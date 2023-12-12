@@ -1,0 +1,65 @@
+Read the given chat history, and decide what function would be most useful for the assistant's next response.
+
+The following functions are available and provide extra, up-to-date information that can help inform the assistant's response:
+
+```python
+def check_weather(location: str) -> WeatherInfo:
+    """
+    Retrieves weather for a given location.
+
+    Example:
+        check_weather('Chicago')
+    """
+    # implementation omitted
+    pass
+
+def search_web(query: str) -> WebResults:
+    """
+    Searches online for a query.
+
+    Examples:
+        search_web('movies showing this weekend')
+        search_web('best pizza in Seattle')
+        search_web('news about large language models')
+    """
+    # implementation omitted
+    pass
+```
+
+If there's no need for extra info, or if the user's last message was purely conversational (or small talk), invoke this function:
+
+```python
+def no_op():
+    """
+    Do nothing. Useful if none of the other functions are needed.
+
+    Example:
+        no_op()
+    """
+    pass
+
+```
+
+The above functions are the **only** functions available.
+
+Use this format for your json reply:
+
+```typescript
+interface Response {
+    user_intent: string; // what was the intent of the user's last message?
+    function_name: string; // the name of the function to select
+    invocation: string; // the full invocation of the function.
+};
+```
+
+For example, if the user asked for a cookie recipe, you might respond with:
+
+```json
+{
+    "user_intent": "The user wants a cookie recipe",
+    "function_name": "search_web",
+    "invocation": "search_web('cookie recipe')"
+}
+```
+
+For your next response, think carefully about the user's latest message. Then, decide what is the appropriate function to respond to their message (or `no_op()` if no function is needed).

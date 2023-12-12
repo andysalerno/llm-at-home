@@ -1,0 +1,22 @@
+[package]
+name = "chat"
+version = "0.1.0"
+edition = "2021"
+description = "A crate containing a chat history representation."
+license = "MIT"
+repository = "https://github.com/andysalerno/infer"
+readme = "README.md"
+keywords = ["text-generation-inference"]
+categories = ["command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+derive_builder = "0.12"
+minijinja = "1.0"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+
+[lints]
+workspace = true

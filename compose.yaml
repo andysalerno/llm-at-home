@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  text-generation-inference:
+    image: ghcr.io/huggingface/text-generation-inference:latest
+    command: --model-id berkeley-nest/Starling-LM-7B-alpha --quantize eetq --max-best-of 1 --max-concurrent-requests 2 --validation-workers 1 --max-total-tokens 16000 --max-top-n-tokens 1 --max-input-length 8191 --max-batch-prefill-tokens 16000 --revision c5f53e9fc7978edac5a5ff74e8fe957a6e076212
+    volumes:
+      - ~/mnt/drive/models:/data
+    ports:
+      - "8080:80"
+    devices:
+      - "nvidia.com/gpu=all"
+    restart: unless-stopped
+
+  chat-ui:
+    image: localhost/chat-ui
+    ports:
+      - "80:5173"
+    restart: unless-stopped
+    depends_on:
+      - mongo-chatui
+
+  embeddings-server:
+    image: localhost/embeddings-server
+    ports:
+      - "8000:8000"
+    devices:
+      - "nvidia.com/gpu=all"
+    restart: unless-stopped
+
+  mongo-chatui:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    restart: unless-stopped

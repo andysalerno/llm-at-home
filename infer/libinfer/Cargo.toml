@@ -1,0 +1,26 @@
+[package]
+name = "libinfer"
+version = "0.1.0"
+edition = "2021"
+description = "A library containing the concepts for the other crates in this repo."
+license = "MIT"
+repository = "https://github.com/andysalerno/infer"
+readme = "README.md"
+keywords = ["text-generation-inference"]
+categories = ["command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chat = { path = "../chat" }
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+reqwest-eventsource = "0.5"
+serde_json = "1.0"
+futures-util = "0.3"
+log = "0.4"
+derive_builder = "0.12"
+regex = "1.10"
+
+[lints]
+workspace = true
