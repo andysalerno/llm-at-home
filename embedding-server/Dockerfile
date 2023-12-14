@@ -37,8 +37,9 @@ RUN case ${TARGETPLATFORM} in \
     esac && \
     /opt/conda/bin/conda clean -ya
 
-RUN pip install sentence-transformers chromadb
-
 COPY guider_server.py .
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
 
 ENTRYPOINT ["python", "./embedding_server.py"]
