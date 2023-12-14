@@ -42,4 +42,3 @@ RUN pip install sentence-transformers chromadb
 COPY guider_server.py .
 
 ENTRYPOINT ["python", "./embedding_server.py"]
-CMD ["none", "none"]
