@@ -18,6 +18,8 @@ services:
     restart: unless-stopped
     depends_on:
       - mongo-chatui
+    networks:
+      - internal_network
 
   embeddings-server:
     image: localhost/embeddings-server
@@ -30,3 +32,8 @@ services:
   mongo-chatui:
     image: mongo:latest
     restart: unless-stopped
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
