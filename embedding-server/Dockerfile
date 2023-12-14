@@ -37,7 +37,7 @@ RUN case ${TARGETPLATFORM} in \
     esac && \
     /opt/conda/bin/conda clean -ya
 
-COPY guider_server.py .
+COPY embedding_server.py .
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
