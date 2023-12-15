@@ -112,7 +112,7 @@ pub fn grendel() -> ChatTemplate {
 
 pub fn openchat() -> ChatTemplate {
     ChatTemplate::new(
-        "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'GPT4 User: ' + message['content'] + eos_token }}{% elif message['role'] == 'system' %}{{ 'System: ' + message['content'] + eos_token }}{% elif message['role'] == 'assistant' %}{{ 'GPT4 Assistant: '  + message['content'] + eos_token }}{% endif %}{% if loop.last and add_generation_prompt %}{{ 'GPT4 Assistant:' }}{% endif %}{% endfor %}",
+        "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'GPT4 Correct User: ' + message['content'] + eos_token }}{% elif message['role'] == 'system' %}{{ 'System: ' + message['content'] + eos_token }}{% elif message['role'] == 'assistant' %}{{ 'GPT4 Correct Assistant: '  + message['content'] + eos_token }}{% endif %}{% if loop.last and add_generation_prompt %}{{ 'GPT4 Correct Assistant:' }}{% endif %}{% endfor %}",
         "<s>",
         "<|end_of_turn|>",
         true,
@@ -123,7 +123,7 @@ pub fn openchat() -> ChatTemplate {
 
 pub fn starling() -> ChatTemplate {
     ChatTemplate::new(
-        "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'GPT4 User: ' + message['content'] + eos_token }}{% elif message['role'] == 'system' %}{{ 'System: ' + message['content'] + eos_token }}{% elif message['role'] == 'assistant' %}{{ 'GPT4 Assistant: '  + message['content'] + eos_token }}{% endif %}{% if loop.last and add_generation_prompt %}{{ 'GPT4 Assistant:' }}{% endif %}{% endfor %}",
+        "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'GPT4 Correct User: ' + message['content'] + eos_token }}{% elif message['role'] == 'system' %}{{ 'System: ' + message['content'] + eos_token }}{% elif message['role'] == 'assistant' %}{{ 'GPT4 Correct Assistant: '  + message['content'] + eos_token }}{% endif %}{% if loop.last and add_generation_prompt %}{{ 'GPT4 Correct Assistant:' }}{% endif %}{% endfor %}",
         "<s>",
         "<|end_of_turn|>",
         true,
