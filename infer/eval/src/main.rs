@@ -37,7 +37,11 @@ async fn main() {
     let chat_client = ChatClient::new(Box::new(client), chat_template);
 
     let exam = ExamBuilder::default()
-        .problems(vec![problems::system_message_compliance_pistachio_easy()])
+        .problems(vec![
+            problems::system_message_compliance_pistachio_easy(),
+            problems::system_message_compliance_pistachio_medium(),
+            problems::system_message_compliance_pistachio_hard(),
+        ])
         .build()
         .unwrap();
 

@@ -1,5 +1,3 @@
-use std::{fs::File, io::Write};
-
 use chat::history::History;
 use derive_builder::Builder;
 use libinfer::chat_client::ChatClient;
