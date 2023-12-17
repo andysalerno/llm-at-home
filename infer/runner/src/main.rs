@@ -1,7 +1,7 @@
 //! A runner for executing a chat loop with function calling.
 #![allow(clippy::multiple_crate_versions)]
 mod api;
-mod chat_loop;
+mod function_selection;
 mod openai_server;
 
 use crate::openai_server::OpenAIServer;
@@ -10,7 +10,6 @@ use functions::{NoOp, WebSearch};
 use libinfer::{function::Function, llm_client::LLMClient};
 use log::{debug, info};
 use model_client::TgiClient;
-use std::io::Write;
 
 #[tokio::main]
 async fn main() {

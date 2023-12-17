@@ -1,6 +1,6 @@
 use crate::{
     api::{ChatChoice, ChatStreamEvent, Message, Request},
-    chat_loop::{map_to_function, select_function},
+    function_selection::{map_to_function, select_function},
 };
 use axum::{
     extract::State,
