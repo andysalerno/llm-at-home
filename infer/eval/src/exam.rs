@@ -11,10 +11,27 @@ pub(crate) struct Exam {
     problems: Vec<Problem>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Builder)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct Answer {
     problem_title: String,
     text: String,
+}
+
+impl Answer {
+    pub(crate) fn new(problem_title: impl Into<String>, text: impl Into<String>) -> Self {
+        Self {
+            problem_title: problem_title.into(),
+            text: text.into(),
+        }
+    }
+
+    pub(crate) fn problem_title(&self) -> &str {
+        self.problem_title.as_ref()
+    }
+
+    pub(crate) fn text(&self) -> &str {
+        self.text.as_ref()
+    }
 }
 
 #[derive(Debug, Clone, Builder)]
@@ -29,7 +46,8 @@ pub(crate) struct Problem {
     history: History,
 
     /// The accepted answer. We will ask an LLM to compare the given answer to this expected answer, and grade it as pass/fail.
-    answer: Answer,
+    #[builder(setter(into))]
+    expected_answer: String,
 }
 
 impl Exam {
@@ -57,19 +75,5 @@ impl Exam {
         }
 
         answers
-    }
-
-    pub fn persist_answers_to_disk(answers: &[Answer]) {
-        let dir = "results";
-        std::fs::create_dir_all(dir).unwrap();
-
-        for answer in answers {
-            let json = serde_json::to_string_pretty(answer).unwrap();
-            let path = format!("{}/{}.txt", dir, answer.problem_title);
-            let mut file = File::create(&path).unwrap();
-
-            info!("Writing: {path}");
-            file.write_all(json.as_bytes()).unwrap();
-        }
     }
 }

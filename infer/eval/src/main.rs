@@ -5,9 +5,12 @@ mod exam;
 mod problems;
 mod proctor;
 
+use std::{fs::File, io::Write};
+
 use crate::exam::{Exam, ExamBuilder};
 use chat_formats::detect_chat_template;
 use env_logger::Env;
+use exam::Answer;
 use libinfer::{chat_client::ChatClient, llm_client::LLMClient};
 use log::{debug, info};
 use model_client::TgiClient;
@@ -40,5 +43,19 @@ async fn main() {
 
     let answers = exam.run(&chat_client).await;
 
-    Exam::persist_answers_to_disk(&answers);
+    persist_answers_to_disk(info.model_id(), &answers);
+}
+
+fn persist_answers_to_disk(model_name: &str, answers: &[Answer]) {
+    let dir = format!("results/{model_name}");
+    std::fs::create_dir_all(&dir).unwrap();
+
+    for answer in answers {
+        let json = serde_json::to_string_pretty(answer).unwrap();
+        let path = format!("{}/{}.txt", dir, answer.problem_title());
+        let mut file = File::create(&path).unwrap();
+
+        info!("Writing: {path}");
+        file.write_all(json.as_bytes()).unwrap();
+    }
 }

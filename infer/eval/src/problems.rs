@@ -1,6 +1,5 @@
-use chat::{history::History, Message, Role};
-
 use crate::exam::{Problem, ProblemBuilder};
+use chat::{history::History, Message, Role};
 
 pub fn system_message_compliance_pistachio_easy() -> Problem {
     let mut history = History::new();
@@ -14,6 +13,7 @@ pub fn system_message_compliance_pistachio_easy() -> Problem {
     ProblemBuilder::default()
         .title("system_message_compliance_pistachio_easy")
         .history(history)
+        .expected_answer("pistachio")
         .build()
         .unwrap()
 }
