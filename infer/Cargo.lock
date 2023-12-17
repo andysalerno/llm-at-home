@@ -174,6 +174,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "chat-formats"
+version = "0.1.0"
+dependencies = [
+ "chat",
+ "log",
+]
+
+[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -352,6 +360,18 @@ checksum = "a258e46cdc063eb8519c00b9fc845fc47bcfca4130e2f08e88665ceda8474245"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "eval"
+version = "0.1.0"
+dependencies = [
+ "chat-formats",
+ "env_logger",
+ "libinfer",
+ "log",
+ "model-client",
+ "tokio",
 ]
 
 [[package]]
@@ -1489,6 +1509,7 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "chat",
+ "chat-formats",
  "env_logger",
  "functions",
  "futures-util",

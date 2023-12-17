@@ -1,7 +1,6 @@
 use crate::{
     api::{ChatChoice, ChatStreamEvent, Message, Request},
     chat_loop::{map_to_function, select_function},
-    detect_chat_template,
 };
 use axum::{
     extract::State,
@@ -9,6 +8,7 @@ use axum::{
     Json, Router,
 };
 use chat::{history::History, Role};
+use chat_formats::detect_chat_template;
 use futures_util::{Stream, StreamExt};
 use libinfer::{
     chat_client::ChatClient,
@@ -99,7 +99,6 @@ impl OpenAIServer {
         info!("got function output:\n{function_output}");
 
         if !function_output.is_empty() {
-            debug!("Skipping empty function output");
             history.add(chat::Message::new(Role::Function, function_output));
         }
 
@@ -118,6 +117,11 @@ impl OpenAIServer {
             }
             Ok(StreamEvent::Message(data)) => {
                 let text = data.token().text();
+
+                // This is a leaky hack:
+                // We don't want to send the EOS output text, which would otherwise appear at the end
+                // of the final message. But we also don't know what text event is the final one.
+                // So we remove the EOS text from the end of every streaming event, which is wrong, but works as a bandage.
                 let text = text.trim_end_matches(&eos_token);
 
                 let chat_choice = ChatChoice::new(Message::new("", text.to_string()), None);

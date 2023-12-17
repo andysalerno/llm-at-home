@@ -7,7 +7,9 @@ members = [
     "runner",
     "functions",
     "chat",
-    "libinfer"
+    "libinfer",
+    "eval",
+    "chat_formats"
 ]
 
 [workspace.lints.rust]

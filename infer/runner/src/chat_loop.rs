@@ -1,6 +1,6 @@
-use crate::{detect_chat_template, get_user_input};
 use chat::{history::History, Message, Renderer, Role};
 
+use chat_formats::detect_chat_template;
 use libinfer::{chat_client::ChatClient, function::Function, llm_client::LLMClient, read_prompt};
 use log::{debug, info};
 use regex::Regex;

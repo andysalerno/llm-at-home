@@ -20,6 +20,8 @@ services:
       - mongo-chatui
     networks:
       - internal_network
+    environment:
+      - "INFER_HOST=http://${HOSTNAME}:5555/"
 
   embeddings-server:
     image: localhost/embeddings-server

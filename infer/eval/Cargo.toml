@@ -1,5 +1,5 @@
 [package]
-name = "runner"
+name = "eval"
 version = "0.1.0"
 edition = "2021"
 description = "An executable for running the chat loop."
@@ -12,19 +12,12 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-model-client = { path = "../model_client" }
-functions = { path = "../functions" }
-libinfer = { path = "../libinfer" }
-chat-formats = { path = "../chat_formats" }
-chat = { path = "../chat" }
 tokio = { version = "1", features = ["full"] }
-futures-util = "0.3"
+model-client = { path = "../model_client" }
+chat-formats = { path = "../chat_formats" }
+libinfer = { path = "../libinfer" }
 log = "0.4"
 env_logger = "0.10"
-serde_json = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-regex = "1.10"
-axum = "0.7"
 
 [lints]
 workspace = true
