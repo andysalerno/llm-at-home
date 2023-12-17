@@ -16,8 +16,12 @@ tokio = { version = "1", features = ["full"] }
 model-client = { path = "../model_client" }
 chat-formats = { path = "../chat_formats" }
 libinfer = { path = "../libinfer" }
+chat = { path = "../chat" }
 log = "0.4"
+derive_builder = "0.12"
 env_logger = "0.10"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
 
 [lints]
 workspace = true

@@ -366,11 +366,15 @@ dependencies = [
 name = "eval"
 version = "0.1.0"
 dependencies = [
+ "chat",
  "chat-formats",
+ "derive_builder",
  "env_logger",
  "libinfer",
  "log",
  "model-client",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
