@@ -44,3 +44,31 @@ pub fn system_message_compliance_pistachio_hard() -> Problem {
         .build()
         .unwrap()
 }
+
+pub fn rag_web_search_excerpts_easy() -> Problem {
+    let mut history = History::new();
+
+    history.add(Message::new(Role::System, ""));
+    history.add(Message::new(Role::User, "Hi there!"));
+
+    ProblemBuilder::default()
+        .title("system_message_compliance_pistachio_easy")
+        .history(history)
+        .expected_answer("pistachio")
+        .build()
+        .unwrap()
+}
+
+pub fn knowledge_check_easy() -> Problem {
+    let mut history = History::new();
+
+    history.add(Message::new(Role::System, ""));
+    history.add(Message::new(Role::User, "Hi there!"));
+
+    ProblemBuilder::default()
+        .title("system_message_compliance_pistachio_easy")
+        .history(history)
+        .expected_answer("pistachio")
+        .build()
+        .unwrap()
+}
