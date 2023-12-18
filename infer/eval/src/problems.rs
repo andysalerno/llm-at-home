@@ -73,8 +73,7 @@ pub fn rag_web_search_excerpts_easy() -> Problem {
 pub fn knowledge_check_easy() -> Problem {
     let mut history = History::new();
 
-    history.add(Message::new(Role::System, ""));
-    history.add(Message::new(Role::User, "Hi there!"));
+    history.add(Message::new(Role::User, "Hi, please list out the 13 studio albums released by The Beatles, in a numeric list, in the ascending order of their release. Do NOT output any other text. Respond with ONLY the numbered list."));
 
     ProblemBuilder::default()
         .title("knowledge_check_easy")
