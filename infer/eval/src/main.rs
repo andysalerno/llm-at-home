@@ -41,6 +41,8 @@ async fn main() {
             problems::system_message_compliance_pistachio_easy(),
             problems::system_message_compliance_pistachio_medium(),
             problems::system_message_compliance_pistachio_hard(),
+            problems::rag_web_search_excerpts_easy(),
+            problems::knowledge_check_easy(),
         ])
         .build()
         .unwrap();
