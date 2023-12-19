@@ -82,3 +82,31 @@ pub fn knowledge_check_easy() -> Problem {
         .build()
         .unwrap()
 }
+
+pub fn logic_puzzle_easy() -> Problem {
+    let mut history = History::new();
+
+    let message = "I have a grape. I put the grape in a paper bag. I put the paper bag in my backpack (a backpack is a type of bag). I have a plastic bag. I put the plastic bag in the same backpack. Inside the plastic bag was another paper bag. At this point, how many bags deep is the grape? Explain your reasoning.";
+
+    history.add(Message::new(Role::User, message));
+
+    ProblemBuilder::default()
+        .title("logic_puzzle_easy")
+        .history(history)
+        .expected_answer("todo")
+        .build()
+        .unwrap()
+}
+
+pub fn misdirection_test_easy() -> Problem {
+    let mut history = History::new();
+
+    history.add(Message::new(Role::User, "I have a zuppy! The zuppy is red. I trade the zuppy for seven flippers. I trade three of the flippers for a smindle. The smindle is purple. I trade the smindle for eight smurkles. Each smurkle is one of the following colors: red, blue, or green. I trade two red smurkles for a flump. The flump is the same color as the smindle was. What color is the flump?"));
+
+    ProblemBuilder::default()
+        .title("misdirection_test_easy")
+        .history(history)
+        .expected_answer("todo")
+        .build()
+        .unwrap()
+}

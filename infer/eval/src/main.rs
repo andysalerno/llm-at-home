@@ -43,6 +43,8 @@ async fn main() {
             problems::system_message_compliance_pistachio_hard(),
             problems::rag_web_search_excerpts_easy(),
             problems::knowledge_check_easy(),
+            problems::logic_puzzle_easy(),
+            problems::misdirection_test_easy(),
         ])
         .build()
         .unwrap();
