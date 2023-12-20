@@ -13,17 +13,7 @@ def check_weather(location: str) -> WeatherInfo:
     # implementation omitted
     pass
 
-def search_web(query: str) -> WebResults:
-    """
-    Searches online for a query.
-
-    Examples:
-        search_web('movies showing this weekend')
-        search_web('best pizza in Seattle')
-        search_web('news about large language models')
-    """
-    # implementation omitted
-    pass
+{{functions}}
 ```
 
 If there's no need for extra info, or if the user's last message was purely conversational (or small talk), invoke this function:

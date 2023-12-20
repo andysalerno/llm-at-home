@@ -1,4 +1,5 @@
 use chat::{history::History, Message, Renderer, Role};
+use functions::NoOp;
 use libinfer::{chat_client::ChatClient, function::Function, read_prompt};
 use log::info;
 use regex::Regex;
@@ -42,8 +43,23 @@ impl FunctionCall {
     }
 }
 
-pub(crate) async fn select_function(client: &ChatClient, history: &History) -> FunctionCall {
+pub(crate) async fn select_function(
+    client: &ChatClient,
+    functions: &[Box<dyn Function + Send + Sync>],
+    history: &History,
+) -> FunctionCall {
     let system_template = read_prompt("action_selection_new_user.txt");
+
+    let function_descriptions_for_model = functions
+        .iter()
+        .filter(|f| f.name() != NoOp.name())
+        .map(|f| f.description_for_model())
+        .collect::<Vec<_>>()
+        .join("\n\n");
+
+    let system_template =
+        system_template.replace("{{functions}}", &function_descriptions_for_model);
+
     let assistant_prompt_template = read_prompt("action_selection_new_assistant.txt");
 
     let chat_template = client.chat_template();

@@ -10,6 +10,10 @@ impl Function for NoOp {
         "no_op"
     }
 
+    fn description_for_model(&self) -> &str {
+        ""
+    }
+
     async fn get_output(&self, _: &str, _: &ChatClient) -> String {
         String::new()
     }

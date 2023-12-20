@@ -26,6 +26,20 @@ impl Function for WebSearch {
         "search_web"
     }
 
+    fn description_for_model(&self) -> &str {
+        r#"def search_web(query: str) -> WebResults:
+    """
+    Searches online for a query.
+
+    Examples:
+        search_web('movies showing this weekend')
+        search_web('best pizza in Seattle')
+        search_web('news about large language models')
+    """
+    # implementation omitted
+    pass"#
+    }
+
     async fn get_output(&self, input: &str, model_client: &ChatClient) -> String {
         // Search the web and find relevant text, split into sections:
         let sections: Vec<String> = {

@@ -80,7 +80,8 @@ impl OpenAIServer {
             history.add(message.into());
         }
 
-        let function_call = select_function(&state.chat_client, &history).await;
+        let function_call =
+            select_function(&state.chat_client, state.functions.as_slice(), &history).await;
 
         info!("Selected function: {function_call:?}");
 
