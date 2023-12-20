@@ -7,7 +7,7 @@ mod proctor;
 
 use std::{fs::File, io::Write};
 
-use crate::exam::{Exam, ExamBuilder};
+use crate::exam::ExamBuilder;
 use chat_formats::detect_chat_template;
 use env_logger::Env;
 use exam::Answer;
@@ -45,6 +45,7 @@ async fn main() {
             problems::knowledge_check_easy(),
             problems::logic_puzzle_easy(),
             problems::misdirection_test_easy(),
+            problems::code_test_easy(),
         ])
         .build()
         .unwrap();

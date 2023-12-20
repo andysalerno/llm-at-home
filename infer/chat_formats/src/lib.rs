@@ -223,7 +223,7 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.contains("agentlm") {
         info!("Detected turn format: agentlm");
         llama2_chat()
-    } else if model_name.contains("openchat_3.5") {
+    } else if model_name.contains("openchat") {
         info!("Detected turn format: openchat");
         openchat()
     } else if model_name.to_lowercase().contains("starling") {

@@ -93,7 +93,7 @@ pub fn logic_puzzle_easy() -> Problem {
     ProblemBuilder::default()
         .title("logic_puzzle_easy")
         .history(history)
-        .expected_answer("todo")
+        .expected_answer("two")
         .build()
         .unwrap()
 }
@@ -106,7 +106,22 @@ pub fn misdirection_test_easy() -> Problem {
     ProblemBuilder::default()
         .title("misdirection_test_easy")
         .history(history)
-        .expected_answer("todo")
+        .expected_answer("purple")
+        .build()
+        .unwrap()
+}
+
+pub fn code_test_easy() -> Problem {
+    let mut history = History::new();
+
+    let message = "Write a single function in Rust that takes in a slice of &[u8] and returns the 95 percentile of the values.";
+
+    history.add(Message::new(Role::User, message));
+
+    ProblemBuilder::default()
+        .title("code_test_easy")
+        .history(history)
+        .expected_answer("<WIP>")
         .build()
         .unwrap()
 }
