@@ -3,7 +3,7 @@ import uuid
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from sentence_transformers import SentenceTransformer
-import chromadb
+from memory import Memory
 
 
 # EMBEDDING_MODEL_NAME = "all-mpnet-base-v2"
@@ -15,10 +15,12 @@ print("initializing embedding transformer...")
 embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
 print("done.")
 
-chroma_client = chromadb.PersistentClient(path="./chroma")
-collection = chroma_client.create_collection(
-    name="my_collection", get_or_create=True, embedding_function=None
-)
+# chroma_client = chromadb.PersistentClient(path="./chroma")
+# collection = chroma_client.create_collection(
+#     name="my_collection", get_or_create=True, embedding_function=None
+# )
+
+memory = Memory(embedding_model)
 
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -49,11 +51,7 @@ class MyHandler(BaseHTTPRequestHandler):
         input = query_params["input"][0]
         num_results = int(query_params["num_results"][0])
 
-        print(f"querying {num_results} for input {input}")
-
-        embeddings = embedding_model.encode(input).tolist()
-
-        results = collection.query(query_embeddings=embeddings, n_results=num_results)
+        results = memory.query(input, num_results, {})
 
         print(f"got results: {results}")
 
@@ -71,13 +69,9 @@ class MyHandler(BaseHTTPRequestHandler):
 
         document = body["document"]
 
-        embeddings = embedding_model.encode(document).tolist()
-
         uuid_str = str(uuid.uuid4())
 
-        collection.add(
-            embeddings=embeddings, documents=document, metadatas=None, ids=uuid_str
-        )
+        memory.add(uuid_str, document, {})
 
     def handle_embeddings(self):
         print("embeddings requested")

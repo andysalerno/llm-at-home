@@ -211,6 +211,9 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("mistral-7b-instruct") {
         info!("Detected turn format: mistral-instruct");
         mistral_instruct()
+    } else if model_name.to_lowercase().contains("/data") {
+        info!("Detected turn format: mistral-instruct");
+        mistral_instruct()
     } else if model_name.contains("zephyr") {
         info!("Detected turn format: zephyr");
         zephyr()

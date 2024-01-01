@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Dict, List
 import chromadb
 from chromadb.config import Settings
 from chromadb.api.types import EmbeddingFunction, Documents, Embeddings
@@ -6,7 +6,11 @@ from sentence_transformers import SentenceTransformer
 import uuid
 
 client = None
-collection = None
+_collection = None
+
+# For certain embedding models, they expect a prefix to differentiate queries and passages:
+query_prefix = "query: "
+passage_prefix = "passage: "
 
 
 def get_client():
@@ -21,26 +25,26 @@ def get_client():
     return client
 
 
-def get_collection(model: SentenceTransformer):
-    global collection
+def _get_collection(model: SentenceTransformer):
+    global _collection
 
     client = get_client()
 
-    if collection is None:
+    if _collection is None:
         print("Getting or creating collection my_collection")
-        collection = client.get_or_create_collection(
+        _collection = client.get_or_create_collection(
             name="my_collection",
             embedding_function=LocalSentenceTransformerEmbeddingFunction(model),
         )
 
-        print(f"my_collection loaded, it has document count: {collection.count()}")
+        print(f"my_collection loaded, it has document count: {_collection.count()}")
 
-    return collection
+    return _collection
 
 
 class Memory:
     def __init__(self, model: SentenceTransformer) -> None:
-        self.collection = get_collection(model)
+        self.collection = _get_collection(model)
 
     # time-weighted chat history,
     # web_search cached history,
@@ -54,6 +58,7 @@ class Memory:
         self.collection.add(ids, documents=documents)
 
     def add(self, id: str, document: str, metadata: Dict[str, str]):
+        document = f"{passage_prefix}{document}"
         # self.add_many([id], [document], [metadata])
         id = id if len(id) > 1 else str(uuid.uuid4())
         print(f"adding id: {id} document: {document}")
@@ -61,6 +66,7 @@ class Memory:
         print("done adding item")
 
     def query(self, query_text: str, n_results: int, where: Dict[str, str]):
+        query_text = f"{query_prefix}{query_text}"
         result = self.collection.query(
             query_texts=query_text, n_results=n_results, where=where
         )
@@ -81,10 +87,10 @@ class LocalSentenceTransformerEmbeddingFunction(EmbeddingFunction):
         self._model = model
         self._normalize_embeddings = False
 
-    def __call__(self, texts: Documents) -> Embeddings:
+    def __call__(self, input: Documents) -> Embeddings:
         print("embedding provider invoked...")
         result = self._model.encode(
-            list(texts),
+            list(input),
             convert_to_numpy=True,
             normalize_embeddings=self._normalize_embeddings,
         ).tolist()
