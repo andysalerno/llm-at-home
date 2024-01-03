@@ -147,6 +147,18 @@ pub fn starling() -> ChatTemplate {
     )
 }
 
+#[must_use]
+pub fn nous_hermes_solar() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
+        "<s>",
+        "<|im_end|>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
 /// Bad responses? Did not understand how to call functions at all.
 #[must_use]
 pub fn amazon_mistral_lite() -> ChatTemplate {
@@ -211,6 +223,9 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("mistral-7b-instruct") {
         info!("Detected turn format: mistral-instruct");
         mistral_instruct()
+    } else if model_name.to_lowercase().contains("solar") {
+        info!("Detected turn format: nous-hermes-solar");
+        nous_hermes_solar()
     } else if model_name.to_lowercase().contains("/data") {
         info!("Detected turn format: mistral-instruct");
         mistral_instruct()
