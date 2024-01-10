@@ -98,6 +98,21 @@ pub fn logic_puzzle_easy() -> Problem {
         .unwrap()
 }
 
+pub fn logic_puzzle_medium() -> Problem {
+    let mut history = History::new();
+
+    let message = "I have a grape. I put the grape in a paper bag. I put the paper bag in my backpack (a backpack is a type of bag). I have a plastic bag. I put the plastic bag in the same backpack. Inside the plastic bag was another paper bag. At this point, how many bags deep is the grape? Explain your reasoning, and think step-by-step before providing your answer.";
+
+    history.add(Message::new(Role::User, message));
+
+    ProblemBuilder::default()
+        .title("logic_puzzle_easy")
+        .history(history)
+        .expected_answer("two")
+        .build()
+        .unwrap()
+}
+
 pub fn misdirection_test_easy() -> Problem {
     let mut history = History::new();
 

@@ -3,7 +3,6 @@
 
 mod exam;
 mod problems;
-mod proctor;
 
 use std::{fs::File, io::Write};
 
@@ -44,6 +43,7 @@ async fn main() {
             problems::rag_web_search_excerpts_easy(),
             problems::knowledge_check_easy(),
             problems::logic_puzzle_easy(),
+            problems::logic_puzzle_medium(),
             problems::misdirection_test_easy(),
             problems::code_test_easy(),
         ])

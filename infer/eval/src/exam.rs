@@ -13,16 +13,10 @@ pub(crate) struct Exam {
 pub(crate) struct Answer {
     problem_title: String,
     text: String,
+    expected_answer: String,
 }
 
 impl Answer {
-    pub(crate) fn new(problem_title: impl Into<String>, text: impl Into<String>) -> Self {
-        Self {
-            problem_title: problem_title.into(),
-            text: text.into(),
-        }
-    }
-
     pub(crate) fn problem_title(&self) -> &str {
         self.problem_title.as_ref()
     }
@@ -69,6 +63,7 @@ impl Exam {
             answers.push(Answer {
                 problem_title: problem.title.clone(),
                 text: response.content().to_owned(),
+                expected_answer: problem.expected_answer.clone(),
             });
         }
 
