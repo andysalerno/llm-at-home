@@ -112,6 +112,18 @@ pub fn neural() -> ChatTemplate {
 }
 
 #[must_use]
+pub fn mixtral_11bx2() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{% if message['role'] == 'system' %}{% if message['content']%}{{'### System:\n' + message['content']+'\n\n'}}{% endif %}{% elif message['role'] == 'user' %}{{'### User:\n' + message['content']+'\n\n'}}{% elif message['role'] == 'assistant' %}{{'### Assistant:\n' + message['content'] + '\n\n'}}{% endif %}{% if loop.last and add_generation_prompt %}{{ '### Assistant:\n' }}{% endif %}{% endfor %}",
+        "<s>",
+        "</s>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
+#[must_use]
 pub fn grendel() -> ChatTemplate {
     ChatTemplate::new(
         "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
@@ -183,6 +195,18 @@ pub fn neural_hermes() -> ChatTemplate {
     )
 }
 
+#[must_use]
+pub fn beagle() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
+        "<s>",
+        "</s>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
 /// Bad responses? Did not understand how to call functions at all.
 #[must_use]
 pub fn amazon_mistral_lite() -> ChatTemplate {
@@ -244,12 +268,18 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("llama-2") {
         info!("Detected turn format: Llama-2");
         llama2_chat()
+    } else if model_name.to_lowercase().contains("beagle") {
+        info!("Detected turn format: Llama-2");
+        beagle()
     } else if model_name.to_lowercase().contains("beyonder") {
         info!("Detected turn format: Beyonder");
         beyonder()
     } else if model_name.to_lowercase().contains("neuralhermes") {
         info!("Detected turn format: neural hermes");
         neural_hermes()
+    } else if model_name.to_lowercase().contains("mixtral_11bx2") {
+        info!("Detected turn format: mixtral11bx2");
+        mixtral_11bx2()
     } else if model_name.to_lowercase().contains("mistral-7b-instruct") {
         info!("Detected turn format: mistral-instruct");
         mistral_instruct()
