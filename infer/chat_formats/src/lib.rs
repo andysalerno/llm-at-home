@@ -148,9 +148,53 @@ pub fn openchat() -> ChatTemplate {
 }
 
 #[must_use]
+pub fn laser_dolphin_x2() -> ChatTemplate {
+    // ChatTemplate::new(
+    //     "{% for message in messages %}{% if message['role'] == 'system' %}{% if message['content']%}{{'### System:\n' + message['content']+'\n\n'}}{% endif %}{% elif message['role'] == 'user' %}{{'### User:\n' + message['content']+'\n\n'}}{% elif message['role'] == 'assistant' %}{{'### Assistant:\n' + message['content'] + '\n\n'}}{% endif %}{% if loop.last and add_generation_prompt %}{{ '### Assistant:\n' }}{% endif %}{% endfor %}",
+    //     "<s>",
+    //     "</s>",
+    //     true,
+    //     false,
+    //     FunctionStyle::AppendToUserMessage
+    // )
+    ChatTemplate::new(
+        "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
+        "<s>",
+        "<|im_end|>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
+#[must_use]
+pub fn pluto() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
+        "<s>",
+        "<|im_end|>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
+#[must_use]
 pub fn starling() -> ChatTemplate {
     ChatTemplate::new(
         "{% for message in messages %}{% if message['role'] == 'user' %}{{ 'GPT4 Correct User: ' + message['content'] + eos_token }}{% elif message['role'] == 'system' %}{{ 'System: ' + message['content'] + eos_token }}{% elif message['role'] == 'assistant' %}{{ 'GPT4 Correct Assistant: '  + message['content'] + eos_token }}{% endif %}{% if loop.last and add_generation_prompt %}{{ 'GPT4 Correct Assistant:' }}{% endif %}{% endfor %}",
+        "<s>",
+        "<|end_of_turn|>",
+        true,
+        false,
+        FunctionStyle::SystemPrompt
+    )
+}
+
+#[must_use]
+pub fn tenyx() -> ChatTemplate {
+    ChatTemplate::new(
+        "{{ bos_token }} {% for message in messages %}{% if message['role'] == 'user' %}{{ 'User:' + message['content'] + eos_token + '\n' }}{% elif message['role'] == 'system' %}{{ 'System:' + message['content'] + eos_token + '\n' }}{% elif message['role'] == 'assistant' %}{{ 'Assistant:'  + message['content'] + eos_token + '\n' }}{% endif %}{% if loop.last and add_generation_prompt %}{{ 'Assistant:' }}{% endif %}{% endfor %}",
         "<s>",
         "<|end_of_turn|>",
         true,
@@ -200,7 +244,7 @@ pub fn beagle() -> ChatTemplate {
     ChatTemplate::new(
         "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
         "<s>",
-        "</s>",
+        "<|im_end|>",
         true,
         false,
         FunctionStyle::AppendToUserMessage
@@ -268,9 +312,18 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("llama-2") {
         info!("Detected turn format: Llama-2");
         llama2_chat()
+    } else if model_name.to_lowercase().contains("pluto") {
+        info!("Detected turn format: pluto");
+        pluto()
     } else if model_name.to_lowercase().contains("beagle") {
-        info!("Detected turn format: Llama-2");
+        info!("Detected turn format: beagle");
         beagle()
+    } else if model_name.to_lowercase().contains("laser-dolphin-mixtral") {
+        info!("Detected turn format: laser_dolphin");
+        laser_dolphin_x2()
+    } else if model_name.to_lowercase().contains("tenyx") {
+        info!("Detected turn format: tenyx");
+        tenyx()
     } else if model_name.to_lowercase().contains("beyonder") {
         info!("Detected turn format: Beyonder");
         beyonder()
