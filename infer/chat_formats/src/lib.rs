@@ -100,6 +100,30 @@ pub fn orca2() -> ChatTemplate {
 }
 
 #[must_use]
+pub fn cloudymixtral() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
+        "<|im_start|>",
+        "<|im_end|>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
+#[must_use]
+pub fn fusion_net() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% if loop.last and add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}{% endfor %}",
+        "<|im_start|>",
+        "<|im_end|>",
+        true,
+        false,
+        FunctionStyle::AppendToUserMessage
+    )
+}
+
+#[must_use]
 pub fn neural() -> ChatTemplate {
     ChatTemplate::new(
         "{% for message in messages %}{% if message['role'] == 'user' %}{{ '### User:\n' + message['content'] }}{% elif message['role'] == 'system' %}{{ '### System:\n' + message['content'] }}{% elif message['role'] == 'assistant' %}{{ '### Assistant:\n'  + message['content'] }}{% endif %}\n{% if loop.last and add_generation_prompt %}{{ '### Assistant:' }}{% endif %}{% endfor %}",
@@ -312,6 +336,21 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("llama-2") {
         info!("Detected turn format: Llama-2");
         llama2_chat()
+    } else if model_name.to_lowercase().contains("fusion") {
+        info!("Detected turn format: fusion net");
+        fusion_net()
+    } else if model_name
+        .to_lowercase()
+        .contains("andysalerno/mistral-sft")
+    {
+        info!("Detected turn format: mistral-sft");
+        orca2()
+    } else if model_name.to_lowercase().contains("rainbowfish") {
+        info!("Detected turn format: rainbowfish");
+        orca2()
+    } else if model_name.to_lowercase().contains("cloudy") {
+        info!("Detected turn format: cloudy mixtral");
+        cloudymixtral()
     } else if model_name.to_lowercase().contains("pluto") {
         info!("Detected turn format: pluto");
         pluto()

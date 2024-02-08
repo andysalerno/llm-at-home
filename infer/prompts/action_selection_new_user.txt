@@ -53,5 +53,5 @@ For example, if the user asked for a cookie recipe, you might respond with:
 }
 ```
 
-For your next response, think carefully about the user's latest message. Then, decide what is the appropriate function to respond to their message (or `no_op()` if no function is needed).
+For your next response, think carefully about the user's **latest** message. Then, decide what is the appropriate function to respond to their message (or `no_op()` if no function is needed).
 </rules>

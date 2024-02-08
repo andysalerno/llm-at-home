@@ -45,6 +45,8 @@ impl ChatClient {
 
         let parameters = GenerateParametersBuilder::default()
             .max_new_tokens(Some(800))
+            .do_sample(Some(true))
+            .temperature(Some(0.2))
             .stop(Some(vec![eos.clone()]))
             .build()
             .unwrap();

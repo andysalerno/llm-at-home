@@ -1,6 +1,10 @@
 I will use the system message as a guide.
 
-To best respond to your most recent message, I invoke this function from the list:
+``python
+last_user_message = "{last_user_message}"
+```
+
+To best respond to your **last** message, I invoke this function from the predefined list:
 ```json
 {
     "user_intent": "{{gen 'intent' stop='"' temperature='0.5' max_new_tokens='20' }}",

@@ -60,7 +60,17 @@ pub(crate) async fn select_function(
     let system_template =
         system_template.replace("{{functions}}", &function_descriptions_for_model);
 
-    let assistant_prompt_template = read_prompt("action_selection_new_assistant.txt");
+    let last_user_message = history
+        .messages()
+        .iter()
+        .filter(|m| m.role() == &Role::User)
+        .last()
+        .expect("Should be at least one user message")
+        .content()
+        .to_owned();
+
+    let assistant_prompt_template = read_prompt("action_selection_new_assistant.txt")
+        .replace("{last_user_message}", &last_user_message);
 
     let chat_template = client.chat_template();
 
