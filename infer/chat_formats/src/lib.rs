@@ -345,6 +345,9 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     {
         info!("Detected turn format: mistral-sft");
         orca2()
+    } else if model_name.to_lowercase().contains("qwen") {
+        info!("Detected turn format: qwen");
+        orca2()
     } else if model_name.to_lowercase().contains("rainbowfish") {
         info!("Detected turn format: rainbowfish");
         orca2()

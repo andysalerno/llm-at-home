@@ -47,6 +47,7 @@ impl ChatClient {
             .max_new_tokens(Some(800))
             .do_sample(Some(true))
             .temperature(Some(0.2))
+            .repetition_penalty(Some(1.1))
             .stop(Some(vec![eos.clone()]))
             .build()
             .unwrap();

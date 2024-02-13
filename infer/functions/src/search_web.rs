@@ -220,10 +220,20 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
         .build()?;
 
     let response = client.get(url)
-        .header("User-Agent", "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6226.2 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)").send().await?;
+        .header("User-Agent", "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6286.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+        .send()
+        .await?.error_for_status()?;
+
+    let status = response.status();
+
     let s = response.text().await?;
 
-    info!("Read text from {} length: {}", url, s.len());
+    info!(
+        "Response: {} Read text from {} length: {}",
+        status,
+        url,
+        s.len()
+    );
 
     let mut readability = Readability::new();
     let (node_ref, _metadata) = readability
