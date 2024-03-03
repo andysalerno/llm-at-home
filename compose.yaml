@@ -2,7 +2,7 @@ version: '3.8'
 services:
   text-generation-inference:
     image: ghcr.io/huggingface/text-generation-inference:sha-39af000
-    command: --model-id ${MODEL_ID} --quantize ${QUANTIZATION} --max-best-of 1 --max-concurrent-requests 2 --validation-workers 1 --max-total-tokens ${MAX_TOKENS} --max-top-n-tokens 1 --max-input-length ${MAX_INPUT} --max-batch-prefill-tokens ${MAX_TOKENS} --revision ${MODEL_REVISION}
+    command: --model-id ${MODEL_ID} --quantize ${QUANTIZATION} --max-best-of 1 --max-concurrent-requests 2 --validation-workers 1 --max-batch-prefill-tokens ${MAX_TOKENS} --max-total-tokens ${MAX_TOKENS} --max-input-length ${MAX_INPUT} --max-batch-total-tokens ${MAX_TOKENS} --max-top-n-tokens 1 --revision ${MODEL_REVISION}
     volumes:
       - ${MODEL_DOWNLOAD_DIR}:/data
     ports:
