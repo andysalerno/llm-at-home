@@ -1,7 +1,11 @@
 I will use the system message as a guide.
 
-``python
+```python
 last_user_message = "{last_user_message}"
+```
+
+```python
+available_functions_names = [ {function_names_list} ]
 ```
 
 To best respond to your **last** message, I invoke this function from the predefined list:

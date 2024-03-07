@@ -48,29 +48,39 @@ pub(crate) async fn select_function(
     functions: &[Box<dyn Function + Send + Sync>],
     history: &History,
 ) -> FunctionCall {
-    let system_template = read_prompt("action_selection_new_user.txt");
+    let system_template = {
+        let template = read_prompt("action_selection_new_user.txt");
 
-    let function_descriptions_for_model = functions
-        .iter()
-        .filter(|f| f.name() != NoOp.name())
-        .map(|f| f.description_for_model())
-        .collect::<Vec<_>>()
-        .join("\n\n");
+        let function_descriptions_for_model = functions
+            .iter()
+            .filter(|f| f.name() != NoOp.name())
+            .map(|f| f.description_for_model())
+            .collect::<Vec<_>>()
+            .join("\n\n");
 
-    let system_template =
-        system_template.replace("{{functions}}", &function_descriptions_for_model);
+        template.replace("{{functions}}", &function_descriptions_for_model)
+    };
 
-    let last_user_message = history
-        .messages()
-        .iter()
-        .filter(|m| m.role() == &Role::User)
-        .last()
-        .expect("Should be at least one user message")
-        .content()
-        .to_owned();
+    let assistant_prompt_template = {
+        let last_user_message = history
+            .messages()
+            .iter()
+            .filter(|m| m.role() == &Role::User)
+            .last()
+            .expect("Should be at least one user message")
+            .content()
+            .replace('\"', "\\\"");
 
-    let assistant_prompt_template = read_prompt("action_selection_new_assistant.txt")
-        .replace("{last_user_message}", &last_user_message);
+        let functions_names = functions
+            .iter()
+            .map(|f| format!("'{}'", f.name()))
+            .collect::<Vec<_>>()
+            .join(", ");
+
+        read_prompt("action_selection_new_assistant.txt")
+            .replace("{last_user_message}", &last_user_message)
+            .replace("{function_names_list}", &functions_names)
+    };
 
     let chat_template = client.chat_template();
 
