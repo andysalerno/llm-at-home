@@ -76,7 +76,11 @@ impl OpenAIServer {
             history
         };
 
-        for message in payload.messages() {
+        for message in payload
+            .messages()
+            .iter()
+            .filter(|m| m.role() != Role::System.as_str())
+        {
             history.add(message.into());
         }
 

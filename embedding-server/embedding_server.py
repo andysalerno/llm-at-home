@@ -3,7 +3,6 @@ import uuid
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from sentence_transformers import SentenceTransformer
-from memory import Memory
 
 
 # EMBEDDING_MODEL_NAME = "all-mpnet-base-v2"
@@ -20,8 +19,6 @@ print("done.")
 #     name="my_collection", get_or_create=True, embedding_function=None
 # )
 
-memory = Memory(embedding_model)
-
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -29,49 +26,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
         if self.path == "/embeddings":
             self.handle_embeddings()
-        elif self.path == "/memory":
-            self.handle_memory_post()
-
-    def do_GET(self):
-        print(f"GET {self.path}", flush=True)
-
-        if self.path.startswith("/memory"):
-            self.handle_memory_get()
-
-    def handle_memory_get(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-
-        parsed_url = urlparse(self.path)
-        query_params = parse_qs(parsed_url.query)
-
-        print(f"params: {query_params}")
-
-        input = query_params["input"][0]
-        num_results = int(query_params["num_results"][0])
-
-        results = memory.query(input, num_results, {})
-
-        print(f"got results: {results}")
-
-        response = json.dumps(results)
-
-        self.wfile.write(response.encode("utf-8"))
-
-    def handle_memory_post(self):
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
-
-        content_length = int(self.headers["Content-Length"])
-        body = json.loads(self.rfile.read(content_length).decode("utf-8"))
-
-        document = body["document"]
-
-        uuid_str = str(uuid.uuid4())
-
-        memory.add(uuid_str, document, {})
 
     def handle_embeddings(self):
         print("embeddings requested")
