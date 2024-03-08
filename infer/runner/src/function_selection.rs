@@ -22,10 +22,11 @@ pub(crate) struct FunctionCall {
 
 impl FunctionCall {
     fn parse(input: &str) -> FunctionCall {
+        let input = input.replace("'", "");
         let re = Regex::new(r#"(\w+)\(['"]?([^'"]*)['"]?\)"#).unwrap();
 
         let captures = re
-            .captures(input)
+            .captures(&input)
             .unwrap_or_else(|| panic!("Expected to parse as a function, but saw: '{input}'"));
 
         FunctionCall {

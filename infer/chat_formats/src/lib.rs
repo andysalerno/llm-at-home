@@ -1,7 +1,7 @@
 //! A library providing a variety of chat format templates.
 #![allow(clippy::multiple_crate_versions, missing_docs)]
 use chat::{ChatTemplate, FunctionStyle};
-use log::info;
+use log::{info, warn};
 
 #[must_use]
 pub fn llama2_chat() -> ChatTemplate {
@@ -436,6 +436,8 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
         info!("Detected turn format: xwin");
         todo!()
     } else {
-        panic!("Unable to detect chat turn format for model id: {model_name}");
+        warn!("Unknown model detected. Falling back on orca2 format.");
+        orca2()
+        // panic!("Unable to detect chat turn format for model id: {model_name}");
     }
 }
