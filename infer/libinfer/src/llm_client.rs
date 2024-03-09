@@ -30,11 +30,11 @@ pub trait LLMClient {
             match event {
                 Ok(StreamEvent::Open) => debug!("connection open"),
                 Ok(StreamEvent::Message(m)) => {
-                    info!("message received: {m:?}");
+                    debug!("message received: {m:?}");
                     assistant_response.push_str(m.token().text());
                 }
                 Err(StreamError::StreamClose) => {
-                    info!("stream complete");
+                    debug!("stream complete");
                     stream.close();
                 }
                 e => {
@@ -108,7 +108,7 @@ impl From<reqwest_eventsource::Event> for StreamEvent {
             reqwest_eventsource::Event::Open => StreamEvent::Open,
             reqwest_eventsource::Event::Message(event) => {
                 let data = &event.data;
-                info!("saw data: '{data}'");
+                debug!("saw data: '{data}'");
                 StreamEvent::Message(serde_json::from_str(&event.data).unwrap_or_else(|_| {
                     panic!(
                         "expected valid json in the response, but saw: '{}'",
