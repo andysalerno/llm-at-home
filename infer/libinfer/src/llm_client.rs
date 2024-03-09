@@ -3,7 +3,7 @@ use crate::generate_request::GenerateRequest;
 use crate::info::Info;
 use async_trait::async_trait;
 use futures_util::{Stream, StreamExt};
-use log::debug;
+use log::{debug, error, info, warn};
 use reqwest_eventsource::EventSource;
 use serde::{Deserialize, Serialize};
 use std::{pin::Pin, task::Poll};
@@ -30,15 +30,15 @@ pub trait LLMClient {
             match event {
                 Ok(StreamEvent::Open) => debug!("connection open"),
                 Ok(StreamEvent::Message(m)) => {
-                    // debug!("message received: {m:?}");
+                    info!("message received: {m:?}");
                     assistant_response.push_str(m.token().text());
                 }
                 Err(StreamError::StreamClose) => {
-                    debug!("stream complete");
+                    info!("stream complete");
                     stream.close();
                 }
-                _ => {
-                    debug!("unknown event");
+                e => {
+                    warn!("unknown event: {e:?}");
                     stream.close();
                 }
             }
@@ -72,6 +72,7 @@ impl Stream for InferenceStream {
         match Pin::new(&mut this.inner_stream).poll_next(cx) {
             Poll::Ready(Some(Ok(value))) => Poll::Ready(Some(Ok(value.into()))),
             Poll::Ready(Some(Err(e))) => {
+                error!("error: '{e:?}'");
                 this.inner_stream.close();
                 Poll::Ready(Some(Err(e.into())))
             }
@@ -106,6 +107,8 @@ impl From<reqwest_eventsource::Event> for StreamEvent {
         match value {
             reqwest_eventsource::Event::Open => StreamEvent::Open,
             reqwest_eventsource::Event::Message(event) => {
+                let data = &event.data;
+                info!("saw data: '{data}'");
                 StreamEvent::Message(serde_json::from_str(&event.data).unwrap_or_else(|_| {
                     panic!(
                         "expected valid json in the response, but saw: '{}'",

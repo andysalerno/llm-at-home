@@ -1,4 +1,5 @@
 import json
+import time
 import uuid
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -10,7 +11,7 @@ model, tokenizer = get_model_and_tokenizer()
 
 
 def get_response_streamer(request: str):
-    streamer = TextIteratorStreamer(tokenizer)
+    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True)
     body = json.loads(request)
 
     inputs = body["inputs"]
@@ -96,6 +97,7 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(response.encode("utf-8"))
 
     def handle_generate_stream(self):
+        self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
         self.send_header("Cache-Control", "no-cache")
         self.send_header("Connection", "keep-alive")
@@ -106,11 +108,20 @@ class MyHandler(BaseHTTPRequestHandler):
         streamer = get_response_streamer(request)
 
         for new_text in streamer:
-            print(f"saw text: {new_text}", flush=True)
+            if not new_text:
+                continue
+            print(f"saw text: '{new_text}'", flush=True)
+            message_json = self.make_stream_json(new_text)
+            message = f"event: tokens\ndata: {message_json}\n\n"
+            print(f"sending text: '{message}'", flush=True)
+            self.wfile.write(message.encode())
+            self.wfile.flush()
+        
+        print('done streaming', flush=True)
 
-        response = json.dumps({"generated_text": "empty"})
+    def make_stream_json(self, text: str) -> str:
+        return json.dumps(dict(details=None, generated_text=text, token=dict(id=0, logprob=0, special=False, text=text)))
 
-        self.wfile.write(response.encode("utf-8"))
 
     def handle_generate(self):
         self.send_response(200)

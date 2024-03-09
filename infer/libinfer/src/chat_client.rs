@@ -84,7 +84,7 @@ impl ChatClient {
                     stream.close();
                 }
                 _ => {
-                    debug!("unknown event");
+                    warn!("unknown event");
                     stream.close();
                 }
             }
