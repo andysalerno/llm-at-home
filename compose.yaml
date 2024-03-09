@@ -1,15 +1,15 @@
 version: '3.8'
 services:
-  text-generation-inference:
-    image: ghcr.io/huggingface/text-generation-inference:latest
-    command: --model-id ${MODEL_ID} --quantize ${QUANTIZATION} --max-total-tokens ${MAX_TOKENS} --max-input-length ${MAX_INPUT} --max-batch-prefill-tokens ${MAX_INPUT} --max-best-of 1 --max-concurrent-requests 2 --validation-workers 1 --max-top-n-tokens 1 --revision ${MODEL_REVISION}
-    volumes:
-      - ${MODEL_DOWNLOAD_DIR}:/data
-    ports:
-      - "8080:80"
-    devices:
-      - "nvidia.com/gpu=all"
-    restart: unless-stopped
+  # text-generation-inference:
+  #   image: ghcr.io/huggingface/text-generation-inference:latest
+  #   command: --model-id ${MODEL_ID} --quantize ${QUANTIZATION} --max-total-tokens ${MAX_TOKENS} --max-input-length ${MAX_INPUT} --max-batch-prefill-tokens ${MAX_INPUT} --max-best-of 1 --max-concurrent-requests 2 --validation-workers 1 --max-top-n-tokens 1 --revision ${MODEL_REVISION}
+  #   volumes:
+  #     - ${MODEL_DOWNLOAD_DIR}:/data
+  #   ports:
+  #     - "8080:80"
+  #   devices:
+  #     - "nvidia.com/gpu=all"
+  #   restart: unless-stopped
 
   chat-ui:
     image: localhost/chat-ui

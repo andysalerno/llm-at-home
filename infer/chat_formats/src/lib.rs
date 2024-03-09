@@ -393,7 +393,7 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("solar") {
         info!("Detected turn format: nous-hermes-solar");
         nous_hermes_solar()
-    } else if model_name.to_lowercase().contains("/data") {
+    } else if model_name.to_lowercase().contains("mistral") {
         info!("Detected turn format: mistral-instruct");
         mistral_instruct()
     } else if model_name.contains("zephyr") {
