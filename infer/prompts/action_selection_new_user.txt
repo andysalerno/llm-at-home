@@ -37,7 +37,7 @@ Use this format for your json reply:
 
 ```typescript
 interface Response {
-    user_intent: string; // what was the intent of the user's last message?
+    last_user_message_intent: string; // what was the intent of the user's last message?
     function_name: string; // the name of the function to select
     invocation: string; // the full invocation of the function.
 };
@@ -47,7 +47,7 @@ For example, if the user asked for a cookie recipe, you might respond with:
 
 ```json
 {
-    "user_intent": "The user wants a cookie recipe",
+    "last_user_message_intent": "The user wants a cookie recipe",
     "function_name": "search_web",
     "invocation": "search_web('cookie recipe')"
 }

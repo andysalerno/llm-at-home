@@ -327,6 +327,18 @@ pub fn mistral_slimorcaboros() -> ChatTemplate {
     )
 }
 
+#[must_use]
+pub fn tulu2() -> ChatTemplate {
+    ChatTemplate::new(
+        "{% for message in messages %}{% if message['role'] == 'user' %}{{ '<|user|>\n' + message['content'] + '\n' }}{% elif message['role'] == 'system' %}{{ '<|system|>\n' + message['content'] + '\n' }}{% elif message['role'] == 'assistant' %}{{ '<|assistant|>\n'  + message['content'] + '\n' }}{% endif %}{% if loop.last and add_generation_prompt %}{{ '<|assistant|>\n' }}{% endif %}{% endfor %}",
+        "<s>",
+        "</s>",
+        true,
+        false,
+        FunctionStyle::SystemPrompt
+    )
+}
+
 /// Determine the proper `ChatTemplate` given the name of the model.
 #[must_use]
 pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
@@ -432,6 +444,12 @@ pub fn detect_chat_template(model_name: &str) -> ChatTemplate {
     } else if model_name.to_lowercase().contains("orca-2") {
         info!("Detected turn format: orca-2");
         orca2()
+    } else if model_name.to_lowercase().contains("bigstral") {
+        info!("Detected turn format: bigstral");
+        mistral_instruct()
+    } else if model_name.to_lowercase().contains("tulu") {
+        info!("Detected turn format: tulu2");
+        tulu2()
     } else if model_name.contains("Xwin-LM") {
         info!("Detected turn format: xwin");
         todo!()
