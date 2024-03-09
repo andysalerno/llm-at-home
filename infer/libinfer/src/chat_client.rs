@@ -73,6 +73,8 @@ impl ChatClient {
 
         let mut assistant_response = String::new();
 
+        info!("starting stream");
+
         while let Some(event) = stream.next().await {
             match event {
                 Ok(StreamEvent::Open) => debug!("connection open"),
@@ -80,7 +82,7 @@ impl ChatClient {
                     assistant_response.push_str(m.token().text());
                 }
                 Err(StreamError::StreamClose) => {
-                    debug!("stream complete");
+                    info!("stream close signal");
                     stream.close();
                 }
                 _ => {
@@ -89,6 +91,8 @@ impl ChatClient {
                 }
             }
         }
+
+        info!("stream complete");
 
         assistant_response = assistant_response.trim_end().to_owned();
 

@@ -4,10 +4,34 @@ import uuid
 from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from aqlmrun import get_model_and_tokenizer
-from transformers import TextIteratorStreamer
+from transformers import TextIteratorStreamer, StoppingCriteriaList, StoppingCriteria
 from threading import Thread
 
 model, tokenizer = get_model_and_tokenizer()
+
+
+class StoppingStringStopCriteria(StoppingCriteria):
+    def __init__(self, target_sequence, prompt):
+        self.target_sequence = target_sequence
+        self.prompt = prompt
+
+    def __call__(self, input_ids, scores, **kwargs):
+        generated_text = tokenizer.decode(input_ids[0])
+        generated_text = generated_text.replace(self.prompt, "")
+        if self.target_sequence in generated_text:
+            print(
+                f"stopping because generated text {generated_text} contains {self.target_sequence}",
+                flush=True,
+            )
+            return True
+
+        return False
+
+    def __len__(self):
+        return 1
+
+    def __iter__(self):
+        yield self
 
 
 def get_response_streamer(request: str):
@@ -20,9 +44,14 @@ def get_response_streamer(request: str):
     # https://huggingface.co/docs/transformers/v4.18.0/en/main_classes/text_generation#transformers.generation_utils.GenerationMixin.generate
     tokenized_inputs = tokenizer([inputs], return_tensors="pt")["input_ids"].cuda()
 
+    stopping_criteria = []
+    for stopping_string in parameters["stop"]:
+        stopping_criteria.append(StoppingStringStopCriteria(stopping_string, inputs))
+
     generation_kwargs = dict(
         inputs=tokenized_inputs,
         streamer=streamer,
+        stopping_criteria=StoppingCriteriaList(stopping_criteria),
         # best_of=int(parameters["best_of"] if "best_of" in parameters else "1"),
         do_sample=bool(
             parameters["do_sample"] if "do_sample" in parameters else "false"
@@ -105,6 +134,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
         content_length = int(self.headers["Content-Length"])
         request = self.rfile.read(content_length).decode("utf-8")
+        print(f"saw request: {request}", flush=True)
         streamer = get_response_streamer(request)
 
         for new_text in streamer:
@@ -116,12 +146,18 @@ class MyHandler(BaseHTTPRequestHandler):
             print(f"sending text: '{message}'", flush=True)
             self.wfile.write(message.encode())
             self.wfile.flush()
-        
-        print('done streaming', flush=True)
+
+        self.wfile.close()
+        print("done streaming", flush=True)
 
     def make_stream_json(self, text: str) -> str:
-        return json.dumps(dict(details=None, generated_text=text, token=dict(id=0, logprob=0, special=False, text=text)))
-
+        return json.dumps(
+            dict(
+                details=None,
+                generated_text=text,
+                token=dict(id=0, logprob=0, special=False, text=text),
+            )
+        )
 
     def handle_generate(self):
         self.send_response(200)

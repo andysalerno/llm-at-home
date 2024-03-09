@@ -114,6 +114,7 @@ impl OpenAIServer {
 
         let stream = stream.map(move |event| match event {
             Ok(StreamEvent::Open) => {
+                info!("openai response stream open");
                 let chat_choice = ChatChoice::new(Message::new("assistant", ""), None);
                 let stream_event = ChatStreamEvent::new(model_name.clone(), vec![chat_choice]);
                 let event = Event::default().json_data(stream_event).unwrap();
@@ -136,6 +137,7 @@ impl OpenAIServer {
                 Ok(event)
             }
             Err(StreamError::StreamClose) => {
+                info!("openai response stream closed");
                 // Once streaming is done, this is the final event we will send, with finish_reason as 'stop':
                 let chat_choice = ChatChoice::new(Message::new("", ""), Some("stop".into()));
                 let stream_event = ChatStreamEvent::new(model_name.clone(), vec![chat_choice]);
