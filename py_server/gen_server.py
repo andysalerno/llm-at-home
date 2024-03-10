@@ -20,7 +20,7 @@ class StoppingStringStopCriteria(StoppingCriteria):
         generated_text = generated_text.replace(self.prompt, "")
         if self.target_sequence in generated_text:
             print(
-                f"stopping because generated text {generated_text} contains {self.target_sequence}",
+                f"stopping because generated text {generated_text} contains stop sequence '{self.target_sequence}'",
                 flush=True,
             )
             return True
@@ -147,7 +147,7 @@ class MyHandler(BaseHTTPRequestHandler):
             self.wfile.write(message.encode())
             self.wfile.flush()
 
-        self.wfile.close()
+        self.finish()
         print("done streaming", flush=True)
 
     def make_stream_json(self, text: str) -> str:
