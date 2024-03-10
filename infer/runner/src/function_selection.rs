@@ -1,7 +1,7 @@
 use chat::{history::History, Message, Renderer, Role};
 use functions::NoOp;
 use libinfer::{chat_client::ChatClient, function::Function, read_prompt};
-use log::info;
+use log::{debug, info};
 use regex::Regex;
 
 pub(crate) fn map_to_function<'a>(
@@ -94,7 +94,7 @@ pub(crate) async fn select_function(
 
     let rendered_prompt = Renderer::render(&alt_history, chat_template);
 
-    info!("rendered prompt:\n{rendered_prompt}");
+    debug!("rendered prompt:\n{rendered_prompt}");
 
     let results = client.get_response_for_template(&rendered_prompt).await;
 
