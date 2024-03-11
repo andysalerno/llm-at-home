@@ -1,5 +1,5 @@
 [package]
-name = "model-client"
+name = "tgi-client"
 version = "0.1.0"
 edition = "2021"
 description = "A text-generation-inference client."

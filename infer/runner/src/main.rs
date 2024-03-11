@@ -9,7 +9,7 @@ use env_logger::Env;
 use functions::{NoOp, WebSearch};
 use libinfer::{function::Function, llm_client::LLMClient};
 use log::{debug, info};
-use model_client::TgiClient;
+use tgi_client::TgiClient;
 
 #[tokio::main]
 async fn main() {

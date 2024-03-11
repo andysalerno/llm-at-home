@@ -12,7 +12,7 @@ use env_logger::Env;
 use exam::Answer;
 use libinfer::{chat_client::ChatClient, llm_client::LLMClient};
 use log::{debug, info};
-use model_client::TgiClient;
+use tgi_client::TgiClient;
 
 #[tokio::main]
 async fn main() {

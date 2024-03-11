@@ -1,5 +1,4 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
 
 
 def get_model_and_tokenizer(skip_warmup: bool = False):
@@ -7,7 +6,7 @@ def get_model_and_tokenizer(skip_warmup: bool = False):
     quantized_model = AutoModelForCausalLM.from_pretrained(
         model_name,
         trust_remote_code=True,
-        torch_dtype=torch.float16,
+        torch_dtype="auto",
     ).cuda()
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)

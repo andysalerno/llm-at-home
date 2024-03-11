@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-model-client = { path = "../model_client" }
+tgi-client = { path = "../tgi_client" }
 chat-formats = { path = "../chat_formats" }
 libinfer = { path = "../libinfer" }
 chat = { path = "../chat" }

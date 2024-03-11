@@ -12,7 +12,7 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-model-client = { path = "../model_client" }
+tgi-client = { path = "../tgi_client" }
 functions = { path = "../functions" }
 libinfer = { path = "../libinfer" }
 chat-formats = { path = "../chat_formats" }

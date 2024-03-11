@@ -7,7 +7,7 @@ use libinfer::{
     info::Info,
     llm_client::{InferenceStream, LLMClient},
 };
-use log::info;
+use log::{debug, info};
 use reqwest::{Client, IntoUrl, Url};
 use reqwest_eventsource::EventSource;
 
@@ -36,7 +36,7 @@ impl LLMClient for TgiClient {
             url
         };
 
-        info!("Sending request:\n'{}'", request.inputs());
+        debug!("Sending request:\n'{}'", request.inputs());
 
         let request = Client::new().post(url).json(request);
 
