@@ -19,14 +19,25 @@ def contains_subarray(main_array, subarray):
 
 class StoppingStringStopCriteria(StoppingCriteria):
     def __init__(self, target_sequence: str, prompt: str):
+        # for debugging:
+        # self.target_sequence = target_sequence
+        # self.prompt = prompt
+
         self.tokenized_sequence = tokenizer(target_sequence, return_tensors="pt")[
             "input_ids"
-        ].cuda()
-        self.prompt_tokens = tokenizer(prompt, return_tensors="pt")["input_ids"].cuda()
+        ].cuda()[0]
+        self.prompt_tokens = tokenizer(prompt, return_tensors="pt")["input_ids"].cuda()[
+            0
+        ]
 
     def __call__(self, input_ids, scores, **kwargs):
-        input_ids = input_ids[0][len(self.prompt_tokens[0]) :]
-        if contains_subarray(input_ids, self.tokenized_sequence[0]):
+        input_ids = input_ids[0][len(self.prompt_tokens) :]
+        if contains_subarray(input_ids, self.tokenized_sequence):
+            # generated_text = tokenizer.decode(input_ids)
+            # print(f"generated text: {generated_text}")
+            # print(
+            #     f'stopping generation because output text "{generated_text}" contains stopping string "{self.target_sequence}"'
+            # )
             return True
 
         return False
@@ -144,10 +155,10 @@ class MyHandler(BaseHTTPRequestHandler):
         for new_text in streamer:
             if not new_text:
                 continue
-            print(f"saw text: '{new_text}'", flush=True)
+            # print(f"saw text: '{new_text}'", flush=True)
             message_json = self.make_stream_json(new_text)
             message = f"event: tokens\ndata: {message_json}\n\n"
-            print(f"sending text: '{message}'", flush=True)
+            # print(f"sending text: '{message}'", flush=True)
             self.wfile.write(message.encode())
             self.wfile.flush()
 
