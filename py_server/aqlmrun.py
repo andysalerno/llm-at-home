@@ -10,10 +10,12 @@ def get_model_and_tokenizer(skip_warmup: bool = False):
     ).cuda()
 
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.add_bos_token = False
+    tokenizer.add_eos_token = False
 
     if not skip_warmup:
         _ = quantized_model.generate(
-            tokenizer("", return_tensors="pt")["input_ids"].cuda(), max_new_tokens=10
+            tokenizer(" ", return_tensors="pt")["input_ids"].cuda(), max_new_tokens=10
         )
 
     return (quantized_model, tokenizer)

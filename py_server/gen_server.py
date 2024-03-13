@@ -1,24 +1,45 @@
 import json
-import time
-import uuid
-from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from aqlmrun import get_model_and_tokenizer
 from transformers import TextIteratorStreamer, StoppingCriteriaList, StoppingCriteria
 from threading import Thread
+import aqlmrun
+# import hqqrun
 
-model, tokenizer = get_model_and_tokenizer()
+model, tokenizer = aqlmrun.get_model_and_tokenizer()
+# model, tokenizer = hqqrun.get_model_and_tokenizer()
+
+
+def contains_subarray(main_array, subarray):
+    # Get the length of the subarray
+    print(f"main_array: {main_array}")
+    print(f"subarray: {subarray}")
+    sub_len = len(subarray)
+    # Iterate over the main array
+    for i in range(len(main_array) - sub_len + 1):
+        # Check if the slice matches the subarray
+        if main_array[i : i + sub_len] == subarray:
+            return True
+    return False
 
 
 class StoppingStringStopCriteria(StoppingCriteria):
-    def __init__(self, target_sequence, prompt):
+    def __init__(self, target_sequence: str, prompt: str):
+        print(f'stopping sequence: "{target_sequence}"')
         self.target_sequence = target_sequence
         self.prompt = prompt
+        self.tokenized_sequence = tokenizer(target_sequence, return_tensors="pt")[
+            "input_ids"
+        ].cuda()
+        self.prompt_tokens = tokenizer(prompt, return_tensors="pt")["input_ids"].cuda()
 
     def __call__(self, input_ids, scores, **kwargs):
-        generated_text = tokenizer.decode(input_ids[0])
+        print(f'input_ids is: "{input_ids}"')
+        input_ids = input_ids[0][len(self.prompt_tokens[0]) :]
+        print(f'trimmed input_ids is: "{input_ids}"')
+        generated_text = tokenizer.decode(input_ids)
         generated_text = generated_text.replace(self.prompt, "")
-        if self.target_sequence in generated_text:
+        # if self.target_sequence in generated_text:
+        if contains_subarray(input_ids, self.tokenized_sequence[0]):
             print(
                 f"stopping because generated text {generated_text} contains stop sequence '{self.target_sequence}'",
                 flush=True,
