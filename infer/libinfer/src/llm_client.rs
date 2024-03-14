@@ -4,7 +4,7 @@ use crate::info::Info;
 use async_trait::async_trait;
 use futures_util::{Stream, StreamExt};
 use log::{debug, error, info, warn};
-use reqwest_eventsource::EventSource;
+use reqwest_eventsource::{Event, EventSource};
 use serde::{Deserialize, Serialize};
 use std::{pin::Pin, task::Poll};
 
@@ -51,12 +51,19 @@ pub trait LLMClient {
 /// A struct that represents streaming response.
 pub struct InferenceStream {
     inner_stream: EventSource,
+    mapper: Box<dyn (FnMut(Event) -> StreamEvent) + Send>,
 }
 
 impl InferenceStream {
     /// Create a new `InferenceStream`.
-    pub fn new(inner_stream: EventSource) -> Self {
-        Self { inner_stream }
+    pub fn new(
+        inner_stream: EventSource,
+        mapper: Box<dyn (FnMut(Event) -> StreamEvent) + Send>,
+    ) -> Self {
+        Self {
+            inner_stream,
+            mapper,
+        }
     }
 }
 
@@ -68,9 +75,10 @@ impl Stream for InferenceStream {
         cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Option<Self::Item>> {
         let this = self.get_mut();
+        let mapper = &mut this.mapper;
 
         match Pin::new(&mut this.inner_stream).poll_next(cx) {
-            Poll::Ready(Some(Ok(value))) => Poll::Ready(Some(Ok(value.into()))),
+            Poll::Ready(Some(Ok(value))) => Poll::Ready(Some(Ok(mapper(value)))),
             Poll::Ready(Some(Err(e))) => {
                 error!("error: '{e:?}'");
                 this.inner_stream.close();
@@ -102,24 +110,6 @@ pub enum StreamEvent {
     Close,
 }
 
-impl From<reqwest_eventsource::Event> for StreamEvent {
-    fn from(value: reqwest_eventsource::Event) -> Self {
-        match value {
-            reqwest_eventsource::Event::Open => StreamEvent::Open,
-            reqwest_eventsource::Event::Message(event) => {
-                let data = &event.data;
-                debug!("saw data: '{data}'");
-                StreamEvent::Message(serde_json::from_str(&event.data).unwrap_or_else(|_| {
-                    panic!(
-                        "expected valid json in the response, but saw: '{}'",
-                        &event.data
-                    )
-                }))
-            }
-        }
-    }
-}
-
 impl From<reqwest_eventsource::Error> for StreamError {
     fn from(value: reqwest_eventsource::Error) -> Self {
         match value {
@@ -142,17 +132,21 @@ pub enum StreamError {
 /// Represents a token.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Token {
-    id: u32,
+    // id: u32,
     text: String,
-    logprob: f64,
-    special: bool,
+    // logprob: f64,
+    // special: bool,
 }
 
 #[allow(missing_docs)]
 impl Token {
-    #[must_use]
-    pub fn id(&self) -> u32 {
-        self.id
+    // #[must_use]
+    // pub fn id(&self) -> u32 {
+    //     self.id
+    // }
+
+    pub fn new(text: String) -> Self {
+        Self { text }
     }
 
     #[must_use]
@@ -160,23 +154,24 @@ impl Token {
         self.text.as_ref()
     }
 
-    #[must_use]
-    pub fn logprob(&self) -> f64 {
-        self.logprob
-    }
+    // #[must_use]
+    // pub fn logprob(&self) -> f64 {
+    //     self.logprob
+    // }
 
-    #[must_use]
-    pub fn special(&self) -> bool {
-        self.special
-    }
+    // #[must_use]
+    // pub fn special(&self) -> bool {
+    //     self.special
+    // }
 }
 
 /// Part of a generated response.
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(missing_docs)]
 pub struct Data {
-    token: Token,
-    generated_text: Option<String>,
-    details: Option<String>,
+    pub token: Token,
+    pub generated_text: Option<String>,
+    pub details: Option<String>,
 }
 
 impl Data {

@@ -6,7 +6,7 @@ use info::Info;
 use libinfer::{
     embeddings::{EmbeddingsRequest, EmbeddingsResponse},
     generate_request::GenerateRequest,
-    llm_client::{InferenceStream, LLMClient},
+    llm_client::{InferenceStream, LLMClient, StreamEvent},
 };
 use log::{debug, info};
 use reqwest::{Client, IntoUrl, Url};
@@ -43,7 +43,7 @@ impl LLMClient for TgiClient {
 
         let event_stream = EventSource::new(request).expect("Could not create EventSource");
 
-        InferenceStream::new(event_stream)
+        InferenceStream::new(event_stream, Box::new(mapper))
     }
 
     async fn get_embeddings(&self, request: &EmbeddingsRequest) -> EmbeddingsResponse {
@@ -79,5 +79,21 @@ impl LLMClient for TgiClient {
             .await
             .expect("Response from /info was not parsable as expected")
             .into()
+    }
+}
+
+fn mapper(value: reqwest_eventsource::Event) -> StreamEvent {
+    match value {
+        reqwest_eventsource::Event::Open => StreamEvent::Open,
+        reqwest_eventsource::Event::Message(event) => {
+            let data = &event.data;
+            debug!("saw data: '{data}'");
+            StreamEvent::Message(serde_json::from_str(&event.data).unwrap_or_else(|_| {
+                panic!(
+                    "expected valid json in the response, but saw: '{}'",
+                    &event.data
+                )
+            }))
+        }
     }
 }

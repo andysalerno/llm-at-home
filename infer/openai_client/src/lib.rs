@@ -2,19 +2,20 @@
 
 mod info;
 mod request;
+mod response;
 
 use async_trait::async_trait;
 use info::Info;
 use libinfer::{
     embeddings::{EmbeddingsRequest, EmbeddingsResponse},
     generate_request::GenerateRequest,
-    llm_client::{InferenceStream, LLMClient},
+    llm_client::{Data, InferenceStream, LLMClient, StreamEvent, Token},
 };
 use log::{debug, info};
 use reqwest::{Client, IntoUrl, Url};
 use reqwest_eventsource::EventSource;
 
-use crate::request::CompletionsRequest;
+use crate::{request::CompletionsRequest, response::Response};
 
 /// A client that is compatible with text-generation-inference and implements `LLMClient`.
 pub struct OpenAIClient {
@@ -52,7 +53,7 @@ impl LLMClient for OpenAIClient {
 
         let event_stream = EventSource::new(request).expect("Could not create EventSource");
 
-        InferenceStream::new(event_stream)
+        InferenceStream::new(event_stream, Box::new(mapper))
     }
 
     async fn get_embeddings(&self, request: &EmbeddingsRequest) -> EmbeddingsResponse {
@@ -88,5 +89,42 @@ impl LLMClient for OpenAIClient {
             .await
             .expect("Response from /info was not parsable as expected")
             .into()
+    }
+}
+
+fn mapper(value: reqwest_eventsource::Event) -> StreamEvent {
+    match value {
+        reqwest_eventsource::Event::Open => StreamEvent::Open,
+        reqwest_eventsource::Event::Message(event) => {
+            let data = &event.data;
+            debug!("saw data: '{data}'");
+
+            if data == "[DONE]" {
+                return StreamEvent::Message(Data {
+                    token: Token::new(String::new()),
+                    generated_text: Some(String::new()),
+                    details: Some(String::new()),
+                });
+            }
+
+            let converted: Response = serde_json::from_str(&event.data).unwrap_or_else(|_| {
+                panic!(
+                    "expected valid json in the response, but saw: '{}'",
+                    &event.data
+                )
+            });
+            debug!("converted to: '{converted:?}'");
+
+            let choice = &converted.choices()[0];
+
+            let token = Token::new(choice.text().into());
+            let data = Data {
+                token,
+                generated_text: Some(choice.text().into()),
+                details: Some("unimportant".into()),
+            };
+
+            StreamEvent::Message(data)
+        }
     }
 }
