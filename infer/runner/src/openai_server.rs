@@ -40,12 +40,13 @@ impl ServerState {
 
 impl OpenAIServer {
     pub async fn serve(
-        client: impl LLMClient + Send + Sync + 'static,
+        // client: impl LLMClient + Send + Sync + 'static,
+        client: Box<dyn LLMClient + Send + Sync>,
         functions: Vec<Box<dyn Function + Send + Sync + 'static>>,
     ) {
         let info = client.get_info().await;
         let chat_template = detect_chat_template(info.model_id());
-        let chat_client = ChatClient::new(Box::new(client), chat_template);
+        let chat_client = ChatClient::new(client, chat_template);
 
         let state = Arc::new(ServerState::new(chat_client, functions));
 

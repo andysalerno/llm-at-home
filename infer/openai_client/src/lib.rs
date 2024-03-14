@@ -1,5 +1,7 @@
 //! A client for the text-generation-inference service that implements `LLMClient`.
+
 mod info;
+mod request;
 
 use async_trait::async_trait;
 use info::Info;
@@ -12,13 +14,15 @@ use log::{debug, info};
 use reqwest::{Client, IntoUrl, Url};
 use reqwest_eventsource::EventSource;
 
+use crate::request::CompletionsRequest;
+
 /// A client that is compatible with text-generation-inference and implements `LLMClient`.
-pub struct TgiClient {
+pub struct OpenAIClient {
     inference_endpoint: Url,
 }
 
-impl TgiClient {
-    /// Create a new `TgiClient`.
+impl OpenAIClient {
+    /// Create a new `OpenAIClient`.
     /// # Panics
     /// Panics if the provided endpoint is not well formed.
     pub fn new(inference_endpoint: impl IntoUrl) -> Self {
@@ -29,17 +33,22 @@ impl TgiClient {
 }
 
 #[async_trait]
-impl LLMClient for TgiClient {
+impl LLMClient for OpenAIClient {
     fn get_response_stream(&self, request: &GenerateRequest) -> InferenceStream {
         let url = {
             let mut url = self.inference_endpoint.clone();
-            url.set_path("generate_stream");
+            url.set_path("v1/completions");
             url
         };
 
-        debug!("Sending request:\n'{}'", request.inputs());
+        let request: CompletionsRequest = request.into();
 
-        let request = Client::new().post(url).json(request);
+        let as_json = serde_json::to_string_pretty(&request).unwrap();
+        debug!("Sending request:\n'{}'", as_json);
+
+        let request = Client::new().post(url).json(&request);
+
+        debug!("Sending request:\n'{:?}'", request);
 
         let event_stream = EventSource::new(request).expect("Could not create EventSource");
 
@@ -67,7 +76,7 @@ impl LLMClient for TgiClient {
     async fn get_info(&self) -> libinfer::info::Info {
         let url = {
             let mut url = self.inference_endpoint.clone();
-            url.set_path("info");
+            url.set_path("v1/models");
             url
         };
 

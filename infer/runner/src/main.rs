@@ -9,6 +9,7 @@ use env_logger::Env;
 use functions::{NoOp, WebSearch};
 use libinfer::{function::Function, llm_client::LLMClient};
 use log::{debug, info};
+use openai_client::OpenAIClient;
 use tgi_client::TgiClient;
 
 #[tokio::main]
@@ -29,7 +30,11 @@ async fn main() {
 
     info!("Starting with endpoint: {endpoint}");
 
-    let client = TgiClient::new(endpoint);
+    let client = match std::env::args().nth(2).as_ref().map(|s| s.as_str()) {
+        Some("tgi") => Box::new(TgiClient::new(endpoint)) as Box<dyn LLMClient + Send + Sync>,
+        Some("openai") => Box::new(OpenAIClient::new(endpoint)),
+        _ => panic!("expected the second argument to be either 'tgi' or 'openai'"),
+    };
 
     let info = client.get_info().await;
     info!("Server is hosting model: {}", info.model_id());
