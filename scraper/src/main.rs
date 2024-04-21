@@ -40,7 +40,7 @@ impl OpenAIServer {
 
         // build our application with a route
         let app = Router::new()
-            .route("/chat/completions", axum::routing::post(Self::root))
+            .route("/scrape", axum::routing::post(Self::root))
             .with_state(state);
 
         let addr = "0.0.0.0:5555";
