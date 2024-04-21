@@ -1,6 +1,4 @@
 import json
-import uuid
-from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from sentence_transformers import SentenceTransformer
 
@@ -13,11 +11,6 @@ EMBEDDING_MODEL_NAME = "intfloat/e5-small-v2"
 print("initializing embedding transformer...")
 embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
 print("done.")
-
-# chroma_client = chromadb.PersistentClient(path="./chroma")
-# collection = chroma_client.create_collection(
-#     name="my_collection", get_or_create=True, embedding_function=None
-# )
 
 
 class MyHandler(BaseHTTPRequestHandler):
