@@ -1,3 +1,5 @@
 .locks/
 models--*
 __pycache__/
+aphrodite/
+tabby/
