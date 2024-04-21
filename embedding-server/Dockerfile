@@ -37,9 +37,9 @@ RUN case ${TARGETPLATFORM} in \
     esac && \
     /opt/conda/bin/conda clean -ya
 
-COPY embedding_server.py .
 COPY requirements.txt .
-
 RUN pip install -r requirements.txt
+
+COPY embedding_server.py .
 
 ENTRYPOINT ["python", "./embedding_server.py"]

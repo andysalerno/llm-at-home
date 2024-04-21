@@ -22,12 +22,10 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def handle_embeddings(self):
         print("embeddings requested")
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.end_headers()
 
         content_length = int(self.headers["Content-Length"])
         body = json.loads(self.rfile.read(content_length).decode("utf-8"))
+        # body = json.loads(self.rfile.read())
 
         text = body["input"] if "input" in body else body["text"]
 
@@ -53,6 +51,9 @@ class MyHandler(BaseHTTPRequestHandler):
             }
         )
 
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
         self.wfile.write(response.encode("utf-8"))
 
 
