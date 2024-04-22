@@ -1,10 +1,9 @@
 mod scrape;
 
-use axum::{extract::State, Json, Router};
+use axum::{Json, Router};
 use env_logger::Env;
 use log::{debug, info};
-use serde::Deserialize;
-use std::sync::Arc;
+use serde::{Deserialize, Serialize};
 
 use crate::scrape::scrape_readably;
 
@@ -26,36 +25,33 @@ async fn main() {
 
 pub(crate) struct OpenAIServer {}
 
-pub(crate) struct ServerState {}
-
-impl ServerState {
-    pub(crate) fn new() -> Self {
-        Self {}
-    }
-}
-
 impl OpenAIServer {
     pub async fn serve() {
-        let state = Arc::new(ServerState::new());
+        let port = std::env::args()
+            .filter(|a| a.starts_with("-p="))
+            .map(|a| a.trim_start_matches("-p=").to_owned())
+            .map(|a| a.parse::<usize>().unwrap())
+            .next()
+            .unwrap_or(5000);
 
         // build our application with a route
-        let app = Router::new()
-            .route("/scrape", axum::routing::post(Self::root))
-            .with_state(state);
+        let app = Router::new().route("/scrape", axum::routing::post(Self::root));
 
-        let addr = "0.0.0.0:5555";
+        let addr = format!("0.0.0.0:{}", port);
+        info!("Starting up server at {addr}. Tip: use -p=<port> to specify a port");
         let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
 
-        info!("Starting up server at {addr}...");
         axum::serve(listener, app).await.unwrap();
     }
 
-    async fn root(State(state): State<Arc<ServerState>>, Json(payload): Json<Request>) -> String {
+    async fn root(Json(payload): Json<Request>) -> Json<Response> {
         info!("Got a request: {payload:?}");
 
-        scrape_readably(&payload.uri).await;
+        let chunks = scrape_readably(&payload.uri).await;
 
-        "hello".into()
+        let response = Response { chunks };
+
+        Json(response)
     }
 }
 
@@ -63,4 +59,10 @@ impl OpenAIServer {
 #[derive(Deserialize, Debug)]
 struct Request {
     uri: Vec<String>,
+}
+
+#[allow(unused)]
+#[derive(Serialize, Deserialize, Debug)]
+struct Response {
+    chunks: Vec<String>,
 }
