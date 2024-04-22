@@ -5,6 +5,13 @@ These projects can combine to make a self-hostable, extensible, customizable, Ch
 
 A Docker Compose file exists to easily launch the services, or to see how they can be manually started.
 
+These are the top-level services:
+
+- **AgentFlow**: A framework for building Agents in c# in a purely composable way. Eventually will be rewritten in Rust, like Infer.
+- **Infer**: A service in Rust for adding function calling and templating on top of a local LLM.
+
+All other projects are libraries or services that support the functionality of those two.
+
 ## agentflow (new)
 
 This is a c# project which consists of a framework for building AI agents.
