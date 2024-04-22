@@ -11,9 +11,21 @@ It has an examples dir that shows how agents may be built using the framework.
 
 TODO: rewrite in Rust to go alongside the Infer library :)
 
+TODO: package as a Docker container.
+
+## scraper
+
+A very simple http service written in Rust that accepts a list of URLs via POST request, and returns the webpage content at those urls, but scraped and converted from HTML into a readable format (for humans and LLMs) returned as chunks.
+
+Useful because both the AgentFlow project and the Infer project depend on scraping webpages for RAG.
+
+TODO: package as a Docker container.
+
 ## embedding-server
 
 A simple Python server that exposes an endpoint `/embeddings` for getting text embeddings.
+
+Useful because both AgentFlow and Infer services depend on getting embeddings.
 
 ## infer
 
