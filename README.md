@@ -1,5 +1,7 @@
 # Monorepo Overview
-This is a monorepo composed of small services that combine to make a self-hostable, extensible, customizable, ChatGPT-like experience. It supports custom functions to extend the abilities of the model.
+This is a monorepo composed of small projects I have been working on related to self-hosting and serving LLMs.
+
+These projects can combine to make a self-hostable, extensible, customizable, ChatGPT-like experience. It supports custom functions to extend the abilities of the model.
 
 A Docker Compose file exists to easily launch the services, or to see how they can be manually started.
 
@@ -35,6 +37,8 @@ This is a proxy for LLM inference services, such as VLLM, text-generation-infere
 * Template-based infilling, inspired by Guidance (much more trivial than Guidance but very useful)
 
 This service adds those things and then re-exposes itself using the OpenAI API.
+
+This is written in Rust.
 
 ## chat-ui
 
