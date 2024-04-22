@@ -32,7 +32,7 @@ impl OpenAIServer {
             .map(|a| a.trim_start_matches("-p=").to_owned())
             .map(|a| a.parse::<usize>().unwrap())
             .next()
-            .unwrap_or(5000);
+            .unwrap_or(8002);
 
         // build our application with a route
         let app = Router::new().route("/scrape", axum::routing::post(Self::root));
@@ -47,9 +47,11 @@ impl OpenAIServer {
     async fn root(Json(payload): Json<Request>) -> Json<Response> {
         info!("Got a request: {payload:?}");
 
-        let chunks = scrape_readably(&payload.uri).await;
+        let chunks = scrape_readably(&payload.uris).await;
 
         let response = Response { chunks };
+
+        info!("Done.");
 
         Json(response)
     }
@@ -58,7 +60,7 @@ impl OpenAIServer {
 #[allow(unused)]
 #[derive(Deserialize, Debug)]
 struct Request {
-    uri: Vec<String>,
+    uris: Vec<String>,
 }
 
 #[allow(unused)]
