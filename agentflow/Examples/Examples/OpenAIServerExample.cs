@@ -11,7 +11,7 @@ internal class OpenAIServerExample
         var logger = Logging.Factory.CreateLogger<OpenAIServerExample>();
 
         var listener = new HttpListener();
-        listener.Prefixes.Add("http://nzxt:8003/");
+        listener.Prefixes.Add("http://*:8003/");
         listener.Start();
 
         await HandleIncomingConnections(listener, logger);
