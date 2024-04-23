@@ -13,7 +13,7 @@ services:
       - "INFER_HOST=http://${HOSTNAME}:5555/"
 
   embeddings-server:
-    image: localhost/embeddings-server
+    image: localhost/embeddingserver
     ports:
       - "8000:8000"
     devices:
