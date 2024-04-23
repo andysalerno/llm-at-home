@@ -15,7 +15,7 @@ services:
   embeddings-server:
     image: localhost/embeddingserver
     ports:
-      - "8000:8000"
+      - "8001:8000"
     devices:
       - "nvidia.com/gpu=all"
     restart: unless-stopped
