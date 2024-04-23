@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  chat-ui:
+    image: localhost/chat-ui
+    ports:
+      - "80:5173"
+    restart: unless-stopped
+    depends_on:
+      - mongo-chatui
+    networks:
+      - internal_network
+    environment:
+      - "INFER_HOST=http://${HOSTNAME}:5555/"
+
+  embeddings-server:
+    image: localhost/embeddings-server
+    ports:
+      - "8000:8000"
+    devices:
+      - "nvidia.com/gpu=all"
+    restart: unless-stopped
+
+  mongo-chatui:
+    image: mongo:latest
+    restart: unless-stopped
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
