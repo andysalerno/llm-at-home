@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 internal class OpenAIServerExample
 {
-    public static async Task ServeAsync(string[] args)
+    public static async Task ServeAsync()
     {
         var logger = Logging.Factory.CreateLogger<OpenAIServerExample>();
 

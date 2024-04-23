@@ -3,7 +3,6 @@ using AgentFlow.Agents;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
-using AgentFlow.Examples.Tools;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
@@ -67,7 +66,8 @@ public static class Program
         // await app.RunMagiExampleAsync();
         // await app.RunCodeExampleAsync();
         // await app.RunSimpleChatExampleAsync();
-        await app.RunWebSearchExample();
+        // await app.RunWebSearchExample();
+        await app.RunOpenAIServerExampleAsync();
     }
 
     private static IContainer ConfigureContainer(CommandLineArgs args)
@@ -205,6 +205,11 @@ public static class Program
             await this.runner.RunAsync(
                 definition,
                 new ConversationThread());
+        }
+
+        public async Task RunOpenAIServerExampleAsync()
+        {
+            await OpenAIServerExample.ServeAsync();
         }
 
         public async Task RunMagiExampleAsync()
