@@ -10,7 +10,7 @@ services:
     networks:
       - internal_network
     environment:
-      - "INFER_HOST=http://${HOSTNAME}:5555/"
+      - "INFERENCE_SERVER_URI=http://${HOSTNAME}:8003/"
 
   embeddings-server:
     image: localhost/embeddingserver

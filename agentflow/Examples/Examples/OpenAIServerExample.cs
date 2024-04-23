@@ -11,7 +11,7 @@ internal class OpenAIServerExample
         var logger = Logging.Factory.CreateLogger<OpenAIServerExample>();
 
         var listener = new HttpListener();
-        listener.Prefixes.Add("http://0.0.0.0:8003/");
+        listener.Prefixes.Add("http://nzxt:8003/");
         listener.Start();
 
         await HandleIncomingConnections(listener, logger);
@@ -33,6 +33,7 @@ internal class OpenAIServerExample
             using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
             {
                 string content = await reader.ReadToEndAsync();
+                logger.LogInformation("Got request: {Content}", content);
                 chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
                     ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
             }
