@@ -45,31 +45,42 @@ internal class OpenAIServerExample
             }
 
             // Write the response info
-            string responseString = SerializeStreamingResponse(
-                new ChatCompletionStreamingResponse([
+            var firstResponse = new ChatCompletionStreamingResponse(
+                [
                     new ChatChoice(
-                        Index: 0,
-                        FinishReason: "stop",
-                        Delta: new Delta(Role: "assistant", Content: "hi!")),
-                ]));
+                            Index: 0,
+                            Delta: new Delta(Role: "assistant", Content: "Hi! How are you??"))
+                ]);
 
-            byte[] data = Encoding.UTF8.GetBytes(responseString);
+            var finalResponse = new ChatCompletionStreamingResponse(
+                [
+                    new ChatChoice(
+                            Index: 1,
+                            FinishReason: "stop",
+                            Delta: new Delta(Role: "assistant", Content: string.Empty))
+                ]);
+
             response.ContentType = "text/event-stream; charset=utf-8";
             response.AddHeader("cache-control", "no-cache");
             response.AddHeader("x-accel-buffering", "no");
             response.AddHeader("Transfer-Encoding", "chunked");
             response.ContentEncoding = Encoding.UTF8;
-            // response.ContentLength64 = data.LongLength;
 
             // Write out to the response stream (asynchronously), then close it
             logger.LogInformation("Responding...");
-            await response.OutputStream.WriteAsync(data, 0, data.Length);
+            await SendStreamingResponseAsync(response.OutputStream, firstResponse);
+            await SendStreamingResponseAsync(response.OutputStream, finalResponse);
             response.Close();
             logger.LogInformation("Request complete.");
         }
     }
 
-    private static async Task SendStreamingResponse(ChatCompletionStreamingResponse response)
+    private static async Task SendStreamingResponseAsync(Stream stream, ChatCompletionStreamingResponse response)
+    {
+        string responseString = SerializeStreamingResponse(response);
+        byte[] data = Encoding.UTF8.GetBytes(responseString);
+        await stream.WriteAsync(data, 0, data.Length);
+    }
 
     private static string SerializeStreamingResponse(ChatCompletionStreamingResponse response)
     {
@@ -95,8 +106,8 @@ internal class OpenAIServerExample
 
     private record ChatChoice(
         int Index,
-        string FinishReason,
-        Delta Delta);
+        Delta Delta,
+        string? FinishReason = null);
 
     private record Delta(string Role, string Content);
 }
