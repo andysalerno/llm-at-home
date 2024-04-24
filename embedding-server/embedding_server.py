@@ -45,12 +45,17 @@ class MyHandler(BaseHTTPRequestHandler):
 
         text = [transform_passage(t) for t in text]
 
-        if "query" in body:
-            text.append(transform_query(body["query"]))
+        text_to_embed = text
 
-        embeddings = embedding_model.encode(text).tolist()
+        if "query" in body:
+            text_to_embed = text[:]
+            text_to_embed.append(transform_query(body["query"]))
+            log(f"query in body: {body['query']}")
+
+        embeddings = embedding_model.encode(text_to_embed).tolist()
 
         query_embedding = None
+        log(f"len embeddings: {len(embeddings)} len text: {len(text)}")
         if len(embeddings) == len(text) + 1:
             # we added the query; need to pop it
             query_embedding = embeddings.pop()
