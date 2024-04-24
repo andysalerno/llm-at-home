@@ -9,6 +9,7 @@ public interface IEmbeddingsClient
 
 public record EmbeddingResponse(
     ImmutableArray<EmbeddingData> Data,
+    EmbeddingData? QueryData,
     string Model);
 
 public record EmbeddingData(

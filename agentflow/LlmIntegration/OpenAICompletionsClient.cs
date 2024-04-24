@@ -263,7 +263,9 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         return new Uri($"{@base}/{path}");
     }
 
-    private record EmbeddingsRequest(ImmutableArray<string> Input);
+    private record EmbeddingsRequest(
+        ImmutableArray<string> Input,
+        string? Query = null);
 
     private record ScrapeRequest(ImmutableArray<Uri> Uris);
 }
