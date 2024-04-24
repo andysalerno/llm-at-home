@@ -117,7 +117,12 @@ internal class OpenAIServer
 
     private static ConversationThread ToConversationThread(ChatCompletionRequest request)
     {
-        throw new NotImplementedException();
+        var messages = request.Messages.Select(m => new AgentFlow.LlmClient.Message(
+            AgentName: new AgentFlow.Agents.AgentName(m.Role),
+            Role: Role.ExpectFromName(m.Role),
+            Content: m.Content));
+
+        return new ConversationThread.Builder().AddMessages(messages).Build();
     }
 
     private record ChatCompletionRequest(
