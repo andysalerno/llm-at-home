@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AgentFlow;
 using AgentFlow.LlmClient;
 using Microsoft.Extensions.Logging;
@@ -103,14 +104,16 @@ internal class OpenAIServerExample
     private record ChatCompletionRequest(string Dummy);
 
     private record ChatCompletionStreamingResponse(
-        ImmutableArray<ChatChoice> Choices,
-        string Model = "mymodel",
-        string Object = "chat.completion.chunk");
+        [property: JsonPropertyName("choices")] ImmutableArray<ChatChoice> Choices,
+        [property: JsonPropertyName("model")] string Model = "mymodel",
+        [property: JsonPropertyName("object")] string Object = "chat.completion.chunk");
 
     private record ChatChoice(
-        int Index,
-        Delta Delta,
-        string? FinishReason = null);
+       [property: JsonPropertyName("index")] int Index,
+       [property: JsonPropertyName("delta")] Delta Delta,
+       [property: JsonPropertyName("finish_reason")] string? FinishReason = null);
 
-    private record Delta(string Role, string Content);
+    private record Delta(
+        [property: JsonPropertyName("role")] string Role,
+        [property: JsonPropertyName("content")] string Content);
 }
