@@ -4,7 +4,7 @@ namespace AgentFlow.LlmClient;
 
 public interface IEmbeddingsClient
 {
-    Task<EmbeddingResponse> GetEmbeddingsAsync(IEnumerable<string> inputs);
+    Task<EmbeddingResponse> GetEmbeddingsAsync(string query, IEnumerable<string> passages);
 }
 
 public record EmbeddingResponse(

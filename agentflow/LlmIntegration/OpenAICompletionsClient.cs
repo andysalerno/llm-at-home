@@ -218,9 +218,9 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         return new ChatCompletionsResult(parsedResponse.Choices.First().Message.Content);
     }
 
-    public async Task<EmbeddingResponse> GetEmbeddingsAsync(IEnumerable<string> inputs)
+    public async Task<EmbeddingResponse> GetEmbeddingsAsync(string query, IEnumerable<string> passages)
     {
-        var requestBody = new EmbeddingsRequest(inputs.ToImmutableArray());
+        var requestBody = new EmbeddingsRequest(passages.ToImmutableArray(), query);
 
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();

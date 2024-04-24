@@ -49,15 +49,15 @@ public class WebSearchTool : ITool
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
-        EmbeddingResponse embeddings = await this.embeddingsClient.GetEmbeddingsAsync(new[] { input }.Concat(topNPagesContents));
+        EmbeddingResponse embeddings = await this.embeddingsClient.GetEmbeddingsAsync(input, topNPagesContents);
 
         logger.LogInformation("Got embeddings results with count: {Embeddings}", embeddings.Data.Length);
 
-        EmbeddingData queryEmbedding = embeddings.Data[0];
+        EmbeddingData queryEmbedding = embeddings.QueryData
+            ?? throw new InvalidOperationException("Expected query data to be returned on the embedding response");
 
         IEnumerable<(float, string)> scoresByIndex = embeddings
             .Data
-            .Skip(1) // skip the query itself, to get only responses
             .Select((e, i) => Tuple.Create(i, CosineSimilarity(queryEmbedding.Embedding, e.Embedding)))
             .OrderByDescending(t => t.Item2) // order by cosine similarity, descending
             .Select(t => (t.Item2, topNPagesContents[t.Item1])) // map score to the original text
