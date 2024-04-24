@@ -17,6 +17,14 @@ embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
 log("done.")
 
 
+def transform_passage(passage: str) -> str:
+    return f"passage: {passage}"
+
+
+def transform_query(query: str) -> str:
+    return f"query: {query}"
+
+
 class MyHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         log(f"POST {self.path}")
@@ -35,24 +43,41 @@ class MyHandler(BaseHTTPRequestHandler):
         if type(text) is str:
             text = [text]
 
+        text = [transform_passage(t) for t in text]
+
+        if "query" in body:
+            text.append(transform_query(body["query"]))
+
         embeddings = embedding_model.encode(text).tolist()
+
+        query_embedding = None
+        if len(embeddings) == len(text) + 1:
+            # we added the query; need to pop it
+            query_embedding = embeddings.pop()
 
         data = [
             {"object": "embedding", "embedding": emb, "index": n}
             for n, emb in enumerate(embeddings)
         ]
 
-        response = json.dumps(
-            {
-                "object": "list",
-                "data": data,
-                "model": EMBEDDING_MODEL_NAME,
-                "usage": {
-                    "prompt_tokens": 0,
-                    "total_tokens": 0,
-                },
+        result = {
+            "object": "list",
+            "data": data,
+            "model": EMBEDDING_MODEL_NAME,
+            "usage": {
+                "prompt_tokens": 0,
+                "total_tokens": 0,
+            },
+        }
+
+        if query_embedding is not None:
+            result["query_data"] = {
+                "object": "embedding",
+                "embedding": query_embedding,
+                "index": 0,
             }
-        )
+
+        response = json.dumps(result)
 
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
