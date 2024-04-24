@@ -68,16 +68,19 @@ internal class OpenAIServerExample
 
             // Write out to the response stream (asynchronously), then close it
             logger.LogInformation("Responding...");
-            await SendStreamingResponseAsync(response.OutputStream, firstResponse);
-            await SendStreamingResponseAsync(response.OutputStream, finalResponse);
+            await SendStreamingResponseAsync(response.OutputStream, firstResponse, logger);
+            await SendStreamingResponseAsync(response.OutputStream, finalResponse, logger);
             response.Close();
             logger.LogInformation("Request complete.");
         }
     }
 
-    private static async Task SendStreamingResponseAsync(Stream stream, ChatCompletionStreamingResponse response)
+    private static async Task SendStreamingResponseAsync(Stream stream, ChatCompletionStreamingResponse response, ILogger logger)
     {
         string responseString = SerializeStreamingResponse(response);
+
+        logger.LogInformation("Sending over stream: {Sending}", responseString);
+
         byte[] data = Encoding.UTF8.GetBytes(responseString);
         await stream.WriteAsync(data, 0, data.Length);
     }
