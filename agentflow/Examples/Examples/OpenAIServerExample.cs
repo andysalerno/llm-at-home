@@ -1,15 +1,10 @@
 using System.Collections.Immutable;
 using System.Net;
-using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgentFlow;
-using AgentFlow.LlmClient;
 using Microsoft.Extensions.Logging;
-
-// 20:28::03::30info: OpenAIServerExample[0] Got request: {   "model": "andymodel",   "messages": [     {       "role": "system",       "content": "You are a summarization AI. Summarize the user's request into a single short sentence of four words or less. Do not try to answer it, only summarize the user's query. Always start your answer with an emoji relevant to the summary"     },     {       "role": "user",       "content": "Who is the president of Gabon?"     },     {       "role": "assistant",       "content": "🇬🇦 President of Gabon"     },     {       "role": "user",       "content": "Who is Julien Chaumond?"     },     {       "role": "assistant",       "content": "🧑 Julien Chaumond"     },     {       "role": "user",       "content": "what is 1 + 1?"     },     {       "role": "assistant",       "content": "🔢 Simple math operation"     },     {       "role": "user",       "content": "What are the latest news?"     },     {       "role": "assistant",       "content": "📰 Latest news"     },     {       "role": "user",       "content": "How to make a great cheesecake?"     },     {       "role": "assistant",       "content": "🍰 Cheesecake recipe"     },     {       "role": "user",       "content": "what is your favorite movie? do a short answer."     },     {       "role": "assistant",       "content": "🎥 Favorite movie"     },     {       "role": "user",       "content": "Explain the concept of artificial intelligence in one sentence"     },     {       "role": "assistant",       "content": "🤖 AI definition"     },     {       "role": "user",       "content": "hi"     }   ],   "stream": true,   "max_tokens": 15,   "stop": [],   "temperature": 0.9,   "top_p": 0.95,   "frequency_penalty": 1.2 }
-// 20:28::03::32info: OpenAIServerExample[0] Got request: {   "model": "andymodel",   "messages": [     {       "role": "system",       "content": ""     },     {       "role": "user",       "content": "hi"     }   ],   "stream": true,   "max_tokens": 1024,   "stop": [],   "temperature": 0.9,   "top_p": 0.95,   "frequency_penalty": 1.2 }
 
 internal class OpenAIServerExample
 {
