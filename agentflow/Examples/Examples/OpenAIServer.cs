@@ -4,24 +4,30 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgentFlow;
+using AgentFlow.LlmClient;
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
-internal class OpenAIServerExample
+internal class OpenAIServer
 {
-    public static async Task ServeAsync()
+    public async Task ServeAsync(Cell<ConversationThread> program, ICellRunner<ConversationThread> runner, int port = 8003)
     {
-        var logger = Logging.Factory.CreateLogger<OpenAIServerExample>();
+        var logger = this.GetLogger();
 
         var listener = new HttpListener();
-        listener.Prefixes.Add("http://*:8003/");
+        listener.Prefixes.Add($"http://*:{port}/");
         listener.Start();
 
-        await HandleIncomingConnections(listener, logger);
+        await HandleIncomingConnections(listener, program, runner, logger);
 
         listener.Close();
     }
 
-    private static async Task HandleIncomingConnections(HttpListener listener, ILogger<OpenAIServerExample> logger)
+    private static async Task HandleIncomingConnections(
+        HttpListener listener,
+        Cell<ConversationThread> program,
+        ICellRunner<ConversationThread> runner,
+        ILogger<OpenAIServer> logger)
     {
         while (true)
         {
@@ -40,12 +46,25 @@ internal class OpenAIServerExample
                     ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
             }
 
+            ConversationThread conversationThread = ToConversationThread(chatRequest);
+
+            ConversationThread output = await runner.RunAsync(program, rootInput: conversationThread);
+
+            var lastMessage = output.Messages.Last();
+
+            logger.LogInformation("Output last message: {}", lastMessage.Content);
+
+            if (lastMessage.Role != Role.Assistant)
+            {
+                logger.LogWarning("Last message was not from assistant");
+            }
+
             // Write the response info
             var firstResponse = new ChatCompletionStreamingResponse(
                 [
                     new ChatChoice(
                             Index: 0,
-                            Delta: new Delta(Role: "assistant", Content: "Hi! How are you??"))
+                            Delta: new Delta(Role: "assistant", Content: lastMessage.Content))
                 ]);
 
             var finalResponse = new ChatCompletionStreamingResponse(
@@ -96,7 +115,17 @@ internal class OpenAIServerExample
         return builder.ToString();
     }
 
-    private record ChatCompletionRequest(string Dummy);
+    private static ConversationThread ToConversationThread(ChatCompletionRequest request)
+    {
+        throw new NotImplementedException();
+    }
+
+    private record ChatCompletionRequest(
+        [property: JsonPropertyName("messages")] ImmutableArray<Message> Messages);
+
+    private record Message(
+        [property: JsonPropertyName("role")] string Role,
+        [property: JsonPropertyName("content")] string Content);
 
     private record ChatCompletionStreamingResponse(
         [property: JsonPropertyName("choices")] ImmutableArray<ChatChoice> Choices,

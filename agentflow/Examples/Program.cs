@@ -1,5 +1,7 @@
-﻿using System.CommandLine;
+﻿using System.Collections.Immutable;
+using System.CommandLine;
 using AgentFlow.Agents;
+using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
@@ -209,7 +211,21 @@ public static class Program
 
         public async Task RunOpenAIServerExampleAsync()
         {
-            await OpenAIServerExample.ServeAsync();
+            var assistant = this.agentBuilderFactory
+                .CreateBuilder()
+                .WithName(new AgentName("Assistant"))
+                .WithRole(Role.Assistant)
+                .WithInstructions("You are a friendly and helpful assistant. Help as much as you can.")
+                .Build();
+
+            var program = new CellSequence<ConversationThread>(
+                sequence: new Cell<ConversationThread>[]
+                {
+                    new AgentCell(this.userConsoleAgent),
+                    new AgentCell(assistant),
+                }.ToImmutableArray());
+
+            await new OpenAIServer().ServeAsync(program, this.runner);
         }
 
         public async Task RunMagiExampleAsync()
