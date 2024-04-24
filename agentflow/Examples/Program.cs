@@ -5,9 +5,12 @@ using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
+using AgentFlow.Examples.Agents;
+using AgentFlow.Examples.Tools;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
+using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -219,6 +222,28 @@ public static class Program
                 .Build();
 
             await new OpenAIServer().ServeAsync(new AgentCell(assistant), this.runner);
+        }
+
+        public async Task RunOpenAIServerWebSearchExampleAsync()
+        {
+            ImmutableArray<ITool> tools = [
+                new WebSearchTool(this.embeddingsClient, this.scraperClient, this.httpClientFactory)
+            ];
+
+            var prompt = new FileSystemPromptProvider(
+                "websearch_example_system",
+                this.fileSystemPromptProviderConfig)
+                .Get();
+
+            var program = new AgentCell(
+                new ToolAgent(
+                    new AgentName("WebSearchAgent"),
+                    Role.Assistant,
+                    prompt,
+                    this.agentBuilderFactory,
+                    tools));
+
+            await new OpenAIServer().ServeAsync(program, this.runner);
         }
 
         public async Task RunMagiExampleAsync()
