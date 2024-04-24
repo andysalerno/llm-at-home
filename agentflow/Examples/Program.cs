@@ -218,14 +218,7 @@ public static class Program
                 .WithInstructions("You are a friendly and helpful assistant. Help as much as you can.")
                 .Build();
 
-            var program = new CellSequence<ConversationThread>(
-                sequence: new Cell<ConversationThread>[]
-                {
-                    new AgentCell(this.userConsoleAgent),
-                    new AgentCell(assistant),
-                }.ToImmutableArray());
-
-            await new OpenAIServer().ServeAsync(program, this.runner);
+            await new OpenAIServer().ServeAsync(new AgentCell(assistant), this.runner);
         }
 
         public async Task RunMagiExampleAsync()
