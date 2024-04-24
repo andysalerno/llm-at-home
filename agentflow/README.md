@@ -25,6 +25,8 @@ How can it be fully composable where you define agents, define what they can do,
 
 Idea: use the Evangelion Magi as a demo :)
 
+- consider making the entire 'select an action' section live within a single system->user->assistant turn, and the full conversation will be represented inside the user's turn where they say: read this conversation and tell me what you want to do next..."
+
 ## Architecture
 
 ### ExecutionFlow
