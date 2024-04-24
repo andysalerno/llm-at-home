@@ -72,7 +72,8 @@ public static class Program
         // await app.RunCodeExampleAsync();
         // await app.RunSimpleChatExampleAsync();
         // await app.RunWebSearchExample();
-        await app.RunOpenAIServerExampleAsync();
+        // await app.RunOpenAIServerExampleAsync();
+        await app.RunOpenAIServerWebSearchExampleAsync();
     }
 
     private static IContainer ConfigureContainer(CommandLineArgs args)
