@@ -59,7 +59,7 @@ internal class OpenAIServerExample
             response.AddHeader("x-accel-buffering", "no");
             response.AddHeader("Transfer-Encoding", "chunked");
             response.ContentEncoding = Encoding.UTF8;
-            response.ContentLength64 = data.LongLength;
+            // response.ContentLength64 = data.LongLength;
 
             // Write out to the response stream (asynchronously), then close it
             logger.LogInformation("Responding...");
@@ -68,6 +68,8 @@ internal class OpenAIServerExample
             logger.LogInformation("Request complete.");
         }
     }
+
+    private static async Task SendStreamingResponse(ChatCompletionStreamingResponse response)
 
     private static string SerializeStreamingResponse(ChatCompletionStreamingResponse response)
     {
