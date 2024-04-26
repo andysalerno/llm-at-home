@@ -44,7 +44,7 @@ public class WebSearchTool : ITool
 
         SearchResults searchResults = await this.GetSearchResultsAsync(input);
 
-        var topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: 3);
+        ImmutableArray<Chunk> topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: 3);
 
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
@@ -60,7 +60,7 @@ public class WebSearchTool : ITool
             .Data
             .Select((e, i) => Tuple.Create(i, CosineSimilarity(queryEmbedding.Embedding, e.Embedding)))
             .OrderByDescending(t => t.Item2) // order by cosine similarity, descending
-            .Select(t => (t.Item2, topNPagesContents[t.Item1])) // map score to the original text
+            .Select(t => (t.Item2, topNPagesContents[t.Item1].Content)) // map score to the original text
             .Take(3)
             .ToArray();
 
@@ -78,7 +78,7 @@ public class WebSearchTool : ITool
         return dotProduct / (magnitudeA * magnitudeB);
     }
 
-    private async Task<ImmutableArray<string>> GetTopNPagesAsync(SearchResults searchResults, int topN)
+    private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)
     {
         var logger = this.GetLogger();
         logger.LogInformation("Requesting chunks...");
