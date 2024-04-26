@@ -66,5 +66,12 @@ struct Request {
 #[allow(unused)]
 #[derive(Serialize, Deserialize, Debug)]
 struct Response {
-    chunks: Vec<String>,
+    chunks: Vec<Chunk>,
+}
+
+#[allow(unused)]
+#[derive(Serialize, Deserialize, Debug)]
+pub(crate) struct Chunk {
+    content: String,
+    uri: String,
 }
