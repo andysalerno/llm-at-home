@@ -56,17 +56,17 @@ public class WebSearchTool : ITool
         EmbeddingData queryEmbedding = embeddings.QueryData
             ?? throw new InvalidOperationException("Expected query data to be returned on the embedding response");
 
-        IEnumerable<(float, string)> scoresByIndex = embeddings
+        IEnumerable<(float, Chunk)> scoresByIndex = embeddings
             .Data
             .Select((e, i) => Tuple.Create(i, CosineSimilarity(queryEmbedding.Embedding, e.Embedding)))
             .OrderByDescending(t => t.Item2) // order by cosine similarity, descending
-            .Select(t => (t.Item2, topNPagesContents[t.Item1].Content)) // map score to the original text
+            .Select(t => (t.Item2, topNPagesContents[t.Item1])) // map score to the original text
             .Take(3)
             .ToArray();
 
         logger.LogInformation("got scored chunks: {Scored}", scoresByIndex);
 
-        return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {i}] {s.Item2.Trim()}"));
+        return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
 
     private static float CosineSimilarity(ImmutableArray<float> a, ImmutableArray<float> b)
