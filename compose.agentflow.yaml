@@ -26,6 +26,9 @@ services:
     ports:
       - "8003:8003"
     restart: unless-stopped
+    env_file:
+      - ./.agentflow.default.env
+      - ./.agentflow.env
 
   scraper:
     image: localhost/scraper
