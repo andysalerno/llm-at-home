@@ -14,6 +14,7 @@ services:
 
   embeddings-server:
     image: localhost/embeddingserver
+    buid: ./embedding-server
     ports:
       - "8001:8000"
     devices:
@@ -22,6 +23,7 @@ services:
 
   scraper:
     image: localhost/scraper
+    build: ./scraper
     ports:
       - "8002:8002"
     restart: unless-stopped
