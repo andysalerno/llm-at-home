@@ -20,6 +20,14 @@ services:
       - "nvidia.com/gpu=all"
     restart: unless-stopped
 
+  scraper:
+    image: localhost/scraper
+    ports:
+      - "8002:8002"
+    restart: unless-stopped
+    networks:
+      - internal_network
+
   mongo-chatui:
     image: mongo:latest
     restart: unless-stopped
