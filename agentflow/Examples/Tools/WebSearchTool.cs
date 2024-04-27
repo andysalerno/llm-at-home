@@ -10,6 +10,7 @@ namespace AgentFlow.Examples.Tools;
 
 public class WebSearchTool : ITool
 {
+    private const int TopNChunks = 5;
     private const string Uri = "https://www.googleapis.com/customsearch/v1";
     private const string SearchKeyEnvVarName = "SEARCH_KEY";
     private const string SearchKeyCxEnvVarName = "SEARCH_KEY_CX";
@@ -61,7 +62,7 @@ public class WebSearchTool : ITool
             .Select((e, i) => Tuple.Create(i, CosineSimilarity(queryEmbedding.Embedding, e.Embedding)))
             .OrderByDescending(t => t.Item2) // order by cosine similarity, descending
             .Select(t => (t.Item2, topNPagesContents[t.Item1])) // map score to the original text
-            .Take(3)
+            .Take(TopNChunks)
             .ToArray();
 
         logger.LogInformation("got scored chunks: {Scored}", scoresByIndex);
