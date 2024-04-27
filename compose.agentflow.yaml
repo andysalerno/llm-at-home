@@ -20,6 +20,13 @@ services:
       - "nvidia.com/gpu=all"
     restart: unless-stopped
 
+  agentflow:
+    image: localhost/agentflow
+    build: ./agentflow
+    ports:
+      - "8003:8003"
+    restart: unless-stopped
+
   scraper:
     image: localhost/scraper
     build: ./scraper
