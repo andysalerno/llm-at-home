@@ -81,7 +81,6 @@ public class WebSearchTool : ITool
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)
     {
         var logger = this.GetLogger();
-        logger.LogInformation("Requesting chunks...");
 
         using var client = this.httpClientFactory.CreateClient();
 
@@ -90,6 +89,8 @@ public class WebSearchTool : ITool
             .Take(topN)
             .Select(r => r.Link)
             .Select(r => new Uri(r));
+
+        logger.LogInformation("Requesting chunks for these sites: {Sites}", links.ToList());
 
         ScrapeResponse response = await this.scraperClient.GetScrapedSiteContentAsync(links);
 
