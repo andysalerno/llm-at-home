@@ -15,7 +15,7 @@ services:
 
   embedding-server:
     image: localhost/embedding-server
-    buid: ./embedding-server
+    build: ./embedding-server
     ports:
       - "8001:8000"
     devices:
