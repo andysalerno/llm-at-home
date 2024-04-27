@@ -8,8 +8,6 @@ services:
     restart: unless-stopped
     depends_on:
       - mongo-chatui
-    networks:
-      - internal_network
     environment:
       - "INFERENCE_SERVER_URI=http://${HOSTNAME}:8003/"
 
@@ -28,14 +26,7 @@ services:
     ports:
       - "8002:8002"
     restart: unless-stopped
-    networks:
-      - internal_network
 
   mongo-chatui:
     image: mongo:latest
     restart: unless-stopped
-    networks:
-      - internal_network
-
-networks:
-  internal_network:

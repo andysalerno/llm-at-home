@@ -10,7 +10,8 @@ const TOP_N_SECTIONS: usize = 3;
 const MIN_SECTION_LEN: usize = 50;
 const VISIT_LINKS_COUNT: usize = 6;
 
-const USER_AGENT: &str = "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/126.0.6437.4 Safari/537.36";
+// const USER_AGENT: &str = "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/126.0.6437.4 Safari/537.36";
+const USER_AGENT: &str = "DuckDuckBot/1.1; (+http://duckduckgo.com/duckduckbot.html)";
 
 pub(crate) async fn scrape_readably<I, T>(uris: I) -> Vec<Chunk>
 where
@@ -24,6 +25,7 @@ where
     future::join_all(scrape_futures)
         .await
         .into_iter()
+        .inspect(|r| info!("Result: {:?}", r.as_ref().map(|_ok| "(ok)")))
         .filter_map(Result::ok)
         .zip(uris)
         .filter(|(text, _)| text.len() > MIN_SECTION_LEN)
@@ -68,7 +70,7 @@ fn split_text_into_sections(input: impl Into<String>, max_section_len: usize) ->
 async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + Sync>> {
     let url = url.as_ref();
 
-    debug!("Scraping: {url}...");
+    info!("Scraping: {url}...");
 
     let client = reqwest::ClientBuilder::new()
         .timeout(Duration::from_millis(2000))
@@ -86,7 +88,7 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
     let s = response.text().await?;
 
     info!(
-        "Response: {} Read text from {} length: {}",
+        "Response: {} Read text from {} length: {} from url: {url}",
         status,
         url,
         s.len()
@@ -97,8 +99,6 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
         // .strip_unlikelys(true)
         // .clean_attributes(true)
         .parse(&s);
-
-    debug!("Done.");
 
     let text_content = node_ref.text_contents();
 
