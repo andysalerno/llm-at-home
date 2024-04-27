@@ -1,10 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from typing import Optional
-import torch.nn.functional as F
-from torch import Tensor
+from typing import List, Optional
 from sentence_transformers import SentenceTransformer, util
-from transformers import AutoTokenizer, AutoModel
 
 
 def log(message: str):
@@ -18,8 +15,6 @@ EMBEDDING_MODEL_NAME = "intfloat/e5-small-v2"
 
 log("initializing embedding transformer...")
 embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-# tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL_NAME)
-# model = AutoModel.from_pretrained(EMBEDDING_MODEL_NAME)
 log("done.")
 
 
@@ -38,8 +33,7 @@ class MyHandler(BaseHTTPRequestHandler):
         if self.path == "/embeddings":
             self.handle_embeddings()
 
-    def handle_scoring(self):
-        log("scoring requested")
+    def extract_from_request(self) -> tuple[List[str], Optional[str]]:
         content_length = int(self.headers["Content-Length"])
         body = json.loads(self.rfile.read(content_length).decode("utf-8"))
 
@@ -49,22 +43,25 @@ class MyHandler(BaseHTTPRequestHandler):
         if "query" in body:
             query = body["query"]
 
-        (passage_embeddings, query_embedding) = get_embeddings(text, query)
+        return (text, query)
 
-        # scores = (embeddings[:2] @ embeddings[2:].T) * 100
-        scores = util.dot_score(query_embedding, passage_embeddings)[0].cpu().tolist()
+    def handle_scoring(self):
+        log("scoring requested")
+        (text, query) = self.extract_from_request()
+
+        scores = get_scores(text, query)
+
+        response = json.dumps({"scores": scores})
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(response.encode("utf-8"))
+        log("scores request completed")
 
     def handle_embeddings(self):
         log("embeddings requested")
-
-        content_length = int(self.headers["Content-Length"])
-        body = json.loads(self.rfile.read(content_length).decode("utf-8"))
-
-        text = body["input"] if "input" in body else body["text"]
-
-        query = None
-        if "query" in body:
-            query = body["query"]
+        (text, query) = self.extract_from_request()
 
         (passage_embeddings, query_embedding) = get_embeddings(text, query)
 
@@ -99,9 +96,13 @@ class MyHandler(BaseHTTPRequestHandler):
         log("embeddings request completed")
 
 
-def average_pool(last_hidden_states: Tensor, attention_mask: Tensor) -> Tensor:
-    last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
-    return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
+def get_scores(text: list[str], query: Optional[str]) -> List[float]:
+    (passage_embeddings, query_embedding) = get_embeddings(text, query)
+
+    # scores = (embeddings[:2] @ embeddings[2:].T) * 100
+    scores = util.dot_score(query_embedding, passage_embeddings)[0].cpu().tolist()
+
+    return scores
 
 
 def get_embeddings(text: list[str], query: Optional[str]):
@@ -144,20 +145,21 @@ def get_embeddings(text: list[str], query: Optional[str]):
 
 def run(server_class=HTTPServer, handler_class=MyHandler):
     log("warming up embedding model...")
-    (passage_embeds, query_embed) = get_embeddings(
-        [
-            "Paul McCartney played bass",
-            "Ringo Starr played drums",
-            "Michael Jordan played basketball",
-            "garbage",
-            "John Lennon played guitar",
-            "George Harrison played guitar",
-            "The Beatles were comprised of Paul, John, George, and Ringo.",
-        ],
-        "Who were the members of The Beatles?",
-    )
+    passages = [
+        "Paul McCartney played bass",
+        "Ringo Starr played drums",
+        "Michael Jordan played basketball",
+        "garbage",
+        "John Lennon played guitar",
+        "George Harrison played guitar",
+        "The Beatles were comprised of Paul, John, George, and Ringo.",
+    ]
+    query = "Who were the members of The Beatles?"
+    (passage_embeds, query_embed) = get_embeddings(passages, query)
     scores = util.dot_score(query_embed, passage_embeds)[0].cpu().tolist()
     log(f"score: {scores}")
+    scores = get_scores(passages, query)
+    log(f"score2: {scores}")
     log("done.")
 
     port = 8000
