@@ -29,6 +29,14 @@ public static class Program
             name: "uri",
             description: "the target URI of the service hosting the LLM API");
 
+        var scraperUriArg = new Argument<string>(
+            name: "scraperUri",
+            description: "the target URI of the scraping service");
+
+        var embeddingsUriArg = new Argument<string>(
+            name: "embeddingsUri",
+            description: "the target URI of the embeddings service");
+
         var verbose = new Option<bool>(
             name: "-v",
             description: "Enable verbose mode",
@@ -42,19 +50,27 @@ public static class Program
         promptDir.AddAlias("--prompt-dir");
 
         rootCommand.AddArgument(uriArg);
+        rootCommand.AddArgument(embeddingsUriArg);
+        rootCommand.AddArgument(scraperUriArg);
         rootCommand.AddOption(verbose);
         rootCommand.AddOption(promptDir);
 
-        rootCommand.SetHandler(RunAppAsync, uriArg, verbose, promptDir);
+        rootCommand.SetHandler(
+            RunAppAsync,
+            uriArg,
+            embeddingsUriArg,
+            scraperUriArg,
+            verbose,
+            promptDir);
 
         await rootCommand.InvokeAsync(args);
     }
 
-    internal static async Task RunAppAsync(string uri, bool verbose, string? promptDir)
+    internal static async Task RunAppAsync(string uri, string embeddingsUri, string scraperUri, bool verbose, string? promptDir)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
-        var commandLineArgs = new CommandLineArgs(uri, verbose, promptDir);
+        var commandLineArgs = new CommandLineArgs(uri, embeddingsUri, scraperUri, verbose, promptDir);
 
         IContainer container = ConfigureContainer(commandLineArgs);
 
@@ -128,16 +144,11 @@ public static class Program
     }
 
     private static Configuration BuildConfiguration(CommandLineArgs args)
-    {
-        // string openAIEndpointUri = args[0];
-        // bool logLlmRequests = args.Any(arg => arg == "-v");
-        // string? fileSystemPromptDir = args.FirstOrDefault(a => a.StartsWith("--prompt-dir="))?.Split('=')[1];
-        return new Configuration(new Uri(args.Uri))
+        => new Configuration(new Uri(args.Uri), new Uri(args.EmbeddingsUri), new Uri(args.ScraperUri))
         {
             LogRequestsToLlm = args.Verbose,
             PromptDirectory = args.PromptDir ?? "./Prompts",
         };
-    }
 
     internal sealed class App
     {
@@ -260,14 +271,20 @@ public static class Program
 
     private class CommandLineArgs
     {
-        public CommandLineArgs(string uri, bool verbose, string promptDir)
+        public CommandLineArgs(string uri, string embeddingsUri, string scraperUri, bool verbose, string promptDir)
         {
             this.Uri = uri;
+            this.EmbeddingsUri = embeddingsUri;
+            this.ScraperUri = scraperUri;
             this.Verbose = verbose;
             this.PromptDir = promptDir;
         }
 
         public string Uri { get; }
+
+        public string ScraperUri { get; }
+
+        public string EmbeddingsUri { get; }
 
         public bool Verbose { get; }
 

@@ -108,14 +108,11 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private const int MaxTokensToGenerate = 512;
     private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
 
-    // TODO: config
-    private static readonly Uri EmbeddingEndpoint = new Uri("http://nzxt.local:8001/embeddings");
-
-    private static readonly Uri ScrapeEndpoint = new Uri("http://nzxt.local:8002/scrape");
-
     private readonly Uri baseEndpoint;
     private readonly Uri completionsEndpoint;
     private readonly Uri chatCompletionsEndpoint;
+    private readonly Uri embeddingsEndpoint;
+    private readonly Uri scraperEndpoint;
     private readonly HttpClient httpClient;
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
@@ -130,6 +127,9 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         this.httpClient = httpClientFactory.CreateClient();
         this.loggingConfig = loggingConfig;
         this.logger = logger;
+
+        this.embeddingsEndpoint = completionsEndpointProvider.EmbeddingsEndpoint;
+        this.scraperEndpoint = completionsEndpointProvider.ScraperEndpoint;
 
         this.chatCompletionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/chat/completions");
         this.completionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/completions");
@@ -226,7 +226,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();
 
-        HttpResponseMessage response = await this.httpClient.PostAsync(EmbeddingEndpoint, content);
+        HttpResponseMessage response = await this.httpClient.PostAsync(this.embeddingsEndpoint, content);
         response.EnsureSuccessStatusCode();
 
         EmbeddingResponse embeddingResponse = await response.Content.ReadFromJsonAsync<EmbeddingResponse>(JsonSerializerOptions)
@@ -242,7 +242,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();
 
-        HttpResponseMessage response = await this.httpClient.PostAsync(ScrapeEndpoint, content);
+        HttpResponseMessage response = await this.httpClient.PostAsync(this.scraperEndpoint, content);
         response.EnsureSuccessStatusCode();
 
         ScrapeResponse scrapeResponse = await response.Content.ReadFromJsonAsync<ScrapeResponse>(JsonSerializerOptions)
