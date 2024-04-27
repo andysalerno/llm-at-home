@@ -12,4 +12,4 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /App
 COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "Examples.dll", "http://nzxt:8000", "-v", "--prompt-dir=Prompts"]
+ENTRYPOINT ["dotnet", "Examples.dll", "http://192.168.50.58:8000", "http://embeddings-server:8000/embeddings", "http://scraper:8002/scrape", "-v", "--prompt-dir=Prompts"]

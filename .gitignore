@@ -3,3 +3,4 @@ models--*
 __pycache__/
 aphrodite/
 tabby/
+.agentflow.env
