@@ -36,7 +36,7 @@ public class ExecuteToolCell : Cell<ConversationThread>
         this.logger.LogInformation("Saw tool selection: {Selection}", toolSelection);
 
         string toolOutput;
-        if (toolSelection.Invocation == "direct_response()")
+        if (toolSelection.Invocation == "direct_response()" || toolSelection.Invocation == "direct_response")
         {
             toolOutput = "nothing; no tool was executed. respond directly.";
         }

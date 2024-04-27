@@ -17,15 +17,16 @@ def direct_response():
 ## Rules
 - ALWAYS prefer using tools over your own knowledge, even for trivial information - if a tool *can* provide useful info, you *should* use it.
 - Invoke the special tool `direct_response()` when you have already executed all the necessary tools and are ready to respond, OR if no tool is needed.
+- The invocation syntax is like a function call even if zero args; e.x. `direct_response()`, NOT `direct_response`
 
 ## Response format
 Use this format for your reply:
 
 ```typescript
 interface Response {
-    last_user_message_intent: string; // what was the intent of the user's last message?
+    last_user_message_intent: string; // what was the intent of the user's *last* message?
     function_name: string; // the name of the function to select
-    invocation: string; // the full invocation of the function.
+    invocation: string; // the full invocation of the function, as functio-call syntax
 };
 ```
 
