@@ -40,7 +40,7 @@ For example, if the user is simply making small talk or chatting, you might resp
 }
 ```
 
-If the user asked for a cookie recipe, you might respond with:
+If the user's **latest message** asked for a cookie recipe, you might respond with:
 
 ```json
 {
@@ -51,3 +51,5 @@ If the user asked for a cookie recipe, you might respond with:
 ```
 
 For your next response, think carefully about the user's **latest** message. Then, decide what is the appropriate tool to respond to their message.
+
+Be mindful: you are responding to their **most recent** message, which may involve a topic change or chitchat.

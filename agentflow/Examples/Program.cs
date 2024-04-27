@@ -1,12 +1,16 @@
-﻿using System.CommandLine;
+﻿using System.Collections.Immutable;
+using System.CommandLine;
 using AgentFlow.Agents;
+using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
+using AgentFlow.Examples.Agents;
 using AgentFlow.Examples.Tools;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
+using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -67,7 +71,9 @@ public static class Program
         // await app.RunMagiExampleAsync();
         // await app.RunCodeExampleAsync();
         // await app.RunSimpleChatExampleAsync();
-        await app.RunWebSearchExample();
+        // await app.RunWebSearchExample();
+        // await app.RunOpenAIServerExampleAsync();
+        await app.RunOpenAIServerWebSearchExampleAsync();
     }
 
     private static IContainer ConfigureContainer(CommandLineArgs args)
@@ -205,6 +211,40 @@ public static class Program
             await this.runner.RunAsync(
                 definition,
                 new ConversationThread());
+        }
+
+        public async Task RunOpenAIServerExampleAsync()
+        {
+            var assistant = this.agentBuilderFactory
+                .CreateBuilder()
+                .WithName(new AgentName("Assistant"))
+                .WithRole(Role.Assistant)
+                .WithInstructions("You are a friendly and helpful assistant. Help as much as you can.")
+                .Build();
+
+            await new OpenAIServer().ServeAsync(new AgentCell(assistant), this.runner);
+        }
+
+        public async Task RunOpenAIServerWebSearchExampleAsync()
+        {
+            ImmutableArray<ITool> tools = [
+                new WebSearchTool(this.embeddingsClient, this.scraperClient, this.httpClientFactory)
+            ];
+
+            var prompt = new FileSystemPromptProvider(
+                "websearch_example_system",
+                this.fileSystemPromptProviderConfig)
+                .Get();
+
+            var program = new AgentCell(
+                new ToolAgent(
+                    new AgentName("WebSearchAgent"),
+                    Role.Assistant,
+                    prompt,
+                    this.agentBuilderFactory,
+                    tools));
+
+            await new OpenAIServer().ServeAsync(program, this.runner);
         }
 
         public async Task RunMagiExampleAsync()

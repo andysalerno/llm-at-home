@@ -1,28 +1,45 @@
 use futures::future;
-use log::{debug, info, trace};
+use log::{info, trace};
 use readable_readability::Readability;
 use std::{error::Error, time::Duration};
 
+use crate::Chunk;
+
 const MAX_SECTION_LEN: usize = 1000;
-const TOP_N_SECTIONS: usize = 3;
 const MIN_SECTION_LEN: usize = 50;
-const VISIT_LINKS_COUNT: usize = 6;
+const MAX_VISIT_LINKS_COUNT: usize = 6;
 
-const USER_AGENT: &str = "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6286.0 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+const USER_AGENT: &str = "DuckDuckBot/1.1; (+http://duckduckgo.com/duckduckbot.html)";
 
-pub(crate) async fn scrape_readably<I, T>(uris: I) -> Vec<String>
+pub(crate) async fn scrape_readably<I, T>(uris: I) -> Vec<Chunk>
 where
     I: IntoIterator<Item = T>,
     T: AsRef<str>,
 {
-    let scrape_futures = uris.into_iter().take(VISIT_LINKS_COUNT).map(scrape);
+    let uris = uris
+        .into_iter()
+        .take(MAX_VISIT_LINKS_COUNT)
+        .collect::<Vec<_>>();
+
+    let scrape_futures = uris.iter().map(scrape);
 
     future::join_all(scrape_futures)
         .await
         .into_iter()
+        .inspect(|r| info!("Result: {:?}", r.as_ref().map(|_ok| "(ok)")))
         .filter_map(Result::ok)
-        .filter(|text| text.len() > MIN_SECTION_LEN)
-        .flat_map(|text| split_text_into_sections(text, MAX_SECTION_LEN))
+        .zip(uris)
+        .filter(|(text, _)| text.len() > MIN_SECTION_LEN)
+        .map(|(text, uri)| (split_text_into_sections(text, MAX_SECTION_LEN), uri))
+        .flat_map(|(texts, uri)| {
+            let uri = uri.as_ref().to_owned();
+            let t = texts.into_iter().map(move |text| (text, uri.clone()));
+            t
+        })
+        .map(|(text, uri)| Chunk {
+            content: text.to_owned(),
+            uri,
+        })
         .collect()
 }
 
@@ -54,7 +71,7 @@ fn split_text_into_sections(input: impl Into<String>, max_section_len: usize) ->
 async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + Sync>> {
     let url = url.as_ref();
 
-    debug!("Scraping: {url}...");
+    info!("Scraping: {url}...");
 
     let client = reqwest::ClientBuilder::new()
         .timeout(Duration::from_millis(2000))
@@ -72,7 +89,7 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
     let s = response.text().await?;
 
     info!(
-        "Response: {} Read text from {} length: {}",
+        "Response: {} Read text from {} length: {} from url: {url}",
         status,
         url,
         s.len()
@@ -80,17 +97,25 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
     let mut readability = Readability::new();
     let (node_ref, _metadata) = readability
-        .strip_unlikelys(true)
-        .clean_attributes(true)
+        // .strip_unlikelys(true)
+        // .clean_attributes(true)
         .parse(&s);
-
-    debug!("Done.");
 
     let text_content = node_ref.text_contents();
 
-    info!("Scraped down to len: {}", text_content.len());
+    if !text_content.is_empty() {
+        info!("Scraped down to len: {}", text_content.len());
 
-    trace!("Scraped text:\n{text_content}");
+        trace!("Scraped text:\n{text_content}");
 
-    Ok(text_content.trim().into())
+        Ok(text_content.trim().into())
+    } else {
+        // let full_content = node_ref.to_string();
+        let full_content = s.to_string();
+
+        info!("Scraped down to len: {}", full_content.len());
+        info!("Scraped text:\n{full_content}");
+
+        Ok(full_content.clone())
+    }
 }

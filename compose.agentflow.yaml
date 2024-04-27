@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  chat-ui:
+    image: localhost/chat-ui
+    build: ./chat-ui
+    ports:
+      - "80:5173"
+    restart: unless-stopped
+    depends_on:
+      - mongo-chatui
+    environment:
+      - "INFERENCE_SERVER_URI=http://${HOSTNAME}:8003/"
+
+  embedding-server:
+    image: localhost/embedding-server
+    build: ./embedding-server
+    ports:
+      - "8001:8000"
+    devices:
+      - "nvidia.com/gpu=all"
+    restart: unless-stopped
+
+  scraper:
+    image: localhost/scraper
+    build: ./scraper
+    ports:
+      - "8002:8002"
+    restart: unless-stopped
+
+  mongo-chatui:
+    image: mongo:latest
+    restart: unless-stopped

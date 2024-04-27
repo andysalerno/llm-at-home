@@ -218,9 +218,10 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         return new ChatCompletionsResult(parsedResponse.Choices.First().Message.Content);
     }
 
-    public async Task<EmbeddingResponse> GetEmbeddingsAsync(IEnumerable<string> inputs)
+    public async Task<EmbeddingResponse> GetEmbeddingsAsync(string query, IEnumerable<Chunk> chunks)
     {
-        var requestBody = new EmbeddingsRequest(inputs.ToImmutableArray());
+        var passages = chunks.Select(c => c.Content);
+        var requestBody = new EmbeddingsRequest(passages.ToImmutableArray(), query);
 
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();
@@ -263,7 +264,9 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         return new Uri($"{@base}/{path}");
     }
 
-    private record EmbeddingsRequest(ImmutableArray<string> Input);
+    private record EmbeddingsRequest(
+        ImmutableArray<string> Input,
+        string? Query = null);
 
     private record ScrapeRequest(ImmutableArray<Uri> Uris);
 }

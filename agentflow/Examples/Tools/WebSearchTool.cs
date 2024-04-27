@@ -10,6 +10,7 @@ namespace AgentFlow.Examples.Tools;
 
 public class WebSearchTool : ITool
 {
+    private const int TopNChunks = 5;
     private const string Uri = "https://www.googleapis.com/customsearch/v1";
     private const string SearchKeyEnvVarName = "SEARCH_KEY";
     private const string SearchKeyCxEnvVarName = "SEARCH_KEY_CX";
@@ -44,29 +45,29 @@ public class WebSearchTool : ITool
 
         SearchResults searchResults = await this.GetSearchResultsAsync(input);
 
-        var topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: 3);
+        ImmutableArray<Chunk> topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: 3);
 
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
-        EmbeddingResponse embeddings = await this.embeddingsClient.GetEmbeddingsAsync(new[] { input }.Concat(topNPagesContents));
+        EmbeddingResponse embeddings = await this.embeddingsClient.GetEmbeddingsAsync(input, topNPagesContents);
 
         logger.LogInformation("Got embeddings results with count: {Embeddings}", embeddings.Data.Length);
 
-        EmbeddingData queryEmbedding = embeddings.Data[0];
+        EmbeddingData queryEmbedding = embeddings.QueryData
+            ?? throw new InvalidOperationException("Expected query data to be returned on the embedding response");
 
-        IEnumerable<(float, string)> scoresByIndex = embeddings
+        IEnumerable<(float, Chunk)> scoresByIndex = embeddings
             .Data
-            .Skip(1) // skip the query itself, to get only responses
             .Select((e, i) => Tuple.Create(i, CosineSimilarity(queryEmbedding.Embedding, e.Embedding)))
             .OrderByDescending(t => t.Item2) // order by cosine similarity, descending
             .Select(t => (t.Item2, topNPagesContents[t.Item1])) // map score to the original text
-            .Take(3)
+            .Take(TopNChunks)
             .ToArray();
 
         logger.LogInformation("got scored chunks: {Scored}", scoresByIndex);
 
-        return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {i}] {s.Item2.Trim()}"));
+        return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
 
     private static float CosineSimilarity(ImmutableArray<float> a, ImmutableArray<float> b)
@@ -78,10 +79,9 @@ public class WebSearchTool : ITool
         return dotProduct / (magnitudeA * magnitudeB);
     }
 
-    private async Task<ImmutableArray<string>> GetTopNPagesAsync(SearchResults searchResults, int topN)
+    private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)
     {
         var logger = this.GetLogger();
-        logger.LogInformation("Requesting chunks...");
 
         using var client = this.httpClientFactory.CreateClient();
 
@@ -90,6 +90,8 @@ public class WebSearchTool : ITool
             .Take(topN)
             .Select(r => r.Link)
             .Select(r => new Uri(r));
+
+        logger.LogInformation("Requesting chunks for these sites: {Sites}", links.ToList());
 
         ScrapeResponse response = await this.scraperClient.GetScrapedSiteContentAsync(links);
 
