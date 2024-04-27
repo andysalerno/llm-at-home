@@ -2,6 +2,7 @@ version: '3.8'
 services:
   chat-ui:
     image: localhost/chat-ui
+    build: ./chat-ui
     ports:
       - "80:5173"
     restart: unless-stopped
