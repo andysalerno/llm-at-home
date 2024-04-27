@@ -29,4 +29,8 @@
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Prompts\**" CopyToPublishDirectory="Always" />
+  </ItemGroup>
+
 </Project>
