@@ -1,16 +1,14 @@
 use futures::future;
-use log::{debug, info, trace};
+use log::{info, trace};
 use readable_readability::Readability;
 use std::{error::Error, time::Duration};
 
 use crate::Chunk;
 
 const MAX_SECTION_LEN: usize = 1000;
-const TOP_N_SECTIONS: usize = 3;
 const MIN_SECTION_LEN: usize = 50;
-const VISIT_LINKS_COUNT: usize = 6;
+const MAX_VISIT_LINKS_COUNT: usize = 6;
 
-// const USER_AGENT: &str = "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/126.0.6437.4 Safari/537.36";
 const USER_AGENT: &str = "DuckDuckBot/1.1; (+http://duckduckgo.com/duckduckbot.html)";
 
 pub(crate) async fn scrape_readably<I, T>(uris: I) -> Vec<Chunk>
@@ -18,7 +16,10 @@ where
     I: IntoIterator<Item = T>,
     T: AsRef<str>,
 {
-    let uris = uris.into_iter().take(VISIT_LINKS_COUNT).collect::<Vec<_>>();
+    let uris = uris
+        .into_iter()
+        .take(MAX_VISIT_LINKS_COUNT)
+        .collect::<Vec<_>>();
 
     let scrape_futures = uris.iter().map(scrape);
 
