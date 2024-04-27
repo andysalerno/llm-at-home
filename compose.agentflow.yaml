@@ -13,8 +13,8 @@ services:
     environment:
       - "INFERENCE_SERVER_URI=http://${HOSTNAME}:8003/"
 
-  embeddings-server:
-    image: localhost/embeddingserver
+  embedding-server:
+    image: localhost/embedding-server
     buid: ./embedding-server
     ports:
       - "8001:8000"
