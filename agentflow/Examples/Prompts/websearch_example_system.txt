@@ -26,7 +26,7 @@ Use this format for your reply:
 interface Response {
     last_user_message_intent: string; // what was the intent of the user's *last* message?
     function_name: string; // the name of the function to select
-    invocation: string; // the full invocation of the function, as functio-call syntax
+    invocation: string; // the full invocation of the function, as function-call syntax
 };
 ```
 
