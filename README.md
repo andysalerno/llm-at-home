@@ -24,6 +24,8 @@ TODO: package as a Docker container.
 
 TODO: accept system prompt from callers, because Huggingface ChatUI sends a system prompt to make a title for the conversation. But need to distinguish when to replace or not...
 
+TODO: tree of thought, where every tool is in a taxonomy-tree like hierarchy, which the model can navigate without getting overwhelmed by choices
+
 ## scraper
 
 A very simple http service written in Rust that accepts a list of URLs via POST request, and returns the webpage content at those urls, but scraped and converted from HTML into a readable format (for humans and LLMs) returned as chunks.
