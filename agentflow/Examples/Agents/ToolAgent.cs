@@ -36,7 +36,7 @@ public class ToolAgent : IAgent
   // get response from assistant provider
   public Task<Cell<ConversationThread>> GetNextThreadStateAsync(ConversationThread conversationThread)
   {
-    var toolSelectionAgent = this.customAgentBuilderFactory
+    IAgent toolSelectionAgent = this.customAgentBuilderFactory
         .CreateBuilder()
         .WithName(new AgentName("ToolSelectorAgent"))
         .WithRole(Role.ToolInvocation)
@@ -46,7 +46,7 @@ public class ToolAgent : IAgent
         .Build();
 
     // TODO: this should be injected(?)
-    var responseAgent = this.customAgentBuilderFactory
+    IAgent responseAgent = this.customAgentBuilderFactory
         .CreateBuilder()
         .WithName(new AgentName("ResponseAgent"))
         .WithRole(this.Role)
@@ -78,11 +78,12 @@ public class ToolAgent : IAgent
 
   private static string BuildToolsDefinitions(IEnumerable<ITool> tools)
   {
-    return string.Join("\n\n", tools.Select(t => t.Definition));
+    const string Sep = "\n\n";
+    return string.Join(Sep, tools.Select(t => t.Definition));
   }
 
-  private static JsonElement JsonToolSchema =>
-JsonSerializer.Deserialize<JsonElement>(
+  private static JsonElement JsonToolSchema { get; }
+    = JsonSerializer.Deserialize<JsonElement>(
 """
 {
     "title": "AnswerFormat",

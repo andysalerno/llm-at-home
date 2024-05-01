@@ -10,7 +10,11 @@ using Microsoft.Extensions.Logging;
 
 internal class OpenAIServer
 {
-    public async Task ServeAsync(Cell<ConversationThread> program, ICellRunner<ConversationThread> runner, int port = 8003)
+    public async Task ServeAsync(
+        Cell<ConversationThread> program,
+        Cell<ConversationThread> passthruProgram,
+        ICellRunner<ConversationThread> runner,
+        int port = 8003)
     {
         var logger = this.GetLogger();
 

@@ -69,12 +69,19 @@ public class CustomAgent : IAgent
 
     public Task<Cell<ConversationThread>> GetNextThreadStateAsync(ConversationThread conversationThread)
     {
-        Cell<ConversationThread> sequence = new CellSequence<ConversationThread>(
-            sequence: new Cell<ConversationThread>[]
+
+        var cells = ImmutableArray.CreateBuilder<Cell<ConversationThread>>();
+        {
+            if (!string.IsNullOrEmpty(this.Instructions))
             {
-                new SetSystemMessageCell(this.Name, new Prompt(this.Instructions)),
-                new GetAssistantResponseCell(this.Name, this.Role, this.responseSchema, this.completionsClient),
-            }.ToImmutableArray(),
+                cells.Add(new SetSystemMessageCell(this.Name, new Prompt(this.Instructions)));
+            }
+
+            cells.Add(new GetAssistantResponseCell(this.Name, this.Role, this.responseSchema, this.completionsClient));
+        }
+
+        Cell<ConversationThread> sequence = new CellSequence<ConversationThread>(
+            sequence: cells.ToImmutableArray(),
             next: null);
 
         return Task.FromResult(sequence);

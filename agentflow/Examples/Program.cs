@@ -224,18 +224,6 @@ public static class Program
                 new ConversationThread());
         }
 
-        public async Task RunOpenAIServerExampleAsync()
-        {
-            var assistant = this.agentBuilderFactory
-                .CreateBuilder()
-                .WithName(new AgentName("Assistant"))
-                .WithRole(Role.Assistant)
-                .WithInstructions("You are a friendly and helpful assistant. Help as much as you can.")
-                .Build();
-
-            await new OpenAIServer().ServeAsync(new AgentCell(assistant), this.runner);
-        }
-
         public async Task RunOpenAIServerWebSearchExampleAsync()
         {
             ImmutableArray<ITool> tools = [
@@ -257,7 +245,15 @@ public static class Program
                     this.agentBuilderFactory,
                     tools));
 
-            await new OpenAIServer().ServeAsync(program, this.runner);
+            var passthruProgram = new AgentCell(
+                this.agentBuilderFactory
+                    .CreateBuilder()
+                    .WithName(new AgentName("ResponseAgent"))
+                    .WithRole(Role.Assistant)
+                    .WithInstructions(string.Empty)
+                    .Build());
+
+            await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);
         }
 
         public async Task RunMagiExampleAsync()
