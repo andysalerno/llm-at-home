@@ -1,5 +1,6 @@
 using System.Text;
 using AgentFlow.Tools;
+using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples.Tools;
 
@@ -32,15 +33,15 @@ public class LightSwitchTool : ITool
 
         if (input.Contains("on"))
         {
-            url = new Uri("http://pibox.local:8123/api/services/homeassistant/turn_on");
+            url = new Uri("http://192.168.50.46:8123/api/services/homeassistant/turn_on");
         }
         else
         {
-            url = new Uri("http://pibox.local:8123/api/services/homeassistant/turn_off");
+            url = new Uri("http://192.168.50.46:8123/api/services/homeassistant/turn_off");
         }
 
         // Your API token
-        string token = "<token>";
+        string token = "<fixme>";
 
         // JSON payload
         string jsonData = "{\"entity_id\": \"light.corner\"}";
@@ -60,8 +61,10 @@ public class LightSwitchTool : ITool
 
             return "success";
         }
-        catch
+        catch (Exception ex)
         {
+            var logger = this.GetLogger();
+            logger.LogError("Failure: {Message}", ex.Message);
             return "falure";
         }
     }
