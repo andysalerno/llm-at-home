@@ -46,6 +46,12 @@ internal class OpenAIServer
                     ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
             }
 
+            if (chatRequest.Model == "passthru")
+            {
+                // Special model that ignores everything we add here
+                // and simply performs a passthru to the actual model
+            }
+
             ConversationThread conversationThread = ToConversationThread(chatRequest);
 
             ConversationThread output = await runner.RunAsync(program, rootInput: conversationThread);
@@ -60,33 +66,46 @@ internal class OpenAIServer
             }
 
             // Write the response info
-            var firstResponse = new ChatCompletionStreamingResponse(
-                [
-                    new ChatChoice(
-                            Index: 0,
-                            Delta: new Delta(Role: "assistant", Content: lastMessage.Content))
-                ]);
+            await SendResponseAsync(lastMessage.Content, response, logger);
 
-            var finalResponse = new ChatCompletionStreamingResponse(
-                [
-                    new ChatChoice(
+            response.Close();
+            logger.LogInformation("Request complete.");
+        }
+    }
+
+    private static async Task SendResponseAsync(
+        string content,
+        HttpListenerResponse response,
+        ILogger<OpenAIServer> logger)
+    {
+        // Write the response info
+        var firstResponse = new ChatCompletionStreamingResponse(
+            [
+                new ChatChoice(
+                            Index: 0,
+                            Delta: new Delta(Role: "assistant", Content: content))
+            ]);
+
+        var finalResponse = new ChatCompletionStreamingResponse(
+            [
+                new ChatChoice(
                             Index: 1,
                             FinishReason: "stop",
                             Delta: new Delta(Role: "assistant", Content: string.Empty))
-                ]);
+            ]);
 
-            response.ContentType = "text/event-stream; charset=utf-8";
-            response.AddHeader("cache-control", "no-cache");
-            response.AddHeader("x-accel-buffering", "no");
-            response.AddHeader("Transfer-Encoding", "chunked");
-            response.ContentEncoding = Encoding.UTF8;
+        response.ContentType = "text/event-stream; charset=utf-8";
+        response.AddHeader("cache-control", "no-cache");
+        response.AddHeader("x-accel-buffering", "no");
+        response.AddHeader("Transfer-Encoding", "chunked");
+        response.ContentEncoding = Encoding.UTF8;
 
-            // Write out to the response stream (asynchronously), then close it
-            logger.LogInformation("Responding...");
-            await SendStreamingResponseAsync(response.OutputStream, firstResponse, logger);
-            await SendStreamingResponseAsync(response.OutputStream, finalResponse, logger);
-            response.Close();
-            logger.LogInformation("Request complete.");
+        // Write out to the response stream (asynchronously), then close it
+        logger.LogInformation("Responding...");
+
+        foreach (var streamingResponse in new[] { firstResponse, finalResponse })
+        {
+            await SendStreamingResponseAsync(response.OutputStream, streamingResponse, logger);
         }
     }
 
@@ -126,6 +145,7 @@ internal class OpenAIServer
     }
 
     private record ChatCompletionRequest(
+        [property: JsonPropertyName("model")] string Model,
         [property: JsonPropertyName("messages")] ImmutableArray<Message> Messages);
 
     private record Message(
