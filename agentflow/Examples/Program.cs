@@ -239,8 +239,9 @@ public static class Program
         public async Task RunOpenAIServerWebSearchExampleAsync()
         {
             ImmutableArray<ITool> tools = [
+
+                // new LightSwitchTool(this.httpClientFactory),
                 new WebSearchTool(this.embeddingsClient, this.scraperClient, this.httpClientFactory),
-                new LightSwitchTool(this.httpClientFactory),
             ];
 
             var prompt = new FileSystemPromptProvider(
