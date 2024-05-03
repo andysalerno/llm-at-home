@@ -32,6 +32,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
         if self.path == "/embeddings":
             self.handle_embeddings()
+        elif self.path == "/scores":
+            self.handle_scoring()
 
     def extract_from_request(self) -> tuple[List[str], Optional[str]]:
         content_length = int(self.headers["Content-Length"])
