@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Logging;
 
 internal class OpenAIServer
 {
+    private const string PassthruModelName = "passthru";
+
     public async Task ServeAsync(
         Cell<ConversationThread> program,
         Cell<ConversationThread> passthruProgram,
@@ -22,7 +25,7 @@ internal class OpenAIServer
         listener.Prefixes.Add($"http://*:{port}/");
         listener.Start();
 
-        await HandleIncomingConnections(listener, program, runner, logger);
+        await HandleIncomingConnections(listener, program, passthruProgram, runner, logger);
 
         listener.Close();
     }
@@ -30,6 +33,7 @@ internal class OpenAIServer
     private static async Task HandleIncomingConnections(
         HttpListener listener,
         Cell<ConversationThread> program,
+        Cell<ConversationThread> passthruProgram,
         ICellRunner<ConversationThread> runner,
         ILogger<OpenAIServer> logger)
     {
@@ -50,15 +54,18 @@ internal class OpenAIServer
                     ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
             }
 
-            if (chatRequest.Model == "passthru")
+            Cell<ConversationThread> programToUse = program;
+
+            if (chatRequest.Model == PassthruModelName)
             {
-                // Special model that ignores everything we add here
-                // and simply performs a passthru to the actual model
+                programToUse = passthruProgram;
+
+                logger.LogInformation("Passthru model requesting - will handle by passthru agent");
             }
 
             ConversationThread conversationThread = ToConversationThread(chatRequest);
 
-            ConversationThread output = await runner.RunAsync(program, rootInput: conversationThread);
+            ConversationThread output = await runner.RunAsync(programToUse, rootInput: conversationThread);
 
             var lastMessage = output.Messages.Last();
 

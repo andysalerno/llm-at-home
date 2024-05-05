@@ -59,7 +59,7 @@ public class CustomAgent : IAgent
 
     public AgentName Name { get; private set; }
 
-    public string ModelDescription { get; } = "blah";
+    public string ModelDescription { get; } = "<unset>";
 
     public bool IsCodeProvider { get; }
 
@@ -74,6 +74,10 @@ public class CustomAgent : IAgent
             if (!string.IsNullOrEmpty(this.Instructions))
             {
                 cells.Add(new SetSystemMessageCell(this.Name, new Prompt(this.Instructions)));
+            }
+            else
+            {
+                this.logger.LogInformation("System prompt unset; this may be intentional");
             }
 
             cells.Add(new GetAssistantResponseCell(this.Name, this.Role, this.responseSchema, this.completionsClient));
