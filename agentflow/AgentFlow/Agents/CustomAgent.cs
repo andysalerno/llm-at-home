@@ -69,7 +69,6 @@ public class CustomAgent : IAgent
 
     public Task<Cell<ConversationThread>> GetNextThreadStateAsync(ConversationThread conversationThread)
     {
-
         var cells = ImmutableArray.CreateBuilder<Cell<ConversationThread>>();
         {
             if (!string.IsNullOrEmpty(this.Instructions))
