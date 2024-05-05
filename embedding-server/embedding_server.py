@@ -44,6 +44,9 @@ class MyHandler(BaseHTTPRequestHandler):
         query = None
         if "query" in body:
             query = body["query"]
+            log(f'saw request with query: "{query}"')
+        else:
+            log("request had no query")
 
         return (text, query)
 
@@ -120,24 +123,11 @@ def get_embeddings(text: list[str], query: Optional[str]):
         text_to_embed.append(transform_query(query))
         log(f"query in body: {query}")
 
-    # batch_dict = tokenizer(
-    #     text_to_embed,
-    #     max_length=512,
-    #     padding=True,
-    #     truncation=True,
-    #     return_tensors="pt",
-    # )
-    # outputs = model(**batch_dict)
-    # embeddings = average_pool(outputs.last_hidden_state, batch_dict["attention_mask"])
-    # embeddings = F.normalize(embeddings, p=2, dim=1)
-    # embeddings = embeddings.tolist()
-
     embeddings = embedding_model.encode(
         text_to_embed, normalize_embeddings=True
     ).tolist()
 
     query_embedding = None
-    log(f"len embeddings: {len(embeddings)} len text: {len(text)}")
     if len(embeddings) == len(text) + 1:
         # we added the query; need to pop it
         query_embedding = embeddings.pop()
