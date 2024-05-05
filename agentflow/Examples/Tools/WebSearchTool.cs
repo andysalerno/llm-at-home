@@ -67,7 +67,7 @@ public class WebSearchTool : ITool
             .ToArray();
 
         logger.LogInformation("got scored chunks: {Scored}", scoresByIndex);
-        logger.LogInformation("got scores: {Scores}", scores);
+        logger.LogInformation("got scores: {Scores}", scores.Scores);
 
         return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
