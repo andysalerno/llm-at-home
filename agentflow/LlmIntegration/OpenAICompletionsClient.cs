@@ -235,10 +235,10 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         return embeddingResponse;
     }
 
-    public async Task<EmbeddingResponse> GetScoresAsync(string query, IEnumerable<Chunk> chunks)
+    public async Task<ScoresResponse> GetScoresAsync(string query, IEnumerable<Chunk> chunks)
     {
-        var passages = chunks.Select(c => c.Content);
-        var requestBody = new EmbeddingsRequest(passages.ToImmutableArray(), query);
+        var passages = chunks.Select(c => c.Content).ToImmutableArray();
+        var requestBody = new EmbeddingsRequest(passages, query);
 
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();
@@ -249,10 +249,10 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         HttpResponseMessage response = await this.httpClient.PostAsync(new Uri(scoresParts), content);
         response.EnsureSuccessStatusCode();
 
-        EmbeddingResponse embeddingResponse = await response.Content.ReadFromJsonAsync<EmbeddingResponse>(JsonSerializerOptions)
+        ScoresResponse scoresResponse = await response.Content.ReadFromJsonAsync<ScoresResponse>(JsonSerializerOptions)
             ?? throw new InvalidOperationException("Failed to parse embedding json response as EmbeddingResponse");
 
-        return embeddingResponse;
+        return scoresResponse;
     }
 
     public async Task<ScrapeResponse> GetScrapedSiteContentAsync(IEnumerable<Uri> uris)

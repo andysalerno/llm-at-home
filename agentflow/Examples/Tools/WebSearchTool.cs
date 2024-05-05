@@ -51,6 +51,7 @@ public class WebSearchTool : ITool
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
         EmbeddingResponse embeddings = await this.embeddingsClient.GetEmbeddingsAsync(input, topNPagesContents);
+        ScoresResponse scores = await this.embeddingsClient.GetScoresAsync(input, topNPagesContents);
 
         logger.LogInformation("Got embeddings results with count: {Embeddings}", embeddings.Data.Length);
 
@@ -66,6 +67,7 @@ public class WebSearchTool : ITool
             .ToArray();
 
         logger.LogInformation("got scored chunks: {Scored}", scoresByIndex);
+        logger.LogInformation("got scores: {Scores}", scores);
 
         return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
