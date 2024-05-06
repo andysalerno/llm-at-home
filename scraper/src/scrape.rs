@@ -97,24 +97,39 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
     let mut readability = Readability::new();
     let (node_ref, _metadata) = readability
-        // .strip_unlikelys(true)
-        // .clean_attributes(true)
+        .strip_unlikelys(true)
+        .clean_attributes(true)
         .parse(&s);
 
     let text_content = node_ref.text_contents();
 
     if !text_content.is_empty() {
-        info!("Scraped down to len: {}", text_content.len());
+        info!(
+            "Scraped using readability, down to len: {}",
+            text_content.len()
+        );
 
-        trace!("Scraped text:\n{text_content}");
+        {
+            let mut text_content = text_content.clone();
+            text_content.truncate(128);
+            trace!("Scraped text:\n{text_content}");
+        }
 
         Ok(text_content.trim().into())
     } else {
         // let full_content = node_ref.to_string();
         let full_content = s.to_string();
 
-        info!("Scraped down to len: {}", full_content.len());
-        info!("Scraped text:\n{full_content}");
+        {
+            let mut full_content = text_content.clone();
+            full_content.truncate(128);
+
+            info!(
+                "Scraped (not readability) down to len: {}",
+                full_content.len()
+            );
+            info!("Scraped text:\n{full_content}");
+        }
 
         Ok(full_content.clone())
     }
