@@ -50,23 +50,15 @@ public class WebSearchTool : ITool
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
-        EmbeddingResponse embeddings = await this.embeddingsClient.GetEmbeddingsAsync(input, topNPagesContents);
         ScoresResponse scores = await this.embeddingsClient.GetScoresAsync(input, topNPagesContents);
 
-        logger.LogInformation("Got embeddings results with count: {Embeddings}", embeddings.Data.Length);
-
-        EmbeddingData queryEmbedding = embeddings.QueryData
-            ?? throw new InvalidOperationException("Expected query data to be returned on the embedding response");
-
-        IEnumerable<(float, Chunk)> scoresByIndex = embeddings
-            .Data
-            .Select((e, i) => Tuple.Create(i, CosineSimilarity(queryEmbedding.Embedding, e.Embedding)))
-            .OrderByDescending(t => t.Item2) // order by cosine similarity, descending
-            .Select(t => (t.Item2, topNPagesContents[t.Item1])) // map score to the original text
+        IEnumerable<(float, Chunk)> scoresByIndex = scores
+            .Scores
+            .Zip(topNPagesContents)
+            .OrderByDescending(i => i.First)
             .Take(TopNChunks)
-            .ToArray();
+            .ToImmutableArray();
 
-        logger.LogInformation("got scored chunks: {Scored}", scoresByIndex);
         logger.LogInformation("got scores: {Scores}", scores.Scores);
 
         return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
