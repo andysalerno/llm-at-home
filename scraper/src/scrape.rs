@@ -111,7 +111,7 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
         {
             let mut text_content = text_content.clone();
-            text_content.truncate(128);
+            safe_truncate(&mut text_content, 128);
             trace!("Scraped text:\n{text_content}");
         }
 
@@ -122,7 +122,7 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
         {
             let mut full_content = text_content.clone();
-            full_content.truncate(128);
+            safe_truncate(&mut full_content, 128);
 
             info!(
                 "Scraped (not readability) down to len: {}",
@@ -133,4 +133,13 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
         Ok(full_content.clone())
     }
+}
+
+fn safe_truncate(s: &mut String, mut index: usize) {
+    // Find the nearest valid character boundary
+    while !s.is_char_boundary(index) && index > 0 {
+        index -= 1;
+    }
+
+    s.truncate(index);
 }
