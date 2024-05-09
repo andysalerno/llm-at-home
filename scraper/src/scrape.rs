@@ -1,7 +1,7 @@
 use futures::future;
 use log::{info, trace};
 use readable_readability::Readability;
-use std::{error::Error, time::Duration};
+use std::{cmp::min, error::Error, time::Duration};
 
 use crate::Chunk;
 
@@ -137,6 +137,7 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
 fn safe_truncate(s: &mut String, mut index: usize) {
     // Find the nearest valid character boundary
+    index = min(s.len() - 1, index);
     while !s.is_char_boundary(index) && index > 0 {
         index -= 1;
     }

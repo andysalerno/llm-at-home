@@ -9,4 +9,5 @@ podman run --rm --gpus all \
     --model $1 \
     --served-model-name model \
     --max-model-len 8192 \
+    --kv-cache-dtype fp8 \
     -tp 1 -pp 1 --trust-remote-code
