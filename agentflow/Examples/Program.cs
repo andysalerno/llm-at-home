@@ -1,16 +1,11 @@
-﻿using System.Collections.Immutable;
-using System.CommandLine;
+﻿using System.CommandLine;
 using AgentFlow.Agents;
-using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
-using AgentFlow.Examples.Agents;
-using AgentFlow.Examples.Tools;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
-using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -82,7 +77,7 @@ public static class Program
             Logging.RegisterLoggerFactory(loggerFactory);
         }
 
-        var serverExample = scope.Resolve<OpenAIServerWebSearchExample>();
+        var serverExample = scope.Resolve<AgentBenchExample>();
 
         await serverExample.RunAsync();
     }
@@ -126,6 +121,7 @@ public static class Program
             // Runnable example classes:
             containerBuilder.RegisterType<WebSearchExample>();
             containerBuilder.RegisterType<SimpleChatExample>();
+            containerBuilder.RegisterType<AgentBenchExample>();
             containerBuilder.RegisterType<OpenAIServerWebSearchExample>();
         }
 
