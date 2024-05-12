@@ -34,14 +34,14 @@ public static class Program
 
         var verbose = new Option<bool>(
             name: "-v",
-            description: "Enable verbose mode",
-            getDefaultValue: () => false);
+            getDefaultValue: () => false,
+            description: "Enable verbose mode");
         verbose.AddAlias("--verbose");
 
         var promptDir = new Option<string?>(
             name: "-p",
-            description: "directory containing prompt files",
-            getDefaultValue: () => "./Prompts");
+            getDefaultValue: () => "./Prompts",
+            description: "directory containing prompt files");
         promptDir.AddAlias("--prompt-dir");
 
         rootCommand.AddArgument(uriArg);
@@ -58,7 +58,9 @@ public static class Program
             verbose,
             promptDir);
 
-        await rootCommand.InvokeAsync(args);
+        // await rootCommand.InvokeAsync(args);
+        var fakeUri = new Uri("http://localhost").AbsoluteUri;
+        await RunAppAsync(fakeUri, fakeUri, fakeUri, true, string.Empty);
     }
 
     internal static async Task RunAppAsync(string uri, string embeddingsUri, string scraperUri, bool verbose, string? promptDir)
@@ -69,7 +71,7 @@ public static class Program
 
         IContainer container = ConfigureContainer(commandLineArgs);
 
-        using var scope = container.BeginLifetimeScope();
+        await using var scope = container.BeginLifetimeScope();
 
         // Register logging before anything else:
         {
@@ -133,9 +135,7 @@ public static class Program
                 .AsImplementedInterfaces();
         }
 
-        var container = containerBuilder.Build();
-
-        return container;
+        return containerBuilder.Build();
     }
 
     private static Configuration BuildConfiguration(CommandLineArgs args)
@@ -145,7 +145,7 @@ public static class Program
             PromptDirectory = args.PromptDir ?? "./Prompts",
         };
 
-    private class CommandLineArgs
+    private sealed class CommandLineArgs
     {
         public CommandLineArgs(string uri, string embeddingsUri, string scraperUri, bool verbose, string promptDir)
         {

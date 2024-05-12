@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples;
 
-internal class AgentBenchExample : IRunnableExample
+internal sealed class AgentBenchExample : IRunnableExample
 {
     private readonly ILogger<AgentBenchExample> logger;
 
