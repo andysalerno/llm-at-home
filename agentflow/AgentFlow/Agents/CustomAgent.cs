@@ -55,17 +55,17 @@ public class CustomAgent : IAgent
         this.logger = this.GetLogger();
     }
 
-    public Role Role { get; private set; }
+    public Role Role { get; }
 
-    public AgentName Name { get; private set; }
+    public AgentName Name { get; }
 
     public string ModelDescription { get; } = "<unset>";
 
     public bool IsCodeProvider { get; }
 
-    public string Instructions { get; private set; }
+    public string Instructions { get; }
 
-    public InstructionStrategy InstructionStrategy { get; private set; }
+    public InstructionStrategy InstructionStrategy { get; }
 
     public Task<Cell<ConversationThread>> GetNextThreadStateAsync(ConversationThread conversationThread)
     {
