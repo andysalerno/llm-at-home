@@ -208,6 +208,9 @@ dotnet_diagnostic.IDE0005.severity = warning
 # CS8618: Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 dotnet_diagnostic.CS8618.severity = error
 
+# RCS1246: Use element access
+dotnet_diagnostic.RCS1246.severity = suggestion
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman

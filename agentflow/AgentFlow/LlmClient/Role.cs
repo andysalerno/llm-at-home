@@ -16,13 +16,20 @@ public record Role
     // Possibly unsupported, depending on the model:
     public static readonly Role ToolOutput = new Role("tool_output");
 
+    private Role(string name)
+    {
+        this.Name = name;
+    }
+
+    public string Name { get; }
+
     public static Role ExpectFromName(string name)
     {
         ImmutableArray<Role> roles = [
             User, Assistant, System, ToolInvocation, ToolOutput
         ];
 
-        Role? matching = roles.Where(r => r.Name == name).FirstOrDefault();
+        Role? matching = roles.FirstOrDefault(r => r.Name == name);
 
         if (matching is Role r)
         {
@@ -31,11 +38,4 @@ public record Role
 
         throw new KeyNotFoundException($"Unknown role: {name}");
     }
-
-    private Role(string name)
-    {
-        this.Name = name;
-    }
-
-    public string Name { get; }
 }

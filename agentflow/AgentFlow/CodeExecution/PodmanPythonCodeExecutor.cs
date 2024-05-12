@@ -26,33 +26,10 @@ public class PodmanPythonCodeExecutor : ICodeExecutor
         return Task.FromResult(codeResult.Trim());
     }
 
-    private void PullImage()
-    {
-        string output = this.RunWithBash($"podman pull {PythonImageName}");
-        this.logger.LogInformation("Output of pulling image: {Output}", output);
-    }
-
-    private string RunWithPython(string pythonCode)
-    {
-        var dirInfo = Directory.CreateDirectory(this.pythonEnvPath);
-
-        string runFile = Path.Combine(dirInfo.FullName, "run.py");
-
-        File.WriteAllText(runFile, pythonCode);
-
-        this.logger.LogInformation("Wrote code content to {RunFile}", runFile);
-
-        string runCommand = CreateRunCommand(dirInfo.FullName, PythonImageName);
-
-        this.logger.LogInformation("Running: {RunCommand}", runCommand);
-
-        return this.RunWithBash(runCommand);
-    }
-
     private static string CreateRunCommand(string pyEnvDir, string pythonImageName)
         => $"podman run --rm -v {pyEnvDir}:/pyenv {pythonImageName} python /pyenv/run.py";
 
-    private string RunWithBash(string command)
+    private static string RunWithBash(string command)
     {
         string args = $"-c \"{command}\"";
         var psi = new ProcessStartInfo
@@ -73,6 +50,29 @@ public class PodmanPythonCodeExecutor : ICodeExecutor
 
         process.WaitForExit();
 
-        return $"{stdOut}{stdErr}";
+        return stdOut + stdErr;
+    }
+
+    private void PullImage()
+    {
+        string output = RunWithBash($"podman pull {PythonImageName}");
+        this.logger.LogInformation("Output of pulling image: {Output}", output);
+    }
+
+    private string RunWithPython(string pythonCode)
+    {
+        var dirInfo = Directory.CreateDirectory(this.pythonEnvPath);
+
+        string runFile = Path.Combine(dirInfo.FullName, "run.py");
+
+        File.WriteAllText(runFile, pythonCode);
+
+        this.logger.LogInformation("Wrote code content to {RunFile}", runFile);
+
+        string runCommand = CreateRunCommand(dirInfo.FullName, PythonImageName);
+
+        this.logger.LogInformation("Running: {RunCommand}", runCommand);
+
+        return RunWithBash(runCommand);
     }
 }

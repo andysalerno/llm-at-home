@@ -10,6 +10,12 @@ public class ExecuteCodeCell : Cell<ConversationThread>
     private readonly ICodeExecutor codeExecutor;
     private readonly ILogger<ExecuteCodeCell> logger;
 
+    public ExecuteCodeCell(ICodeExecutor codeExecutor, ILogger<ExecuteCodeCell> logger)
+    {
+        this.codeExecutor = codeExecutor;
+        this.logger = logger;
+    }
+
     public override Cell<ConversationThread>? GetNext(ConversationThread input)
     {
         return null;
@@ -29,14 +35,6 @@ public class ExecuteCodeCell : Cell<ConversationThread>
 
         string response = $"<internal message>Here is the verbatim output from executing your code:\n{codeOutput}";
 
-        ConversationThread output = input.WithAddedMessage(new Message(new AgentName("CodeExecutor"), Role.User, response));
-
-        return output;
-    }
-
-    public ExecuteCodeCell(ICodeExecutor codeExecutor, ILogger<ExecuteCodeCell> logger)
-    {
-        this.codeExecutor = codeExecutor;
-        this.logger = logger;
+        return input.WithAddedMessage(new Message(new AgentName("CodeExecutor"), Role.User, response));
     }
 }

@@ -29,7 +29,7 @@ public enum InstructionStrategy
     InlineSystemMessage,
 }
 
-public class CustomAgent : IAgent
+public sealed class CustomAgent : IAgent
 {
     private readonly MessageVisibility messageVisibility;
     private readonly ILlmCompletionsClient completionsClient;

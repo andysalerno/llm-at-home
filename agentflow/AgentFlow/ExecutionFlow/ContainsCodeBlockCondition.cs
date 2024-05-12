@@ -18,12 +18,7 @@ public class ContainsCodeBlockCondition : ICondition<ConversationThread>
             return false;
         }
 
-        if (ExtractCodeBlocks(lastMessage.Content).Any())
-        {
-            return true;
-        }
-
-        return false;
+        return ExtractCodeBlocks(lastMessage.Content).Any();
     }
 
     private static List<(string Language, string Code)> ExtractCodeBlocks(string input)

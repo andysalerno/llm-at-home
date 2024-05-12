@@ -51,14 +51,12 @@ public class ExecuteToolCell : Cell<ConversationThread>
             toolOutput = await tool.GetOutput(toolInput);
         }
 
-        var next = input.WithAddedMessage(
+        return input.WithAddedMessage(
             new Message(
                 new AgentName("ToolExecution"),
                 Role.ToolOutput,
                 toolOutput,
                 new MessageVisibility(ShownToUser: false, ShownToModel: true)));
-
-        return next;
     }
 
     private static string ExtractToolInvocationInput(ToolSelectionOutput toolSelectionOutput)
@@ -70,7 +68,9 @@ public class ExecuteToolCell : Cell<ConversationThread>
         {
             string stage1 = invocation.Split('(')[1];
             string stage2 = stage1.TrimStart('\'');
+#pragma warning disable RCS1124 // Inline local variable
             string stage3 = stage2.TrimEnd(')').TrimEnd('\'');
+#pragma warning restore RCS1124 // Inline local variable
 
             extractedInputs = stage3;
         }

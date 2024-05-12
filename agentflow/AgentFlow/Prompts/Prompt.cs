@@ -6,14 +6,14 @@ public record Prompt
 {
     private readonly List<Variable> variables = new();
 
-    public IReadOnlyList<Variable> Variables => this.variables;
-
-    public string TemplateText { get; }
-
     public Prompt(string templateText)
     {
         this.TemplateText = templateText;
     }
+
+    public IReadOnlyList<Variable> Variables => this.variables;
+
+    public string TemplateText { get; }
 
     public Prompt WithVariable(string name, string value)
     {
