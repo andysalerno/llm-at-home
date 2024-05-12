@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace AgentFlow.Config;
+﻿namespace AgentFlow.Config;
 
 public interface ICompletionsEndpointConfig
 {
