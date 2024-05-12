@@ -202,6 +202,9 @@ roslynator_compiler_diagnostic_fixes.enabled = true
 # RCS1161: Enum should declare explicit values
 dotnet_diagnostic.RCS1161.severity = silent
 
+# IDE0005: Using directive is unnecessary.
+dotnet_diagnostic.IDE0005.severity = warning
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman
