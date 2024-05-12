@@ -8,11 +8,36 @@ using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
 
-internal static class MagiExample
+internal class MagiExample : IRunnableExample
 {
-    public static Cell<ConversationThread> CreateDefinition(IAgent userConsoleAgent, CustomAgentBuilderFactory agentBuilderFactory)
+    private readonly IAgent userConsoleAgent;
+    private readonly CustomAgentBuilderFactory agentBuilderFactory;
+    private readonly ICellRunner<ConversationThread> runner;
+
+    public MagiExample(IAgent userConsoleAgent, CustomAgentBuilderFactory agentBuilderFactory, ICellRunner<ConversationThread> runner)
     {
-        IAgent bot = agentBuilderFactory
+        this.userConsoleAgent = userConsoleAgent;
+        this.agentBuilderFactory = agentBuilderFactory;
+        this.runner = runner;
+    }
+
+    public async Task RunAsync()
+    {
+        Cell<ConversationThread> definition = this.CreateDefinition();
+
+        await this.runner.RunAsync(
+            definition,
+            new ConversationThread());
+    }
+
+    private static string BuildInstructionsForRole(string roleName)
+    {
+        return $"You are a {roleName}. Your repsonses are always from the point of view of a {roleName}. Consider what the user says, and provide your decision, keeping in mind your role as a {roleName}.";
+    }
+
+    private Cell<ConversationThread> CreateDefinition()
+    {
+        IAgent bot = this.agentBuilderFactory
             .CreateBuilder()
             .WithRole(Role.Assistant)
             .WithName(new AgentName("MagiCollector"))
@@ -26,21 +51,21 @@ internal static class MagiExample
         // which is composed of 3 agents who make decisions by majority decision.
         // Spoiler: the 3 agents are revealed to be 3 different aspects of their creator, Dr. Naoko Agaki.
         // Those aspects are: Dr. Agaki as a mother, Dr. Agaki as a woman, and Dr. Agaki as a scientist.
-        IAgent magiMother = agentBuilderFactory
+        IAgent magiMother = this.agentBuilderFactory
             .CreateBuilder()
             .WithRole(Role.Assistant)
             .WithName(new AgentName("MagiMother"))
             .WithInstructions(BuildInstructionsForRole("mother"))
             .Build();
 
-        IAgent magiWoman = agentBuilderFactory
+        IAgent magiWoman = this.agentBuilderFactory
             .CreateBuilder()
             .WithName(new AgentName("MagiWoman"))
             .WithRole(Role.Assistant)
             .WithInstructions(BuildInstructionsForRole("woman"))
             .Build();
 
-        IAgent magiScientist = agentBuilderFactory
+        IAgent magiScientist = this.agentBuilderFactory
             .CreateBuilder()
             .WithName(new AgentName("MagiScientist"))
             .WithRole(Role.Assistant)
@@ -53,7 +78,7 @@ internal static class MagiExample
                 sequence: new Cell<ConversationThread>[]
                 {
                         // 1. user provides the question
-                        new AgentCell(userConsoleAgent),
+                        new AgentCell(this.userConsoleAgent),
 
                         // 2. Magi agents respond with their majority decision:
                         new JoinMultipleAgentsCell(
@@ -76,10 +101,5 @@ internal static class MagiExample
         };
 
         return loopForever;
-    }
-
-    private static string BuildInstructionsForRole(string roleName)
-    {
-        return $"You are a {roleName}. Your repsonses are always from the point of view of a {roleName}. Consider what the user says, and provide your decision, keeping in mind your role as a {roleName}.";
     }
 }

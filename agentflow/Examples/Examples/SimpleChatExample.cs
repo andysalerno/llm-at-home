@@ -6,13 +6,31 @@ using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
 
-internal static class SimpleChatExample
+internal class SimpleChatExample : IRunnableExample
 {
-    public static Cell<ConversationThread> CreateDefinition(
-        IAgent userConsoleAgent,
-        CustomAgentBuilderFactory agentBuilderFactory)
+    private readonly IAgent userConsoleAgent;
+    private readonly CustomAgentBuilderFactory agentBuilderFactory;
+    private readonly ICellRunner<ConversationThread> runner;
+
+    public SimpleChatExample(IAgent userConsoleAgent, CustomAgentBuilderFactory agentBuilderFactory, ICellRunner<ConversationThread> runner)
     {
-        var assistant = agentBuilderFactory
+        this.userConsoleAgent = userConsoleAgent;
+        this.agentBuilderFactory = agentBuilderFactory;
+        this.runner = runner;
+    }
+
+    public async Task RunAsync()
+    {
+        Cell<ConversationThread> definition = this.CreateDefinition();
+
+        await this.runner.RunAsync(
+            definition,
+            new ConversationThread());
+    }
+
+    private Cell<ConversationThread> CreateDefinition()
+    {
+        var assistant = this.agentBuilderFactory
             .CreateBuilder()
             .WithName(new AgentName("Assistant"))
             .WithRole(Role.Assistant)
@@ -24,7 +42,7 @@ internal static class SimpleChatExample
             WhileTrue = new CellSequence<ConversationThread>(
                 sequence: new Cell<ConversationThread>[]
                 {
-                    new AgentCell(userConsoleAgent),
+                    new AgentCell(this.userConsoleAgent),
                     new AgentCell(assistant),
                 }.ToImmutableArray()),
         };

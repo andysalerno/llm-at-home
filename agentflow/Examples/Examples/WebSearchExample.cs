@@ -8,25 +8,49 @@ using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
+using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples;
 
-internal static class WebSearchExample
+internal class WebSearchExample : IRunnableExample
 {
-    public static Cell<ConversationThread> CreateDefinition(
+    private readonly ICellRunner<ConversationThread> runner;
+    private readonly IAgent userConsoleAgent;
+    private readonly IHttpClientFactory httpClientFactory;
+    private readonly IEmbeddingsClient embeddingsClient;
+    private readonly IScraperClient scraperClient;
+    private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
+    private readonly IFileSystemPromptProviderConfig promptProviderConfig;
+    private readonly ILoggingConfig loggingConfig;
+
+    public WebSearchExample(
+        ICellRunner<ConversationThread> runner,
         IAgent userConsoleAgent,
         IHttpClientFactory httpClientFactory,
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
         CustomAgentBuilderFactory customAgentBuilderFactory,
-        IFileSystemPromptProviderConfig promptProviderConfig)
+        IFileSystemPromptProviderConfig promptProviderConfig,
+        ILoggingConfig loggingConfig)
+    {
+        this.runner = runner;
+        this.userConsoleAgent = userConsoleAgent;
+        this.httpClientFactory = httpClientFactory;
+        this.embeddingsClient = embeddingsClient;
+        this.scraperClient = scraperClient;
+        this.customAgentBuilderFactory = customAgentBuilderFactory;
+        this.promptProviderConfig = promptProviderConfig;
+        this.loggingConfig = loggingConfig;
+    }
+
+    public Cell<ConversationThread> CreateDefinition()
     {
         var prompt = new FileSystemPromptProvider(
             "websearch_example_system",
-            promptProviderConfig)
+            this.promptProviderConfig)
             .Get();
 
-        ImmutableArray<ITool> tools = [new WebSearchTool(embeddingsClient, scraperClient, httpClientFactory)];
+        ImmutableArray<ITool> tools = [new WebSearchTool(this.embeddingsClient, this.scraperClient, this.httpClientFactory)];
 
         // TODO: BeginLoop().WithSequence().AddAgent().AddAgent().EndLoop();
         var loopForever = new WhileCell<ConversationThread>()
@@ -34,17 +58,35 @@ internal static class WebSearchExample
             WhileTrue = new CellSequence<ConversationThread>(
                 sequence: new Cell<ConversationThread>[]
                 {
-                    new AgentCell(userConsoleAgent),
+                    new AgentCell(this.userConsoleAgent),
                     new AgentCell(
                         new ToolAgent(
                             new AgentName("WebSearchAgent"),
                             Role.Assistant,
                             prompt,
-                            customAgentBuilderFactory,
+                            this.customAgentBuilderFactory,
                             tools)),
                 }.ToImmutableArray()),
         };
 
         return loopForever;
+    }
+
+    public async Task RunAsync()
+    {
+        var logger = this.GetLogger();
+        logger.LogInformation("Starting up...");
+        logger.LogInformation("Running web search example");
+
+        if (this.loggingConfig.LogRequestsToLlm)
+        {
+            logger.LogWarning("Verbosity mode enabled, will log requests and responses to/from llm");
+        }
+
+        Cell<ConversationThread> definition = this.CreateDefinition();
+
+        await this.runner.RunAsync(
+            definition,
+            new ConversationThread());
     }
 }

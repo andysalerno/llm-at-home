@@ -82,14 +82,9 @@ public static class Program
             Logging.RegisterLoggerFactory(loggerFactory);
         }
 
-        var app = scope.Resolve<App>();
+        var serverExample = scope.Resolve<OpenAIServerWebSearchExample>();
 
-        // await app.RunMagiExampleAsync();
-        // await app.RunCodeExampleAsync();
-        // await app.RunSimpleChatExampleAsync();
-        // await app.RunWebSearchExample();
-        // await app.RunOpenAIServerExampleAsync();
-        await app.RunOpenAIServerWebSearchExampleAsync();
+        await serverExample.RunAsync();
     }
 
     private static IContainer ConfigureContainer(CommandLineArgs args)
@@ -127,7 +122,11 @@ public static class Program
             containerBuilder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<CustomAgentBuilderFactory>();
             containerBuilder.RegisterType<FileSystemPromptProvider>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<App>();
+
+            // Runnable example classes:
+            containerBuilder.RegisterType<WebSearchExample>();
+            containerBuilder.RegisterType<SimpleChatExample>();
+            containerBuilder.RegisterType<OpenAIServerWebSearchExample>();
         }
 
         // Parse args as configuration:
@@ -149,123 +148,6 @@ public static class Program
             LogRequestsToLlm = args.Verbose,
             PromptDirectory = args.PromptDir ?? "./Prompts",
         };
-
-    internal sealed class App
-    {
-        private readonly UserConsoleAgent userConsoleAgent;
-        private readonly ICodeExecutor codeExecutor;
-        private readonly IFileSystemPromptProviderConfig fileSystemPromptProviderConfig;
-        private readonly ILoggingConfig loggingConfig;
-        private readonly ILlmCompletionsClient llmCompletionsClient;
-        private readonly IEmbeddingsClient embeddingsClient;
-        private readonly IScraperClient scraperClient;
-        private readonly CustomAgentBuilderFactory agentBuilderFactory;
-        private readonly ICellRunner<ConversationThread> runner;
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly ILogger<App> logger;
-
-        public App(
-            UserConsoleAgent userConsoleAgent,
-            CustomAgentBuilderFactory agentBuilderFactory,
-            ICellRunner<ConversationThread> runner,
-            IHttpClientFactory httpClientFactory,
-            ICodeExecutor codeExecutor,
-            IFileSystemPromptProviderConfig fileSystemPromptProviderConfig,
-            ILoggingConfig loggingConfig,
-            ILlmCompletionsClient llmCompletionsClient,
-            IEmbeddingsClient embeddingsClient,
-            IScraperClient scraperClient,
-            ILogger<App> logger)
-        {
-            this.userConsoleAgent = userConsoleAgent;
-            this.logger = logger;
-            this.codeExecutor = codeExecutor;
-            this.fileSystemPromptProviderConfig = fileSystemPromptProviderConfig;
-            this.loggingConfig = loggingConfig;
-            this.llmCompletionsClient = llmCompletionsClient;
-            this.embeddingsClient = embeddingsClient;
-            this.scraperClient = scraperClient;
-            this.agentBuilderFactory = agentBuilderFactory;
-            this.runner = runner;
-            this.httpClientFactory = httpClientFactory;
-        }
-
-        public async Task RunWebSearchExample()
-        {
-            var logger = this.GetLogger();
-            logger.LogInformation("Starting up...");
-            logger.LogInformation("Running web search example");
-
-            if (this.loggingConfig.LogRequestsToLlm)
-            {
-                logger.LogWarning("Verbosity mode enabled, will log requests and responses to/from llm");
-            }
-
-            Cell<ConversationThread> definition = WebSearchExample.CreateDefinition(
-                this.userConsoleAgent,
-                this.httpClientFactory,
-                this.embeddingsClient,
-                this.scraperClient,
-                this.agentBuilderFactory,
-                this.fileSystemPromptProviderConfig);
-
-            await this.runner.RunAsync(
-                definition,
-                new ConversationThread());
-        }
-
-        public async Task RunSimpleChatExampleAsync()
-        {
-            Cell<ConversationThread> definition = SimpleChatExample.CreateDefinition(
-                this.userConsoleAgent, this.agentBuilderFactory);
-
-            await this.runner.RunAsync(
-                definition,
-                new ConversationThread());
-        }
-
-        public async Task RunOpenAIServerWebSearchExampleAsync()
-        {
-            ImmutableArray<ITool> tools = [
-
-                // new LightSwitchTool(this.httpClientFactory),
-                new WebSearchTool(this.embeddingsClient, this.scraperClient, this.httpClientFactory),
-            ];
-
-            var prompt = new FileSystemPromptProvider(
-                "websearch_example_system",
-                this.fileSystemPromptProviderConfig)
-                .Get();
-
-            var program = new AgentCell(
-                new ToolAgent(
-                    new AgentName("WebSearchAgent"),
-                    Role.Assistant,
-                    prompt,
-                    this.agentBuilderFactory,
-                    tools));
-
-            var passthruProgram = new AgentCell(
-                this.agentBuilderFactory
-                    .CreateBuilder()
-                    .WithName(new AgentName("ResponseAgent"))
-                    .WithRole(Role.Assistant)
-                    .WithInstructions(string.Empty)
-                    .Build());
-
-            await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);
-        }
-
-        public async Task RunMagiExampleAsync()
-        {
-            Cell<ConversationThread> definition = MagiExample.CreateDefinition(
-                this.userConsoleAgent, this.agentBuilderFactory);
-
-            await this.runner.RunAsync(
-                definition,
-                new ConversationThread());
-        }
-    }
 
     private class CommandLineArgs
     {
