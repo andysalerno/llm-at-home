@@ -16,7 +16,7 @@ namespace AgentFlow;
 
 public static class Program
 {
-    public static async Task Main()
+    public static async Task Main(string[] args)
     {
         var rootCommand = new RootCommand("Run an example");
 
@@ -58,9 +58,7 @@ public static class Program
             verbose,
             promptDir);
 
-        // await rootCommand.InvokeAsync(args);
-        var fakeUri = new Uri("http://localhost").AbsoluteUri;
-        await RunAppAsync(fakeUri, fakeUri, fakeUri, true, string.Empty);
+        await rootCommand.InvokeAsync(args);
     }
 
     internal static async Task RunAppAsync(string uri, string embeddingsUri, string scraperUri, bool verbose, string? promptDir)
