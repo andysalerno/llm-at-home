@@ -8,7 +8,7 @@ using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
 
-internal class MagiExample : IRunnableExample
+internal sealed class MagiExample : IRunnableExample
 {
     private readonly IAgent userConsoleAgent;
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
@@ -72,7 +72,7 @@ internal class MagiExample : IRunnableExample
             .WithInstructions(BuildInstructionsForRole("scientist"))
             .Build();
 
-        var loopForever = new WhileCell<ConversationThread>()
+        return new WhileCell<ConversationThread>()
         {
             WhileTrue = new CellSequence<ConversationThread>(
                 sequence: new Cell<ConversationThread>[]
@@ -92,14 +92,13 @@ internal class MagiExample : IRunnableExample
                             collectorMessageBuilder: (agentsOutput) =>
                             {
                                 var sb = new StringBuilder();
-                                sb.AppendLine("I queried multiple agents to respond. Here is what they said:");
-                                sb.AppendLine(agentsOutput);
-                                sb.AppendLine("\nBased on their majority decision, I can provide you with this final repsonse:");
+                                sb.AppendLine("I queried multiple agents to respond. Here is what they said:")
+                                    .AppendLine(agentsOutput)
+                                    .AppendLine("\nBased on their majority decision, I can provide you with this final repsonse:");
+
                                 return sb.ToString();
                             }),
                 }.ToImmutableArray()),
         };
-
-        return loopForever;
     }
 }
