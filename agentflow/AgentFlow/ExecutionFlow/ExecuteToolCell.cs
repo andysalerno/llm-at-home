@@ -95,7 +95,7 @@ public class ExecuteToolCell : Cell<ConversationThread>
         return this.tools.First();
     }
 
-    private record ToolSelectionOutput(
+    private sealed record ToolSelectionOutput(
         string LastUserMessageIntent,
         string FunctionName,
         string Invocation);

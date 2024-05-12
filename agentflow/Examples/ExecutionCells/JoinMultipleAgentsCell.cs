@@ -11,7 +11,7 @@ namespace AgentFlow.Examples.ExecutionCells;
 /// Gets a response from several different agents, and then collects them
 /// into a majority decision.
 /// </summary>
-internal class JoinMultipleAgentsCell : Cell<ConversationThread>
+internal sealed class JoinMultipleAgentsCell : Cell<ConversationThread>
 {
     private readonly ImmutableArray<AgentCell> agents;
     private readonly AgentCell collector;

@@ -11,7 +11,7 @@ using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
 
-internal class OpenAIServerWebSearchExample : IRunnableExample
+internal sealed class OpenAIServerWebSearchExample : IRunnableExample
 {
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
     private readonly IEmbeddingsClient embeddingsClient;

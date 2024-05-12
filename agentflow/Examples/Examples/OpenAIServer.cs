@@ -3,12 +3,13 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgentFlow;
 using AgentFlow.LlmClient;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
-internal class OpenAIServer
+namespace AgentFlow.Examples;
+
+internal sealed class OpenAIServer
 {
     private const string PassthruModelName = "passthru";
 
@@ -154,25 +155,25 @@ internal class OpenAIServer
         return new ConversationThread.Builder().AddMessages(messages).Build();
     }
 
-    private record ChatCompletionRequest(
+    private sealed record ChatCompletionRequest(
         [property: JsonPropertyName("model")] string Model,
         [property: JsonPropertyName("messages")] ImmutableArray<Message> Messages);
 
-    private record Message(
+    private sealed record Message(
         [property: JsonPropertyName("role")] string Role,
         [property: JsonPropertyName("content")] string Content);
 
-    private record ChatCompletionStreamingResponse(
+    private sealed record ChatCompletionStreamingResponse(
         [property: JsonPropertyName("choices")] ImmutableArray<ChatChoice> Choices,
         [property: JsonPropertyName("model")] string Model = "mymodel",
         [property: JsonPropertyName("object")] string Object = "chat.completion.chunk");
 
-    private record ChatChoice(
+    private sealed record ChatChoice(
        [property: JsonPropertyName("index")] int Index,
        [property: JsonPropertyName("delta")] Delta Delta,
        [property: JsonPropertyName("finish_reason")] string? FinishReason = null);
 
-    private record Delta(
+    private sealed record Delta(
         [property: JsonPropertyName("role")] string Role,
         [property: JsonPropertyName("content")] string Content);
 }

@@ -6,7 +6,7 @@ using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
 
-internal class SimpleChatExample : IRunnableExample
+internal sealed class SimpleChatExample : IRunnableExample
 {
     private readonly IAgent userConsoleAgent;
     private readonly CustomAgentBuilderFactory agentBuilderFactory;

@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples;
 
-internal class WebSearchExample : IRunnableExample
+internal sealed class WebSearchExample : IRunnableExample
 {
     private readonly ICellRunner<ConversationThread> runner;
     private readonly IAgent userConsoleAgent;

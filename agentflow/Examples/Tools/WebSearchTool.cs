@@ -122,7 +122,7 @@ public class WebSearchTool : ITool
         return parsed;
     }
 
-    private record SearchResults(ImmutableArray<SearchItem> Items);
+    private sealed record SearchResults(ImmutableArray<SearchItem> Items);
 
-    private record SearchItem(string Title, string Link, string DisplayLink, string Snippet);
+    private sealed record SearchItem(string Title, string Link, string DisplayLink, string Snippet);
 }
