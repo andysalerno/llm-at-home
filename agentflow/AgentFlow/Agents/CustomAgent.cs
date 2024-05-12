@@ -77,7 +77,7 @@ public sealed class CustomAgent : IAgent
             }
             else
             {
-                this.logger.LogInformation("System prompt unset; this may be intentional");
+                this.logger.LogInformation("No system prompt set; this may be intentional");
             }
 
             cells.Add(new GetAssistantResponseCell(this.Name, this.Role, this.responseSchema, this.completionsClient));
@@ -169,8 +169,8 @@ public sealed class CustomAgent : IAgent
                 instructionStrategy: this.instructionsStrategy,
                 name: this.name ?? throw new InvalidDataException("Name is required but was null"),
                 messageVisibility: this.visibility,
-                responseSchema: this.responseSchema,
-                completionsClient: this.completionsClient ?? throw new InvalidDataException("CompletionsClient is required but was null"));
+                completionsClient: this.completionsClient ?? throw new InvalidDataException("CompletionsClient is required but was null"),
+                responseSchema: this.responseSchema);
         }
     }
 }

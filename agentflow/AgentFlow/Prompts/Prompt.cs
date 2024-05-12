@@ -1,8 +1,10 @@
-﻿namespace AgentFlow.Prompts;
+﻿using Microsoft.Extensions.Logging;
 
-public record Variable(string Name, string Value);
+namespace AgentFlow.Prompts;
 
-public record Prompt
+public sealed record Variable(string Name, string Value);
+
+public sealed record Prompt
 {
     private readonly List<Variable> variables = new();
 
@@ -15,7 +17,7 @@ public record Prompt
 
     public string TemplateText { get; }
 
-    public Prompt WithVariable(string name, string value)
+    public Prompt AddVariable(string name, string value)
     {
         this.variables.Add(new Variable(name, value));
         return this;
@@ -23,6 +25,8 @@ public record Prompt
 
     public string Render()
     {
+        var logger = this.GetLogger();
+
         string result = this.TemplateText;
 
         foreach (var variable in this.variables)
@@ -36,10 +40,11 @@ public record Prompt
             result = result.Replace(tepmlatedVariableText, variable.Value, StringComparison.Ordinal);
         }
 
+        logger.LogInformation("Replaced {Count} variables in prompt", this.variables.Count);
+
         if (result.Contains("{{", StringComparison.Ordinal))
         {
-            // TODO: this should be a warning, not an exception
-            // throw new InvalidOperationException($"Prompt was rendered, but still contained unreplaced template artifacts. Saw: {result}");
+            logger.LogWarning("Prompt was rendered, but still contained unreplaced template artifacts. Saw: {Result}", result);
         }
 
         return result;
