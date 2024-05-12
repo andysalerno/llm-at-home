@@ -84,7 +84,7 @@ public class CustomAgent : IAgent
         }
 
         Cell<ConversationThread> sequence = new CellSequence<ConversationThread>(
-            sequence: cells.ToImmutableArray(),
+            sequence: cells.DrainToImmutable(),
             next: null);
 
         return Task.FromResult(sequence);

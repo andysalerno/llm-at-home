@@ -113,23 +113,26 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private readonly Uri chatCompletionsEndpoint;
     private readonly Uri embeddingsEndpoint;
     private readonly Uri scraperEndpoint;
+    private readonly string modelName;
     private readonly HttpClient httpClient;
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
 
     public OpenAICompletionsClient(
-        ICompletionsEndpointConfig completionsEndpointProvider,
+        ICompletionsEndpointConfig completionsEndpointProviderConfig,
         IHttpClientFactory httpClientFactory,
         ILoggingConfig loggingConfig,
         ILogger<OpenAICompletionsClient> logger)
     {
-        this.baseEndpoint = completionsEndpointProvider.CompletionsEndpoint;
+        this.baseEndpoint = completionsEndpointProviderConfig.CompletionsEndpoint;
         this.httpClient = httpClientFactory.CreateClient();
         this.loggingConfig = loggingConfig;
         this.logger = logger;
 
-        this.embeddingsEndpoint = completionsEndpointProvider.EmbeddingsEndpoint;
-        this.scraperEndpoint = completionsEndpointProvider.ScraperEndpoint;
+        this.embeddingsEndpoint = completionsEndpointProviderConfig.EmbeddingsEndpoint;
+        this.scraperEndpoint = completionsEndpointProviderConfig.ScraperEndpoint;
+
+        this.modelName = completionsEndpointProviderConfig.ModelName;
 
         this.chatCompletionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/chat/completions");
         this.completionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/completions");
@@ -147,7 +150,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     public async Task<CompletionsResult> GetCompletionsAsync(CompletionsRequest input)
     {
         var request = new OpenAICompletionRequest(
-            Model: "mixtral-8x7b-32768",
+            Model: this.modelName,
             Temperature: 0.0f,
             MaxTokens: MaxTokensToGenerate,
             Prompt: input.Text);
@@ -182,7 +185,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             .ToImmutableArray();
 
         var request = new OpenAIChatCompletionRequest(
-            Model: "mixtral-8x7b-32768",
+            Model: this.modelName,
             Temperature: 0.01f,
             MaxTokens: MaxTokensToGenerate,
             JsonSchema: input.JsonSchema,
@@ -205,6 +208,11 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         if (this.loggingConfig.LogRequestsToLlm)
         {
             this.logger.LogInformation("Received: {received}", resultJson);
+        }
+
+        if (!result.IsSuccessStatusCode)
+        {
+            this.logger.LogError("Request failed with status code: {StatusCode}", result.StatusCode);
         }
 
         OpenAIChatCompletionResponse parsedResponse = JsonSerializer.Deserialize<OpenAIChatCompletionResponse>(resultJson, JsonSerializerOptions)

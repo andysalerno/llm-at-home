@@ -156,7 +156,7 @@ public static class Program
     }
 
     private static Configuration BuildConfiguration(CommandLineArgs args)
-        => new Configuration(new Uri(args.Uri), new Uri(args.EmbeddingsUri), new Uri(args.ScraperUri))
+        => new Configuration(new Uri(args.Uri), new Uri(args.EmbeddingsUri), new Uri(args.ScraperUri), args.ModelName)
         {
             LogRequestsToLlm = args.Verbose,
             PromptDirectory = args.PromptDir ?? "./Prompts",

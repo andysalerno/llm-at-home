@@ -6,9 +6,14 @@ public static class NullUtilities
 {
     public static T OrElse<T>(this T? input, Func<T> output)
     {
-        if (input == null)
+        return input ?? output();
+    }
+
+    public static T NonNullOrThrow<T>(this T? input)
+    {
+        if (input is null)
         {
-            return output();
+            throw new ArgumentNullException("Expected non-null value, but found null");
         }
 
         return input;

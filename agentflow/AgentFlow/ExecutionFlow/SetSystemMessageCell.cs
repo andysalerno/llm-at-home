@@ -25,11 +25,14 @@ public class SetSystemMessageCell : Cell<ConversationThread>
 
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
-        if (input.Messages.Any(m => m.Role == Role.System))
+        string nextContent = this.systemMessageContent.Render();
+
+        if (input.Messages.FirstOrDefault(m => m.Role == Role.System) is Message existingSystemMessage
+            && !string.Equals(existingSystemMessage.Content, nextContent, StringComparison.Ordinal))
         {
-            this.logger.LogWarning("Workspace message context already contained a system message, which is unexpected.");
+            this.logger.LogWarning("ConversationThread already contained a different system message, which will be replaced.");
         }
 
-        return Task.FromResult(input.WithSystemMessage(new Message(this.agentName, Role.System, this.systemMessageContent.Render())));
+        return Task.FromResult(input.WithSystemMessage(new Message(this.agentName, Role.System, nextContent)));
     }
 }
