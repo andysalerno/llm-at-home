@@ -18,6 +18,13 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
+        var rootCommand = BuildRootCommand();
+
+        await rootCommand.InvokeAsync(args);
+    }
+
+    private static RootCommand BuildRootCommand()
+    {
         var rootCommand = new RootCommand("Run an example");
 
         var uriArg = new Argument<string>(
@@ -64,10 +71,10 @@ public static class Program
             verbose,
             promptDir);
 
-        await rootCommand.InvokeAsync(args);
+        return rootCommand;
     }
 
-    internal static async Task RunAppAsync(
+    private static async Task RunAppAsync(
         string uri,
         string embeddingsUri,
         string scraperUri,
@@ -155,28 +162,11 @@ public static class Program
             PromptDirectory = args.PromptDir ?? "./Prompts",
         };
 
-    private sealed class CommandLineArgs
-    {
-        public CommandLineArgs(string uri, string embeddingsUri, string scraperUri, string modelName, bool verbose, string promptDir)
-        {
-            this.Uri = uri;
-            this.EmbeddingsUri = embeddingsUri;
-            this.ScraperUri = scraperUri;
-            this.ModelName = modelName;
-            this.Verbose = verbose;
-            this.PromptDir = promptDir;
-        }
-
-        public string Uri { get; }
-
-        public string ModelName { get; }
-
-        public string ScraperUri { get; }
-
-        public string EmbeddingsUri { get; }
-
-        public bool Verbose { get; }
-
-        public string PromptDir { get; }
-    }
+    private sealed record CommandLineArgs(
+        string Uri,
+        string EmbeddingsUri,
+        string ScraperUri,
+        string ModelName,
+        bool Verbose,
+        string PromptDir);
 }
