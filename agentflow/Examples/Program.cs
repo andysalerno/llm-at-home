@@ -32,6 +32,10 @@ public static class Program
             name: "embeddingsUri",
             description: "the target URI of the embeddings service");
 
+        var modelName = new Argument<string>(
+            name: "modelName",
+            description: "The name of the model to use");
+
         var verbose = new Option<bool>(
             name: "-v",
             getDefaultValue: () => false,
@@ -47,6 +51,7 @@ public static class Program
         rootCommand.AddArgument(uriArg);
         rootCommand.AddArgument(embeddingsUriArg);
         rootCommand.AddArgument(scraperUriArg);
+        rootCommand.AddArgument(modelName);
         rootCommand.AddOption(verbose);
         rootCommand.AddOption(promptDir);
 
@@ -55,17 +60,24 @@ public static class Program
             uriArg,
             embeddingsUriArg,
             scraperUriArg,
+            modelName,
             verbose,
             promptDir);
 
         await rootCommand.InvokeAsync(args);
     }
 
-    internal static async Task RunAppAsync(string uri, string embeddingsUri, string scraperUri, bool verbose, string? promptDir)
+    internal static async Task RunAppAsync(
+        string uri,
+        string embeddingsUri,
+        string scraperUri,
+        string modelName,
+        bool verbose,
+        string? promptDir)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
-        var commandLineArgs = new CommandLineArgs(uri, embeddingsUri, scraperUri, verbose, promptDir);
+        var commandLineArgs = new CommandLineArgs(uri, embeddingsUri, scraperUri, modelName, verbose, promptDir);
 
         IContainer container = ConfigureContainer(commandLineArgs);
 
@@ -145,16 +157,19 @@ public static class Program
 
     private sealed class CommandLineArgs
     {
-        public CommandLineArgs(string uri, string embeddingsUri, string scraperUri, bool verbose, string promptDir)
+        public CommandLineArgs(string uri, string embeddingsUri, string scraperUri, string modelName, bool verbose, string promptDir)
         {
             this.Uri = uri;
             this.EmbeddingsUri = embeddingsUri;
             this.ScraperUri = scraperUri;
+            this.ModelName = modelName;
             this.Verbose = verbose;
             this.PromptDir = promptDir;
         }
 
         public string Uri { get; }
+
+        public string ModelName { get; }
 
         public string ScraperUri { get; }
 
