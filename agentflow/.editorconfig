@@ -193,6 +193,10 @@ dotnet_diagnostic.SA1615.severity = suggestion
 # SA1402: File may only contain a single type
 dotnet_diagnostic.SA1402.severity = suggestion
 
+# Roslynator
+# Set severity for all analyzers that are enabled by default (https://docs.microsoft.com/en-us/visualstudio/code-quality/use-roslyn-analyzers?view=vs-2022#set-rule-severity-of-multiple-analyzer-rules-at-once-in-an-editorconfig-file)
+dotnet_analyzer_diagnostic.category-roslynator.severity = warning
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman
