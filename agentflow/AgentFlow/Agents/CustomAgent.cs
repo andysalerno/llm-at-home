@@ -38,7 +38,7 @@ public sealed class CustomAgent : IAgent
 
     private CustomAgent(
         Role role,
-        string instructions,
+        string? instructions,
         InstructionStrategy instructionStrategy,
         AgentName name,
         MessageVisibility messageVisibility,
@@ -63,7 +63,7 @@ public sealed class CustomAgent : IAgent
 
     public bool IsCodeProvider { get; }
 
-    public string Instructions { get; }
+    public string? Instructions { get; }
 
     public InstructionStrategy InstructionStrategy { get; }
 
@@ -165,7 +165,7 @@ public sealed class CustomAgent : IAgent
         {
             return new CustomAgent(
                 role: this.role ?? throw new InvalidDataException("Role is required but was null"),
-                instructions: this.instructions ?? throw new InvalidDataException("Instructions is required but was null"),
+                instructions: this.instructions,
                 instructionStrategy: this.instructionsStrategy,
                 name: this.name ?? throw new InvalidDataException("Name is required but was null"),
                 messageVisibility: this.visibility,

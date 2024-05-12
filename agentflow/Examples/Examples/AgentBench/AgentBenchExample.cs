@@ -1,5 +1,6 @@
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
+using AgentFlow.Agents.Extensions;
 using AgentFlow.LlmClient;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -30,14 +31,23 @@ internal sealed class AgentBenchExample : IRunnableExample
 
     private async Task BenchOneAsync()
     {
+        Message CreateUserMessage(string content)
+        {
+            return new Message(new AgentName("UserAgent"), Role.User, content);
+        }
+
+        var conversationThread = ConversationThread
+            .CreateBuilder()
+            .AddMessage(CreateUserMessage("how many prime numbers are there?"))
+            .Build();
+
         IAgent agent = this.agentFactory
             .CreateBuilder()
             .WithRole(Role.Assistant)
             .WithName(new AgentName("BenchOneAgent"))
-            .WithInstructions("You are a helpful assistant. Always do what you can to help.")
             .Build();
 
-        ConversationThread result = await this.runner.RunAsync(new AgentCell(agent), new ConversationThread());
+        ConversationThread result = await this.runner.RunAsync(new AgentCell(agent), conversationThread);
 
         this.logger.LogInformation("Result: {Result}", result);
     }

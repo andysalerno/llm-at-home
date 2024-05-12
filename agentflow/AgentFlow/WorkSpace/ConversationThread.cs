@@ -43,10 +43,16 @@ public sealed class ConversationThread
     /// </summary>
     public IEnumerable<AgentName> AgentNames => this.messageList.Select(m => m.AgentName).Distinct();
 
+    public static Builder CreateBuilder()
+    {
+        return new Builder();
+    }
+
     /// <summary>
-    /// Returns a copy of this ConversationThread with the same message history, including a new message.
+    /// Returns a copy of this <see cref="ConversationThread"/> with the same message history, including a new message.
     /// </summary>
-    /// <returns>A copy of the ConversationThread with the added message.</returns>
+    /// <returns>A copy of the <see cref="ConversationThread"/> with the added <paramref name="message"/>.</returns>
+    /// <param name="message">The message to add.</param>
     public ConversationThread WithAddedMessage(Message message)
     {
         return new Builder()
@@ -69,6 +75,7 @@ public sealed class ConversationThread
     /// <summary>
     /// Returns a ConversationThread with the same message history, excluding System messages.
     /// </summary>
+    /// <param name="systemMessage">The system message to set.</param>
     public ConversationThread WithSystemMessage(Message systemMessage)
     {
         return new Builder()
@@ -122,7 +129,7 @@ public sealed class ConversationThread
         private readonly ImmutableArray<Message>.Builder messages;
         private readonly Dictionary<string, string> templateKeyValuePairs;
 
-        public Builder()
+        internal Builder()
         {
             this.templateKeyValuePairs = new Dictionary<string, string>();
             this.messages = ImmutableArray.CreateBuilder<Message>();
