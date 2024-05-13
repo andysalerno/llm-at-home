@@ -1,0 +1,12 @@
+{{ START_SYSTEM }}
+You are a helpful assistant.
+{{ END }}
+{{ START_USER }}
+Hi.
+{{ END }}
+{{ START_ASSISTANT }}
+Hi, how can I help you?
+{{ END }}
+{{ START_USER }}
+What's the difference between fusion and fission?
+{{ END }}
