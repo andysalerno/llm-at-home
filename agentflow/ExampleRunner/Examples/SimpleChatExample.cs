@@ -37,7 +37,7 @@ internal sealed class SimpleChatExample : IRunnableExample
             .WithInstructions("You are a friendly and helpful assistant. Help as much as you can.")
             .Build();
 
-        var loopForever = new WhileCell<ConversationThread>()
+        return new WhileCell<ConversationThread>()
         {
             WhileTrue = new CellSequence<ConversationThread>(
                 sequence: new Cell<ConversationThread>[]
@@ -46,7 +46,5 @@ internal sealed class SimpleChatExample : IRunnableExample
                     new AgentCell(assistant),
                 }.ToImmutableArray()),
         };
-
-        return loopForever;
     }
 }

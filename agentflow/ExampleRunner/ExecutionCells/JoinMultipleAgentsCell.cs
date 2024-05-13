@@ -47,7 +47,7 @@ internal sealed class JoinMultipleAgentsCell : Cell<ConversationThread>
 
         string agentsOutputJson;
         {
-            var formatted = decisions.Select(d => new { Name = d.AgentName.Value, Response = d.Content }).ToList();
+            var formatted = decisions.ConvertAll(d => new { Name = d.AgentName.Value, Response = d.Content });
             agentsOutputJson = JsonSerializer.Serialize(formatted);
             this.logger.LogInformation("Formatted agent outputs to: {Outputs}", agentsOutputJson);
         }
@@ -61,9 +61,7 @@ internal sealed class JoinMultipleAgentsCell : Cell<ConversationThread>
             throw new InvalidOperationException("The 'collector' agent must have role 'Assistant', but it did not");
         }
 
-        var finalOutput = await this.collector.RunAsync(threadWithAllResponses);
-
         // Then, ask the 'collector' agent to tally up the votes and provide the final response:
-        return finalOutput;
+        return await this.collector.RunAsync(threadWithAllResponses);
     }
 }

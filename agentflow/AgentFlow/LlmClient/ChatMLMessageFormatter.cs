@@ -67,7 +67,7 @@ public class ChatMLMessageFormatter : IMessageFormatter
 
         if (addGenerationPrompt)
         {
-            builder.Append($"<|im_start|>assistant\n");
+            builder.Append("<|im_start|>assistant\n");
         }
 
         return builder.ToString();

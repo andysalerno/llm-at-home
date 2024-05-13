@@ -28,16 +28,18 @@ public class WebSearchTool : ITool
     public string Name { get; } = "search_web";
 
     public string Definition { get; } =
-@"def search_web(query: str) -> str:
-    """"""
+""""
+def search_web(query: str) -> str:
+    """
     Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.
     Examples:
         search_web('Eiffel Tower height')
         search_web('best pizza in Seattle')
         search_web('Seattle Kraken game results')
-    """"""
+    """
     pass
-".TrimEnd();
+
+"""".TrimEnd();
 
     public async Task<string> GetOutputAsync(string input)
     {
@@ -61,7 +63,7 @@ public class WebSearchTool : ITool
 
         logger.LogInformation("got scores: {Scores}", scores.Scores);
 
-        return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
+        return string.Join("\n\n", scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
 
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)
@@ -107,10 +109,8 @@ public class WebSearchTool : ITool
 
         var result = await client.GetAsync(searchUri.Uri);
 
-        var parsed = await result.Content.ReadFromJsonAsync<SearchResults>()
+        return await result.Content.ReadFromJsonAsync<SearchResults>()
             ?? throw new InvalidOperationException("Could not parse response as SearchResults");
-
-        return parsed;
     }
 
     private sealed record SearchResults(ImmutableArray<SearchItem> Items);

@@ -33,7 +33,7 @@ def turn_lights_on_off(on_or_off: str) -> str:
         // URL of the service
         Uri url;
 
-        if (input.Contains("on"))
+        if (input.Contains("on", StringComparison.Ordinal))
         {
             url = new Uri("http://192.168.50.46:8123/api/services/homeassistant/turn_on");
         }
