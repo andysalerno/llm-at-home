@@ -6,5 +6,5 @@ public interface ITool
 
     string Definition { get; }
 
-    Task<string> GetOutput(string input);
+    Task<string> GetOutputAsync(string input);
 }

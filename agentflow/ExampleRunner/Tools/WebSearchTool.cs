@@ -39,7 +39,7 @@ public class WebSearchTool : ITool
     pass
 ".TrimEnd();
 
-    public async Task<string> GetOutput(string input)
+    public async Task<string> GetOutputAsync(string input)
     {
         ILogger logger = this.GetLogger();
 
@@ -62,15 +62,6 @@ public class WebSearchTool : ITool
         logger.LogInformation("got scores: {Scores}", scores.Scores);
 
         return string.Join("\n\n", scoresByIndex.Select((s, i) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
-    }
-
-    private static float CosineSimilarity(ImmutableArray<float> a, ImmutableArray<float> b)
-    {
-        float dotProduct = a.Zip(b).Select(tuple => tuple.First * tuple.Second).Sum();
-        float magnitudeA = (float)Math.Sqrt(a.Select(n => (float)Math.Pow(n, 2)).Sum());
-        float magnitudeB = (float)Math.Sqrt(b.Select(n => (float)Math.Pow(n, 2)).Sum());
-
-        return dotProduct / (magnitudeA * magnitudeB);
     }
 
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)

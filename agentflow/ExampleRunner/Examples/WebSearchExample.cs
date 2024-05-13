@@ -53,7 +53,7 @@ internal sealed class WebSearchExample : IRunnableExample
         ImmutableArray<ITool> tools = [new WebSearchTool(this.embeddingsClient, this.scraperClient, this.httpClientFactory)];
 
         // TODO: BeginLoop().WithSequence().AddAgent().AddAgent().EndLoop();
-        var loopForever = new WhileCell<ConversationThread>()
+        return new WhileCell<ConversationThread>()
         {
             WhileTrue = new CellSequence<ConversationThread>(
                 sequence: new Cell<ConversationThread>[]
@@ -68,8 +68,6 @@ internal sealed class WebSearchExample : IRunnableExample
                             tools)),
                 }.ToImmutableArray()),
         };
-
-        return loopForever;
     }
 
     public async Task RunAsync()

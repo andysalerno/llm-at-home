@@ -25,12 +25,12 @@ internal sealed class OpenAIServer
         listener.Prefixes.Add($"http://*:{port}/");
         listener.Start();
 
-        await HandleIncomingConnections(listener, program, passthruProgram, runner, logger);
+        await HandleIncomingConnectionsAsync(listener, program, passthruProgram, runner, logger);
 
         listener.Close();
     }
 
-    private static async Task HandleIncomingConnections(
+    private static async Task HandleIncomingConnectionsAsync(
         HttpListener listener,
         Cell<ConversationThread> program,
         Cell<ConversationThread> passthruProgram,
@@ -101,8 +101,8 @@ internal sealed class OpenAIServer
             [
                 new ChatChoice(
                             Index: 1,
-                            FinishReason: "stop",
-                            Delta: new Delta(Role: "assistant", Content: string.Empty))
+                            Delta: new Delta(Role: "assistant", Content: string.Empty),
+                            FinishReason: "stop")
             ]);
 
         response.ContentType = "text/event-stream; charset=utf-8";
@@ -138,9 +138,8 @@ internal sealed class OpenAIServer
 
         string serialized = JsonSerializer.Serialize(response);
 
-        builder.Append(serialized);
-
-        builder.Append("\n\n");
+        builder.Append(serialized)
+            .Append("\n\n");
 
         return builder.ToString();
     }

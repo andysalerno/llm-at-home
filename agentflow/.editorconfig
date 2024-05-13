@@ -217,6 +217,12 @@ dotnet_diagnostic.RCS1246.severity = suggestion
 # CA1034: Nested types should not be visible
 dotnet_diagnostic.CA1034.severity = suggestion
 
+# CA1303: Do not pass literals as localized parameters
+dotnet_diagnostic.CA1303.severity = suggestion
+
+# SA1649: File name should match first type name
+dotnet_diagnostic.SA1649.severity = suggestion
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman

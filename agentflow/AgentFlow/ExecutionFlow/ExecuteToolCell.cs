@@ -48,7 +48,7 @@ public class ExecuteToolCell : Cell<ConversationThread>
 
             this.GetLogger().LogInformation("Detected tool input string: {Input}", toolInput);
 
-            toolOutput = await tool.GetOutput(toolInput);
+            toolOutput = await tool.GetOutputAsync(toolInput);
         }
 
         return input.WithAddedMessage(
@@ -81,12 +81,12 @@ public class ExecuteToolCell : Cell<ConversationThread>
     private ITool SelectMatchingTool(Message toolMessage)
     {
         // TODO
-        if (toolMessage.Content.Contains("search"))
+        if (toolMessage.Content.Contains("search", StringComparison.Ordinal))
         {
             return this.tools.FirstOrDefault(t => t.Name == "search_web")
                 ?? throw new InvalidOperationException("tool not found");
         }
-        else if (toolMessage.Content.Contains("lights"))
+        else if (toolMessage.Content.Contains("lights", StringComparison.Ordinal))
         {
             return this.tools.FirstOrDefault(t => t.Name == "turn_lights_on_off")
                 ?? throw new InvalidOperationException("tool not found");
