@@ -1,6 +1,7 @@
+using System.Collections.Immutable;
+using System.Net.Mime;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
-using AgentFlow.Agents.Extensions;
 using AgentFlow.LlmClient;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -29,17 +30,42 @@ internal sealed class AgentBenchExample : IRunnableExample
         this.logger.LogInformation("AgentBench complete.");
     }
 
-    private async Task BenchOneAsync()
+    private ConversationThread ParseScenario(string scenarioText)
     {
-        Message CreateUserMessage(string content)
+        var messages = new List<Message>();
+
+        while (true)
         {
-            return new Message(new AgentName("UserAgent"), Role.User, content);
+            var split = scenarioText.Split("{{ END }}", count: 2).Where(s => !string.IsNullOrWhiteSpace(s)).ToImmutableArray();
+            if (split.Length == 0)
+            {
+                break;
+            }
+            else if (split.Length > 2)
+            {
+                throw new InvalidOperationException($"Expected two splits at most, saw {split.Length}");
+            }
+
+            if (!split[0].StartsWith("{{ START_"))
+            {
+                throw new InvalidOperationException("Expected split to start with message prefix");
+            }
+
+            string messageContent = split[0].Substring("{{ START_".Length);
+
+            messages.Add(new Message(new AgentName("blah"), Role.User, Content: messageContent));
+
+            scenarioText = split[1];
         }
 
-        var conversationThread = ConversationThread
-            .CreateBuilder()
-            .AddMessage(CreateUserMessage("how many prime numbers are there?"))
-            .Build();
+        this.logger.LogInformation("Saw messages: {Thread}", messages);
+
+        return new ConversationThread();
+    }
+
+    private async Task BenchOneAsync()
+    {
+        var conversationThread = ParseScenario("hi");
 
         IAgent agent = this.agentFactory
             .CreateBuilder()
