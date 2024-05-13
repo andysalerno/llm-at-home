@@ -10,6 +10,8 @@ namespace AgentFlow.Examples;
 
 internal sealed class AgentBenchExample : IRunnableExample
 {
+    private static readonly string[] Separator = new[] { "{{ END }}" };
+
     private readonly CustomAgentBuilderFactory agentFactory;
     private readonly ICellRunner<ConversationThread> runner;
     private readonly ILogger<AgentBenchExample> logger;
@@ -37,7 +39,7 @@ internal sealed class AgentBenchExample : IRunnableExample
         return await File.ReadAllTextAsync($"{currentDir}/Examples/AgentBench/Scenarios/{scenarioName}.scenario");
     }
 
-    private ConversationThread ParseScenario(string scenarioText)
+    private ConversationThread ParseScenarioOld(string scenarioText)
     {
         var messages = new List<Message>();
 
@@ -83,6 +85,42 @@ internal sealed class AgentBenchExample : IRunnableExample
         }
 
         this.logger.LogInformation("Saw messages: {Thread}", messages);
+
+        return ConversationThread.CreateBuilder().AddMessages(messages).Build();
+    }
+
+    private ConversationThread ParseScenario(string scenarioText)
+    {
+        var messages = new List<Message>();
+
+        var parts = scenarioText.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
+
+        var messageRegex = new Regex(@"{{ START_(?<start>[^}]*) }}\s*(?<content>.*)", RegexOptions.Singleline);
+
+        foreach (var part in parts)
+        {
+            string trimmedPart = part.Trim();
+            if (string.IsNullOrEmpty(trimmedPart))
+            {
+                continue; // Skip empty segments.
+            }
+
+            Match match = messageRegex.Match(trimmedPart);
+
+            if (!match.Success)
+            {
+                throw new InvalidOperationException("Failed to parse the scenario text: " + trimmedPart);
+            }
+
+            string startTag = match.Groups["start"].Value.Trim();
+            string content = match.Groups["content"].Value.Trim();
+
+            this.logger.LogInformation("Parsed message with tag: {Tag}, content: {Content}", startTag, content);
+
+            messages.Add(new Message(new AgentName(startTag), Role.ExpectFromName(startTag), content));
+        }
+
+        this.logger.LogInformation("Total parsed messages: {Count}", messages.Count);
 
         return ConversationThread.CreateBuilder().AddMessages(messages).Build();
     }
