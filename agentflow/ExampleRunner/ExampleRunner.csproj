@@ -26,12 +26,8 @@
 
   <ItemGroup>
     <Content Include="Prompts\**" CopyToPublishDirectory="Always" />
+    <Content Include="Examples\AgentBench\**" CopyToOutputDirectory="Always" />
   </ItemGroup>
-
-  <Target Name="CopyScenarios" AfterTargets="AfterBuild">
-    <Copy SourceFiles="Examples\AgentBench\Scenarios"
-      DestinationFolder="$(OutDir)\Scenarios" />
-  </Target>
 
   <!-- begin analyzers -->
   <PropertyGroup>
