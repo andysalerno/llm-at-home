@@ -1,10 +1,8 @@
 using System.Collections.Immutable;
-using System.Net.Mime;
 using System.Text.RegularExpressions;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.LlmClient;
-using AgentFlow.Util;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
@@ -93,7 +91,7 @@ internal sealed class AgentBenchExample : IRunnableExample
     {
         this.logger.LogInformation("Running BenchOne");
         string scenario1Content = await GetScenarioTextAsync("scenario_1");
-        var conversationThread = ParseScenario(scenario1Content);
+        var conversationThread = this.ParseScenario(scenario1Content);
 
         IAgent agent = this.agentFactory
             .CreateBuilder()

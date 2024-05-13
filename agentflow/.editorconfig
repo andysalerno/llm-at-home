@@ -214,6 +214,9 @@ dotnet_diagnostic.CS8618.severity = error
 # RCS1246: Use element access
 dotnet_diagnostic.RCS1246.severity = suggestion
 
+# CA1034: Nested types should not be visible
+dotnet_diagnostic.CA1034.severity = suggestion
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman
