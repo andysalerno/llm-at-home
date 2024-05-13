@@ -26,7 +26,7 @@ internal sealed class AgentBenchExample : IRunnableExample
     {
         this.logger.LogInformation("Starting AgentBench...");
 
-        await this.Bench2Async();
+        await this.Pistachio1Async();
 
         this.logger.LogInformation("AgentBench complete.");
     }
@@ -104,6 +104,16 @@ internal sealed class AgentBenchExample : IRunnableExample
         this.logger.LogInformation("Running Bench2");
 
         var conversationThread = await this.GetScenarioConversationAsync("scenario_2");
+        ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
+
+        this.logger.LogInformation("Result: {Result}", result);
+    }
+
+    private async Task Pistachio1Async()
+    {
+        this.logger.LogInformation("Running Pistachio1");
+
+        var conversationThread = await this.GetScenarioConversationAsync("pistachio_1");
         ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
 
         this.logger.LogInformation("Result: {Result}", result);
