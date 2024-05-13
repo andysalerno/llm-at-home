@@ -86,7 +86,7 @@ internal sealed class AgentBenchExample : IRunnableExample
 
         this.logger.LogInformation("Saw messages: {Thread}", messages);
 
-        return new ConversationThread();
+        return ConversationThread.CreateBuilder().AddMessages(messages).Build();
     }
 
     private async Task BenchOneAsync()
