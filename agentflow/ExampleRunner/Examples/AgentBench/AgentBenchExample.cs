@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.LlmClient;
+using AgentFlow.Util;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
@@ -9,7 +10,14 @@ namespace AgentFlow.Examples;
 
 internal sealed class AgentBenchExample : IRunnableExample
 {
-    private static readonly string[] Separator = new[] { "{{ END }}" };
+    private static readonly string[] Separator = ["{{ END }}"];
+
+    private static readonly Lazy<string> ScenarioDirectory =
+        new Lazy<string>(() =>
+        {
+            DirectoryInfo assemblyDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).NonNullOrThrow();
+            return $"{assemblyDir.FullName}/Examples/AgentBench/Scenarios";
+        });
 
     private readonly CustomAgentBuilderFactory agentFactory;
     private readonly ICellRunner<ConversationThread> runner;
@@ -26,16 +34,16 @@ internal sealed class AgentBenchExample : IRunnableExample
     {
         this.logger.LogInformation("Starting AgentBench...");
 
-        await this.Pistachio1Async();
+        await this.RunScenarioAsync("logic_1");
 
         this.logger.LogInformation("AgentBench complete.");
     }
 
     private static async Task<string> GetScenarioTextAsync(string scenarioName)
     {
-        string currentDir = System.Reflection.Assembly.GetExecutingAssembly().Location;
-        currentDir = Directory.GetParent(currentDir)?.FullName ?? throw new InvalidOperationException("Parent dir not found");
-        return await File.ReadAllTextAsync($"{currentDir}/Examples/AgentBench/Scenarios/{scenarioName}.scenario");
+        string scenarioDir = ScenarioDirectory.Value;
+
+        return await File.ReadAllTextAsync($"{scenarioDir}/{scenarioName}.scenario");
     }
 
     private ConversationThread ParseScenario(string scenarioText)
@@ -80,7 +88,7 @@ internal sealed class AgentBenchExample : IRunnableExample
         return this.ParseScenario(scenarioText);
     }
 
-    private IAgent GetSimpleTestAgent()
+    private CustomAgent GetSimpleTestAgent()
     {
         return this.agentFactory
             .CreateBuilder()
@@ -89,33 +97,30 @@ internal sealed class AgentBenchExample : IRunnableExample
             .Build();
     }
 
-    private async Task Bench1Async()
+    private async Task RunScenarioAsync(string scenarioName)
     {
-        this.logger.LogInformation("Running Bench2");
+        using var scope = this.logger.BeginScope(scenarioName);
 
-        var conversationThread = await this.GetScenarioConversationAsync("scenario_1");
+        var conversationThread = await this.GetScenarioConversationAsync(scenarioName);
         ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
 
-        this.logger.LogInformation("Result: {Result}", result);
+        await this.WriteResultAsync("modelName", scenarioName, result.Messages.Last().Content);
     }
 
-    private async Task Bench2Async()
+    private async Task WriteResultAsync(string modelName, string scenarioName, string output)
     {
-        this.logger.LogInformation("Running Bench2");
+        DirectoryInfo parent = Directory.GetParent(ScenarioDirectory.Value).NonNullOrThrow();
 
-        var conversationThread = await this.GetScenarioConversationAsync("scenario_2");
-        ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
+        string resultDir = $"{parent.FullName}/Results/{modelName}/";
 
-        this.logger.LogInformation("Result: {Result}", result);
-    }
+        Directory.CreateDirectory(resultDir);
 
-    private async Task Pistachio1Async()
-    {
-        this.logger.LogInformation("Running Pistachio1");
+        string resultPath = resultDir + scenarioName;
 
-        var conversationThread = await this.GetScenarioConversationAsync("pistachio_1");
-        ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
+        this.logger.LogInformation("writing result to: {Path}", resultPath);
 
-        this.logger.LogInformation("Result: {Result}", result);
+        await File.WriteAllTextAsync(resultPath, output);
+
+        this.logger.LogInformation("wrote result to: {Path}", resultPath);
     }
 }
