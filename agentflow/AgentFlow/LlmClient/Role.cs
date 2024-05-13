@@ -29,7 +29,7 @@ public record Role
             User, Assistant, System, ToolInvocation, ToolOutput
         ];
 
-        Role? matching = roles.FirstOrDefault(r => r.Name == name);
+        Role? matching = roles.FirstOrDefault(r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (matching is Role r)
         {

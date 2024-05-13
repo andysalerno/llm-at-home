@@ -1,8 +1,10 @@
 using System.Collections.Immutable;
 using System.Net.Mime;
+using System.Text.RegularExpressions;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.LlmClient;
+using AgentFlow.Util;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
@@ -30,6 +32,13 @@ internal sealed class AgentBenchExample : IRunnableExample
         this.logger.LogInformation("AgentBench complete.");
     }
 
+    private static async Task<string> GetScenarioTextAsync(string scenarioName)
+    {
+        string currentDir = System.Reflection.Assembly.GetExecutingAssembly().Location;
+        currentDir = Directory.GetParent(currentDir)?.FullName ?? throw new InvalidOperationException("Parent dir not found");
+        return await File.ReadAllTextAsync($"{currentDir}/Examples/AgentBench/Scenarios/{scenarioName}.scenario");
+    }
+
     private ConversationThread ParseScenario(string scenarioText)
     {
         var messages = new List<Message>();
@@ -46,14 +55,31 @@ internal sealed class AgentBenchExample : IRunnableExample
                 throw new InvalidOperationException($"Expected two splits at most, saw {split.Length}");
             }
 
-            if (!split[0].StartsWith("{{ START_"))
+            string nextMessageRaw = split[0];
+
+            var regex = new Regex(@"{{ START_(?<start>[^}]*) }}\s*(?<content>.*)", RegexOptions.Singleline);
+
+            this.logger.LogInformation("Parsing text: {Text}", nextMessageRaw);
+
+            Match match = regex.Match(nextMessageRaw);
+
+            if (!match.Success)
             {
-                throw new InvalidOperationException("Expected split to start with message prefix");
+                throw new InvalidOperationException("Could not parse the scenario text.");
             }
 
-            string messageContent = split[0].Substring("{{ START_".Length);
+            string startTag = match.Groups["start"].Value.Trim();
+            string content = match.Groups["content"].Value.Trim();
 
-            messages.Add(new Message(new AgentName("blah"), Role.User, Content: messageContent));
+            this.logger.LogInformation("saw tag: {Tag}", startTag);
+            this.logger.LogInformation("saw content: {Content}", content);
+
+            messages.Add(new Message(new AgentName(startTag), Role.ExpectFromName(startTag), Content: content));
+
+            if (split.Length == 1)
+            {
+                break;
+            }
 
             scenarioText = split[1];
         }
@@ -65,7 +91,9 @@ internal sealed class AgentBenchExample : IRunnableExample
 
     private async Task BenchOneAsync()
     {
-        var conversationThread = ParseScenario("hi");
+        this.logger.LogInformation("Running BenchOne");
+        string scenario1Content = await GetScenarioTextAsync("scenario_1");
+        var conversationThread = ParseScenario(scenario1Content);
 
         IAgent agent = this.agentFactory
             .CreateBuilder()
