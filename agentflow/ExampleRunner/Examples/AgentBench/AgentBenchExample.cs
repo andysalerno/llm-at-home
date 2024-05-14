@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -34,16 +35,41 @@ internal sealed class AgentBenchExample : IRunnableExample
     {
         this.logger.LogInformation("Starting AgentBench...");
 
-        await this.RunScenarioAsync("logic_1");
+        ImmutableArray<string> scenarios = DiscoverScenarios();
+
+        this.logger.LogInformation("Discovered scenarios: {Scenarios}", string.Join(", ", scenarios));
+
+        foreach (string scenarioName in scenarios)
+        {
+            this.logger.LogInformation("Running scenario: {Scenario}", scenarioName);
+            await this.RunScenarioAsync(scenarioName);
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
 
         this.logger.LogInformation("AgentBench complete.");
+    }
+
+    private static ImmutableArray<string> DiscoverScenarios()
+    {
+        string scenarioDir = ScenarioDirectory.Value;
+
+        string[] scenarios = Directory.GetFiles(scenarioDir);
+
+        return scenarios.Select(s => Path.GetFileName(s)).ToImmutableArray();
     }
 
     private static async Task<string> GetScenarioTextAsync(string scenarioName)
     {
         string scenarioDir = ScenarioDirectory.Value;
 
-        return await File.ReadAllTextAsync($"{scenarioDir}/{scenarioName}.scenario");
+        string scenarioFile = $"{scenarioDir}/{scenarioName}";
+
+        if (!scenarioFile.EndsWith(".scenario"))
+        {
+            scenarioFile += ".scenario";
+        }
+
+        return await File.ReadAllTextAsync(scenarioFile);
     }
 
     private ConversationThread ParseScenario(string scenarioText)
