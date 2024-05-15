@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  openaiapi:
+    image: localhost/llama.cpp:server-cuda
+    volumes:
+      - /home/tiny/mnt/drive/gguf:/models
+    ports:
+      - "8003:8080"
+    restart: unless-stopped
+    command: -m /models/Phi-3-mini-128k-instruct.Q8_0.gguf --port 8080 --host 0.0.0.0 -ngl 100 -fa
+    devices:
+      - nvidia.com/gpu=all
+
+  chat-ui:
+    image: localhost/chat-ui
+    build: ./chat-ui
+    ports:
+      - "80:5173"
+    restart: unless-stopped
+    depends_on:
+      - mongo-chatui
+
+  mongo-chatui:
+    image: mongo:latest
+    restart: unless-stopped

@@ -20,7 +20,7 @@ services:
       - "nvidia.com/gpu=all"
     restart: unless-stopped
 
-  agentflow:
+  openaiapi:
     image: localhost/agentflow
     build: ./agentflow
     ports:
