@@ -5,9 +5,10 @@ services:
     volumes:
       - /home/tiny/mnt/drive/gguf:/models
     ports:
-      - "8003:8080"
+      - "8003:8003"
     restart: unless-stopped
-    command: -m /models/Phi-3-mini-128k-instruct.Q8_0.gguf --port 8080 --host 0.0.0.0 -ngl 100 -fa
+    # command: -m /models/Yi-1.5-9B-Chat-Q8_0.gguf --port 8003 --host 0.0.0.0 -ngl 100 -fa --log-disable -c 8192
+    command: -m /models/Meta-Llama-3-8B-Instruct-correct-pre-tokenizer-and-EOS-token-Q8_0.gguf --port 8003 --host 0.0.0.0 -ngl 100 -fa --log-disable -c 8192
     devices:
       - nvidia.com/gpu=all
 
@@ -19,6 +20,7 @@ services:
     restart: unless-stopped
     depends_on:
       - mongo-chatui
+      - openaiapi
 
   mongo-chatui:
     image: mongo:latest
