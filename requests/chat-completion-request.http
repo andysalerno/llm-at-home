@@ -10,7 +10,7 @@ curl http://nzxt.local:8003/v1/chat/completions \
 },
 {
     "role": "user",
-    "content": "Write a limerick about python exceptions"
+    "content": "How can I reverse a string in Rust?"
 }
 ]
 }'
