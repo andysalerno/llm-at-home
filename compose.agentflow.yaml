@@ -1,5 +1,14 @@
-version: '3.8'
+version: '3.9'
 services:
+  openaiapi:
+    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    volumes:
+      - /home/tiny/mnt/drive/gguf:/models
+    restart: unless-stopped
+    command: -m /models/Yi-1.5-9B-Chat-Q8_0.gguf --port 8003 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
+    devices:
+      - nvidia.com/gpu=all
+
   chat-ui:
     image: localhost/chat-ui
     build: ./chat-ui
@@ -8,8 +17,6 @@ services:
     restart: unless-stopped
     depends_on:
       - mongo-chatui
-    environment:
-      - "INFERENCE_SERVER_URI=http://${HOSTNAME}:8003/"
 
   embedding-server:
     image: localhost/embedding-server
