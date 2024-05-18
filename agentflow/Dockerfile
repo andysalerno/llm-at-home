@@ -1,6 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /App
 
+ARG EMBEDDING_URI=http://embedding-server:8000/embeddings
+ARG SCRAPER_URI=http://scraper:8002/scrape
+ARG OPENAI_URI=http://192.168.50.58:8000
+
 # Copy everything
 COPY . ./
 # Restore as distinct layers
@@ -12,4 +16,4 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /App
 COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "Examples.dll", "http://192.168.50.58:8000", "http://embedding-server:8000/embeddings", "http://scraper:8002/scrape", "-v", "--prompt-dir=Prompts"]
+ENTRYPOINT ["dotnet", "Examples.dll", "$OPENAI_URI", "$EMBEDDING_URI", "$SCRAPER_URI", "-v", "--prompt-dir=Prompts"]
