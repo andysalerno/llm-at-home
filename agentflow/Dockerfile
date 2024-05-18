@@ -3,7 +3,8 @@ WORKDIR /App
 
 ARG EMBEDDING_URI=http://embedding-server:8000/embeddings
 ARG SCRAPER_URI=http://scraper:8002/scrape
-ARG OPENAI_URI=http://192.168.50.58:8000
+ARG OPENAI_URI=http://openaiapi:8003
+ARG MODEL_NAME=http://openaiapi:8003
 
 # Copy everything
 COPY . ./
@@ -16,4 +17,4 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /App
 COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "Examples.dll", "$OPENAI_URI", "$EMBEDDING_URI", "$SCRAPER_URI", "-v", "--prompt-dir=Prompts"]
+ENTRYPOINT ["dotnet", "Examples.dll", "$OPENAI_URI", "$EMBEDDING_URI", "$SCRAPER_URI", "$MODEL_NAME", "-v", "--prompt-dir=Prompts"]
