@@ -1,27 +1,28 @@
 version: '3.9'
 services:
-  openaiapi:
-    image: localhost/agentflow
-    build: ./agentflow
-    ports:
-      - "8003:8003"
-    restart: unless-stopped
-    env_file:
-      - ./.agentflow.default.env
-      - ./.agentflow.env
-    depends_on:
-      - llmhost
-      - embedding-server
-      - scraper
+  # uncomment to enable from within compose:
+  # openaiapi:
+  #   image: localhost/agentflow
+  #   build: ./agentflow
+  #   ports:
+  #     - "8003:8003"
+  #   restart: unless-stopped
+  #   env_file:
+  #     - ./.agentflow.default.env
+  #     - ./.agentflow.env
+  #   depends_on:
+  #     - llmhost
+  #     - embedding-server
+  #     - scraper
 
   llmhost:
     image: ghcr.io/ggerganov/llama.cpp:server-cuda
     volumes:
       - /home/tiny/mnt/drive/gguf:/models
     restart: unless-stopped
-    command: -m /models/Yi-1.5-9B-Chat-Q8_0.gguf --port 8003 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
+    command: -m /models/Yi-1.5-9B-Chat-Q8_0.gguf --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
     ports:
-      - "8003:8003"
+      - "8000:8000"
     devices:
       - nvidia.com/gpu=all
 
@@ -31,9 +32,10 @@ services:
     ports:
       - "80:5173"
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - mongo-chatui
-      - openaiapi
 
   embedding-server:
     image: localhost/embedding-server
