@@ -96,7 +96,7 @@ public static class Program
             Logging.RegisterLoggerFactory(loggerFactory);
         }
 
-        var serverExample = scope.Resolve<AgentBenchExample>();
+        var serverExample = scope.Resolve<WebSearchExample>();
 
         await serverExample.RunAsync();
     }
