@@ -1,19 +1,24 @@
 version: '3.9'
 services:
   # uncomment to enable from within compose:
-  # openaiapi:
-  #   image: localhost/agentflow
-  #   build: ./agentflow
-  #   ports:
-  #     - "8003:8003"
-  #   restart: unless-stopped
-  #   env_file:
-  #     - ./.agentflow.default.env
-  #     - ./.agentflow.env
-  #   depends_on:
-  #     - llmhost
-  #     - embedding-server
-  #     - scraper
+  openaiapi:
+    image: localhost/agentflow
+    build: ./agentflow
+    ports:
+      - "8003:8003"
+    restart: unless-stopped
+    env_file:
+      - ./.agentflow.default.env
+      - ./.agentflow.env
+    depends_on:
+      - llmhost
+      - embedding-server
+      - scraper
+    environment:
+      - EMBEDDINT_URI=http://embedding-server:8000/embeddings
+      - SCRAPER_URI=http://scraper:8002/scrape
+      - OPENAI_URI=http://llmhost:8000
+      - MODEL_NAME=modelname
 
   llmhost:
     image: ghcr.io/ggerganov/llama.cpp:server-cuda

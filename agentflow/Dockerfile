@@ -1,10 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /App
 
-ARG EMBEDDING_URI=http://embedding-server:8000/embeddings
-ARG SCRAPER_URI=http://scraper:8002/scrape
-ARG OPENAI_URI=http://openaiapi:8003
-ARG MODEL_NAME=http://openaiapi:8003
+ENV EMBEDDING_URI=http://embedding-server:8000/embeddings
+ENV SCRAPER_URI=http://scraper:8002/scrape
+ENV OPENAI_URI=http://openaiapi:8003
+ENV MODEL_NAME=modelname
 
 # Copy everything
 COPY . ./
