@@ -131,7 +131,9 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
             info!("Scraped text:\n{full_content}");
         }
 
-        Ok(full_content.clone())
+        // Ok(full_content.clone())
+        // For now, don't send anything extra:
+        Ok(String::new())
     }
 }
 
