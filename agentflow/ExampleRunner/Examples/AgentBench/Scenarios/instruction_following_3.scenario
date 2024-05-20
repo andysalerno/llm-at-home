@@ -1,0 +1,64 @@
+{{ START_SYSTEM }}
+You are EchoGPT. You always repeat the user's message back to them.
+{{ END }}
+{{ START_USER }}
+Tell me a joke about penguins.
+{{ END }}
+{{ START_ASSISTANT }}
+Why don't you ever see penguins in the UK?
+
+Because they're afraid of whales!
+{{ END }}
+{{ START_USER }}
+what are some things I should buy on Amazon now that I have purchased my first home, after always living in apartments?
+{{ END }}
+{{ START_ASSISTANT }}
+Congratulations on your new home! Here are some essential items you might consider purchasing:
+
+### Home Maintenance and Improvement
+1. **Tool Kit**: Basic tools like a hammer, screwdrivers, pliers, wrenches, tape measure, and level.
+2. **Ladder**: A sturdy ladder for reaching high places.
+3. **Power Tools**: A cordless drill, circular saw, and other power tools for DIY projects.
+4. **Garden Tools**: A lawnmower, rake, shovel, hose, and other gardening essentials if you have a yard.
+
+### Cleaning and Organization
+1. **Vacuum Cleaner**: A high-quality vacuum, especially if you have carpets.
+2. **Mop and Broom**: For keeping floors clean.
+3. **Storage Solutions**: Shelves, bins, and organizers for keeping your home tidy.
+4. **Cleaning Supplies**: All-purpose cleaner, glass cleaner, and other essential cleaning products.
+
+### Home Security
+1. **Smart Doorbell**: A doorbell with a camera to monitor visitors.
+2. **Security Cameras**: Indoor and outdoor cameras for additional security.
+3. **Locks and Deadbolts**: High-quality locks for doors and windows.
+
+### Comfort and Decor
+1. **Furniture**: Essential pieces like a sofa, dining table, chairs, and beds.
+2. **Bedding and Linens**: New sheets, blankets, and towels.
+3. **Decor Items**: Wall art, rugs, and other decor items to personalize your space.
+
+### Appliances and Electronics
+1. **Washer and Dryer**: If your home doesn't come with these appliances.
+2. **Refrigerator**: A reliable fridge if the house doesn't have one or you want to upgrade.
+3. **Microwave and Small Appliances**: Items like a microwave, toaster, coffee maker, etc.
+
+### Outdoor and Backyard
+1. **Grill**: For outdoor cooking and entertaining.
+2. **Patio Furniture**: Tables, chairs, and other outdoor furniture.
+3. **Outdoor Lighting**: Solar lights, string lights, or other outdoor lighting solutions.
+
+### Safety and Emergency
+1. **Fire Extinguishers**: For kitchen and other areas.
+2. **Smoke and Carbon Monoxide Detectors**: Ensure you have working detectors throughout your home.
+3. **First Aid Kit**: A comprehensive first aid kit for emergencies.
+
+### Utilities and Convenience
+1. **Smart Home Devices**: Smart plugs, light bulbs, and assistants like Alexa or Google Home.
+2. **Thermostat**: A programmable or smart thermostat to control your home's temperature.
+3. **Extension Cords and Power Strips**: For various electronics and appliances.
+
+These items should help you settle into your new home and make it comfortable and functional.
+{{ END }}
+{{ START_USER }}
+Thanks, that's very helpful.
+{{ END }}

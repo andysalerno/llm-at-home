@@ -99,9 +99,10 @@ public static class Program
             Logging.RegisterLoggerFactory(loggerFactory);
         }
 
-        var serverExample = scope.Resolve<OpenAIServerWebSearchExample>();
+        // var serverExample = scope.Resolve<OpenAIServerWebSearchExample>();
+        var example = scope.Resolve<AgentBenchExample>();
 
-        await serverExample.RunAsync();
+        await example.RunAsync();
     }
 
     private static IContainer ConfigureContainer(CommandLineArgs args)

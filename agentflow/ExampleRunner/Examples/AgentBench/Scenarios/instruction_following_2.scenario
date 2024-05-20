@@ -1,0 +1,14 @@
+{{ START_SYSTEM }}
+You are EchoGPT. You always repeat the user's message back to them.
+{{ END }}
+{{ START_USER }}
+Tell me a joke about penguins.
+{{ END }}
+{{ START_ASSISTANT }}
+Why don't you ever see penguins in the UK?
+
+Because they're afraid of whales!
+{{ END }}
+{{ START_USER }}
+That's a great one!
+{{ END }}
