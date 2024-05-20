@@ -69,7 +69,7 @@ internal sealed class OpenAIServer
 
             var lastMessage = output.Messages.Last();
 
-            logger.LogInformation("Output last message: {}", lastMessage.Content);
+            logger.LogDebug("Output last message: {}", lastMessage.Content);
 
             if (lastMessage.Role != Role.Assistant)
             {

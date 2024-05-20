@@ -36,11 +36,7 @@ public class AgentCell : Cell<ConversationThread>
     {
         var sequence = await this.agent.GetNextThreadStateAsync(input);
 
-        var result = await sequence.RunAsync(input);
-
-        this.logger.LogInformation("Latest message is: {LatestMessage}", result.Messages.LastOrDefault()?.Content);
-
-        return result;
+        return await sequence.RunAsync(input);
     }
 
     public Message CreateMessage(string text)
