@@ -26,7 +26,7 @@ services:
     volumes:
       - /home/tiny/mnt/drive/gguf:/models
     restart: unless-stopped
-    command: -m /models/Qwen1.5-32B-Chat-Q4_K_M.gguf --port 8000 --host 0.0.0.0 -ngl 100 -fa --log-disable -c 8192
+    command: -m /models/Qwen1.5-32B-Chat-Q4_K_M.gguf --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
     ports:
       - "8000:8000"
     devices:
