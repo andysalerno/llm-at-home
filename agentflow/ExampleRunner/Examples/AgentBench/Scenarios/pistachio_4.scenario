@@ -8,5 +8,5 @@ Hi, how are you?
 I'm doing well, how are you?
 {{ END }}
 {{ START_USER }}
-Good! Can you help me with something? I'm trying to understand the difference between a reference and a pointer.
+Good! Can you help me with something? I'm trying to understand the difference between a reference and a pointer. Please explain it to me in a way that's understandable.
 {{ END }}
