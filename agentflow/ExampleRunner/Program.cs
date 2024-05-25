@@ -26,9 +26,48 @@ public static class Program
         await rootCommand.InvokeAsync(args);
     }
 
-    private static RootCommand BuildRootCommand()
+    private static Command BuildBenchmarkCommand()
     {
-        var rootCommand = new RootCommand("Run an example");
+        var command = new Command("bench");
+
+        var uriArg = new Argument<string>(
+            name: "uri",
+            description: "the target URI of the service hosting the LLM API");
+
+        var modelName = new Argument<string>(
+            name: "modelName",
+            description: "The name of the model to use");
+
+        var verbose = new Option<bool>(
+            name: "-v",
+            getDefaultValue: () => false,
+            description: "Enable verbose mode");
+        verbose.AddAlias("--verbose");
+
+        var promptDir = new Option<string?>(
+            name: "-p",
+            getDefaultValue: () => "./Prompts",
+            description: "directory containing prompt files");
+        promptDir.AddAlias("--prompt-dir");
+
+        command.AddArgument(uriArg);
+        command.AddArgument(modelName);
+        command.AddOption(verbose);
+        command.AddOption(promptDir);
+
+        command.SetHandler(
+            RunBenchmarkAsync,
+            uriArg,
+            modelName,
+            verbose,
+            promptDir);
+
+        return command;
+    }
+
+    private static Command BuildServerCommand()
+    {
+        var command = new Command("server");
 
         var uriArg = new Argument<string>(
             name: "uri",
@@ -58,15 +97,15 @@ public static class Program
             description: "directory containing prompt files");
         promptDir.AddAlias("--prompt-dir");
 
-        rootCommand.AddArgument(uriArg);
-        rootCommand.AddArgument(embeddingsUriArg);
-        rootCommand.AddArgument(scraperUriArg);
-        rootCommand.AddArgument(modelName);
-        rootCommand.AddOption(verbose);
-        rootCommand.AddOption(promptDir);
+        command.AddArgument(uriArg);
+        command.AddArgument(embeddingsUriArg);
+        command.AddArgument(scraperUriArg);
+        command.AddArgument(modelName);
+        command.AddOption(verbose);
+        command.AddOption(promptDir);
 
-        rootCommand.SetHandler(
-            RunAppAsync,
+        command.SetHandler(
+            RunServerAsync,
             uriArg,
             embeddingsUriArg,
             scraperUriArg,
@@ -74,10 +113,45 @@ public static class Program
             verbose,
             promptDir);
 
-        return rootCommand;
+        return command;
     }
 
-    private static async Task RunAppAsync(
+    private static RootCommand BuildRootCommand()
+    {
+        var command = new RootCommand("Run an example");
+
+        command.AddCommand(BuildServerCommand());
+        command.AddCommand(BuildBenchmarkCommand());
+
+        return command;
+    }
+
+    private static async Task RunBenchmarkAsync(
+        string uri,
+        string modelName,
+        bool verbose,
+        string? promptDir)
+    {
+        promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
+
+        var commandLineArgs = new CommandLineArgs(uri, uri, uri, modelName, verbose, promptDir);
+
+        IContainer container = ConfigureContainer(commandLineArgs);
+
+        await using var scope = container.BeginLifetimeScope();
+
+        // Register logging before anything else:
+        {
+            ILoggerFactory loggerFactory = scope.Resolve<ILoggerFactory>();
+            Logging.RegisterLoggerFactory(loggerFactory);
+        }
+
+        var example = scope.Resolve<AgentBenchExample>();
+
+        await example.RunAsync();
+    }
+
+    private static async Task RunServerAsync(
         string uri,
         string embeddingsUri,
         string scraperUri,
