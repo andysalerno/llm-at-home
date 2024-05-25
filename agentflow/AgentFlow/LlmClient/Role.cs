@@ -27,6 +27,8 @@ public record Role
             User, Assistant, System, ToolInvocation, ToolOutput
         ];
 
+        name = name.Replace("_", string.Empty, StringComparison.Ordinal);
+
         Role? matching = roles.FirstOrDefault(r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase));
 
         if (matching is Role r)
