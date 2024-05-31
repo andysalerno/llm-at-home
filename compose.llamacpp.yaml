@@ -7,7 +7,7 @@ services:
     ports:
       - "8003:8003"
     restart: unless-stopped
-    command: -m /models/Phi-3-medium-4k-instruct-Q8_0.gguf --chat-template phi3 --port 8003 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
+    command: -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf --chat-template phi3 --port 8003 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
     devices:
       - nvidia.com/gpu=all
 
