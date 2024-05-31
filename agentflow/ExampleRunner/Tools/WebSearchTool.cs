@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
+using AgentFlow.Agents;
 using AgentFlow.LlmClient;
 using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
@@ -15,12 +16,14 @@ public class WebSearchTool : ITool
     private const string Uri = "https://www.googleapis.com/customsearch/v1";
     private const string SearchKeyEnvVarName = "SEARCH_KEY";
     private const string SearchKeyCxEnvVarName = "SEARCH_KEY_CX";
+    private readonly CustomAgentBuilderFactory agentFactory;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
     private readonly IHttpClientFactory httpClientFactory;
 
-    public WebSearchTool(IEmbeddingsClient embeddingsClient, IScraperClient scraperClient, IHttpClientFactory httpClientFactory)
+    public WebSearchTool(CustomAgentBuilderFactory agentFactory, IEmbeddingsClient embeddingsClient, IScraperClient scraperClient, IHttpClientFactory httpClientFactory)
     {
+        this.agentFactory = agentFactory;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
         this.httpClientFactory = httpClientFactory;
@@ -69,9 +72,14 @@ def search_web(query: str) -> str:
         return string.Join("\n\n", scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
 
-    private string RewriteQuery(string originalQuery)
+    private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
     {
-        return originalQuery;
+        var agent = this
+            .agentFactory
+            .CreateBuilder()
+            .Build();
+
+        await agent.GetNextThreadStateAsync(history);
     }
 
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)
