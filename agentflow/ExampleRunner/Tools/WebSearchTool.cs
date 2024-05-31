@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Web;
 using AgentFlow.LlmClient;
 using AgentFlow.Tools;
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples.Tools;
@@ -41,7 +42,7 @@ def search_web(query: str) -> str:
 
 """".TrimEnd();
 
-    public async Task<string> GetOutputAsync(string input)
+    public async Task<string> GetOutputAsync(ConversationThread conversationThread, string input)
     {
         ILogger logger = this.GetLogger();
 
@@ -52,7 +53,9 @@ def search_web(query: str) -> str:
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
-        ScoresResponse scores = await this.embeddingsClient.GetScoresAsync(input, topNPagesContents);
+        string rewrittenQuery = this.RewriteQuery(input);
+
+        ScoresResponse scores = await this.embeddingsClient.GetScoresAsync(rewrittenQuery, topNPagesContents);
 
         IEnumerable<(float, Chunk)> scoresByIndex = scores
             .Scores
@@ -64,6 +67,11 @@ def search_web(query: str) -> str:
         logger.LogInformation("got scores: {Scores}", scores.Scores);
 
         return string.Join("\n\n", scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
+    }
+
+    private string RewriteQuery(string originalQuery)
+    {
+        return originalQuery;
     }
 
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)

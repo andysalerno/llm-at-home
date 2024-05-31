@@ -1,5 +1,6 @@
 using System.Text;
 using AgentFlow.Tools;
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples.Tools;
@@ -28,7 +29,7 @@ def turn_lights_on_off(on_or_off: str) -> str:
 
 """".TrimEnd();
 
-    public async Task<string> GetOutputAsync(string input)
+    public async Task<string> GetOutputAsync(ConversationThread conversationThread, string input)
     {
         // URL of the service
         Uri url;

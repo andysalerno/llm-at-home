@@ -48,7 +48,7 @@ public class ExecuteToolCell : Cell<ConversationThread>
 
             this.GetLogger().LogInformation("Detected tool input string: {Input}", toolInput);
 
-            toolOutput = await tool.GetOutputAsync(toolInput);
+            toolOutput = await tool.GetOutputAsync(input, toolInput);
         }
 
         return input.WithAddedMessage(

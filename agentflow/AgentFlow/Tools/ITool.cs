@@ -1,3 +1,5 @@
+using AgentFlow.WorkSpace;
+
 namespace AgentFlow.Tools;
 
 public interface ITool
@@ -6,5 +8,5 @@ public interface ITool
 
     string Definition { get; }
 
-    Task<string> GetOutputAsync(string input);
+    Task<string> GetOutputAsync(ConversationThread conversation, string input);
 }
