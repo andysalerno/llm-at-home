@@ -1,6 +1,5 @@
 version: '3.9'
 services:
-  # uncomment to enable from within compose:
   openaiapi:
     image: localhost/agentflow
     build: ./agentflow
