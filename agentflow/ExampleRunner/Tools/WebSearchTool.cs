@@ -74,10 +74,10 @@ def search_web(query: str) -> str:
 
     private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
     {
-        var agent = this
-            .agentFactory
-            .CreateBuilder()
-            .Build();
+        // var agent = this
+        //     .agentFactory
+        //     .CreateBuilder()
+        //     .Build();
 
         // await agent.GetNextThreadStateAsync(history);
         return originalQuery;
