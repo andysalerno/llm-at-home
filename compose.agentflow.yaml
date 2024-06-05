@@ -21,7 +21,8 @@ services:
     command: server http://llmhost:8000 http://embedding-server:8000/embeddings http://scraper:8002/scrape modelname -v --prompt-dir=Prompts 
 
   llmhost:
-    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    # image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    image: localhost/llama.cpp
     volumes:
       - /home/tiny/mnt/drive/gguf:/models
     restart: unless-stopped

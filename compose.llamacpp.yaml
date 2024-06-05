@@ -1,7 +1,8 @@
 version: '3.9'
 services:
   openaiapi:
-    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    # image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    image: localhost/llama.cpp
     volumes:
       - /home/tiny/mnt/drive/gguf:/models
     ports:
