@@ -56,7 +56,7 @@ def search_web(query: str) -> str:
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
-        string rewrittenQuery = this.RewriteQuery(input);
+        string rewrittenQuery = await this.RewriteQueryAsync(input, conversationThread);
 
         ScoresResponse scores = await this.embeddingsClient.GetScoresAsync(rewrittenQuery, topNPagesContents);
 
@@ -79,7 +79,8 @@ def search_web(query: str) -> str:
             .CreateBuilder()
             .Build();
 
-        await agent.GetNextThreadStateAsync(history);
+        // await agent.GetNextThreadStateAsync(history);
+        return originalQuery;
     }
 
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)
