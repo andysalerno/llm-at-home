@@ -3,7 +3,9 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
 using AgentFlow.Agents;
+using AgentFlow.Config;
 using AgentFlow.LlmClient;
+using AgentFlow.Prompts;
 using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -17,15 +19,25 @@ public class WebSearchTool : ITool
     private const string SearchKeyEnvVarName = "SEARCH_KEY";
     private const string SearchKeyCxEnvVarName = "SEARCH_KEY_CX";
     private readonly CustomAgentBuilderFactory agentFactory;
+    private readonly ICellRunner<ConversationThread> runner;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
+    private readonly IFileSystemPromptProviderConfig fileSystemPromptProviderConfig;
     private readonly IHttpClientFactory httpClientFactory;
 
-    public WebSearchTool(CustomAgentBuilderFactory agentFactory, IEmbeddingsClient embeddingsClient, IScraperClient scraperClient, IHttpClientFactory httpClientFactory)
+    public WebSearchTool(
+        CustomAgentBuilderFactory agentFactory,
+        ICellRunner<ConversationThread> runner,
+        IEmbeddingsClient embeddingsClient,
+        IScraperClient scraperClient,
+        IFileSystemPromptProviderConfig fileSystemPromptProviderConfig,
+        IHttpClientFactory httpClientFactory)
     {
         this.agentFactory = agentFactory;
+        this.runner = runner;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
+        this.fileSystemPromptProviderConfig = fileSystemPromptProviderConfig;
         this.httpClientFactory = httpClientFactory;
     }
 
@@ -74,12 +86,22 @@ def search_web(query: str) -> str:
 
     private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
     {
-        // var agent = this
-        //     .agentFactory
-        //     .CreateBuilder()
-        //     .Build();
+        var prompt = new FileSystemPromptProvider(
+            "rewrite_query_system",
+            this.fileSystemPromptProviderConfig)
+            .Get();
 
-        // await agent.GetNextThreadStateAsync(history);
+        var agent = this
+            .agentFactory
+            .CreateBuilder()
+            .WithRole(Role.System)
+            .WithInstructionsFromPrompt(prompt)
+            .Build();
+
+        var nextState = await agent.GetNextThreadStateAsync();
+
+        await this.runner.RunAsync(nextState, history);
+
         return originalQuery;
     }
 

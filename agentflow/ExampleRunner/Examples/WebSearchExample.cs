@@ -50,7 +50,13 @@ internal sealed class WebSearchExample : IRunnableExample
             this.promptProviderConfig)
             .Get();
 
-        ImmutableArray<ITool> tools = [new WebSearchTool(this.customAgentBuilderFactory, this.embeddingsClient, this.scraperClient, this.httpClientFactory)];
+        ImmutableArray<ITool> tools = [new WebSearchTool(
+            this.customAgentBuilderFactory,
+            this.runner,
+            this.embeddingsClient,
+            this.scraperClient,
+            this.promptProviderConfig,
+            this.httpClientFactory)];
 
         // TODO: BeginLoop().WithSequence().AddAgent().AddAgent().EndLoop();
         return new WhileCell<ConversationThread>()

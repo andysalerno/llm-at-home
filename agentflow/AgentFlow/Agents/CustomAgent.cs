@@ -67,7 +67,7 @@ public sealed class CustomAgent : IAgent
 
     public InstructionStrategy InstructionStrategy { get; }
 
-    public Task<Cell<ConversationThread>> GetNextThreadStateAsync(ConversationThread conversationThread)
+    public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
     {
         var cells = ImmutableArray.CreateBuilder<Cell<ConversationThread>>();
         {

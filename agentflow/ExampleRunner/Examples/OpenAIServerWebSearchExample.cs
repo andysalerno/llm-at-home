@@ -41,7 +41,13 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         ImmutableArray<ITool> tools = [
 
             // new LightSwitchTool(this.httpClientFactory),
-            new WebSearchTool(this.agentBuilderFactory, this.embeddingsClient, this.scraperClient, this.httpClientFactory),
+            new WebSearchTool(
+                this.agentBuilderFactory,
+                this.runner,
+                this.embeddingsClient,
+                this.scraperClient,
+                this.fileSystemPromptProviderConfig,
+                this.httpClientFactory),
             ];
 
         var prompt = new FileSystemPromptProvider(

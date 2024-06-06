@@ -34,7 +34,7 @@ public class ToolAgent : IAgent
   // apply variables to prompt template
   // apply prompt template as system message
   // get response from assistant provider
-  public Task<Cell<ConversationThread>> GetNextThreadStateAsync(ConversationThread conversationThread)
+  public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
   {
     IAgent toolSelectionAgent = this.customAgentBuilderFactory
         .CreateBuilder()
