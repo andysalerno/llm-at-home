@@ -98,9 +98,9 @@ def search_web(query: str) -> str:
             .WithInstructionsFromPrompt(prompt)
             .Build();
 
-        var nextState = await agent.GetNextThreadStateAsync();
+        var program = await agent.GetNextThreadStateAsync();
 
-        await this.runner.RunAsync(nextState, history);
+        ConversationThread nextState = await this.runner.RunAsync(program, history);
 
         return originalQuery;
     }
