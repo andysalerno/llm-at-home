@@ -213,7 +213,6 @@ public static class Program
             // containerBuilder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<CustomAgentBuilderFactory>();
-            containerBuilder.RegisterType<FileSystemPromptProvider>().AsImplementedInterfaces();
 
             // Runnable example classes:
             containerBuilder.RegisterType<WebSearchExample>();

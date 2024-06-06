@@ -46,14 +46,14 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                this.fileSystemPromptProviderConfig,
+                new FileSystemPromptFactory("rewrite_query", this.fileSystemPromptProviderConfig),
                 this.httpClientFactory),
             ];
 
-        var prompt = new FileSystemPromptProvider(
+        var prompt = new FileSystemPromptFactory(
             "websearch_example_system",
             this.fileSystemPromptProviderConfig)
-            .Get();
+            .Create();
 
         var program = new AgentCell(
             new ToolAgent(

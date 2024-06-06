@@ -1,22 +1,23 @@
 ﻿using AgentFlow.Config;
+using AgentFlow.Generic;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Prompts;
 
-public class FileSystemPromptProvider
+public class FileSystemPromptFactory : IFactory<Prompt>
 {
     private readonly string promptDirectoryLocalPath;
     private readonly string promptName;
-    private readonly ILogger<FileSystemPromptProvider> logger;
+    private readonly ILogger<FileSystemPromptFactory> logger;
 
-    public FileSystemPromptProvider(string promptName, IFileSystemPromptProviderConfig config)
+    public FileSystemPromptFactory(string promptName, IFileSystemPromptProviderConfig config)
     {
         this.promptDirectoryLocalPath = config.PromptDirectory;
         this.promptName = promptName;
         this.logger = this.GetLogger();
     }
 
-    public Prompt Get()
+    public Prompt Create()
     {
         // prompt names are assumed to be txt file names:
         string txtFileName = $"{this.promptName}.txt";

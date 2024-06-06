@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
 using AgentFlow.Agents;
-using AgentFlow.Config;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
@@ -22,7 +22,7 @@ public class WebSearchTool : ITool
     private readonly ICellRunner<ConversationThread> runner;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
-    private readonly IFileSystemPromptProviderConfig fileSystemPromptProviderConfig;
+    private readonly IFactory<Prompt> promptFactory;
     private readonly IHttpClientFactory httpClientFactory;
 
     public WebSearchTool(
@@ -30,14 +30,14 @@ public class WebSearchTool : ITool
         ICellRunner<ConversationThread> runner,
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
-        IFileSystemPromptProviderConfig fileSystemPromptProviderConfig,
+        IFactory<Prompt> promptFactory,
         IHttpClientFactory httpClientFactory)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
-        this.fileSystemPromptProviderConfig = fileSystemPromptProviderConfig;
+        this.promptFactory = promptFactory;
         this.httpClientFactory = httpClientFactory;
     }
 
@@ -86,10 +86,7 @@ def search_web(query: str) -> str:
 
     private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
     {
-        var prompt = new FileSystemPromptProvider(
-            "rewrite_query_system",
-            this.fileSystemPromptProviderConfig)
-            .Get();
+        var prompt = this.promptFactory.Create();
 
         var agent = this
             .agentFactory
