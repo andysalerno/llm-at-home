@@ -13,7 +13,7 @@ public static class NullUtilities
     {
         if (input is null)
         {
-            throw new ArgumentNullException("Expected non-null value, but found null");
+            throw new ArgumentNullException(nameof(input));
         }
 
         return input;

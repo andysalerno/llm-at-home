@@ -5,7 +5,6 @@ using AgentFlow.Config;
 using AgentFlow.Examples;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
-using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;

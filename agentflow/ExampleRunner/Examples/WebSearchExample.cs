@@ -45,13 +45,15 @@ internal sealed class WebSearchExample : IRunnableExample
 
     public Cell<ConversationThread> CreateDefinition()
     {
-        ImmutableArray<ITool> tools = [new WebSearchTool(
-            this.customAgentBuilderFactory,
-            this.runner,
-            this.embeddingsClient,
-            this.scraperClient,
-            new FileSystemPromptFactory("rewrite_query_system", this.promptProviderConfig),
-            this.httpClientFactory)];
+        ImmutableArray<ITool> tools = [
+            new WebSearchTool(
+                this.customAgentBuilderFactory,
+                this.runner,
+                this.embeddingsClient,
+                this.scraperClient,
+                new FileSystemPromptFactory("rewrite_query_system", this.promptProviderConfig),
+                this.httpClientFactory)
+        ];
 
         var prompt = new FileSystemPromptFactory(
             "websearch_example_system",
