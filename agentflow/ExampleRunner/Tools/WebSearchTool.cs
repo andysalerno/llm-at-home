@@ -91,6 +91,7 @@ def search_web(query: str) -> str:
         var agent = this
             .agentFactory
             .CreateBuilder()
+            .WithName(new AgentName("QueryRewriter"))
             .WithRole(Role.Assistant)
             .WithInstructionsFromPrompt(prompt)
             .Build();
