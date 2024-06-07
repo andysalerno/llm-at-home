@@ -14,7 +14,8 @@ namespace AgentFlow.Examples.Tools;
 
 public class WebSearchTool : ITool
 {
-    private const int TopNChunks = 5;
+    private const int NumChunksToRAG = 5;
+    private const int NumPagesToRead = 5;
     private const string Uri = "https://www.googleapis.com/customsearch/v1";
     private const string SearchKeyEnvVarName = "SEARCH_KEY";
     private const string SearchKeyCxEnvVarName = "SEARCH_KEY_CX";
@@ -57,18 +58,18 @@ def search_web(query: str) -> str:
 
 """".TrimEnd();
 
-    public async Task<string> GetOutputAsync(ConversationThread conversationThread, string input)
+    public async Task<string> GetOutputAsync(ConversationThread conversation, string input)
     {
         ILogger logger = this.GetLogger();
 
         SearchResults searchResults = await this.GetSearchResultsAsync(input);
 
-        ImmutableArray<Chunk> topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: 3);
+        ImmutableArray<Chunk> topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: NumPagesToRead);
 
         logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
-        string rewrittenQuery = await this.RewriteQueryAsync(input, conversationThread);
+        string rewrittenQuery = await this.RewriteQueryAsync(input, conversation);
 
         ScoresResponse scores = await this.embeddingsClient.GetScoresAsync(rewrittenQuery, topNPagesContents);
 
@@ -76,7 +77,7 @@ def search_web(query: str) -> str:
             .Scores
             .Zip(topNPagesContents)
             .OrderByDescending(i => i.First)
-            .Take(TopNChunks)
+            .Take(NumChunksToRAG)
             .ToImmutableArray();
 
         logger.LogInformation("got scores: {Scores}", scores.Scores);
