@@ -94,6 +94,7 @@ def search_web(query: str) -> str:
             .Build();
 
         var prompt = this.promptFactory.Create();
+        prompt.AddVariable("ORIGINAL_QUERY", originalQuery);
 
         var logger = this.GetLogger();
 

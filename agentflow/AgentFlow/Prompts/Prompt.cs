@@ -44,7 +44,7 @@ public sealed record Prompt
 
         if (result.Contains("{{", StringComparison.Ordinal))
         {
-            logger.LogWarning("Prompt was rendered, but still contained unreplaced template artifacts.");
+            logger.LogWarning("Prompt was rendered, but (most likely) still contained unreplaced template artifacts.");
             logger.LogDebug("Saw: {Result}", result);
         }
 
