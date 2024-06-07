@@ -86,24 +86,31 @@ def search_web(query: str) -> str:
 
     private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
     {
-        var prompt = this.promptFactory.Create();
-
         var agent = this
             .agentFactory
             .CreateBuilder()
             .WithName(new AgentName("QueryRewriter"))
             .WithRole(Role.Assistant)
-            .WithInstructionsFromPrompt(prompt)
             .Build();
 
+        var prompt = this.promptFactory.Create();
+
         // Let's try making the rewrite instructions a new system message, the latest in the conversation, instead of the first:
-        var historyWithRewriteInstructions = history.WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render()));
+        var historyWithRewriteInstructions = history
+
+            // Filter out anything except assistant and user messages:
+            .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role))
+            .WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render()));
+
+        var logger = this.GetLogger();
+
+        logger.LogInformation("Current message history for request is: {Messages}", historyWithRewriteInstructions);
 
         var program = await agent.GetNextThreadStateAsync();
 
         ConversationThread nextState = await this.runner.RunAsync(program, historyWithRewriteInstructions);
 
-        this.GetLogger().LogInformation("Query rewritten from: '{Original}' to: '{Rewritten}'", originalQuery, nextState.Messages.Last().Content);
+        logger.LogInformation("Query rewritten from: '{Original}' to: '{Rewritten}'", originalQuery, nextState.Messages.Last().Content);
 
         return originalQuery;
     }

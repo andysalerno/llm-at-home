@@ -61,6 +61,13 @@ public sealed class ConversationThread
             .Build();
     }
 
+    public ConversationThread WithMatchingMessages(Func<Message, bool> predicate)
+    {
+        return new Builder()
+            .CopyFrom(this)
+            .Build();
+    }
+
     /// <summary>
     /// Returns a ConversationThread with the same message history, excluding System messages.
     /// </summary>
@@ -137,12 +144,17 @@ public sealed class ConversationThread
 
         public Builder CopyFrom(ConversationThread other)
         {
+            return this.CopyFrom(other, _ => true);
+        }
+
+        public Builder CopyFrom(ConversationThread other, Func<Message, bool> predicate)
+        {
             foreach (var (k, v) in other.templateKeyValuePairs)
             {
                 this.templateKeyValuePairs[k] = v;
             }
 
-            this.messages.AddRange(other.messageList);
+            this.messages.AddRange(other.messageList.Where(predicate));
 
             return this;
         }
