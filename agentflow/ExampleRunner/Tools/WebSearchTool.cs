@@ -113,9 +113,11 @@ def search_web(query: str) -> str:
 
         ConversationThread nextState = await this.runner.RunAsync(program, historyWithRewriteInstructions);
 
-        logger.LogInformation("Query rewritten from: '{Original}' to: '{Rewritten}'", originalQuery, nextState.Messages.Last().Content);
+        string rewrittenQuery = nextState.Messages.Last().Content.Trim();
 
-        return originalQuery;
+        logger.LogInformation("Query rewritten from: '{Original}' to: '{Rewritten}'", originalQuery, rewrittenQuery);
+
+        return rewrittenQuery;
     }
 
     private async Task<ImmutableArray<Chunk>> GetTopNPagesAsync(SearchResults searchResults, int topN)

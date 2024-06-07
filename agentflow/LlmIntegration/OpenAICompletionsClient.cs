@@ -220,10 +220,18 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         if (this.loggingConfig.LogRequestsToLlm)
         {
-            this.logger.LogInformation("Parsed response: {response}", parsedResponse);
+            this.logger.LogInformation("Parsed response: {response}", parsedResponse.Choices.First().Message.Content);
         }
 
-        return new ChatCompletionsResult(parsedResponse.Choices.First().Message.Content);
+        string preTrim = parsedResponse.Choices.First().Message.Content;
+        string trimmed = preTrim.Trim();
+
+        if (preTrim.Length != trimmed.Length)
+        {
+            this.logger.LogWarning("The response from the LLM had whitespace in the prefix or suffix that was trimmed.");
+        }
+
+        return new ChatCompletionsResult(trimmed);
     }
 
     public async Task<EmbeddingResponse> GetEmbeddingsAsync(string query, IEnumerable<Chunk> chunks)
