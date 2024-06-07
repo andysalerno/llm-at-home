@@ -64,18 +64,7 @@ public sealed class ConversationThread
     public ConversationThread WithMatchingMessages(Func<Message, bool> predicate)
     {
         return new Builder()
-            .CopyFrom(this)
-            .Build();
-    }
-
-    /// <summary>
-    /// Returns a ConversationThread with the same message history, excluding System messages.
-    /// </summary>
-    public ConversationThread WithoutSystem()
-    {
-        return new Builder()
-            .CopyFrom(this)
-            .RemoveSystem()
+            .CopyFrom(this, predicate)
             .Build();
     }
 
@@ -83,11 +72,11 @@ public sealed class ConversationThread
     /// Returns a ConversationThread with the same message history, excluding System messages.
     /// </summary>
     /// <param name="systemMessage">The system message to set.</param>
-    public ConversationThread WithSystemMessage(Message systemMessage)
+    public ConversationThread WithFirstMessageSystemMessage(Message systemMessage)
     {
         return new Builder()
             .CopyFrom(this)
-            .RemoveSystem()
+            .RemoveTopSystemMessage()
             .AddMessageToFront(systemMessage)
             .Build();
     }
@@ -127,7 +116,7 @@ public sealed class ConversationThread
             systemMessageContent = systemMessageContent.Replace("{{" + k + "}}", v, StringComparison.OrdinalIgnoreCase);
         }
 
-        return this.WithSystemMessage(
+        return this.WithFirstMessageSystemMessage(
             new Message(systemMessage.AgentName, systemMessage.Role, systemMessageContent));
     }
 
@@ -173,9 +162,15 @@ public sealed class ConversationThread
             return this;
         }
 
-        public Builder RemoveSystem()
+        public Builder RemoveTopSystemMessage()
         {
             this.messages.RemoveAll(m => m.Role == Role.System);
+
+            if (this.messages.FirstOrDefault() is Message m
+                && m.Role == Role.System)
+            {
+                this.messages.RemoveAt(0);
+            }
 
             return this;
         }

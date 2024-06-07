@@ -95,6 +95,10 @@ def search_web(query: str) -> str:
 
         var prompt = this.promptFactory.Create();
 
+        var logger = this.GetLogger();
+
+        logger.LogInformation("Rewrite prompt is: {Prompt}", prompt);
+
         // Let's try making the rewrite instructions a new system message, the latest in the conversation, instead of the first:
         var historyWithRewriteInstructions = history
 
@@ -102,9 +106,7 @@ def search_web(query: str) -> str:
             .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role))
             .WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render()));
 
-        var logger = this.GetLogger();
-
-        logger.LogInformation("Current message history for request is: {Messages}", historyWithRewriteInstructions);
+        logger.LogInformation("Current message history for request is: {Messages}", JsonSerializer.Serialize(historyWithRewriteInstructions.Messages));
 
         var program = await agent.GetNextThreadStateAsync();
 

@@ -33,6 +33,6 @@ public class SetSystemMessageCell : Cell<ConversationThread>
             this.logger.LogWarning("ConversationThread already contained a different system message, which will be replaced.");
         }
 
-        return Task.FromResult(input.WithSystemMessage(new Message(this.agentName, Role.System, nextContent)));
+        return Task.FromResult(input.WithFirstMessageSystemMessage(new Message(this.agentName, Role.System, nextContent)));
     }
 }
