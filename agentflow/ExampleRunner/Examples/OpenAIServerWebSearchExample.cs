@@ -46,7 +46,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory("rewrite_query", this.fileSystemPromptProviderConfig),
+                new FileSystemPromptFactory("rewrite_query_system", this.fileSystemPromptProviderConfig),
                 this.httpClientFactory),
             ];
 

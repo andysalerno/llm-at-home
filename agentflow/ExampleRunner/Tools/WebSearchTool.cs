@@ -91,13 +91,18 @@ def search_web(query: str) -> str:
         var agent = this
             .agentFactory
             .CreateBuilder()
-            .WithRole(Role.System)
+            .WithRole(Role.Assistant)
             .WithInstructionsFromPrompt(prompt)
             .Build();
 
+        // Let's try making the rewrite instructions a new system message, the latest in the conversation, instead of the first:
+        var historyWithRewriteInstructions = history.WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render()));
+
         var program = await agent.GetNextThreadStateAsync();
 
-        ConversationThread nextState = await this.runner.RunAsync(program, history);
+        ConversationThread nextState = await this.runner.RunAsync(program, historyWithRewriteInstructions);
+
+        this.GetLogger().LogInformation("Query rewritten from: '{Original}' to: '{Rewritten}'", originalQuery, nextState.Messages.Last().Content);
 
         return originalQuery;
     }
