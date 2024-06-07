@@ -14,8 +14,9 @@ def direct_response():
     pass
 ```
 
-## Rules
+## Additional Rules
 - ALWAYS prefer using tools over your own knowledge, even for trivial information - if a tool *can* provide useful info, you *should* use it.
+- For tasks involving coding assistance, you may invoke `direct_response()` to use your own knowledge, at your discretion.
 - Invoke the special tool `direct_response()` when you have already executed all the necessary tools and are ready to respond, OR if no tool is needed.
 - The invocation syntax is like a function call even if zero args; e.x. `direct_response()`, NOT `direct_response`
 
