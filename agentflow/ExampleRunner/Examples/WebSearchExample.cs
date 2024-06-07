@@ -55,8 +55,13 @@ internal sealed class WebSearchExample : IRunnableExample
                 this.httpClientFactory)
         ];
 
-        var prompt = new FileSystemPromptFactory(
+        var toolSelectionPrompt = new FileSystemPromptFactory(
             "websearch_example_system",
+            this.promptProviderConfig)
+            .Create();
+
+        var respondingPrompt = new FileSystemPromptFactory(
+            "websearch_example_responding",
             this.promptProviderConfig)
             .Create();
 
@@ -71,7 +76,8 @@ internal sealed class WebSearchExample : IRunnableExample
                         new ToolAgent(
                             new AgentName("WebSearchAgent"),
                             Role.Assistant,
-                            prompt,
+                            toolSelectionPrompt,
+                            respondingPrompt,
                             this.customAgentBuilderFactory,
                             tools)),
                 }.ToImmutableArray()),

@@ -16,11 +16,18 @@ public class ToolAgent : IAgent
   private readonly ImmutableArray<ITool> tools;
 
   // TODO: take in CustomAgentBuilderFactory, or re-implement the custom agent logic here? Not sure
-  public ToolAgent(AgentName name, Role role, Prompt prompt, CustomAgentBuilderFactory customAgentBuilderFactory, ImmutableArray<ITool> tools)
+  public ToolAgent(
+      AgentName name,
+      Role role,
+      Prompt toolSelectionPrompt,
+      Prompt respondingPrompt,
+      CustomAgentBuilderFactory customAgentBuilderFactory,
+      ImmutableArray<ITool> tools)
   {
     this.Name = name;
     this.Role = role;
-    this.Prompt = prompt;
+    this.ToolSelectionPrompt = toolSelectionPrompt;
+    this.RespondingPrompt = respondingPrompt;
     this.customAgentBuilderFactory = customAgentBuilderFactory;
     this.tools = tools;
   }
@@ -29,18 +36,17 @@ public class ToolAgent : IAgent
 
   public Role Role { get; }
 
-  public Prompt Prompt { get; }
+  public Prompt ToolSelectionPrompt { get; }
 
-  // apply variables to prompt template
-  // apply prompt template as system message
-  // get response from assistant provider
+  public Prompt RespondingPrompt { get; }
+
   public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
   {
     IAgent toolSelectionAgent = this.customAgentBuilderFactory
         .CreateBuilder()
         .WithName(new AgentName("ToolSelectorAgent"))
         .WithRole(Role.ToolInvocation)
-        .WithInstructionsFromPrompt(this.Prompt)
+        .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
         .Build();
@@ -50,7 +56,7 @@ public class ToolAgent : IAgent
         .CreateBuilder()
         .WithName(new AgentName("ResponseAgent"))
         .WithRole(this.Role)
-        .WithInstructions("You are a helpful AI. Help the user as much as you can. You may use responses from tool_output as extra context when answering the user. Because your own knowledge may be inaccurate, DO NOT provide any facts or information unless it is given to you by a tool output.")
+        .WithInstructionsFromPrompt(this.RespondingPrompt)
         .Build();
 
     string toolsDefinitions = BuildToolsDefinitions(this.tools);

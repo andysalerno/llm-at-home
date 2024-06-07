@@ -50,8 +50,13 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.httpClientFactory),
             ];
 
-        var prompt = new FileSystemPromptFactory(
+        var toolSelectionPrompt = new FileSystemPromptFactory(
             "websearch_example_system",
+            this.fileSystemPromptProviderConfig)
+            .Create();
+
+        var respondingPrompt = new FileSystemPromptFactory(
+            "websearch_example_responding",
             this.fileSystemPromptProviderConfig)
             .Create();
 
@@ -59,7 +64,8 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
             new ToolAgent(
                 new AgentName("WebSearchAgent"),
                 Role.Assistant,
-                prompt,
+                toolSelectionPrompt,
+                respondingPrompt,
                 this.agentBuilderFactory,
                 tools));
 
