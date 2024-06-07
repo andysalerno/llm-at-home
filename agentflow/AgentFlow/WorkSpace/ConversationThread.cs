@@ -102,14 +102,14 @@ public sealed class ConversationThread
 
     public ConversationThread WithTemplateAppliedToSystem()
     {
-        Message? systemMessage = this.messageList.FirstOrDefault(m => m.Role == Role.System);
+        Message? topSystemMessage = this.messageList.FirstOrDefault();
 
-        if (systemMessage == null)
+        if (topSystemMessage == null || topSystemMessage.Role != Role.System)
         {
             return this;
         }
 
-        string systemMessageContent = systemMessage.Content;
+        string systemMessageContent = topSystemMessage.Content;
 
         foreach (var (k, v) in this.templateKeyValuePairs)
         {
@@ -117,7 +117,7 @@ public sealed class ConversationThread
         }
 
         return this.WithFirstMessageSystemMessage(
-            new Message(systemMessage.AgentName, systemMessage.Role, systemMessageContent));
+            new Message(topSystemMessage.AgentName, topSystemMessage.Role, systemMessageContent));
     }
 
     public sealed class Builder
