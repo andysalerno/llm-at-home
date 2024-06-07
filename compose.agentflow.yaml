@@ -18,6 +18,7 @@ services:
       - SCRAPER_URI=http://scraper:8002/scrape
       - OPENAI_URI=http://llmhost:8000
       - MODEL_NAME=modelname
+    tty: true
     command: server http://llmhost:8000 http://embedding-server:8000/embeddings http://scraper:8002/scrape modelname -v --prompt-dir=Prompts 
 
   llmhost:
