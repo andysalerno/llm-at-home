@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.Config;
@@ -59,6 +60,8 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
             "websearch_example_responding",
             this.fileSystemPromptProviderConfig)
             .Create();
+
+        respondingPrompt.AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
         var program = new AgentCell(
             new ToolAgent(

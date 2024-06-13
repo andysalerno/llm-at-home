@@ -9,7 +9,9 @@ Here are the tools that you can select from:
 
 def direct_response():
     """
-    A no-op tool that indicates no tool is needed and a direct response is appropriate.
+    A no-op tool that takes no input, and indicates no tool is needed and a direct response is appropriate.
+    Args:
+        None. Will trigger a response from the model as the next call.
     """
     pass
 ```
