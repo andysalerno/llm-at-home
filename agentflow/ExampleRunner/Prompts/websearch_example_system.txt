@@ -1,3 +1,6 @@
+## Context
+Today's date is: {CUR_DATE}
+
 ## Instructions
 Select the correct tool to handle the user's latest message.
 

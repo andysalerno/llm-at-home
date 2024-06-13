@@ -54,7 +54,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         var toolSelectionPrompt = new FileSystemPromptFactory(
             "websearch_example_system",
             this.fileSystemPromptProviderConfig)
-            .Create();
+            .Create().AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
         var respondingPrompt = new FileSystemPromptFactory(
             "websearch_example_responding",
