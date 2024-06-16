@@ -27,7 +27,7 @@ services:
     volumes:
       - /home/tiny/mnt/drive/gguf:/models
     restart: unless-stopped
-    command: -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
+    command: -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
     ports:
       - "8000:8000"
     devices:
@@ -63,3 +63,22 @@ services:
   mongo-chatui:
     image: mongo:latest
     restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  grafana-storage:
