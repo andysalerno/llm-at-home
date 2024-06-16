@@ -173,8 +173,8 @@ public static class Program
         }
 
         var example = scope.Resolve<OpenAIServerWebSearchExample>();
-        // var example = scope.Resolve<AgentBenchExample>();
 
+        // var example = scope.Resolve<AgentBenchExample>();
         await example.RunAsync();
     }
 

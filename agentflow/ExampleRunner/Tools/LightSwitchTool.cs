@@ -29,7 +29,7 @@ def turn_lights_on_off(on_or_off: str) -> str:
 
 """".TrimEnd();
 
-    public async Task<string> GetOutputAsync(ConversationThread conversationThread, string input)
+    public async Task<string> GetOutputAsync(ConversationThread conversation, string input)
     {
         // URL of the service
         Uri url;

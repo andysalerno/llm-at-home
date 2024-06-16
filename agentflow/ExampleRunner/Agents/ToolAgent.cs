@@ -40,6 +40,31 @@ public class ToolAgent : IAgent
 
   public Prompt RespondingPrompt { get; }
 
+  private static JsonElement JsonToolSchema { get; }
+    = JsonSerializer.Deserialize<JsonElement>(
+"""
+{
+    "title": "AnswerFormat",
+    "type": "object",
+    "properties": {
+      "last_user_message_intent": {
+        "type": "string"
+      },
+      "function_name": {
+        "type": "string"
+      },
+      "invocation": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "last_user_message_intent",
+      "function_name",
+      "invocation"
+    ]
+}
+""".Trim());
+
   public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
   {
     IAgent toolSelectionAgent = this.customAgentBuilderFactory
@@ -87,29 +112,4 @@ public class ToolAgent : IAgent
     const string Sep = "\n\n";
     return string.Join(Sep, tools.Select(t => t.Definition));
   }
-
-  private static JsonElement JsonToolSchema { get; }
-    = JsonSerializer.Deserialize<JsonElement>(
-"""
-{
-    "title": "AnswerFormat",
-    "type": "object",
-    "properties": {
-      "last_user_message_intent": {
-        "type": "string"
-      },
-      "function_name": {
-        "type": "string"
-      },
-      "invocation": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "last_user_message_intent",
-      "function_name",
-      "invocation"
-    ]
-}
-""".Trim());
 }
