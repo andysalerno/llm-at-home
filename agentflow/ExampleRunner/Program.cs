@@ -174,7 +174,6 @@ public static class Program
 
         var example = scope.Resolve<OpenAIServerWebSearchExample>();
 
-        // var example = scope.Resolve<AgentBenchExample>();
         await example.RunAsync();
     }
 
@@ -217,12 +216,7 @@ public static class Program
             containerBuilder.RegisterType<WebSearchExample>();
             containerBuilder.RegisterType<SimpleChatExample>();
             containerBuilder.RegisterType<AgentBenchExample>();
-            // containerBuilder.Register(
-            //     b => new AgentBenchExample(
-            //         b.Resolve<CustomAgentBuilderFactory>(),
-            //         b.Resolve<ICellRunner<ConversationThread>>(),
-            //         b.Resolve<Configuration>().ModelName,
-            //         b.Resolve<ILogger<AgentBenchExample>>()));
+            containerBuilder.RegisterType<OpenAIServerWebSearchExample>();
         }
 
         // Parse args as configuration:
