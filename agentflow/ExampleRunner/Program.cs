@@ -217,7 +217,12 @@ public static class Program
             containerBuilder.RegisterType<WebSearchExample>();
             containerBuilder.RegisterType<SimpleChatExample>();
             containerBuilder.RegisterType<AgentBenchExample>();
-            containerBuilder.RegisterType<OpenAIServerWebSearchExample>();
+            // containerBuilder.Register(
+            //     b => new AgentBenchExample(
+            //         b.Resolve<CustomAgentBuilderFactory>(),
+            //         b.Resolve<ICellRunner<ConversationThread>>(),
+            //         b.Resolve<Configuration>().ModelName,
+            //         b.Resolve<ILogger<AgentBenchExample>>()));
         }
 
         // Parse args as configuration:

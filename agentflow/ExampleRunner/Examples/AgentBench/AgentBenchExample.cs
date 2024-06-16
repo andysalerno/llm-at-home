@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
+using AgentFlow.Config;
 using AgentFlow.LlmClient;
 using AgentFlow.Util;
 using AgentFlow.WorkSpace;
@@ -11,6 +12,7 @@ namespace AgentFlow.Examples;
 
 internal sealed class AgentBenchExample : IRunnableExample
 {
+    private static readonly TimeSpan Delay = TimeSpan.FromSeconds(1);
     private static readonly string[] Separator = ["{{ END }}"];
 
     private static readonly Lazy<string> ScenarioDirectory =
@@ -22,12 +24,14 @@ internal sealed class AgentBenchExample : IRunnableExample
 
     private readonly CustomAgentBuilderFactory agentFactory;
     private readonly ICellRunner<ConversationThread> runner;
+    private readonly ICompletionsEndpointConfig config;
     private readonly ILogger<AgentBenchExample> logger;
 
-    public AgentBenchExample(CustomAgentBuilderFactory agentFactory, ICellRunner<ConversationThread> runner, ILogger<AgentBenchExample> logger)
+    public AgentBenchExample(CustomAgentBuilderFactory agentFactory, ICellRunner<ConversationThread> runner, ICompletionsEndpointConfig config, ILogger<AgentBenchExample> logger)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
+        this.config = config;
         this.logger = logger;
     }
 
@@ -43,7 +47,7 @@ internal sealed class AgentBenchExample : IRunnableExample
         {
             this.logger.LogInformation("Running scenario: {Scenario}", scenarioName);
             await this.RunScenarioAsync(scenarioName);
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await Task.Delay(Delay);
         }
 
         this.logger.LogInformation("AgentBench complete.");
@@ -130,7 +134,7 @@ internal sealed class AgentBenchExample : IRunnableExample
         var conversationThread = await this.GetScenarioConversationAsync(scenarioName);
         ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
 
-        await this.WriteResultAsync("modelName", scenarioName, result.Messages.Last().Content);
+        await this.WriteResultAsync(this.config.ModelName, scenarioName, result.Messages.Last().Content);
     }
 
     private async Task WriteResultAsync(string modelName, string scenarioName, string output)
