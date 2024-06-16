@@ -63,6 +63,8 @@ services:
   mongo-chatui:
     image: mongo:latest
     restart: unless-stopped
+    volumes:
+      - mongo-storage:/data/db
 
   prometheus:
     image: prom/prometheus:latest
@@ -82,3 +84,4 @@ services:
 
 volumes:
   grafana-storage:
+  mongo-storage:
