@@ -43,44 +43,53 @@ internal sealed class OpenAIServer
             HttpListenerContext ctx = await listener.GetContextAsync(); // Wait for a request
             HttpListenerRequest request = ctx.Request;
             HttpListenerResponse response = ctx.Response;
-            logger.LogInformation("Incoming request received...");
-
-            ChatCompletionRequest chatRequest;
-            using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+            try
             {
-                string content = await reader.ReadToEndAsync();
-                logger.LogInformation("Got request: {Content}", content);
-                chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
-                    ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
+                ChatCompletionRequest chatRequest;
+                using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                {
+                    string content = await reader.ReadToEndAsync();
+                    logger.LogInformation("Got request: {Content}", content);
+                    chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
+                        ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
+                }
+
+                Cell<ConversationThread> programToUse = program;
+
+                if (chatRequest.Model == PassthruModelName)
+                {
+                    programToUse = passthruProgram;
+
+                    logger.LogInformation("Passthru model requesting - will handle by passthru agent");
+                }
+
+                ConversationThread conversationThread = ToConversationThread(chatRequest);
+
+                ConversationThread output = await runner.RunAsync(programToUse, rootInput: conversationThread);
+
+                var lastMessage = output.Messages.Last();
+
+                logger.LogDebug("Output last message: {}", lastMessage.Content);
+
+                if (lastMessage.Role != Role.Assistant)
+                {
+                    logger.LogWarning("Last message was not from assistant - this might cause quality issues in the response.");
+                }
+
+                // Write the response info
+                await SendResponseAsync(lastMessage.Content, response, logger);
             }
-
-            Cell<ConversationThread> programToUse = program;
-
-            if (chatRequest.Model == PassthruModelName)
+            catch (Exception ex)
             {
-                programToUse = passthruProgram;
-
-                logger.LogInformation("Passthru model requesting - will handle by passthru agent");
+                logger.LogError(ex, message: "error");
             }
-
-            ConversationThread conversationThread = ToConversationThread(chatRequest);
-
-            ConversationThread output = await runner.RunAsync(programToUse, rootInput: conversationThread);
-
-            var lastMessage = output.Messages.Last();
-
-            logger.LogDebug("Output last message: {}", lastMessage.Content);
-
-            if (lastMessage.Role != Role.Assistant)
+            finally
             {
-                logger.LogWarning("Last message was not from assistant");
+                // The docs specify you should invoke `Close()`, instead of using `using`,
+                // even though it's an `IDisposable`...
+                response.Close();
+                logger.LogInformation("Request complete.");
             }
-
-            // Write the response info
-            await SendResponseAsync(lastMessage.Content, response, logger);
-
-            response.Close();
-            logger.LogInformation("Request complete.");
         }
     }
 
@@ -110,9 +119,6 @@ internal sealed class OpenAIServer
         response.AddHeader("x-accel-buffering", "no");
         response.AddHeader("Transfer-Encoding", "chunked");
         response.ContentEncoding = Encoding.UTF8;
-
-        // Write out to the response stream (asynchronously), then close it
-        logger.LogInformation("Responding...");
 
         foreach (var streamingResponse in new[] { firstResponse, finalResponse })
         {
