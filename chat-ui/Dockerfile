@@ -2,7 +2,7 @@ FROM node:20 as base-node-image
 
 RUN git clone https://github.com/huggingface/chat-ui
 WORKDIR /chat-ui
-RUN git checkout 96d25a671f9e6ed6651cbb9cdd62b88bbe5d1bef
+RUN git checkout fc5262974a556bf308943770a961b7ccbf8dcb4e
 RUN rm -rf .git
 
 RUN rm package.json && rm .env
