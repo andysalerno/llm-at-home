@@ -199,20 +199,20 @@ internal sealed class OpenAIServer
                 string content = reader.GetString() ?? throw new JsonException();
                 return new MessageContent(Text: content);
             }
-            else if (reader.TokenType == JsonTokenType.StartObject)
+            else if (reader.TokenType == JsonTokenType.StartArray)
             {
                 using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
                 {
                     var value = doc.RootElement.Clone();
 
-                    var values = value.Deserialize<Dictionary<string, string>>()
+                    var values = value.Deserialize<List<Dictionary<string, string>>>()
                         ?? throw new JsonException();
 
-                    return new MessageContent(Text: values["text"]);
+                    return new MessageContent(Text: values.First()["text"]);
                 }
             }
 
-            throw new JsonException();
+            throw new JsonException($"Expected StartArray or String, saw {reader.TokenType}");
         }
 
         public override void Write(
