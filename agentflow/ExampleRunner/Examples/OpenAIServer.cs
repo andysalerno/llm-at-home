@@ -155,7 +155,7 @@ internal sealed class OpenAIServer
         var messages = request.Messages.Select(m => new AgentFlow.LlmClient.Message(
             AgentName: new AgentFlow.Agents.AgentName(m.Role),
             Role: Role.ExpectFromName(m.Role),
-            Content: m.Content));
+            Content: m.Content.Text));
 
         return ConversationThread.CreateBuilder().AddMessages(messages).Build();
     }
@@ -166,7 +166,11 @@ internal sealed class OpenAIServer
 
     private sealed record Message(
         [property: JsonPropertyName("role")] string Role,
-        [property: JsonPropertyName("content")] string Content);
+        [property: JsonPropertyName("content")] MessageContent Content);
+
+    private sealed record MessageContent(
+        [property: JsonPropertyName("text")] string Text,
+        [property: JsonPropertyName("type")] string Type = "text");
 
     private sealed record ChatCompletionStreamingResponse(
         [property: JsonPropertyName("choices")] ImmutableArray<ChatChoice> Choices,
