@@ -166,6 +166,7 @@ internal sealed class OpenAIServer
 
     private sealed record Message(
         [property: JsonPropertyName("role")] string Role,
+        [property: JsonConverter(typeof(MessageContentConverter))]
         [property: JsonPropertyName("content")] MessageContent Content);
 
     private sealed record MessageContent(
@@ -185,4 +186,41 @@ internal sealed class OpenAIServer
     private sealed record Delta(
         [property: JsonPropertyName("role")] string Role,
         [property: JsonPropertyName("content")] string Content);
+
+    private sealed class MessageContentConverter : JsonConverter<MessageContent>
+    {
+        public override MessageContent? Read(
+            ref Utf8JsonReader reader,
+            Type typeToConvert,
+            JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
+                string content = reader.GetString() ?? throw new JsonException();
+                return new MessageContent(Text: content);
+            }
+            else if (reader.TokenType == JsonTokenType.StartObject)
+            {
+                using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
+                {
+                    var value = doc.RootElement.Clone();
+
+                    var values = value.Deserialize<Dictionary<string, string>>()
+                        ?? throw new JsonException();
+
+                    return new MessageContent(Text: values["text"]);
+                }
+            }
+
+            throw new JsonException();
+        }
+
+        public override void Write(
+            Utf8JsonWriter writer,
+            MessageContent value,
+            JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
