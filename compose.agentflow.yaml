@@ -25,13 +25,16 @@ services:
     # image: ghcr.io/ggerganov/llama.cpp:server-cuda
     image: localhost/llama.cpp
     volumes:
-      - /home/tiny/mnt/drive/gguf:/models
+      - ${MODEL_DIR}:/models
     restart: unless-stopped
-    command: -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
+    command: -m /models/${MODEL_NAME} --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
     ports:
       - "8000:8000"
     devices:
       - nvidia.com/gpu=all
+    env_file:
+      - ./.agentflow.default.env
+      - ./.agentflow.env
 
   chat-ui:
     image: localhost/chat-ui
