@@ -4,6 +4,8 @@ namespace AgentFlow.Prompts;
 
 public sealed record Variable(string Name, string Value);
 
+public sealed record RenderedPrompt(string Text);
+
 public sealed record Prompt
 {
     private readonly List<Variable> variables = new();
@@ -23,7 +25,7 @@ public sealed record Prompt
         return this;
     }
 
-    public string Render()
+    public RenderedPrompt Render()
     {
         var logger = this.GetLogger();
 
@@ -48,6 +50,6 @@ public sealed record Prompt
             logger.LogDebug("Saw: {Result}", result);
         }
 
-        return result;
+        return new RenderedPrompt(result);
     }
 }

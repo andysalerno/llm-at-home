@@ -144,7 +144,7 @@ public sealed class CustomAgent : IAgent
 
         public Builder WithInstructionsFromPrompt(Prompt prompt)
         {
-            this.instructions = prompt.Render();
+            this.instructions = prompt.Render().Text;
 
             return this;
         }

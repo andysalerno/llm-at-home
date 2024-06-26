@@ -13,7 +13,6 @@ public class PromptTests
     [Fact]
     public void Sample()
     {
-
         Assert.True(true);
     }
 }

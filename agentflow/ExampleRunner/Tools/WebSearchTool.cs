@@ -106,7 +106,7 @@ def search_web(query: str) -> str:
 
             // Filter out anything except assistant and user messages:
             .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role))
-            .WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render()));
+            .WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render().Text));
 
         logger.LogDebug("Current message history for request is: {Messages}", JsonSerializer.Serialize(historyWithRewriteInstructions.Messages));
 
