@@ -8,12 +8,14 @@ public class FileSystemPromptFactory : IFactory<Prompt>
 {
     private readonly string promptDirectoryLocalPath;
     private readonly string promptName;
+    private readonly IPromptParser parser;
     private readonly ILogger<FileSystemPromptFactory> logger;
 
-    public FileSystemPromptFactory(string promptName, IFileSystemPromptProviderConfig config)
+    public FileSystemPromptFactory(string promptName, IPromptParser parser, IFileSystemPromptProviderConfig config)
     {
         this.promptDirectoryLocalPath = config.PromptDirectory;
         this.promptName = promptName;
+        this.parser = parser;
         this.logger = this.GetLogger();
     }
 
@@ -35,6 +37,6 @@ public class FileSystemPromptFactory : IFactory<Prompt>
 
         var text = File.ReadAllText(fullPath).Trim().Replace("\r\n", "\n", StringComparison.Ordinal);
 
-        return new Prompt(text);
+        return this.parser.Parse(text);
     }
 }

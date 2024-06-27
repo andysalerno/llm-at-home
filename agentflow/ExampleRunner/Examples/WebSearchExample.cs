@@ -19,6 +19,7 @@ internal sealed class WebSearchExample : IRunnableExample
     private readonly IHttpClientFactory httpClientFactory;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
+    private readonly IPromptParser promptParser;
     private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
     private readonly IFileSystemPromptProviderConfig promptProviderConfig;
     private readonly ILoggingConfig loggingConfig;
@@ -29,6 +30,7 @@ internal sealed class WebSearchExample : IRunnableExample
         IHttpClientFactory httpClientFactory,
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
+        IPromptParser promptParser,
         CustomAgentBuilderFactory customAgentBuilderFactory,
         IFileSystemPromptProviderConfig promptProviderConfig,
         ILoggingConfig loggingConfig)
@@ -38,6 +40,7 @@ internal sealed class WebSearchExample : IRunnableExample
         this.httpClientFactory = httpClientFactory;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
+        this.promptParser = promptParser;
         this.customAgentBuilderFactory = customAgentBuilderFactory;
         this.promptProviderConfig = promptProviderConfig;
         this.loggingConfig = loggingConfig;
@@ -51,17 +54,19 @@ internal sealed class WebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory("rewrite_query_system", this.promptProviderConfig),
+                new FileSystemPromptFactory("rewrite_query_system", this.promptParser, this.promptProviderConfig),
                 this.httpClientFactory)
         ];
 
         var toolSelectionPrompt = new FileSystemPromptFactory(
             "websearch_example_system",
+            this.promptParser,
             this.promptProviderConfig)
             .Create();
 
         var respondingPrompt = new FileSystemPromptFactory(
             "websearch_example_responding",
+            this.promptParser,
             this.promptProviderConfig)
             .Create();
 

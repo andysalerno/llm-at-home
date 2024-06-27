@@ -19,6 +19,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     private readonly IScraperClient scraperClient;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly ICellRunner<ConversationThread> runner;
+    private readonly IPromptParser promptParser;
     private readonly IFileSystemPromptProviderConfig fileSystemPromptProviderConfig;
 
     public OpenAIServerWebSearchExample(
@@ -26,6 +27,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         IScraperClient scraperClient,
         IHttpClientFactory httpClientFactory,
         ICellRunner<ConversationThread> runner,
+        IPromptParser promptParser,
         CustomAgentBuilderFactory agentBuilderFactory,
         IFileSystemPromptProviderConfig fileSystemPromptProviderConfig)
     {
@@ -33,6 +35,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         this.scraperClient = scraperClient;
         this.httpClientFactory = httpClientFactory;
         this.runner = runner;
+        this.promptParser = promptParser;
         this.agentBuilderFactory = agentBuilderFactory;
         this.fileSystemPromptProviderConfig = fileSystemPromptProviderConfig;
     }
@@ -47,17 +50,19 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory("rewrite_query_system", this.fileSystemPromptProviderConfig),
+                new FileSystemPromptFactory("rewrite_query_system", this.promptParser, this.fileSystemPromptProviderConfig),
                 this.httpClientFactory),
             ];
 
         var toolSelectionPrompt = new FileSystemPromptFactory(
             "websearch_example_system",
+            this.promptParser,
             this.fileSystemPromptProviderConfig)
             .Create().AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
         var respondingPrompt = new FileSystemPromptFactory(
             "websearch_example_responding",
+            this.promptParser,
             this.fileSystemPromptProviderConfig)
             .Create();
 
