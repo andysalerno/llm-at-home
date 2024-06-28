@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace AgentFlow.Prompts;
+﻿namespace AgentFlow.Prompts;
 
 public sealed record Variable(string Name, string Value);
 
@@ -37,30 +35,8 @@ public sealed record Prompt
 
     public RenderedPrompt Render()
     {
-        var logger = this.GetLogger();
-
-        string result = this.TemplateText;
-
-        foreach (var variable in this.variables)
-        {
-            string tepmlatedVariableText = $"{{{variable.Name}}}";
-            if (!result.Contains(tepmlatedVariableText, StringComparison.Ordinal))
-            {
-                throw new InvalidOperationException($"Expected template to include variable {variable.Name}, but was not found");
-            }
-
-            result = result.Replace(tepmlatedVariableText, variable.Value, StringComparison.Ordinal);
-        }
-
-        logger.LogInformation("Replaced {Count} variables in prompt", this.variables.Count);
-
-        if (result.Contains("{{", StringComparison.Ordinal))
-        {
-            logger.LogWarning("Prompt was rendered, but (most likely) still contained unreplaced template artifacts.");
-            logger.LogDebug("Saw: {Result}", result);
-        }
-
-        return new RenderedPrompt(result);
+        // todo: remove or obsolete this method
+        return new PromptRenderer().Render(this);
     }
 
     public sealed record FrontMatter(string Name);
