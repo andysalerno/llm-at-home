@@ -39,5 +39,5 @@ public sealed record Prompt
         return new PromptRenderer().Render(this);
     }
 
-    public sealed record FrontMatter(string Name);
+    public sealed record FrontMatter(string Name, string? Description = null);
 }

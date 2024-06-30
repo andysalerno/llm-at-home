@@ -27,6 +27,11 @@ public sealed class PromptParser : IPromptParser
             3,
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
+        if (splits.Length == 1)
+        {
+            return new Prompt(splits[0], new Prompt.FrontMatter(Name: "<unset>"));
+        }
+
         return new Prompt(splits[1], ParseFrontMatter(splits[0]));
     }
 
