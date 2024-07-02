@@ -5,6 +5,7 @@ using AgentFlow.Config;
 using AgentFlow.Examples;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
+using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -210,6 +211,7 @@ public static class Program
             // containerBuilder.RegisterType<GroqCompletionsClient>().AsImplementedInterfaces();
             // containerBuilder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<PromptParser>().AsImplementedInterfaces();
             containerBuilder.RegisterType<CustomAgentBuilderFactory>();
 
             // Runnable example classes:
