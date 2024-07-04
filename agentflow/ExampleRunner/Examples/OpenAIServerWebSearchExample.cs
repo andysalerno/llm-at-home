@@ -22,6 +22,8 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     private readonly IPromptParser promptParser;
     private readonly IFileSystemPromptProviderConfig fileSystemPromptProviderConfig;
 
+    // constructor should take the prompt factory, not both the parser
+    // and the config for the purposes of constructing the factory.
     public OpenAIServerWebSearchExample(
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
@@ -50,18 +52,18 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory("rewrite_query_system", this.promptParser, this.fileSystemPromptProviderConfig),
+                new FileSystemPromptFactory(ExamplePrompts.RewriteQuerySystem, this.promptParser, this.fileSystemPromptProviderConfig),
                 this.httpClientFactory),
-            ];
+        ];
 
         var toolSelectionPrompt = new FileSystemPromptFactory(
-            "websearch_example_system",
+            ExamplePrompts.WebsearchExampleSystem,
             this.promptParser,
             this.fileSystemPromptProviderConfig)
             .Create().AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
         var respondingPrompt = new FileSystemPromptFactory(
-            "websearch_example_responding",
+            ExamplePrompts.WebsearchExampleResponding,
             this.promptParser,
             this.fileSystemPromptProviderConfig)
             .Create();

@@ -54,18 +54,18 @@ internal sealed class WebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory("rewrite_query_system", this.promptParser, this.promptProviderConfig),
+                new FileSystemPromptFactory(ExamplePrompts.RewriteQuerySystem, this.promptParser, this.promptProviderConfig),
                 this.httpClientFactory)
         ];
 
         var toolSelectionPrompt = new FileSystemPromptFactory(
-            "websearch_example_system",
+            ExamplePrompts.WebsearchExampleSystem,
             this.promptParser,
             this.promptProviderConfig)
             .Create();
 
         var respondingPrompt = new FileSystemPromptFactory(
-            "websearch_example_responding",
+            ExamplePrompts.WebsearchExampleResponding,
             this.promptParser,
             this.promptProviderConfig)
             .Create();

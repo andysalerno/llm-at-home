@@ -1,5 +1,7 @@
 ﻿namespace AgentFlow.Prompts;
 
+public sealed record PromptName(string Value);
+
 public sealed record Variable(string Name, string Value);
 
 public sealed record RenderedPrompt(string Text);

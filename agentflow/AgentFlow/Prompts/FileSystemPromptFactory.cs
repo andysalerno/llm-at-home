@@ -7,11 +7,11 @@ namespace AgentFlow.Prompts;
 public class FileSystemPromptFactory : IFactory<Prompt>
 {
     private readonly string promptDirectoryLocalPath;
-    private readonly string promptName;
+    private readonly PromptName promptName;
     private readonly IPromptParser parser;
     private readonly ILogger<FileSystemPromptFactory> logger;
 
-    public FileSystemPromptFactory(string promptName, IPromptParser parser, IFileSystemPromptProviderConfig config)
+    public FileSystemPromptFactory(PromptName promptName, IPromptParser parser, IFileSystemPromptProviderConfig config)
     {
         this.promptDirectoryLocalPath = config.PromptDirectory;
         this.promptName = promptName;
@@ -22,7 +22,7 @@ public class FileSystemPromptFactory : IFactory<Prompt>
     public Prompt Create()
     {
         // prompt names are assumed to be txt file names:
-        string txtFileName = $"{this.promptName}.txt";
+        string txtFileName = $"{this.promptName.Value}.txt";
 
         var file = Path.Combine(this.promptDirectoryLocalPath, txtFileName);
 
