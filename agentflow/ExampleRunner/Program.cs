@@ -3,7 +3,6 @@ using AgentFlow.Agents;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
-using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
