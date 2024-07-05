@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using System.Globalization;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
-using AgentFlow.Config;
 using AgentFlow.Examples.Agents;
 using AgentFlow.Examples.Tools;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
@@ -19,27 +19,22 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     private readonly IScraperClient scraperClient;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly ICellRunner<ConversationThread> runner;
-    private readonly IPromptParser promptParser;
-    private readonly IFileSystemPromptProviderConfig fileSystemPromptProviderConfig;
+    private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
 
-    // constructor should take the prompt factory, not both the parser
-    // and the config for the purposes of constructing the factory.
     public OpenAIServerWebSearchExample(
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
         IHttpClientFactory httpClientFactory,
         ICellRunner<ConversationThread> runner,
-        IPromptParser promptParser,
-        CustomAgentBuilderFactory agentBuilderFactory,
-        IFileSystemPromptProviderConfig fileSystemPromptProviderConfig)
+        IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
+        CustomAgentBuilderFactory agentBuilderFactory)
     {
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
         this.httpClientFactory = httpClientFactory;
         this.runner = runner;
-        this.promptParser = promptParser;
+        this.promptFactoryProvider = promptFactoryProvider;
         this.agentBuilderFactory = agentBuilderFactory;
-        this.fileSystemPromptProviderConfig = fileSystemPromptProviderConfig;
     }
 
     public async Task RunAsync()
@@ -52,20 +47,17 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory(ExamplePrompts.RewriteQuerySystem, this.promptParser, this.fileSystemPromptProviderConfig),
+                this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
                 this.httpClientFactory),
         ];
 
-        var toolSelectionPrompt = new FileSystemPromptFactory(
-            ExamplePrompts.WebsearchExampleSystem,
-            this.promptParser,
-            this.fileSystemPromptProviderConfig)
-            .Create().AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
+        var toolSelectionPrompt = this.promptFactoryProvider
+            .GetFactory(ExamplePrompts.WebsearchExampleSystem)
+            .Create()
+            .AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
-        var respondingPrompt = new FileSystemPromptFactory(
-            ExamplePrompts.WebsearchExampleResponding,
-            this.promptParser,
-            this.fileSystemPromptProviderConfig)
+        var respondingPrompt = this.promptFactoryProvider
+            .GetFactory(ExamplePrompts.WebsearchExampleResponding)
             .Create();
 
         respondingPrompt.AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));

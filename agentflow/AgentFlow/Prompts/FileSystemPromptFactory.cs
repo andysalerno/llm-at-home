@@ -4,6 +4,23 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Prompts;
 
+public sealed class FileSystemPromptFactoryProvider : IFactoryProvider<Prompt, PromptName>
+{
+    private readonly IPromptParser parser;
+    private readonly IFileSystemPromptProviderConfig config;
+
+    public FileSystemPromptFactoryProvider(IPromptParser parser, IFileSystemPromptProviderConfig config)
+    {
+        this.parser = parser;
+        this.config = config;
+    }
+
+    public IFactory<Prompt> GetFactory(PromptName name)
+    {
+        return new FileSystemPromptFactory(name, this.parser, this.config);
+    }
+}
+
 public class FileSystemPromptFactory : IFactory<Prompt>
 {
     private readonly string promptDirectoryLocalPath;

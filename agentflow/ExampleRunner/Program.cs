@@ -3,6 +3,7 @@ using AgentFlow.Agents;
 using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
@@ -212,6 +213,7 @@ public static class Program
             // containerBuilder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<PromptParser>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<FileSystemPromptFactoryProvider>().AsImplementedInterfaces();
             containerBuilder.RegisterType<CustomAgentBuilderFactory>();
 
             // Runnable example classes:
