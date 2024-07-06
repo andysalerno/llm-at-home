@@ -5,22 +5,33 @@ use axum::{
     routing::get,
     Router,
 };
+use clap::Parser;
 use env_logger::Env;
 use log::info;
 use std::path::{Path, PathBuf};
 use tokio::fs;
 
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Port number to listen on
+    #[arg(short, long, default_value_t = 3000)]
+    port: u16,
+}
+
 #[tokio::main]
 async fn main() {
     init_logging();
+
+    let args = Args::parse();
 
     let app = Router::new()
         .route("/", get(serve_file))
         .route("/*file", get(serve_file));
 
-    let addr = "0.0.0.0:3000";
-    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    let addr = format!("0.0.0.0:{}", args.port);
     info!("Listening on {}", addr);
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
