@@ -14,7 +14,6 @@ use tokio::fs;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Port number to listen on
     #[arg(short, long, default_value_t = 3000)]
     port: u16,
 }
