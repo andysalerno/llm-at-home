@@ -63,6 +63,13 @@ services:
       - "8002:8002"
     restart: unless-stopped
 
+  webprompt:
+    image: localhost/webprompt
+    build: ./webprompt
+    ports:
+      - "8004:3000"
+    restart: unless-stopped
+
   mongo-chatui:
     image: mongo:latest
     restart: unless-stopped
