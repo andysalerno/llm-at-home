@@ -20,11 +20,11 @@ It has an examples dir that shows how agents may be built using the framework.
 
 TODO: rewrite in Rust to go alongside the Infer library :)
 
-TODO: package as a Docker container.
-
-TODO: accept system prompt from callers, because Huggingface ChatUI sends a system prompt to make a title for the conversation. But need to distinguish when to replace or not...
-
 TODO: tree of thought, where every tool is in a taxonomy-tree like hierarchy, which the model can navigate without getting overwhelmed by choices
+
+~~TODO: package as a Docker container.~~ Done :)
+
+~~TODO: accept system prompt from callers, because Huggingface ChatUI sends a system prompt to make a title for the conversation. But need to distinguish when to replace or not...~~ Done :)
 
 ## scraper
 
@@ -58,3 +58,7 @@ This is Huggingface's project chat-ui, with a slightly modified Dockerfile. Can 
 ## text-generation-inference
 
 This is Huggingface's project text-generation-inference. Its responsibility is to host the model and expose an API for inference that is super robust, super fast, super efficient, and super easy to set up. It is similar to vllm, but exposes a slightly different API.
+
+## webprompt
+
+TODO
