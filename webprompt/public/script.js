@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const line of lines) {
                     if (line.startsWith('data:')) {
                         const jsonData = JSON.parse(line.slice(5));
-                        if (jsonData.content) {
+                        if (jsonData.stop === false && jsonData.content) {
                             accumulatedResponse += jsonData.content;
                             updateTextArea(textBeforeCursor, accumulatedResponse, textAfterCursor);
                         }
@@ -70,12 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Error:', error);
-            textArea.value += '\n\nAn error occurred while fetching the response.';
+            textArea.value += '\n\n<error>';
         }
     }
 
     function updateTextArea(beforeText, newContent, afterText) {
-        // const formattedResponse = `<span class="llm-response">${newContent}</span>`;
         textArea.value = `${beforeText}${newContent}${afterText}`;
         textArea.scrollTop = textArea.scrollHeight;
     }
