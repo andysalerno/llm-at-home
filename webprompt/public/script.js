@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateTextArea(beforeText, newContent, afterText) {
-        const formattedResponse = `<span class="llm-response">${newContent}</span>`;
-        textArea.value = `${beforeText}${formattedResponse}${afterText}`;
+        // const formattedResponse = `<span class="llm-response">${newContent}</span>`;
+        textArea.value = `${beforeText}${newContent}${afterText}`;
         textArea.scrollTop = textArea.scrollHeight;
     }
 });
