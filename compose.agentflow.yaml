@@ -17,7 +17,7 @@ services:
       - EMBEDDING_URI=http://embedding-server:8000/embeddings
       - SCRAPER_URI=http://scraper:8002/scrape
       - OPENAI_URI=http://llmhost:8000
-      - MODEL_NAME=modelname
+      - MODEL_NAME=
     tty: true
     command: server http://llmhost:8000 http://embedding-server:8000/embeddings http://scraper:8002/scrape modelname -v --prompt-dir=Prompts 
 
@@ -79,7 +79,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./.prometheus.config:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
