@@ -3,6 +3,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('sendButton');
     const apiEndpointInput = document.getElementById('apiEndpoint');
     const stopStringInput = document.getElementById('stopString');
+    const userPrefixAutoAdd = document.getElementById('userPrefixAutoAdd');
+
+    // Load saved values from localStorage
+    apiEndpointInput.value = localStorage.getItem('apiEndpoint') || '';
+    stopStringInput.value = localStorage.getItem('stopString') || '';
+    userPrefixAutoAdd.value = localStorage.getItem('userPrefixAutoAdd') || '';
+
+    // Save values to localStorage when they change
+    apiEndpointInput.addEventListener('change', () => {
+        localStorage.setItem('apiEndpoint', apiEndpointInput.value);
+    });
+
+    stopStringInput.addEventListener('change', () => {
+        localStorage.setItem('stopString', stopStringInput.value);
+    });
+
+    userPrefixAutoAdd.addEventListener('change', () => {
+        localStorage.setItem('userPrefixAutoAdd', userPrefixAutoAdd.value);
+    });
 
     sendButton.addEventListener('click', sendMessage);
     textArea.addEventListener('keydown', (e) => {
@@ -37,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     model: 'gpt-4',
                     prompt: textBeforeCursor,
-                    max_tokens: 150,
+                    max_tokens: 512,
                     stream: true,
                     stop: stopString ? [stopString] : undefined,
                 }),
@@ -72,10 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error:', error);
             textArea.value += '\n\n<error>';
         }
+
+        appendTextArea(stopString);
+        appendTextArea(userPrefixAutoAdd.value.replace("\\n", "\n"));
     }
 
     function updateTextArea(beforeText, newContent, afterText) {
         textArea.value = `${beforeText}${newContent}${afterText}`;
+        textArea.scrollTop = textArea.scrollHeight;
+    }
+
+    function appendTextArea(text) {
+        textArea.value = `${textArea.value}${text}`;
         textArea.scrollTop = textArea.scrollHeight;
     }
 });
