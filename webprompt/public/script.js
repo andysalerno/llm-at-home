@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const textArea = document.getElementById('textArea');
     const sendButton = document.getElementById('sendButton');
+    const apiEndpointInput = document.getElementById('apiEndpoint');
+    const stopStringInput = document.getElementById('stopString');
 
     sendButton.addEventListener('click', sendMessage);
     textArea.addEventListener('keydown', (e) => {
@@ -14,16 +16,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const userInput = textArea.value;
         if (!userInput.trim()) return;
 
+        const apiEndpoint = apiEndpointInput.value.trim();
+        if (!apiEndpoint) {
+            alert('Please enter an API endpoint URI');
+            return;
+        }
+
+        const stopString = stopStringInput.value.trim();
+
+        const cursorPosition = textArea.selectionStart;
+        const textBeforeCursor = userInput.substring(0, cursorPosition);
+        const textAfterCursor = userInput.substring(cursorPosition);
+
         try {
-            const response = await fetch('http://your-local-llm-api-endpoint/v1/chat/completions', {
+            const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    model: 'your-model-name',
-                    messages: [{ role: 'user', content: userInput }],
+                    model: 'gpt-4',
+                    prompt: textBeforeCursor,
+                    max_tokens: 150,
                     stream: true,
+                    stop: stopString ? [stopString] : undefined,
                 }),
             });
 
@@ -45,9 +61,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (const line of lines) {
                     if (line.startsWith('data:')) {
                         const jsonData = JSON.parse(line.slice(5));
-                        if (jsonData.choices && jsonData.choices[0].delta.content) {
-                            accumulatedResponse += jsonData.choices[0].delta.content;
-                            updateTextArea(accumulatedResponse);
+                        if (jsonData.content) {
+                            accumulatedResponse += jsonData.content;
+                            updateTextArea(textBeforeCursor, accumulatedResponse, textAfterCursor);
                         }
                     }
                 }
@@ -58,10 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateTextArea(newContent) {
-        const userInput = textArea.value;
-        const formattedResponse = marked.parse(newContent);
-        textArea.value = `${userInput}\n\n<div class="llm-response">${formattedResponse}</div>`;
+    function updateTextArea(beforeText, newContent, afterText) {
+        const formattedResponse = `<span class="llm-response">${newContent}</span>`;
+        textArea.value = `${beforeText}${formattedResponse}${afterText}`;
         textArea.scrollTop = textArea.scrollHeight;
     }
 });
