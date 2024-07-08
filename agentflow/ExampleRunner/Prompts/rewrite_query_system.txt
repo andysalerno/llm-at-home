@@ -1,6 +1,6 @@
 In the above conversation, the user's request resulted in a web search, with the following query text:
 
-QUERY_TEXT: {ORIGINAL_QUERY}
+QUERY_TEXT: {{ORIGINAL_QUERY}}
 
 Your task is to rephrase that query into a question.
 
@@ -17,4 +17,4 @@ QUERY_TEXT: what is Mario Kart
 YOUR_RESPONSE: what is Mario Kart?
 
 Now give your response for:
-QUERY_TEXT: {ORIGINAL_QUERY}
+QUERY_TEXT: {{ORIGINAL_QUERY}}
