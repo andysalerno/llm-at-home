@@ -1,9 +1,18 @@
 ﻿namespace AgentFlow.Prompts;
 
+/// <summary>
+/// The name of a prompt. Used for retrieving a prompt by name.
+/// </summary>
 public sealed record PromptName(string Value);
 
+/// <summary>
+/// A variable key/value representation in a <see cref="Prompt"/>.
+/// </summary>
 public sealed record Variable(string Name, string Value);
 
+/// <summary>
+/// The result of using a <see cref="IPromptRenderer"/> to render a <see cref="Prompt"/>.
+/// </summary>
 public sealed record RenderedPrompt(string Text);
 
 public sealed record PromptText(string Text);

@@ -14,8 +14,9 @@ public class ToolAgent : IAgent
 {
   private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
   private readonly ImmutableArray<ITool> tools;
+  private readonly Lazy<IAgent> toolSelectionAgent;
+  private readonly Lazy<IAgent> responseAgent;
 
-  // TODO: take in CustomAgentBuilderFactory, or re-implement the custom agent logic here? Not sure
   public ToolAgent(
       AgentName name,
       Role role,
@@ -30,6 +31,22 @@ public class ToolAgent : IAgent
     this.RespondingPrompt = respondingPrompt;
     this.customAgentBuilderFactory = customAgentBuilderFactory;
     this.tools = tools;
+
+    this.toolSelectionAgent = new Lazy<IAgent>(() => this.customAgentBuilderFactory
+        .CreateBuilder()
+        .WithName(new AgentName("ToolSelectorAgent"))
+        .WithRole(Role.ToolInvocation)
+        .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
+        .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
+        .WithJsonResponseSchema(JsonToolSchema)
+        .Build());
+
+    this.responseAgent = new Lazy<IAgent>(() => this.customAgentBuilderFactory
+       .CreateBuilder()
+       .WithName(new AgentName("ResponseAgent"))
+       .WithRole(this.Role)
+       .WithInstructionsFromPrompt(this.RespondingPrompt)
+       .Build());
   }
 
   public AgentName Name { get; }
@@ -67,22 +84,8 @@ public class ToolAgent : IAgent
 
   public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
   {
-    IAgent toolSelectionAgent = this.customAgentBuilderFactory
-        .CreateBuilder()
-        .WithName(new AgentName("ToolSelectorAgent"))
-        .WithRole(Role.ToolInvocation)
-        .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
-        .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
-        .WithJsonResponseSchema(JsonToolSchema)
-        .Build();
-
-    // TODO: this should be injected(?)
-    IAgent responseAgent = this.customAgentBuilderFactory
-        .CreateBuilder()
-        .WithName(new AgentName("ResponseAgent"))
-        .WithRole(this.Role)
-        .WithInstructionsFromPrompt(this.RespondingPrompt)
-        .Build();
+    IAgent toolSelectionAgent = this.toolSelectionAgent.Value;
+    IAgent responseAgent = this.responseAgent.Value;
 
     string toolsDefinitions = BuildToolsDefinitions(this.tools);
 

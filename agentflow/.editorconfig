@@ -223,6 +223,9 @@ dotnet_diagnostic.CA1303.severity = suggestion
 # SA1649: File name should match first type name
 dotnet_diagnostic.SA1649.severity = suggestion
 
+# RCS1141: Add 'param' element to documentation comment
+dotnet_diagnostic.RCS1141.severity = silent
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman

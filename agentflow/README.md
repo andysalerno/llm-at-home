@@ -4,6 +4,7 @@
 - [x] Separate lib from program runner
 - [ ] All agents should be composable from the base parts, I should not need ProgrammerAgent.cs
 - [ ] When two AI agents are conversing, they should each see themselves as "assistant" and the other as "user" 
+- [ ] Resolve conflict between a `Prompt` having a dictionary of variables, and a `SetTemplateValueCell` - these concepts are competing
 
 ## System prompt strategy
 
