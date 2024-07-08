@@ -29,8 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Prompts\**" CopyToPublishDirectory="Always" />
-    <Content Include="Examples\AgentBench\Scenarios\**" CopyToOutputDirectory="Always" />
+    <Content Include="Prompts\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
+    <Content Include="Examples\AgentBench\Scenarios\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
   <!-- begin analyzers -->
