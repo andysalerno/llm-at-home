@@ -51,7 +51,8 @@ internal sealed class OpenAIServer
                     string content = await reader.ReadToEndAsync();
                     logger.LogInformation("Got request: {Content}", content);
                     chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
-                        ?? throw new InvalidOperationException($"Could not parse request type as a ChatCompletionRequest: {content}");
+                        ?? throw new InvalidOperationException(
+                            $"Could not parse request type as a ChatCompletionRequest: {content}");
                 }
 
                 Cell<ConversationThread> programToUse = program;
@@ -73,7 +74,8 @@ internal sealed class OpenAIServer
 
                 if (lastMessage.Role != Role.Assistant)
                 {
-                    logger.LogWarning("Last message was not from assistant - this might cause quality issues in the response.");
+                    logger.LogWarning(
+                        "Last message was not from assistant - this might cause quality issues in the response.");
                 }
 
                 // Write the response info
@@ -126,7 +128,10 @@ internal sealed class OpenAIServer
         }
     }
 
-    private static async Task SendStreamingResponseAsync(Stream stream, ChatCompletionStreamingResponse response, ILogger logger)
+    private static async Task SendStreamingResponseAsync(
+        Stream stream,
+        ChatCompletionStreamingResponse response,
+        ILogger logger)
     {
         string responseString = SerializeStreamingResponse(response);
 

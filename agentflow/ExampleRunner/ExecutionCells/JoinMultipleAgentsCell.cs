@@ -18,7 +18,10 @@ internal sealed class JoinMultipleAgentsCell : Cell<ConversationThread>
     private readonly Func<string, string> collectorMessageBuilder;
     private readonly ILogger<JoinMultipleAgentsCell> logger;
 
-    public JoinMultipleAgentsCell(ImmutableArray<AgentCell> agents, AgentCell collector, Func<string, string> collectorMessageBuilder)
+    public JoinMultipleAgentsCell(
+        ImmutableArray<AgentCell> agents,
+        AgentCell collector,
+        Func<string, string> collectorMessageBuilder)
     {
         this.agents = agents;
         this.collector = collector;

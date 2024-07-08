@@ -18,7 +18,8 @@ internal sealed class AgentBenchExample : IRunnableExample
     private static readonly Lazy<string> ScenarioDirectory =
         new Lazy<string>(() =>
         {
-            DirectoryInfo assemblyDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).NonNullOrThrow();
+            DirectoryInfo assemblyDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)
+                .NonNullOrThrow();
             return $"{assemblyDir.FullName}/Examples/AgentBench/Scenarios";
         });
 
@@ -27,7 +28,11 @@ internal sealed class AgentBenchExample : IRunnableExample
     private readonly ICompletionsEndpointConfig config;
     private readonly ILogger<AgentBenchExample> logger;
 
-    public AgentBenchExample(CustomAgentBuilderFactory agentFactory, ICellRunner<ConversationThread> runner, ICompletionsEndpointConfig config, ILogger<AgentBenchExample> logger)
+    public AgentBenchExample(
+        CustomAgentBuilderFactory agentFactory,
+        ICellRunner<ConversationThread> runner,
+        ICompletionsEndpointConfig config,
+        ILogger<AgentBenchExample> logger)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
@@ -132,7 +137,8 @@ internal sealed class AgentBenchExample : IRunnableExample
         using var scope = this.logger.BeginScope(scenarioName);
 
         var conversationThread = await this.GetScenarioConversationAsync(scenarioName);
-        ConversationThread result = await this.runner.RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
+        ConversationThread result = await this.runner
+            .RunAsync(new AgentCell(this.GetSimpleTestAgent()), conversationThread);
 
         await this.WriteResultAsync(this.config.ModelName, scenarioName, result.Messages.Last().Content);
     }

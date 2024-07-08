@@ -25,7 +25,8 @@ internal sealed class GetUserInputCell : Cell<ConversationThread>
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
         Console.Write("User: ");
-        string userInput = Console.ReadLine()?.Trim() ?? throw new InvalidOperationException("Could not read input from console.");
+        string userInput = Console.ReadLine()?.Trim()
+            ?? throw new InvalidOperationException("Could not read input from console.");
 
         var result = input.WithAddedMessage(new Message(this.name, this.role, userInput));
 

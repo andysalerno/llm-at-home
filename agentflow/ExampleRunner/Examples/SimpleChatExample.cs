@@ -12,7 +12,10 @@ internal sealed class SimpleChatExample : IRunnableExample
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
     private readonly ICellRunner<ConversationThread> runner;
 
-    public SimpleChatExample(IAgent userConsoleAgent, CustomAgentBuilderFactory agentBuilderFactory, ICellRunner<ConversationThread> runner)
+    public SimpleChatExample(
+        IAgent userConsoleAgent,
+        CustomAgentBuilderFactory agentBuilderFactory,
+        ICellRunner<ConversationThread> runner)
     {
         this.userConsoleAgent = userConsoleAgent;
         this.agentBuilderFactory = agentBuilderFactory;

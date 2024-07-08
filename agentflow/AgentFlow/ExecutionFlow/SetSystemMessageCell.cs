@@ -30,9 +30,11 @@ public class SetSystemMessageCell : Cell<ConversationThread>
         if (input.Messages.FirstOrDefault(m => m.Role == Role.System) is Message existingSystemMessage
             && !string.Equals(existingSystemMessage.Content, nextContent.Text, StringComparison.Ordinal))
         {
-            this.logger.LogWarning("ConversationThread already contained a different system message, which will be replaced.");
+            this.logger
+                .LogWarning("ConversationThread already contained a different system message, which will be replaced.");
         }
 
-        return Task.FromResult(input.WithFirstMessageSystemMessage(new Message(this.agentName, Role.System, nextContent.Text)));
+        return Task.FromResult(
+            input.WithFirstMessageSystemMessage(new Message(this.agentName, Role.System, nextContent.Text)));
     }
 }

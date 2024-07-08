@@ -15,7 +15,8 @@ public sealed class PromptRenderer : IPromptRenderer
             string tepmlatedVariableText = $"{{{variable.Name}}}";
             if (!result.Contains(tepmlatedVariableText, StringComparison.Ordinal))
             {
-                throw new InvalidOperationException($"Expected template to include variable {variable.Name}, but was not found");
+                throw new InvalidOperationException(
+                    $"Expected template to include variable {variable.Name}, but was not found");
             }
 
             result = result.Replace(tepmlatedVariableText, variable.Value, StringComparison.Ordinal);

@@ -60,7 +60,9 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
             .GetFactory(ExamplePrompts.WebsearchExampleResponding)
             .Create();
 
-        respondingPrompt.AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
+        respondingPrompt.AddVariable(
+            "CUR_DATE",
+            DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
         var program = new AgentCell(
             new ToolAgent(

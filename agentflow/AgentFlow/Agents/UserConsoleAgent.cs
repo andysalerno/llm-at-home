@@ -32,7 +32,8 @@ public class UserConsoleAgent : IAgent
     public Task<string> ExecuteCodeAsync(string code)
     {
         return this.CodeExecutor?.ExecuteCodeAsync(code)
-            ?? throw new InvalidOperationException("CodeExecutor not configured on the UserConsoleAgent, cannot execute code.");
+            ?? throw new InvalidOperationException(
+                "CodeExecutor not configured on the UserConsoleAgent, cannot execute code.");
     }
 
     public Task<AgentResponse> GetNextResponseAsync(ConversationThread thread)

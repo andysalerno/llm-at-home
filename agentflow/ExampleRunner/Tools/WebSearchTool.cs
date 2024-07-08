@@ -82,7 +82,9 @@ def search_web(query: str) -> str:
 
         logger.LogInformation("got scores: {Scores}", scores.Scores);
 
-        return string.Join("\n\n", scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
+        return string.Join(
+            "\n\n",
+            scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
     }
 
     private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
@@ -108,7 +110,9 @@ def search_web(query: str) -> str:
             .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role))
             .WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render().Text));
 
-        logger.LogDebug("Current message history for request is: {Messages}", JsonSerializer.Serialize(historyWithRewriteInstructions.Messages));
+        logger.LogDebug(
+            "Current message history for request is: {Messages}",
+            JsonSerializer.Serialize(historyWithRewriteInstructions.Messages));
 
         var program = await agent.GetNextThreadStateAsync();
 
@@ -145,10 +149,12 @@ def search_web(query: str) -> str:
     private async Task<SearchResults> GetSearchResultsAsync(string searchQuery)
     {
         string googleKey = Environment.GetEnvironmentVariable(SearchKeyEnvVarName)
-            ?? throw new InvalidOperationException($"{SearchKeyEnvVarName} environment variable was expected but not found.");
+            ?? throw new InvalidOperationException(
+                $"{SearchKeyEnvVarName} environment variable was expected but not found.");
 
         string googleCx = Environment.GetEnvironmentVariable(SearchKeyCxEnvVarName)
-            ?? throw new InvalidOperationException($"{SearchKeyCxEnvVarName} environment variable was expected but not found.");
+            ?? throw new InvalidOperationException(
+                $"{SearchKeyCxEnvVarName} environment variable was expected but not found.");
 
         using var client = this.httpClientFactory.CreateClient();
 

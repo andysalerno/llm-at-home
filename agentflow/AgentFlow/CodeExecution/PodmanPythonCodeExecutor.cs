@@ -42,7 +42,8 @@ public class PodmanPythonCodeExecutor : ICodeExecutor
             CreateNoWindow = true,
         };
 
-        using var process = Process.Start(psi) ?? throw new InvalidOperationException("Could not spawn a bash process.");
+        using var process = Process.Start(psi)
+            ?? throw new InvalidOperationException("Could not spawn a bash process.");
 
         string stdOut = process.StandardOutput.ReadToEnd();
 

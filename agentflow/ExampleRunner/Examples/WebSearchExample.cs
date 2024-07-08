@@ -54,7 +54,10 @@ internal sealed class WebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
-                new FileSystemPromptFactory(ExamplePrompts.RewriteQuerySystem, this.promptParser, this.promptProviderConfig),
+                new FileSystemPromptFactory(
+                    ExamplePrompts.RewriteQuerySystem,
+                    this.promptParser,
+                    this.promptProviderConfig),
                 this.httpClientFactory)
         ];
 

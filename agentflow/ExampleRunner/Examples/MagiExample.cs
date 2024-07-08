@@ -14,7 +14,10 @@ internal sealed class MagiExample : IRunnableExample
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
     private readonly ICellRunner<ConversationThread> runner;
 
-    public MagiExample(IAgent userConsoleAgent, CustomAgentBuilderFactory agentBuilderFactory, ICellRunner<ConversationThread> runner)
+    public MagiExample(
+        IAgent userConsoleAgent,
+        CustomAgentBuilderFactory agentBuilderFactory,
+        ICellRunner<ConversationThread> runner)
     {
         this.userConsoleAgent = userConsoleAgent;
         this.agentBuilderFactory = agentBuilderFactory;

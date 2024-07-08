@@ -19,7 +19,11 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
     {
     }
 
-    public GetAssistantResponseCell(AgentName agentName, Role agentRole, JsonElement? responseSchema, ILlmCompletionsClient completionsClient)
+    public GetAssistantResponseCell(
+        AgentName agentName,
+        Role agentRole,
+        JsonElement? responseSchema,
+        ILlmCompletionsClient completionsClient)
     {
         this.agentName = agentName;
         this.agentRole = agentRole;
@@ -39,7 +43,8 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
 
         if (messages.LastOrDefault() is Message lastMessage && lastMessage.Role == Role.Assistant)
         {
-            this.logger.LogWarning("Last message was from assistant already. Some LLMs may not work well in this scenario.");
+            this.logger
+                .LogWarning("Last message was from assistant already. Some LLMs may not work well in this scenario.");
         }
 
         ConversationThread templateFilled = input

@@ -169,7 +169,8 @@ public sealed class CustomAgent : IAgent
                 instructionStrategy: this.instructionsStrategy,
                 name: this.name ?? throw new InvalidDataException("Name is required but was null"),
                 messageVisibility: this.visibility,
-                completionsClient: this.completionsClient ?? throw new InvalidDataException("CompletionsClient is required but was null"),
+                completionsClient: this.completionsClient
+                    ?? throw new InvalidDataException("CompletionsClient is required but was null"),
                 responseSchema: this.responseSchema);
         }
     }

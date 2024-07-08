@@ -9,7 +9,8 @@ namespace AgentFlow.Agents.ExecutionFlow;
 
 public class ExecuteToolCell : Cell<ConversationThread>
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
 
     private readonly ImmutableArray<ITool> tools;
     private readonly ILogger<ExecuteToolCell> logger;
@@ -30,7 +31,9 @@ public class ExecuteToolCell : Cell<ConversationThread>
                 "Expected the last message to be a tool message from the assistant");
         }
 
-        ToolSelectionOutput toolSelection = JsonSerializer.Deserialize<ToolSelectionOutput>(lastMessage.Content, JsonSerializerOptions)
+        ToolSelectionOutput toolSelection = JsonSerializer.Deserialize<ToolSelectionOutput>(
+            lastMessage.Content,
+            JsonSerializerOptions)
             ?? throw new InvalidOperationException("Could not parse the last message as a ToolSelectionOutput");
 
         this.logger.LogInformation("Saw tool selection: {Selection}", toolSelection);
