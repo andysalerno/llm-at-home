@@ -24,7 +24,11 @@ public record Role
     public static Role ExpectFromName(string name)
     {
         ImmutableArray<Role> roles = [
-            User, Assistant, System, ToolInvocation, ToolOutput
+            User,
+            Assistant,
+            System,
+            ToolInvocation,
+            ToolOutput,
         ];
 
         Role? matching = roles.FirstOrDefault(r => string.Equals(r.Name, name, StringComparison.OrdinalIgnoreCase));

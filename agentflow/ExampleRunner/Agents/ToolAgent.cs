@@ -12,54 +12,54 @@ namespace AgentFlow.Examples.Agents;
 // TODO: move out of examples and into AgentFlow lib
 public class ToolAgent : IAgent
 {
-  private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
-  private readonly ImmutableArray<ITool> tools;
-  private readonly Lazy<IAgent> toolSelectionAgent;
-  private readonly Lazy<IAgent> responseAgent;
+    private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
+    private readonly ImmutableArray<ITool> tools;
+    private readonly Lazy<IAgent> toolSelectionAgent;
+    private readonly Lazy<IAgent> responseAgent;
 
-  public ToolAgent(
-      AgentName name,
-      Role role,
-      Prompt toolSelectionPrompt,
-      Prompt respondingPrompt,
-      CustomAgentBuilderFactory customAgentBuilderFactory,
-      ImmutableArray<ITool> tools)
-  {
-    this.Name = name;
-    this.Role = role;
-    this.ToolSelectionPrompt = toolSelectionPrompt;
-    this.RespondingPrompt = respondingPrompt;
-    this.customAgentBuilderFactory = customAgentBuilderFactory;
-    this.tools = tools;
+    public ToolAgent(
+        AgentName name,
+        Role role,
+        Prompt toolSelectionPrompt,
+        Prompt respondingPrompt,
+        CustomAgentBuilderFactory customAgentBuilderFactory,
+        ImmutableArray<ITool> tools)
+    {
+        this.Name = name;
+        this.Role = role;
+        this.ToolSelectionPrompt = toolSelectionPrompt;
+        this.RespondingPrompt = respondingPrompt;
+        this.customAgentBuilderFactory = customAgentBuilderFactory;
+        this.tools = tools;
 
-    this.toolSelectionAgent = new Lazy<IAgent>(() => this.customAgentBuilderFactory
-        .CreateBuilder()
-        .WithName(new AgentName("ToolSelectorAgent"))
-        .WithRole(Role.ToolInvocation)
-        .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
-        .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
-        .WithJsonResponseSchema(JsonToolSchema)
-        .Build());
+        this.toolSelectionAgent = new Lazy<IAgent>(() => this.customAgentBuilderFactory
+            .CreateBuilder()
+            .WithName(new AgentName("ToolSelectorAgent"))
+            .WithRole(Role.ToolInvocation)
+            .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
+            .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
+            .WithJsonResponseSchema(JsonToolSchema)
+            .Build());
 
-    this.responseAgent = new Lazy<IAgent>(() => this.customAgentBuilderFactory
-       .CreateBuilder()
-       .WithName(new AgentName("ResponseAgent"))
-       .WithRole(this.Role)
-       .WithInstructionsFromPrompt(this.RespondingPrompt)
-       .Build());
-  }
+        this.responseAgent = new Lazy<IAgent>(() => this.customAgentBuilderFactory
+           .CreateBuilder()
+           .WithName(new AgentName("ResponseAgent"))
+           .WithRole(this.Role)
+           .WithInstructionsFromPrompt(this.RespondingPrompt)
+           .Build());
+    }
 
-  public AgentName Name { get; }
+    public AgentName Name { get; }
 
-  public Role Role { get; }
+    public Role Role { get; }
 
-  public Prompt ToolSelectionPrompt { get; }
+    public Prompt ToolSelectionPrompt { get; }
 
-  public Prompt RespondingPrompt { get; }
+    public Prompt RespondingPrompt { get; }
 
-  private static JsonElement JsonToolSchema { get; }
-    = JsonSerializer.Deserialize<JsonElement>(
-"""
+    private static JsonElement JsonToolSchema { get; }
+      = JsonSerializer.Deserialize<JsonElement>(
+  """
 {
     "title": "AnswerFormat",
     "type": "object",
@@ -82,20 +82,20 @@ public class ToolAgent : IAgent
 }
 """.Trim());
 
-  public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
-  {
-    IAgent toolSelectionAgent = this.toolSelectionAgent.Value;
-    IAgent responseAgent = this.responseAgent.Value;
+    public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
+    {
+        IAgent toolSelectionAgent = this.toolSelectionAgent.Value;
+        IAgent responseAgent = this.responseAgent.Value;
 
-    string toolsDefinitions = BuildToolsDefinitions(this.tools);
+        string toolsDefinitions = BuildToolsDefinitions(this.tools);
 
-    // TODO: add CellSequence<T>.BeginSequence().Then(...).Then(...).Then(...).Build();
-    Cell<ConversationThread> setupSequence = new CellSequence<ConversationThread>(
-        sequence:
-        [
+        // TODO: add CellSequence<T>.BeginSequence().Then(...).Then(...).Then(...).Build();
+        Cell<ConversationThread> setupSequence = new CellSequence<ConversationThread>(
+            sequence:
+            [
 
-            // Set the template values for the system message:
-            new SetTemplateValueCell("tools", toolsDefinitions),
+                // Set the template values for the system message:
+                new SetTemplateValueCell("tools", toolsDefinitions),
 
                 // Get the response from the tool selection agent:
                 new AgentCell(toolSelectionAgent),
@@ -105,14 +105,14 @@ public class ToolAgent : IAgent
 
                 // Get the ultimate response from the responding agent:
                 new AgentCell(responseAgent),
-        ]);
+            ]);
 
-    return Task.FromResult(setupSequence);
-  }
+        return Task.FromResult(setupSequence);
+    }
 
-  private static string BuildToolsDefinitions(IEnumerable<ITool> tools)
-  {
-    const string Sep = "\n\n";
-    return string.Join(Sep, tools.Select(t => t.Definition));
-  }
+    private static string BuildToolsDefinitions(IEnumerable<ITool> tools)
+    {
+        const string Sep = "\n\n";
+        return string.Join(Sep, tools.Select(t => t.Definition));
+    }
 }
