@@ -32,26 +32,29 @@ public enum InstructionStrategy
 public sealed class CustomAgent : IAgent
 {
     private readonly MessageVisibility messageVisibility;
+    private readonly IPromptRenderer promptRenderer;
     private readonly ILlmCompletionsClient completionsClient;
     private readonly JsonElement? responseSchema;
     private readonly ILogger<CustomAgent> logger;
 
     private CustomAgent(
         Role role,
-        string? instructions,
+        Prompt? prompt,
         InstructionStrategy instructionStrategy,
         AgentName name,
         MessageVisibility messageVisibility,
+        IPromptRenderer promptRenderer,
         ILlmCompletionsClient completionsClient,
         JsonElement? responseSchema = null)
     {
         this.Role = role;
-        this.Instructions = instructions;
+        this.Prompt = prompt;
         this.InstructionStrategy = instructionStrategy;
         this.completionsClient = completionsClient;
         this.responseSchema = responseSchema;
         this.Name = name;
         this.messageVisibility = messageVisibility;
+        this.promptRenderer = promptRenderer;
         this.logger = this.GetLogger();
     }
 
@@ -63,7 +66,7 @@ public sealed class CustomAgent : IAgent
 
     public bool IsCodeProvider { get; }
 
-    public string? Instructions { get; }
+    public Prompt? Prompt { get; }
 
     public InstructionStrategy InstructionStrategy { get; }
 
@@ -71,9 +74,10 @@ public sealed class CustomAgent : IAgent
     {
         var cells = ImmutableArray.CreateBuilder<Cell<ConversationThread>>();
         {
-            if (!string.IsNullOrEmpty(this.Instructions))
+            if (this.Prompt is Prompt p)
             {
-                cells.Add(new SetSystemMessageCell(this.Name, new Prompt(this.Instructions)));
+                RenderedPrompt rendered = this.promptRenderer.Render(p);
+                cells.Add(new SetSystemMessageCell(this.Name, rendered));
             }
             else
             {
@@ -92,17 +96,19 @@ public sealed class CustomAgent : IAgent
 
     public class Builder
     {
+        private readonly IPromptRenderer promptRenderer;
         private Role? role;
-        private string? instructions;
+        private Prompt? prompt;
         private AgentName? name;
         private InstructionStrategy instructionsStrategy = InstructionStrategy.TopLevelSystemMessage;
         private ILlmCompletionsClient completionsClient;
         private JsonElement? responseSchema;
         private MessageVisibility visibility;
 
-        public Builder(ILlmCompletionsClient completionsClient)
+        public Builder(ILlmCompletionsClient completionsClient, IPromptRenderer promptRenderer)
         {
             this.completionsClient = completionsClient;
+            this.promptRenderer = promptRenderer;
             this.visibility = new MessageVisibility(ShownToUser: true, ShownToModel: true);
             this.responseSchema = null;
         }
@@ -128,9 +134,9 @@ public sealed class CustomAgent : IAgent
             return this;
         }
 
-        public Builder WithInstructions(string instructions)
+        public Builder WithPrompt(Prompt prompt)
         {
-            this.instructions = instructions;
+            this.prompt = prompt;
 
             return this;
         }
@@ -144,7 +150,7 @@ public sealed class CustomAgent : IAgent
 
         public Builder WithInstructionsFromPrompt(Prompt prompt)
         {
-            this.instructions = prompt.Render().Text;
+            this.prompt = prompt;
 
             return this;
         }
@@ -165,10 +171,11 @@ public sealed class CustomAgent : IAgent
         {
             return new CustomAgent(
                 role: this.role ?? throw new InvalidDataException("Role is required but was null"),
-                instructions: this.instructions,
+                prompt: this.prompt,
                 instructionStrategy: this.instructionsStrategy,
                 name: this.name ?? throw new InvalidDataException("Name is required but was null"),
                 messageVisibility: this.visibility,
+                promptRenderer: this.promptRenderer,
                 completionsClient: this.completionsClient
                     ?? throw new InvalidDataException("CompletionsClient is required but was null"),
                 responseSchema: this.responseSchema);

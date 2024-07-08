@@ -4,6 +4,7 @@ using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.Examples.ExecutionCells;
 using AgentFlow.LlmClient;
+using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
@@ -33,10 +34,10 @@ internal sealed class MagiExample : IRunnableExample
             new ConversationThread());
     }
 
-    private static string BuildInstructionsForRole(string roleName)
+    private static Prompt BuildPromptForRole(string roleName)
     {
-        return $"You are a {roleName}. Your repsonses are always from the point of view of a {roleName}. "
-        + $"Consider what the user says, and provide your decision, keeping in mind your role as a {roleName}.";
+        return new Prompt($"You are a {roleName}. Your repsonses are always from the point of view of a {roleName}. "
+        + $"Consider what the user says, and provide your decision, keeping in mind your role as a {roleName}.");
     }
 
     private Cell<ConversationThread> CreateDefinition()
@@ -45,10 +46,10 @@ internal sealed class MagiExample : IRunnableExample
             .CreateBuilder()
             .WithRole(Role.Assistant)
             .WithName(new AgentName("MagiCollector"))
-            .WithInstructions(
+            .WithPrompt(new Prompt(
                 "You are an assistant who queries multiple other AI assistants for their responses. " +
                 "You see all their responses, and then you combine them into one response for the user. " +
-                "**Always** provide a response that corresponds with the **majority decision** of the agents you query.")
+                "**Always** provide a response that corresponds with the **majority decision** of the agents you query."))
             .Build();
 
         // In the famous science-fiction anime Neon Genesis: Evangelion, there is an AI system named 'Magi'
@@ -59,21 +60,21 @@ internal sealed class MagiExample : IRunnableExample
             .CreateBuilder()
             .WithRole(Role.Assistant)
             .WithName(new AgentName("MagiMother"))
-            .WithInstructions(BuildInstructionsForRole("mother"))
+            .WithPrompt(BuildPromptForRole("mother"))
             .Build();
 
         IAgent magiWoman = this.agentBuilderFactory
             .CreateBuilder()
             .WithName(new AgentName("MagiWoman"))
             .WithRole(Role.Assistant)
-            .WithInstructions(BuildInstructionsForRole("woman"))
+            .WithPrompt(BuildPromptForRole("woman"))
             .Build();
 
         IAgent magiScientist = this.agentBuilderFactory
             .CreateBuilder()
             .WithName(new AgentName("MagiScientist"))
             .WithRole(Role.Assistant)
-            .WithInstructions(BuildInstructionsForRole("scientist"))
+            .WithPrompt(BuildPromptForRole("scientist"))
             .Build();
 
         return new WhileCell<ConversationThread>()

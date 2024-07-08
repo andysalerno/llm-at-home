@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.LlmClient;
+using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Examples;
@@ -37,7 +38,7 @@ internal sealed class SimpleChatExample : IRunnableExample
             .CreateBuilder()
             .WithName(new AgentName("Assistant"))
             .WithRole(Role.Assistant)
-            .WithInstructions("You are a friendly and helpful assistant. Help as much as you can.")
+            .WithPrompt(new Prompt("You are a friendly and helpful assistant. Help as much as you can."))
             .Build();
 
         return new WhileCell<ConversationThread>()

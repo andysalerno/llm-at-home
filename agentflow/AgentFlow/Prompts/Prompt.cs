@@ -52,12 +52,6 @@ public sealed record Prompt
         return this;
     }
 
-    public RenderedPrompt Render()
-    {
-        // todo: remove or obsolete this method
-        return new PromptRenderer().Render(this);
-    }
-
     /// <summary>
     /// The configuration values present in the prompt.
     /// </summary>

@@ -19,6 +19,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     private readonly IScraperClient scraperClient;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly ICellRunner<ConversationThread> runner;
+    private readonly IPromptRenderer promptRenderer;
     private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
 
     public OpenAIServerWebSearchExample(
@@ -26,6 +27,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         IScraperClient scraperClient,
         IHttpClientFactory httpClientFactory,
         ICellRunner<ConversationThread> runner,
+        IPromptRenderer promptRenderer,
         IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
         CustomAgentBuilderFactory agentBuilderFactory)
     {
@@ -33,6 +35,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         this.scraperClient = scraperClient;
         this.httpClientFactory = httpClientFactory;
         this.runner = runner;
+        this.promptRenderer = promptRenderer;
         this.promptFactoryProvider = promptFactoryProvider;
         this.agentBuilderFactory = agentBuilderFactory;
     }
@@ -47,6 +50,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
+                this.promptRenderer,
                 this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
                 this.httpClientFactory),
         ];
@@ -78,7 +82,8 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 .CreateBuilder()
                 .WithName(new AgentName("ResponseAgent"))
                 .WithRole(Role.Assistant)
-                .WithInstructions(string.Empty)
+
+                // .WithPrompt(string.Empty)
                 .Build());
 
         await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);

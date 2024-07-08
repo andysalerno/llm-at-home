@@ -23,6 +23,7 @@ public class WebSearchTool : ITool
     private readonly ICellRunner<ConversationThread> runner;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
+    private readonly IPromptRenderer promptRenderer;
     private readonly IFactory<Prompt> promptFactory;
     private readonly IHttpClientFactory httpClientFactory;
 
@@ -31,6 +32,7 @@ public class WebSearchTool : ITool
         ICellRunner<ConversationThread> runner,
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
+        IPromptRenderer promptRenderer,
         IFactory<Prompt> promptFactory,
         IHttpClientFactory httpClientFactory)
     {
@@ -38,6 +40,7 @@ public class WebSearchTool : ITool
         this.runner = runner;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
+        this.promptRenderer = promptRenderer;
         this.promptFactory = promptFactory;
         this.httpClientFactory = httpClientFactory;
     }
@@ -104,11 +107,12 @@ def search_web(query: str) -> str:
         logger.LogDebug("Rewrite prompt is: {Prompt}", prompt);
 
         // Let's try making the rewrite instructions a new system message, the latest in the conversation, instead of the first:
+        RenderedPrompt renderedPrompt = this.promptRenderer.Render(prompt);
         var historyWithRewriteInstructions = history
 
             // Filter out anything except assistant and user messages:
             .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role))
-            .WithAddedMessage(new Message(new AgentName("system"), Role.System, prompt.Render().Text));
+            .WithAddedMessage(new Message(new AgentName("system"), Role.System, renderedPrompt.Text));
 
         logger.LogDebug(
             "Current message history for request is: {Messages}",

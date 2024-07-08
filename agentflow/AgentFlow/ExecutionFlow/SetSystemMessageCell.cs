@@ -9,9 +9,9 @@ public class SetSystemMessageCell : Cell<ConversationThread>
 {
     private readonly ILogger<SetSystemMessageCell> logger;
     private readonly AgentName agentName;
-    private readonly Prompt systemMessageContent;
+    private readonly RenderedPrompt systemMessageContent;
 
-    public SetSystemMessageCell(AgentName agentName, Prompt systemMessageContent)
+    public SetSystemMessageCell(AgentName agentName, RenderedPrompt systemMessageContent)
     {
         this.logger = this.GetLogger();
         this.agentName = agentName;
@@ -25,16 +25,15 @@ public class SetSystemMessageCell : Cell<ConversationThread>
 
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
-        RenderedPrompt nextContent = this.systemMessageContent.Render();
-
         if (input.Messages.FirstOrDefault(m => m.Role == Role.System) is Message existingSystemMessage
-            && !string.Equals(existingSystemMessage.Content, nextContent.Text, StringComparison.Ordinal))
+            && !string.Equals(existingSystemMessage.Content, this.systemMessageContent.Text, StringComparison.Ordinal))
         {
             this.logger
                 .LogWarning("ConversationThread already contained a different system message, which will be replaced.");
         }
 
         return Task.FromResult(
-            input.WithFirstMessageSystemMessage(new Message(this.agentName, Role.System, nextContent.Text)));
+            input.WithFirstMessageSystemMessage(
+                new Message(this.agentName, Role.System, this.systemMessageContent.Text)));
     }
 }

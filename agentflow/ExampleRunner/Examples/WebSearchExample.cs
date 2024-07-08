@@ -20,6 +20,7 @@ internal sealed class WebSearchExample : IRunnableExample
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
     private readonly IPromptParser promptParser;
+    private readonly IPromptRenderer promptRenderer;
     private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
     private readonly IFileSystemPromptProviderConfig promptProviderConfig;
     private readonly ILoggingConfig loggingConfig;
@@ -31,6 +32,7 @@ internal sealed class WebSearchExample : IRunnableExample
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
         IPromptParser promptParser,
+        IPromptRenderer promptRenderer,
         CustomAgentBuilderFactory customAgentBuilderFactory,
         IFileSystemPromptProviderConfig promptProviderConfig,
         ILoggingConfig loggingConfig)
@@ -41,6 +43,7 @@ internal sealed class WebSearchExample : IRunnableExample
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
         this.promptParser = promptParser;
+        this.promptRenderer = promptRenderer;
         this.customAgentBuilderFactory = customAgentBuilderFactory;
         this.promptProviderConfig = promptProviderConfig;
         this.loggingConfig = loggingConfig;
@@ -54,6 +57,7 @@ internal sealed class WebSearchExample : IRunnableExample
                 this.runner,
                 this.embeddingsClient,
                 this.scraperClient,
+                this.promptRenderer,
                 new FileSystemPromptFactory(
                     ExamplePrompts.RewriteQuerySystem,
                     this.promptParser,

@@ -5,6 +5,8 @@ namespace AgentFlow.Tests.ExecutionFlow;
 
 public class PromptTests
 {
+    private IPromptRenderer Renderer { get; } = new PromptRenderer();
+
     public PromptTests()
     {
         Logging.TryRegisterLoggerFactory(NullLoggerFactory.Instance);
@@ -24,7 +26,7 @@ this is some prompt
 
         var prompt = parser.Parse(PromptText);
 
-        Assert.Equal(expected: "this is some prompt", actual: prompt.Render().Text);
+        Assert.Equal(expected: "this is some prompt", actual: this.Renderer.Render(prompt).Text);
     }
 
     [Fact]
