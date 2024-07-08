@@ -231,6 +231,9 @@ dotnet_diagnostic.SA1649.severity = suggestion
 # RCS1141: Add 'param' element to documentation comment
 dotnet_diagnostic.RCS1141.severity = silent
 
+# SA1118: Parameter should not span multiple lines
+dotnet_diagnostic.SA1118.severity = suggestion
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman
