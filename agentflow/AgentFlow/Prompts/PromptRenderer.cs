@@ -12,14 +12,14 @@ public sealed class PromptRenderer : IPromptRenderer
 
         foreach (var variable in prompt.Variables)
         {
-            string tepmlatedVariableText = $"{{{variable.Name}}}";
-            if (!result.Contains(tepmlatedVariableText, StringComparison.Ordinal))
+            string templatedVariableText = "{{" + variable.Name + "}}";
+            if (!result.Contains(templatedVariableText, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
                     $"Expected template to include variable {variable.Name}, but was not found");
             }
 
-            result = result.Replace(tepmlatedVariableText, variable.Value, StringComparison.Ordinal);
+            result = result.Replace(templatedVariableText, variable.Value, StringComparison.Ordinal);
         }
 
         logger.LogInformation("Replaced {Count} variables in prompt", prompt.Variables.Count);
