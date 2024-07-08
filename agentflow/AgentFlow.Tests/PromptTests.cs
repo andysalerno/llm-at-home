@@ -1,7 +1,7 @@
 using AgentFlow.Prompts;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace AgentFlow.Tests.ExecutionFlow;
+namespace AgentFlow.Tests;
 
 public class PromptTests
 {
