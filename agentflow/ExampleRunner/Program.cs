@@ -1,15 +1,7 @@
 ﻿using System.CommandLine;
-using AgentFlow.Agents;
-using AgentFlow.CodeExecution;
 using AgentFlow.Config;
 using AgentFlow.Examples;
-using AgentFlow.LlmClient;
-using AgentFlow.LlmClients.OpenAI;
-using AgentFlow.Prompts;
-using AgentFlow.WorkSpace;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow;
@@ -183,45 +175,10 @@ public static class Program
         var containerBuilder = new ContainerBuilder();
 
         // Register dotnet ServiceCollection builtins:
-        {
-            var serviceCollection = new ServiceCollection();
-
-            serviceCollection.AddHttpClient();
-            serviceCollection.AddLogging(builder =>
-            {
-                builder.AddSimpleConsole(config =>
-                {
-                    config.IncludeScopes = true;
-                    config.SingleLine = true;
-                    config.TimestampFormat = "HH:mm::ss::ff";
-                });
-            });
-
-            containerBuilder.Populate(serviceCollection);
-        }
+        containerBuilder.RegisterModule<LocalEnvironmentModule>();
 
         // Register the types from this project:
-        {
-            // containerBuilder.RegisterType<PodmanPythonCodeExecutor>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<HostedCodeExecutor>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<CellRunner<ConversationThread>>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<ChatMLMessageFormatter>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<UserConsoleAgent>();
-
-            // containerBuilder.RegisterType<GroqCompletionsClient>().AsImplementedInterfaces();
-            // containerBuilder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<PromptParser>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<PromptRenderer>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<FileSystemPromptFactoryProvider>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<CustomAgentBuilderFactory>();
-
-            // Runnable example classes:
-            containerBuilder.RegisterType<WebSearchExample>();
-            containerBuilder.RegisterType<SimpleChatExample>();
-            containerBuilder.RegisterType<AgentBenchExample>();
-            containerBuilder.RegisterType<OpenAIServerWebSearchExample>();
-        }
+        containerBuilder.RegisterModule<DependencyModule>();
 
         // Parse args as configuration:
         {

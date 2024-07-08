@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="ExampleRunner.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../AgentFlow/AgentFlow.csproj" />
     <ProjectReference Include="../Logging/Logging.csproj" />
     <ProjectReference Include="../LlmIntegration/LlmIntegration.csproj" />
