@@ -196,6 +196,8 @@ dotnet_diagnostic.SA1615.severity = suggestion
 # SA1402: File may only contain a single type
 dotnet_diagnostic.SA1402.severity = suggestion
 
+dotnet_diagnostic.SA1413.severity = warning
+
 # Roslynator
 dotnet_analyzer_diagnostic.category-roslynator.severity = warning
 # Enable/disable all refactorings
