@@ -42,6 +42,22 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
 
     public async Task RunAsync()
     {
+        var program = this.CreateProgram();
+
+        var passthruProgram = new AgentCell(
+            this.agentBuilderFactory
+                .CreateBuilder()
+                .WithName(new AgentName("ResponseAgent"))
+                .WithRole(Role.Assistant)
+
+                // .WithPrompt(string.Empty)
+                .Build());
+
+        await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);
+    }
+
+    public Cell<ConversationThread> CreateProgram()
+    {
         ImmutableArray<ITool> tools = [
 
             // new LightSwitchTool(this.httpClientFactory),
@@ -68,7 +84,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
             "CUR_DATE",
             DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
-        var program = new AgentCell(
+        return new AgentCell(
             new ToolAgent(
                 new AgentName("WebSearchAgent"),
                 Role.Assistant,
@@ -76,16 +92,5 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 respondingPrompt,
                 this.agentBuilderFactory,
                 tools));
-
-        var passthruProgram = new AgentCell(
-            this.agentBuilderFactory
-                .CreateBuilder()
-                .WithName(new AgentName("ResponseAgent"))
-                .WithRole(Role.Assistant)
-
-                // .WithPrompt(string.Empty)
-                .Build());
-
-        await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);
     }
 }
