@@ -212,6 +212,7 @@ public static class Program
             // containerBuilder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
             containerBuilder.RegisterType<PromptParser>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<PromptRenderer>().AsImplementedInterfaces();
             containerBuilder.RegisterType<FileSystemPromptFactoryProvider>().AsImplementedInterfaces();
             containerBuilder.RegisterType<CustomAgentBuilderFactory>();
 
