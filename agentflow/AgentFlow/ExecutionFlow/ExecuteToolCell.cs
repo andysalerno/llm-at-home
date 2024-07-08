@@ -9,8 +9,10 @@ namespace AgentFlow.Agents.ExecutionFlow;
 
 public class ExecuteToolCell : Cell<ConversationThread>
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions {
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+    };
 
     private readonly ImmutableArray<ITool> tools;
     private readonly ILogger<ExecuteToolCell> logger;

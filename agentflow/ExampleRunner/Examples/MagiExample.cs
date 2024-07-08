@@ -35,7 +35,8 @@ internal sealed class MagiExample : IRunnableExample
 
     private static string BuildInstructionsForRole(string roleName)
     {
-        return $"You are a {roleName}. Your repsonses are always from the point of view of a {roleName}. Consider what the user says, and provide your decision, keeping in mind your role as a {roleName}.";
+        return $"You are a {roleName}. Your repsonses are always from the point of view of a {roleName}. "
+        + $"Consider what the user says, and provide your decision, keeping in mind your role as a {roleName}.";
     }
 
     private Cell<ConversationThread> CreateDefinition()
@@ -97,7 +98,8 @@ internal sealed class MagiExample : IRunnableExample
                                 var sb = new StringBuilder();
                                 sb.AppendLine("I queried multiple agents to respond. Here is what they said:")
                                     .AppendLine(agentsOutput)
-                                    .AppendLine("\nBased on their majority decision, I can provide you with this final repsonse:");
+                                    .AppendLine(
+                                        "\nBased on their majority decision, I can provide you with this final repsonse:");
 
                                 return sb.ToString();
                             }),

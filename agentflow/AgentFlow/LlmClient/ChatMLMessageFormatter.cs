@@ -50,7 +50,8 @@ public class ChatMLMessageFormatter : IMessageFormatter
         {
             if (addGenerationPrompt)
             {
-                this.logger.LogWarning("addGenerationPrompt is true, but the last message is already from the assistant, so ignoring addGenerationPrompt");
+                this.logger.LogWarning(
+                    "addGenerationPrompt is true, but the last message is already from the assistant, so ignoring addGenerationPrompt");
             }
 
             addGenerationPrompt = false;
