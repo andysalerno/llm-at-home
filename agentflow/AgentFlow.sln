@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LlmIntegration", "LlmIntegr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionFlow", "ExecutionFlow\ExecutionFlow.csproj", "{CFC1152A-F49B-456F-B3AE-3B47E727572C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionFlow.Tests", "ExecutionFlow.Tests\ExecutionFlow.Tests.csproj", "{480AC56F-6BDC-431A-A85C-8EC16B2D10DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecutionFlow.Tests", "tests\ExecutionFlow.Tests\ExecutionFlow.Tests.csproj", "{480AC56F-6BDC-431A-A85C-8EC16B2D10DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentFlow.Tests", "AgentFlow.Tests\AgentFlow.Tests.csproj", "{7797E3C0-F62C-45D8-9BCF-C485B0CA301E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentFlow.Tests", "tests\AgentFlow.Tests\AgentFlow.Tests.csproj", "{7797E3C0-F62C-45D8-9BCF-C485B0CA301E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "Logging\Logging.csproj", "{0730A260-DC79-4289-8721-5FAA11B27410}"
 EndProject
