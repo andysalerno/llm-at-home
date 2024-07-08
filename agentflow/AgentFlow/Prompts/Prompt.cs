@@ -15,8 +15,16 @@ public sealed record Variable(string Name, string Value);
 /// </summary>
 public sealed record RenderedPrompt(string Text);
 
-public sealed record PromptText(string Text);
-
+/// <summary>
+/// A prompt that can be sent to an LLM for completion, either as the full
+/// context, as a single chat message, or as multiple chat messages.
+///
+/// <para>A <see cref="IPromptParser"/> takes a raw <see cref="string"/> and parses
+/// it into a <see cref="Prompt"/>.</para>
+///
+/// <para>A <see cref="IPromptRenderer"/> takes a <see cref="Prompt"/> and renders
+/// it back to a string, replacing any variables provided.</para>
+/// </summary>
 public sealed record Prompt
 {
     private readonly List<Variable> variables = new();
@@ -50,5 +58,8 @@ public sealed record Prompt
         return new PromptRenderer().Render(this);
     }
 
+    /// <summary>
+    /// The configuration values present in the prompt.
+    /// </summary>
     public sealed record FrontMatter(string Name, string? Description = null);
 }
