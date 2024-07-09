@@ -1,6 +1,7 @@
 using AgentFlow.Agents;
 using AgentFlow.CodeExecution;
 using AgentFlow.Examples;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients.OpenAI;
 using AgentFlow.Prompts;
@@ -21,6 +22,7 @@ internal sealed class DependencyModule : Module
         builder.RegisterType<CellRunner<ConversationThread>>().AsImplementedInterfaces();
         builder.RegisterType<ChatMLMessageFormatter>().AsImplementedInterfaces();
         builder.RegisterType<UserConsoleAgent>();
+        builder.RegisterType<EnvironmentVariableProvider>().AsImplementedInterfaces();
 
         // builder.RegisterType<GroqCompletionsClient>().AsImplementedInterfaces();
         // builder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
