@@ -17,6 +17,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
+    private readonly IEnvironmentVariableProvider environmentVariableProvider;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly ICellRunner<ConversationThread> runner;
     private readonly IPromptRenderer promptRenderer;
@@ -25,6 +26,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     public OpenAIServerWebSearchExample(
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
+        IEnvironmentVariableProvider environmentVariableProvider,
         IHttpClientFactory httpClientFactory,
         ICellRunner<ConversationThread> runner,
         IPromptRenderer promptRenderer,
@@ -33,6 +35,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     {
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
+        this.environmentVariableProvider = environmentVariableProvider;
         this.httpClientFactory = httpClientFactory;
         this.runner = runner;
         this.promptRenderer = promptRenderer;
@@ -64,6 +67,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
             new WebSearchTool(
                 this.agentBuilderFactory,
                 this.runner,
+                this.environmentVariableProvider,
                 this.embeddingsClient,
                 this.scraperClient,
                 this.promptRenderer,

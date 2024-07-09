@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgentFlow.Config;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using Microsoft.Extensions.Logging;
 
@@ -115,17 +116,20 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private readonly Uri scraperEndpoint;
     private readonly string modelName;
     private readonly HttpClient httpClient;
+    private readonly IEnvironmentVariableProvider environmentVariableProvider;
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
 
     public OpenAICompletionsClient(
         ICompletionsEndpointConfig completionsEndpointProviderConfig,
+        IEnvironmentVariableProvider environmentVariableProvider,
         IHttpClientFactory httpClientFactory,
         ILoggingConfig loggingConfig,
         ILogger<OpenAICompletionsClient> logger)
     {
         this.baseEndpoint = completionsEndpointProviderConfig.CompletionsEndpoint;
         this.httpClient = httpClientFactory.CreateClient();
+        this.environmentVariableProvider = environmentVariableProvider;
         this.loggingConfig = loggingConfig;
         this.logger = logger;
 
@@ -139,7 +143,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         logger.LogInformation("chat completions endpoint: {Endpoint}", this.chatCompletionsEndpoint);
 
-        string? bearerToken = Environment.GetEnvironmentVariable("TOKEN");
+        string? bearerToken = this.environmentVariableProvider.GetVariableValue("TOKEN");
 
         if (bearerToken != null)
         {

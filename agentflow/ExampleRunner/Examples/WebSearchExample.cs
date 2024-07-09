@@ -4,6 +4,7 @@ using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.Config;
 using AgentFlow.Examples.Agents;
 using AgentFlow.Examples.Tools;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
@@ -17,6 +18,7 @@ internal sealed class WebSearchExample : IRunnableExample
     private readonly ICellRunner<ConversationThread> runner;
     private readonly IAgent userConsoleAgent;
     private readonly IHttpClientFactory httpClientFactory;
+    private readonly IEnvironmentVariableProvider environmentVariableProvider;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
     private readonly IPromptParser promptParser;
@@ -29,6 +31,7 @@ internal sealed class WebSearchExample : IRunnableExample
         ICellRunner<ConversationThread> runner,
         IAgent userConsoleAgent,
         IHttpClientFactory httpClientFactory,
+        IEnvironmentVariableProvider environmentVariableProvider,
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
         IPromptParser promptParser,
@@ -40,6 +43,7 @@ internal sealed class WebSearchExample : IRunnableExample
         this.runner = runner;
         this.userConsoleAgent = userConsoleAgent;
         this.httpClientFactory = httpClientFactory;
+        this.environmentVariableProvider = environmentVariableProvider;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
         this.promptParser = promptParser;
@@ -55,6 +59,7 @@ internal sealed class WebSearchExample : IRunnableExample
             new WebSearchTool(
                 this.customAgentBuilderFactory,
                 this.runner,
+                this.environmentVariableProvider,
                 this.embeddingsClient,
                 this.scraperClient,
                 this.promptRenderer,

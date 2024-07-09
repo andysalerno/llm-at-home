@@ -21,6 +21,7 @@ public class WebSearchTool : ITool
     private const string SearchKeyCxEnvVarName = "SEARCH_KEY_CX";
     private readonly CustomAgentBuilderFactory agentFactory;
     private readonly ICellRunner<ConversationThread> runner;
+    private readonly IEnvironmentVariableProvider environmentVariableProvider;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
     private readonly IPromptRenderer promptRenderer;
@@ -30,6 +31,7 @@ public class WebSearchTool : ITool
     public WebSearchTool(
         CustomAgentBuilderFactory agentFactory,
         ICellRunner<ConversationThread> runner,
+        IEnvironmentVariableProvider environmentVariableProvider,
         IEmbeddingsClient embeddingsClient,
         IScraperClient scraperClient,
         IPromptRenderer promptRenderer,
@@ -38,6 +40,7 @@ public class WebSearchTool : ITool
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
+        this.environmentVariableProvider = environmentVariableProvider;
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
         this.promptRenderer = promptRenderer;
@@ -152,11 +155,11 @@ def search_web(query: str) -> str:
 
     private async Task<SearchResults> GetSearchResultsAsync(string searchQuery)
     {
-        string googleKey = Environment.GetEnvironmentVariable(SearchKeyEnvVarName)
+        string googleKey = this.environmentVariableProvider.GetVariableValue(SearchKeyEnvVarName)
             ?? throw new InvalidOperationException(
                 $"{SearchKeyEnvVarName} environment variable was expected but not found.");
 
-        string googleCx = Environment.GetEnvironmentVariable(SearchKeyCxEnvVarName)
+        string googleCx = this.environmentVariableProvider.GetVariableValue(SearchKeyCxEnvVarName)
             ?? throw new InvalidOperationException(
                 $"{SearchKeyCxEnvVarName} environment variable was expected but not found.");
 
