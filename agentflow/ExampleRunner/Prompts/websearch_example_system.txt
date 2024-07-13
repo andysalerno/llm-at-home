@@ -1,8 +1,8 @@
-## Context
-Today's date is: {{CUR_DATE}}
-
 ## Instructions
 Select the correct tool to handle the user's latest message.
+
+## Context
+Today's date is: {{CUR_DATE}}
 
 ## Tools
 Here are the tools that you can select from:
