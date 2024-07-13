@@ -10,9 +10,6 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
-        string s = string.Join(" ", args);
-        Console.WriteLine(s);
-
         var rootCommand = BuildRootCommand();
 
         await rootCommand.InvokeAsync(args);
