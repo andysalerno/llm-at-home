@@ -33,13 +33,13 @@ public static class Program
             description: "Enable verbose mode");
         verbose.AddAlias("--verbose");
 
-        var promptDir = new Option<string?>(
+        var promptDir = new Option<string>(
             name: "-p",
             getDefaultValue: () => "./Prompts",
             description: "directory containing prompt files");
         promptDir.AddAlias("--prompt-dir");
 
-        var diskLoggingDir = new Option<string?>(
+        var diskLoggingDir = new Option<string>(
             name: "-d",
             getDefaultValue: () => "./LlmRequestLogs",
             description: "logging dir for requests sent to LLM");
@@ -89,13 +89,13 @@ public static class Program
             description: "Enable verbose mode");
         verbose.AddAlias("--verbose");
 
-        var promptDir = new Option<string?>(
+        var promptDir = new Option<string>(
             name: "-p",
             getDefaultValue: () => "./Prompts",
             description: "directory containing prompt files");
         promptDir.AddAlias("--prompt-dir");
 
-        var diskLoggingDir = new Option<string?>(
+        var diskLoggingDir = new Option<string>(
             name: "-d",
             getDefaultValue: () => "./LlmRequestLogs",
             description: "logging dir for requests sent to LLM");
@@ -136,14 +136,16 @@ public static class Program
         string uri,
         string modelName,
         bool verbose,
-        string? promptDir,
-        string? diskLoggingDir)
+        string promptDir,
+        string diskLoggingDir)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
         var commandLineArgs = new CommandLineArgs(uri, uri, uri, modelName, verbose, promptDir, diskLoggingDir);
 
-        IContainer container = ConfigureContainer(commandLineArgs);
+        Configuration configuration = BuildConfiguration(commandLineArgs);
+
+        IContainer container = ConfigureContainer(configuration);
 
         await using var scope = container.BeginLifetimeScope();
 
@@ -164,8 +166,8 @@ public static class Program
         string scraperUri,
         string modelName,
         bool verbose,
-        string? promptDir,
-        string? diskLoggingDir)
+        string promptDir,
+        string diskLoggingDir)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
@@ -178,7 +180,9 @@ public static class Program
             promptDir,
             diskLoggingDir);
 
-        IContainer container = ConfigureContainer(commandLineArgs);
+        Configuration configuration = BuildConfiguration(commandLineArgs);
+
+        IContainer container = ConfigureContainer(configuration);
 
         await using var scope = container.BeginLifetimeScope();
 
@@ -190,10 +194,13 @@ public static class Program
 
         var example = scope.Resolve<OpenAIServerWebSearchExample>();
 
+        var logger = scope.Resolve<ILogger>();
+        logger.LogInformation("Starting up with configuration: {Configuration}", configuration);
+
         await example.RunAsync();
     }
 
-    private static IContainer ConfigureContainer(CommandLineArgs args)
+    private static IContainer ConfigureContainer(Configuration configuration)
     {
         var containerBuilder = new ContainerBuilder();
 
@@ -203,13 +210,9 @@ public static class Program
         // Register the types from this project:
         containerBuilder.RegisterModule<DependencyModule>();
 
-        // Parse args as configuration:
-        {
-            Configuration configuration = BuildConfiguration(args);
-            containerBuilder
-                .RegisterInstance(configuration)
-                .AsImplementedInterfaces();
-        }
+        containerBuilder
+            .RegisterInstance(configuration)
+            .AsImplementedInterfaces();
 
         return containerBuilder.Build();
     }
@@ -219,12 +222,10 @@ public static class Program
             new Uri(args.Uri),
             new Uri(args.EmbeddingsUri),
             new Uri(args.ScraperUri),
+            args.Verbose,
             args.ModelName,
             args.PromptDir,
-            args.DiskLoggingDir)
-        {
-            LogRequestsToLlm = args.Verbose,
-        };
+            args.DiskLoggingDir);
 
     private sealed record CommandLineArgs(
         string Uri,

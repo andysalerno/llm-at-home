@@ -37,6 +37,7 @@ public class ExampleRunnerTests
             new Uri("http://localhost"),
             new Uri("http://localhost"),
             new Uri("http://localhost"),
+            false,
             "fake",
             "fake",
             "fake");
@@ -65,6 +66,7 @@ public class ExampleRunnerTests
             new Uri("http://localhost"),
             new Uri("http://localhost"),
             new Uri("http://localhost"),
+            false,
             "fake",
             "fake",
             "fake");

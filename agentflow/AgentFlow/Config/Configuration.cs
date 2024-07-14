@@ -26,39 +26,15 @@ public interface IChatRequestDiskLoggerConfig
     string DiskLoggingPath { get; }
 }
 
-public class Configuration :
+public record Configuration(
+    Uri CompletionsEndpoint,
+    Uri EmbeddingsEndpoint,
+    Uri ScraperEndpoint,
+    bool LogRequestsToLlm,
+    string PromptDirectory,
+    string ModelName,
+    string DiskLoggingPath) :
     ICompletionsEndpointConfig,
     ILoggingConfig,
     IFileSystemPromptProviderConfig,
-    IChatRequestDiskLoggerConfig
-{
-    public Configuration(
-        Uri completionsEndpoint,
-        Uri embeddingsEndpoint,
-        Uri scraperEndpoint,
-        string modelName,
-        string promptDirectory,
-        string diskLoggingPath)
-    {
-        this.CompletionsEndpoint = completionsEndpoint;
-        this.EmbeddingsEndpoint = embeddingsEndpoint;
-        this.ScraperEndpoint = scraperEndpoint;
-        this.ModelName = modelName;
-        this.PromptDirectory = promptDirectory;
-        this.DiskLoggingPath = diskLoggingPath;
-    }
-
-    public Uri CompletionsEndpoint { get; }
-
-    public Uri EmbeddingsEndpoint { get; }
-
-    public Uri ScraperEndpoint { get; }
-
-    public bool LogRequestsToLlm { get; init; }
-
-    public string PromptDirectory { get; }
-
-    public string ModelName { get; }
-
-    public string DiskLoggingPath { get; }
-}
+    IChatRequestDiskLoggerConfig;
