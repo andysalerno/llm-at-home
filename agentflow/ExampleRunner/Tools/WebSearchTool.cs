@@ -204,7 +204,7 @@ public class WebSearchTool : ITool
 
             string siteFilter = string.Join(" OR ", this.searchSiteUris.Select(s => $"site:{s}"));
 
-            query["q"] = searchQuery.Trim() + siteFilter;
+            query["q"] = (searchQuery.Trim() + " " + siteFilter).Trim();
             query["key"] = googleKey;
             query["cx"] = googleCx;
             searchUri.Query = query.ToString();
