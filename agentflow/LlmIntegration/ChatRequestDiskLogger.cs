@@ -18,8 +18,11 @@ public sealed class ChatRequestDiskLogger
         var logger = this.GetLogger();
 
         string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{Guid.NewGuid()}.log";
+        string fullPath = Path.GetFullPath(logFilePath);
 
-        logger.LogInformation("Logging chat request to disk at path: {Path}", logFilePath);
+        logger.LogInformation("Logging chat request to disk at path: {Path}, fullpath: {FullPath}", logFilePath, fullPath);
+
+        Directory.CreateDirectory(fullPath);
 
         var logContentBuilder = new StringBuilder();
 
@@ -30,6 +33,6 @@ public sealed class ChatRequestDiskLogger
             logContentBuilder.Append("<|end|>");
         }
 
-        await File.WriteAllTextAsync(logFilePath, logContentBuilder.ToString());
+        await File.WriteAllTextAsync(fullPath, logContentBuilder.ToString());
     }
 }
