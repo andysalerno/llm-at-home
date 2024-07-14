@@ -22,7 +22,7 @@ public sealed class ChatRequestDiskLogger
 
         logger.LogInformation("Logging chat request to disk at path: {Path}, fullpath: {FullPath}", logFilePath, fullPath);
 
-        Directory.CreateDirectory(fullPath);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath) ?? throw new InvalidOperationException("Could not create directory"));
 
         var logContentBuilder = new StringBuilder();
 
