@@ -47,7 +47,8 @@ public class WebSearchTool : ITool
             promptRenderer,
             promptFactory,
             httpClientFactory,
-            ImmutableArray<string>.Empty)
+            ImmutableArray<string>.Empty,
+            "search_web")
     {
     }
 
@@ -60,7 +61,8 @@ public class WebSearchTool : ITool
         IPromptRenderer promptRenderer,
         IFactory<Prompt> promptFactory,
         IHttpClientFactory httpClientFactory,
-        ImmutableArray<string> searchSiteUris)
+        ImmutableArray<string> searchSiteUris,
+        string toolName)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
@@ -71,23 +73,24 @@ public class WebSearchTool : ITool
         this.promptFactory = promptFactory;
         this.httpClientFactory = httpClientFactory;
         this.searchSiteUris = searchSiteUris;
+        this.Name = toolName;
     }
 
-    public string Name { get; } = "search_web";
+    public string Name { get; }
 
-    public string Definition { get; } =
-""""
-def search_web(query: str) -> str:
-    """
-    Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.
-    Examples:
-        search_web('Eiffel Tower height')
-        search_web('best pizza in Seattle')
-        search_web('Seattle Kraken game results')
-    """
-    pass
+    public string Definition =>
+        $""""
+        def {this.Name}(query: str) -> List[str]:
+            """
+            Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.
+            Examples:
+                search_web('Eiffel Tower height')
+                search_web('best pizza in Seattle')
+                search_web('Seattle Kraken game results')
+            """
+            pass # impl omitted
 
-"""".TrimEnd();
+        """".TrimEnd();
 
     public async Task<string> GetOutputAsync(ConversationThread conversation, string input)
     {
@@ -97,7 +100,7 @@ def search_web(query: str) -> str:
 
         ImmutableArray<Chunk> topNPagesContents = await this.GetTopNPagesAsync(searchResults, topN: NumPagesToRead);
 
-        logger.LogInformation("Got page contents: {Contents}", topNPagesContents);
+        logger.LogDebug("Got page contents: {Contents}", topNPagesContents);
         logger.LogInformation("Got page contents count: {Contents}", topNPagesContents.Length);
 
         string rewrittenQuery = await this.RewriteQueryAsync(input, conversation);
