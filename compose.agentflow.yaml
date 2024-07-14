@@ -20,6 +20,8 @@ services:
       - MODEL_NAME=
     tty: true
     command: server http://llmhost:8000 http://embedding-server:8000/embeddings http://scraper:8002/scrape modelname -v --prompt-dir=Prompts 
+    volumes:
+      - ./request_logs:/App/LlmRequestLogs
 
   llmhost:
     # image: ghcr.io/ggerganov/llama.cpp:server-cuda

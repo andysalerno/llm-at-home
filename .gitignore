@@ -4,3 +4,4 @@ __pycache__/
 aphrodite/
 tabby/
 .agentflow.env
+request_logs/
