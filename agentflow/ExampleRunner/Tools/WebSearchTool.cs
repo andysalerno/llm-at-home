@@ -27,6 +27,7 @@ public class WebSearchTool : ITool
     private readonly IPromptRenderer promptRenderer;
     private readonly IFactory<Prompt> promptFactory;
     private readonly IHttpClientFactory httpClientFactory;
+    private readonly ImmutableArray<string> searchSiteUris;
 
     public WebSearchTool(
         CustomAgentBuilderFactory agentFactory,
@@ -37,6 +38,29 @@ public class WebSearchTool : ITool
         IPromptRenderer promptRenderer,
         IFactory<Prompt> promptFactory,
         IHttpClientFactory httpClientFactory)
+        : this(
+            agentFactory,
+            runner,
+            environmentVariableProvider,
+            embeddingsClient,
+            scraperClient,
+            promptRenderer,
+            promptFactory,
+            httpClientFactory,
+            ImmutableArray<string>.Empty)
+    {
+    }
+
+    public WebSearchTool(
+        CustomAgentBuilderFactory agentFactory,
+        ICellRunner<ConversationThread> runner,
+        IEnvironmentVariableProvider environmentVariableProvider,
+        IEmbeddingsClient embeddingsClient,
+        IScraperClient scraperClient,
+        IPromptRenderer promptRenderer,
+        IFactory<Prompt> promptFactory,
+        IHttpClientFactory httpClientFactory,
+        ImmutableArray<string> searchSiteUris)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
@@ -46,6 +70,7 @@ public class WebSearchTool : ITool
         this.promptRenderer = promptRenderer;
         this.promptFactory = promptFactory;
         this.httpClientFactory = httpClientFactory;
+        this.searchSiteUris = searchSiteUris;
     }
 
     public string Name { get; } = "search_web";
@@ -169,7 +194,9 @@ def search_web(query: str) -> str:
         {
             var query = HttpUtility.ParseQueryString(searchUri.Query);
 
-            query["q"] = searchQuery.Trim();
+            string siteFilter = string.Join(" OR ", this.searchSiteUris.Select(s => $"site:{s}"));
+
+            query["q"] = searchQuery.Trim() + siteFilter;
             query["key"] = googleKey;
             query["cx"] = googleCx;
             searchUri.Query = query.ToString();
