@@ -86,9 +86,14 @@ public class ExecuteToolCell : Cell<ConversationThread>
     private ITool SelectMatchingTool(Message toolMessage)
     {
         // TODO
-        if (toolMessage.Content.Contains("search", StringComparison.Ordinal))
+        if (toolMessage.Content.Contains("search_web", StringComparison.Ordinal))
         {
             return this.tools.FirstOrDefault(t => t.Name == "search_web")
+                ?? throw new InvalidOperationException("tool not found");
+        }
+        if (toolMessage.Content.Contains("search_news", StringComparison.Ordinal))
+        {
+            return this.tools.FirstOrDefault(t => t.Name == "search_news")
                 ?? throw new InvalidOperationException("tool not found");
         }
         else if (toolMessage.Content.Contains("lights", StringComparison.Ordinal))
