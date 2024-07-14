@@ -181,7 +181,7 @@ public class WebSearchTool : ITool
 
         ScrapeResponse response = await this.scraperClient.GetScrapedSiteContentAsync(links);
 
-        logger.LogInformation("Saw chunks: {Chunks}", JsonSerializer.Serialize(response));
+        logger.LogDebug("Saw chunks: {Chunks}", JsonSerializer.Serialize(response));
 
         return response.Chunks;
     }
