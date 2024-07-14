@@ -37,11 +37,9 @@ public class ExampleRunnerTests
             new Uri("http://localhost"),
             new Uri("http://localhost"),
             new Uri("http://localhost"),
-            "fake")
-        {
-            PromptDirectory = "fake",
-            DiskLoggingPath = "fake",
-        };
+            "fake",
+            "fake",
+            "fake");
 
         containerBuilder
             .RegisterInstance(config)
@@ -67,11 +65,9 @@ public class ExampleRunnerTests
             new Uri("http://localhost"),
             new Uri("http://localhost"),
             new Uri("http://localhost"),
-            "fake")
-        {
-            PromptDirectory = "fake",
-            DiskLoggingPath = "fake",
-        };
+            "fake",
+            "fake",
+            "fake");
 
         containerBuilder
             .RegisterInstance(config)

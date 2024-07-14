@@ -219,11 +219,11 @@ public static class Program
             new Uri(args.Uri),
             new Uri(args.EmbeddingsUri),
             new Uri(args.ScraperUri),
-            args.ModelName)
+            args.ModelName,
+            args.PromptDir,
+            args.DiskLoggingDir)
         {
             LogRequestsToLlm = args.Verbose,
-            PromptDirectory = args.PromptDir ?? "./Prompts",
-            DiskLoggingPath = args.DiskLoggingDir ?? "./RequestLogs",
         };
 
     private sealed record CommandLineArgs(
@@ -232,6 +232,6 @@ public static class Program
         string ScraperUri,
         string ModelName,
         bool Verbose,
-        string? PromptDir,
-        string? DiskLoggingDir);
+        string PromptDir,
+        string DiskLoggingDir);
 }

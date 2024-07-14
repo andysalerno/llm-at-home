@@ -36,12 +36,16 @@ public class Configuration :
         Uri completionsEndpoint,
         Uri embeddingsEndpoint,
         Uri scraperEndpoint,
-        string modelName)
+        string modelName,
+        string promptDirectory,
+        string diskLoggingPath)
     {
         this.CompletionsEndpoint = completionsEndpoint;
         this.EmbeddingsEndpoint = embeddingsEndpoint;
         this.ScraperEndpoint = scraperEndpoint;
         this.ModelName = modelName;
+        this.PromptDirectory = promptDirectory;
+        this.DiskLoggingPath = diskLoggingPath;
     }
 
     public Uri CompletionsEndpoint { get; }
@@ -52,9 +56,9 @@ public class Configuration :
 
     public bool LogRequestsToLlm { get; init; }
 
-    public required string PromptDirectory { get; init; }
+    public string PromptDirectory { get; }
 
     public string ModelName { get; }
 
-    public required string DiskLoggingPath { get; init; }
+    public string DiskLoggingPath { get; }
 }
