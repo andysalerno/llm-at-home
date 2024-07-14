@@ -39,17 +39,25 @@ public static class Program
             description: "directory containing prompt files");
         promptDir.AddAlias("--prompt-dir");
 
+        var diskLoggingDir = new Option<string?>(
+            name: "-d",
+            getDefaultValue: () => "./LlmRequestLogs",
+            description: "logging dir for requests sent to LLM");
+        diskLoggingDir.AddAlias("--request-logging-dir");
+
         command.AddArgument(uriArg);
         command.AddArgument(modelName);
         command.AddOption(verbose);
         command.AddOption(promptDir);
+        command.AddOption(diskLoggingDir);
 
         command.SetHandler(
             RunBenchmarkAsync,
             uriArg,
             modelName,
             verbose,
-            promptDir);
+            promptDir,
+            diskLoggingDir);
 
         return command;
     }
@@ -86,12 +94,19 @@ public static class Program
             description: "directory containing prompt files");
         promptDir.AddAlias("--prompt-dir");
 
+        var diskLoggingDir = new Option<string?>(
+            name: "-d",
+            getDefaultValue: () => "./LlmRequestLogs",
+            description: "logging dir for requests sent to LLM");
+        diskLoggingDir.AddAlias("--request-logging-dir");
+
         command.AddArgument(uriArg);
         command.AddArgument(embeddingsUriArg);
         command.AddArgument(scraperUriArg);
         command.AddArgument(modelName);
         command.AddOption(verbose);
         command.AddOption(promptDir);
+        command.AddOption(diskLoggingDir);
 
         command.SetHandler(
             RunServerAsync,
@@ -100,7 +115,8 @@ public static class Program
             scraperUriArg,
             modelName,
             verbose,
-            promptDir);
+            promptDir,
+            diskLoggingDir);
 
         return command;
     }
@@ -119,11 +135,12 @@ public static class Program
         string uri,
         string modelName,
         bool verbose,
-        string? promptDir)
+        string? promptDir,
+        string? diskLoggingDir)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
-        var commandLineArgs = new CommandLineArgs(uri, uri, uri, modelName, verbose, promptDir);
+        var commandLineArgs = new CommandLineArgs(uri, uri, uri, modelName, verbose, promptDir, diskLoggingDir);
 
         IContainer container = ConfigureContainer(commandLineArgs);
 
@@ -146,11 +163,19 @@ public static class Program
         string scraperUri,
         string modelName,
         bool verbose,
-        string? promptDir)
+        string? promptDir,
+        string? diskLoggingDir)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
-        var commandLineArgs = new CommandLineArgs(uri, embeddingsUri, scraperUri, modelName, verbose, promptDir);
+        var commandLineArgs = new CommandLineArgs(
+            uri,
+            embeddingsUri,
+            scraperUri,
+            modelName,
+            verbose,
+            promptDir,
+            diskLoggingDir);
 
         IContainer container = ConfigureContainer(commandLineArgs);
 
@@ -189,10 +214,15 @@ public static class Program
     }
 
     private static Configuration BuildConfiguration(CommandLineArgs args)
-        => new Configuration(new Uri(args.Uri), new Uri(args.EmbeddingsUri), new Uri(args.ScraperUri), args.ModelName)
+        => new Configuration(
+            new Uri(args.Uri),
+            new Uri(args.EmbeddingsUri),
+            new Uri(args.ScraperUri),
+            args.ModelName)
         {
             LogRequestsToLlm = args.Verbose,
             PromptDirectory = args.PromptDir ?? "./Prompts",
+            DiskLoggingPath = args.DiskLoggingDir ?? "./RequestLogs",
         };
 
     private sealed record CommandLineArgs(
@@ -201,5 +231,6 @@ public static class Program
         string ScraperUri,
         string ModelName,
         bool Verbose,
-        string PromptDir);
+        string? PromptDir,
+        string? DiskLoggingDir);
 }

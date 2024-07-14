@@ -21,9 +21,22 @@ public interface IFileSystemPromptProviderConfig
     string PromptDirectory { get; }
 }
 
-public class Configuration : ICompletionsEndpointConfig, ILoggingConfig, IFileSystemPromptProviderConfig
+public interface IChatRequestDiskLoggerConfig
 {
-    public Configuration(Uri completionsEndpoint, Uri embeddingsEndpoint, Uri scraperEndpoint, string modelName)
+    string DiskLoggingPath { get; }
+}
+
+public class Configuration :
+    ICompletionsEndpointConfig,
+    ILoggingConfig,
+    IFileSystemPromptProviderConfig,
+    IChatRequestDiskLoggerConfig
+{
+    public Configuration(
+        Uri completionsEndpoint,
+        Uri embeddingsEndpoint,
+        Uri scraperEndpoint,
+        string modelName)
     {
         this.CompletionsEndpoint = completionsEndpoint;
         this.EmbeddingsEndpoint = embeddingsEndpoint;
@@ -39,7 +52,9 @@ public class Configuration : ICompletionsEndpointConfig, ILoggingConfig, IFileSy
 
     public bool LogRequestsToLlm { get; init; }
 
-    public string PromptDirectory { get; init; } = "./Prompts";
+    public required string PromptDirectory { get; init; }
 
     public string ModelName { get; }
+
+    public required string DiskLoggingPath { get; init; }
 }

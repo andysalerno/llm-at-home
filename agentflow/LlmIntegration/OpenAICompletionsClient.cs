@@ -8,7 +8,7 @@ using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using Microsoft.Extensions.Logging;
 
-namespace AgentFlow.LlmClients.OpenAI;
+namespace AgentFlow.LlmClients;
 
 internal record OpenAICompletionRequest(
     string Model,
@@ -119,20 +119,22 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private readonly IEnvironmentVariableProvider environmentVariableProvider;
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
+    private readonly ChatRequestDiskLogger? chatRequestDiskLogger;
 
     public OpenAICompletionsClient(
         ICompletionsEndpointConfig completionsEndpointProviderConfig,
         IEnvironmentVariableProvider environmentVariableProvider,
         IHttpClientFactory httpClientFactory,
         ILoggingConfig loggingConfig,
-        ILogger<OpenAICompletionsClient> logger)
+        ILogger<OpenAICompletionsClient> logger,
+        ChatRequestDiskLogger? chatRequestDiskLogger = null)
     {
         this.baseEndpoint = completionsEndpointProviderConfig.CompletionsEndpoint;
         this.httpClient = httpClientFactory.CreateClient();
         this.environmentVariableProvider = environmentVariableProvider;
         this.loggingConfig = loggingConfig;
         this.logger = logger;
-
+        this.chatRequestDiskLogger = chatRequestDiskLogger;
         this.embeddingsEndpoint = completionsEndpointProviderConfig.EmbeddingsEndpoint;
         this.scraperEndpoint = completionsEndpointProviderConfig.ScraperEndpoint;
 
@@ -203,6 +205,11 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         {
             string json = await requestContent.ReadAsStringAsync();
             this.logger.LogInformation("Sending request: {Received}", json);
+        }
+
+        if (this.chatRequestDiskLogger is ChatRequestDiskLogger chatRequestDiskLogger)
+        {
+            await chatRequestDiskLogger.LogRequestToDiskAsync(input);
         }
 
         var result = await this.httpClient.PostAsync(this.chatCompletionsEndpoint, requestContent);

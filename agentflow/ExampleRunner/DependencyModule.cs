@@ -3,7 +3,7 @@ using AgentFlow.CodeExecution;
 using AgentFlow.Examples;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
-using AgentFlow.LlmClients.OpenAI;
+using AgentFlow.LlmClients;
 using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 using Autofac;
@@ -24,8 +24,6 @@ internal sealed class DependencyModule : Module
         builder.RegisterType<UserConsoleAgent>();
         builder.RegisterType<EnvironmentVariableProvider>().AsImplementedInterfaces();
 
-        // builder.RegisterType<GroqCompletionsClient>().AsImplementedInterfaces();
-        // builder.RegisterType<VllmCompletionsClient>().AsImplementedInterfaces();
         builder.RegisterType<OpenAICompletionsClient>().AsImplementedInterfaces();
         builder.RegisterType<PromptParser>().AsImplementedInterfaces();
         builder.RegisterType<PromptRenderer>().AsImplementedInterfaces();
