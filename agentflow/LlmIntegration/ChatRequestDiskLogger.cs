@@ -30,7 +30,7 @@ public sealed class ChatRequestDiskLogger
         {
             logContentBuilder.Append($"<|{message.Role.Name}|>\n");
             logContentBuilder.Append(message.Content);
-            logContentBuilder.Append("<|end|>");
+            logContentBuilder.Append("<|end|>\n");
         }
 
         await File.WriteAllTextAsync(fullPath, logContentBuilder.ToString());
