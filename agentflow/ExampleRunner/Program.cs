@@ -224,8 +224,8 @@ public static class Program
             new Uri(args.EmbeddingsUri),
             new Uri(args.ScraperUri),
             args.Verbose,
-            args.ModelName,
             args.PromptDir,
+            args.ModelName,
             args.DiskLoggingDir);
 
     private sealed record CommandLineArgs(
