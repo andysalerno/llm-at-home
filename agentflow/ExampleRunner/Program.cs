@@ -64,6 +64,7 @@ public static class Program
 
     private static Command BuildServerCommand()
     {
+        // TODO: deduplicate these args between server and benchmark
         var command = new Command("server");
 
         var uriArg = new Argument<string>(
