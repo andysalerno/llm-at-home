@@ -49,7 +49,7 @@ public class WebSearchTool : ITool
             httpClientFactory,
             ImmutableArray<string>.Empty,
             "search_web",
-            ("Eiffel Tower height", "best pizza in Seattle", "Seattle Kraken game results"))
+            ("Eiffel Tower height", "best pizza in Seattle", "Abraham Lincoln early life"))
     {
     }
 
