@@ -194,8 +194,9 @@ public static class Program
 
         var example = scope.Resolve<OpenAIServerWebSearchExample>();
 
-        var logger = scope.Resolve<ILogger>();
-        logger.LogInformation("Starting up with configuration: {Configuration}", configuration);
+        Logging.Factory
+            .CreateLogger<Configuration>()
+            .LogInformation("Starting up with configuration: {Configuration}", configuration);
 
         await example.RunAsync();
     }
