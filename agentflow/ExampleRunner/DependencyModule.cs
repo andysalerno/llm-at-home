@@ -34,6 +34,7 @@ internal sealed class DependencyModule : Module
         builder.RegisterType<WebSearchExample>();
         builder.RegisterType<SimpleChatExample>();
         builder.RegisterType<AgentBenchExample>();
+        builder.RegisterType<ChatRequestDiskLogger>();
         builder.RegisterType<OpenAIServerWebSearchExample>();
     }
 }
