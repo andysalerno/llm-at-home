@@ -48,7 +48,8 @@ public class WebSearchTool : ITool
             promptFactory,
             httpClientFactory,
             ImmutableArray<string>.Empty,
-            "search_web")
+            "search_web",
+            ("Eiffel Tower height", "best pizza in Seattle", "Seattle Kraken game results"))
     {
     }
 
@@ -62,7 +63,8 @@ public class WebSearchTool : ITool
         IFactory<Prompt> promptFactory,
         IHttpClientFactory httpClientFactory,
         ImmutableArray<string> searchSiteUris,
-        string toolName)
+        string toolName,
+        (string, string, string) exampleQueries)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
@@ -74,9 +76,12 @@ public class WebSearchTool : ITool
         this.httpClientFactory = httpClientFactory;
         this.searchSiteUris = searchSiteUris;
         this.Name = toolName;
+        this.ExampleQueries = exampleQueries;
     }
 
     public string Name { get; }
+
+    public (string, string, string) ExampleQueries { get; }
 
     public string Definition =>
         $""""
@@ -84,9 +89,9 @@ public class WebSearchTool : ITool
             """
             Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.
             Examples:
-                search_web('Eiffel Tower height')
-                search_web('best pizza in Seattle')
-                search_web('Seattle Kraken game results')
+                {this.Name}('{this.ExampleQueries.Item1}')
+                {this.Name}('{this.ExampleQueries.Item2}')
+                {this.Name}('{this.ExampleQueries.Item3}')
             """
             pass # impl omitted
 

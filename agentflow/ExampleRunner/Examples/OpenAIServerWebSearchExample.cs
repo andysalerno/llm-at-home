@@ -73,6 +73,19 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.promptRenderer,
                 this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
                 this.httpClientFactory),
+
+            new WebSearchTool(
+                this.agentBuilderFactory,
+                this.runner,
+                this.environmentVariableProvider,
+                this.embeddingsClient,
+                this.scraperClient,
+                this.promptRenderer,
+                this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
+                this.httpClientFactory,
+                ["nytimes.com", "cnn.com", "apnews.com"],
+                "search_news",
+                ("2024 election polls", "seattle heat wave", "stock market performance")),
         ];
 
         var toolSelectionPrompt = this.promptFactoryProvider
