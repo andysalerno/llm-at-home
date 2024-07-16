@@ -15,11 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentFlow.Tests", "tests\Ag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "Logging\Logging.csproj", "{0730A260-DC79-4289-8721-5FAA11B27410}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleRunner", "ExampleRunner\ExampleRunner.csproj", "{AEA06619-04B1-48B2-9D78-3B6FF1BA33C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{AEA06619-04B1-48B2-9D78-3B6FF1BA33C7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{126DBF89-B5B4-45F0-AC86-9AA74C8184AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleRunner.Tests", "tests\ExampleRunner.Tests\ExampleRunner.Tests.csproj", "{B4906B52-7494-42FC-A9F6-1060C04A2697}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples.Tests", "tests\Examples.Tests\Examples.Tests.csproj", "{B4906B52-7494-42FC-A9F6-1060C04A2697}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

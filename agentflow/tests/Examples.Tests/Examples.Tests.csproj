@@ -22,7 +22,7 @@
     <PackageReference Include="Moq" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <ProjectReference Include="../../AgentFlow/AgentFlow.csproj" />
-    <ProjectReference Include="../../ExampleRunner/ExampleRunner.csproj" />
+    <ProjectReference Include="../../Examples/Examples.csproj" />
   </ItemGroup>
 
   <ItemGroup>
