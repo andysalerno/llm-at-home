@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="ExampleRunner.Tests" />
+    <InternalsVisibleTo Include="Examples.Tests" />
   </ItemGroup>
 
   <ItemGroup>
