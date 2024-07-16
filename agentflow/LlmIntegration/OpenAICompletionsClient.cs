@@ -207,11 +207,6 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             this.logger.LogInformation("Sending request: {Received}", json);
         }
 
-        if (this.chatRequestDiskLogger is ChatRequestDiskLogger chatRequestDiskLogger)
-        {
-            await chatRequestDiskLogger.LogRequestToDiskAsync(input);
-        }
-
         var result = await this.httpClient.PostAsync(this.chatCompletionsEndpoint, requestContent);
 
         var resultJson = await result.Content.ReadAsStringAsync();
@@ -240,6 +235,15 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         if (preTrim.Length != trimmed.Length)
         {
             this.logger.LogWarning("The response from the LLM had whitespace in the prefix or suffix that was trimmed.");
+        }
+
+        if (this.chatRequestDiskLogger is ChatRequestDiskLogger chatRequestDiskLogger)
+        {
+            await chatRequestDiskLogger.LogRequestToDiskAsync(input.Messages.Concat(
+                new[]
+                {
+                    new Message(new Agents.AgentName("unused"), Role.Assistant, trimmed),
+                }));
         }
 
         return new ChatCompletionsResult(trimmed);

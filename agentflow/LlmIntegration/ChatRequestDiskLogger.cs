@@ -13,7 +13,7 @@ public sealed class ChatRequestDiskLogger
         this.config = config;
     }
 
-    public async Task LogRequestToDiskAsync(ChatCompletionsRequest chatCompletionsRequest)
+    public async Task LogRequestToDiskAsync(IEnumerable<LlmClient.Message> messages)
     {
         var logger = this.GetLogger();
 
@@ -26,7 +26,7 @@ public sealed class ChatRequestDiskLogger
 
         var logContentBuilder = new StringBuilder();
 
-        foreach (var message in chatCompletionsRequest.Messages)
+        foreach (var message in messages)
         {
             logContentBuilder.Append($"<|{message.Role.Name}|>\n");
             logContentBuilder.Append(message.Content);
