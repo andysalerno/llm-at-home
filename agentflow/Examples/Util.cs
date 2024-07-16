@@ -1,5 +1,7 @@
 // TODO: extract this to a distinct project
 
+using System.Diagnostics;
+
 namespace AgentFlow.Util;
 
 public static class NullUtilities
@@ -17,5 +19,18 @@ public static class NullUtilities
         }
 
         return input;
+    }
+}
+
+public static class ActivityExtensions
+{
+    public static Activity AddRequestIdBaggage(this Activity activity)
+    {
+        return activity.AddBaggage("requestId", Guid.NewGuid().ToString());
+    }
+
+    public static string? GetRequestIdBaggage(this Activity activity)
+    {
+        return activity.GetBaggageItem("requestId");
     }
 }

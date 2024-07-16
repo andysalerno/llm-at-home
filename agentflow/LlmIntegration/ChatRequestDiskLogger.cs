@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using AgentFlow.Config;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,8 @@ namespace AgentFlow.LlmClients;
 
 public sealed class ChatRequestDiskLogger
 {
+    private static readonly object _lock = new object();
+
     private readonly IChatRequestDiskLoggerConfig config;
 
     public ChatRequestDiskLogger(IChatRequestDiskLoggerConfig config)
@@ -17,7 +20,17 @@ public sealed class ChatRequestDiskLogger
     {
         var logger = this.GetLogger();
 
-        string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{Guid.NewGuid()}.log";
+        string? requestId = Activity.Current?.GetBaggageItem("requestId");
+
+        int requestIndex = this.GetAndIncrementRequestIndex();
+
+        if (requestId == null)
+        {
+            logger.LogWarning("RequestId information was not found on current activity");
+            requestId = Guid.NewGuid().ToString();
+        }
+
+        string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{requestId}.{requestIndex}.log";
         string fullPath = Path.GetFullPath(logFilePath);
 
         logger.LogInformation("Logging chat request to disk at path: {Path}, fullpath: {FullPath}", logFilePath, fullPath);
@@ -34,5 +47,21 @@ public sealed class ChatRequestDiskLogger
         }
 
         await File.WriteAllTextAsync(fullPath, logContentBuilder.ToString());
+    }
+
+    private int GetAndIncrementRequestIndex()
+    {
+        int requestIndexVal = 0;
+
+        lock (_lock)
+        {
+            string? requestIndex = Activity.Current?.GetBaggageItem("requestIndex");
+
+            int.TryParse(requestIndex, out requestIndexVal);
+
+            Activity.Current?.SetBaggage("requestIndex", (requestIndexVal + 1).ToString());
+        }
+
+        return requestIndexVal;
     }
 }

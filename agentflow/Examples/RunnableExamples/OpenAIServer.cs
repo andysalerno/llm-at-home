@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgentFlow.LlmClient;
+using AgentFlow.Util;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
@@ -65,6 +67,12 @@ internal sealed class OpenAIServer
                 }
 
                 ConversationThread conversationThread = ToConversationThread(chatRequest);
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
+                using var activity = new Activity("request")
+                    .AddRequestIdBaggage()
+                    .Start();
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
                 ConversationThread output = await runner.RunAsync(programToUse, rootInput: conversationThread);
 
