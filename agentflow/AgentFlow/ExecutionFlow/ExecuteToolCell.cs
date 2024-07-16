@@ -91,6 +91,7 @@ public class ExecuteToolCell : Cell<ConversationThread>
             return this.tools.FirstOrDefault(t => t.Name == "search_web")
                 ?? throw new InvalidOperationException("tool not found");
         }
+
         if (toolMessage.Content.Contains("search_news", StringComparison.Ordinal))
         {
             return this.tools.FirstOrDefault(t => t.Name == "search_news")
