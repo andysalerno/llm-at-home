@@ -4,12 +4,12 @@ WORKDIR /App
 # Copy everything
 COPY . ./
 # Restore as distinct layers
-RUN dotnet restore ExampleRunner
+RUN dotnet restore Examples
 # Build and publish a release
-RUN dotnet publish ExampleRunner -c Release -o out
+RUN dotnet publish Examples -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /App
 COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "ExampleRunner.dll"]
+ENTRYPOINT ["dotnet", "Examples.dll"]
