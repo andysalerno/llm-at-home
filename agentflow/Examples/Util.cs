@@ -26,7 +26,7 @@ public static class ActivityExtensions
 {
     public static Activity AddRequestIdBaggage(this Activity activity)
     {
-        return activity.AddBaggage("requestId", Guid.NewGuid().ToString());
+        return activity.AddBaggage("requestId", Guid.NewGuid().ToString().Substring(0, 8));
     }
 
     public static string? GetRequestIdBaggage(this Activity activity)
