@@ -154,7 +154,7 @@ public class WebSearchTool : ITool
             "Current message history for request is: {Messages}",
             JsonSerializer.Serialize(historyWithRewriteInstructions.Messages));
 
-        var program = await agent.GetNextThreadStateAsync();
+        var program = await agent.GetNextConversationStateAsync();
 
         ConversationThread nextState = await this.runner.RunAsync(program, historyWithRewriteInstructions);
 

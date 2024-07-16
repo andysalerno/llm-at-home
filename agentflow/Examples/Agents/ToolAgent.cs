@@ -82,7 +82,7 @@ public class ToolAgent : IAgent
 }
 """.Trim());
 
-  public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
+  public Task<Cell<ConversationThread>> GetNextConversationStateAsync()
   {
     IAgent toolSelectionAgent = this.toolSelectionAgent.Value;
     IAgent responseAgent = this.responseAgent.Value;

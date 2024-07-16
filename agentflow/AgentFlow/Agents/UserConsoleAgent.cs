@@ -41,7 +41,7 @@ public class UserConsoleAgent : IAgent
         throw new NotImplementedException("Use GetNextThreadStateAsync instead");
     }
 
-    public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
+    public Task<Cell<ConversationThread>> GetNextConversationStateAsync()
     {
         Cell<ConversationThread> result = new GetUserInputCell(this.Name, this.Role);
 

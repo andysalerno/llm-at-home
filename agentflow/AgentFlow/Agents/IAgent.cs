@@ -9,7 +9,7 @@ public interface IAgent
 
     Role Role { get; }
 
-    Task<Cell<ConversationThread>> GetNextThreadStateAsync();
+    Task<Cell<ConversationThread>> GetNextConversationStateAsync();
 }
 
 public record AgentName(string Value);

@@ -34,7 +34,7 @@ public class AgentCell : Cell<ConversationThread>
 
     public override async Task<ConversationThread> RunAsync(ConversationThread input)
     {
-        var sequence = await this.agent.GetNextThreadStateAsync();
+        var sequence = await this.agent.GetNextConversationStateAsync();
 
         return await sequence.RunAsync(input);
     }

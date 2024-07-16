@@ -70,7 +70,7 @@ public sealed class CustomAgent : IAgent
 
     public InstructionStrategy InstructionStrategy { get; }
 
-    public Task<Cell<ConversationThread>> GetNextThreadStateAsync()
+    public Task<Cell<ConversationThread>> GetNextConversationStateAsync()
     {
         var cells = ImmutableArray.CreateBuilder<Cell<ConversationThread>>();
         {
