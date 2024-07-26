@@ -16,6 +16,7 @@ public sealed class ConversationThread
 {
     private readonly ImmutableArray<Message> messageList;
 
+    // TODO: deprecate?
     private readonly Dictionary<string, string> templateKeyValuePairs;
 
     public ConversationThread()
@@ -81,6 +82,7 @@ public sealed class ConversationThread
             .Build();
     }
 
+    // TODO: deprecate?
     public ConversationThread WithTemplateValue(string key, string value)
     {
         var output = new Builder().CopyFrom(this).Build();
@@ -100,6 +102,7 @@ public sealed class ConversationThread
             .Build();
     }
 
+    // TODO: deprecate?
     public ConversationThread WithTemplateAppliedToSystem()
     {
         Message? topSystemMessage = this.messageList.FirstOrDefault();

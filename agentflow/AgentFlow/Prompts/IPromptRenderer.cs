@@ -1,3 +1,5 @@
+using AgentFlow.WorkSpace;
+
 namespace AgentFlow.Prompts;
 
 public interface IPromptRenderer
@@ -7,5 +9,5 @@ public interface IPromptRenderer
     /// </summary>
     RenderedPrompt Render(Prompt prompt);
 
-    RenderedTranscript RenderTranscript(Prompt prompt);
+    RenderedTranscript RenderTranscript(Prompt prompt, ConversationThread conversationThread);
 }

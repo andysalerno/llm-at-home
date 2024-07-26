@@ -1,3 +1,4 @@
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Prompts;
@@ -46,5 +47,9 @@ public sealed class PromptRenderer : IPromptRenderer
         return new RenderedPrompt(result);
     }
 
-    public RenderedTranscript RenderTranscript(Prompt prompt) => throw new NotImplementedException();
+    public RenderedTranscript RenderTranscript(Prompt prompt, ConversationThread conversationThread)
+    {
+        // There is a special well-known variable name for the conversation history
+        throw new NotImplementedException();
+    }
 }
