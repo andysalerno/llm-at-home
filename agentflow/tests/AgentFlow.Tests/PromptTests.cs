@@ -10,7 +10,7 @@ public class PromptTests
         Logging.TryRegisterLoggerFactory(NullLoggerFactory.Instance);
     }
 
-    private IPromptRenderer Renderer { get; } = new PromptRenderer();
+    private IPromptRenderer Renderer { get; } = new PromptRenderer(new PromptRendererConfig());
 
     [Fact]
     public void Prompt_WithFrontMatter_CanBeParsed()

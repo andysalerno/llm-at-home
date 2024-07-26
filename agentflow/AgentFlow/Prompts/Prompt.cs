@@ -1,4 +1,7 @@
-﻿namespace AgentFlow.Prompts;
+﻿using System.Collections.Immutable;
+using AgentFlow.LlmClient;
+
+namespace AgentFlow.Prompts;
 
 /// <summary>
 /// The name of a prompt. Used for retrieving a prompt by name.
@@ -14,6 +17,8 @@ public sealed record Variable(string Name, string Value);
 /// The result of using a <see cref="IPromptRenderer"/> to render a <see cref="Prompt"/>.
 /// </summary>
 public sealed record RenderedPrompt(string Text);
+
+public sealed record RenderedTranscript(ImmutableArray<Message> Transcript);
 
 /// <summary>
 /// A prompt that can be sent to an LLM for completion, either as the full

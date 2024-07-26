@@ -1,4 +1,6 @@
-﻿namespace AgentFlow.Config;
+﻿using AgentFlow.Prompts;
+
+namespace AgentFlow.Config;
 
 public interface ICompletionsEndpointConfig
 {
@@ -37,4 +39,5 @@ public record Configuration(
     ICompletionsEndpointConfig,
     ILoggingConfig,
     IFileSystemPromptProviderConfig,
-    IChatRequestDiskLoggerConfig;
+    IChatRequestDiskLoggerConfig,
+    IPromptRendererConfig;

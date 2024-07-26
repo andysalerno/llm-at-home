@@ -2,8 +2,21 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Prompts;
 
+public interface IPromptRendererConfig
+{
+}
+
+public sealed record PromptRendererConfig() : IPromptRendererConfig;
+
 public sealed class PromptRenderer : IPromptRenderer
 {
+    private readonly IPromptRendererConfig config;
+
+    public PromptRenderer(IPromptRendererConfig config)
+    {
+        this.config = config;
+    }
+
     public RenderedPrompt Render(Prompt prompt)
     {
         var logger = this.GetLogger();
@@ -32,4 +45,6 @@ public sealed class PromptRenderer : IPromptRenderer
 
         return new RenderedPrompt(result);
     }
+
+    public RenderedTranscript RenderTranscript(Prompt prompt) => throw new NotImplementedException();
 }
