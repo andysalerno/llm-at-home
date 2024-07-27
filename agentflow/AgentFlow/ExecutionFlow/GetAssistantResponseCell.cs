@@ -19,6 +19,7 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
     {
     }
 
+    // pass promptrenderer here?
     public GetAssistantResponseCell(
         AgentName agentName,
         Role agentRole,

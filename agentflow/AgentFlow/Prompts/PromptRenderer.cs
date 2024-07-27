@@ -47,9 +47,20 @@ public sealed class PromptRenderer : IPromptRenderer
         return new RenderedPrompt(result);
     }
 
-    public RenderedTranscript RenderTranscript(Prompt prompt, ConversationThread conversationThread)
-    {
-        // There is a special well-known variable name for the conversation history
-        throw new NotImplementedException();
-    }
+    // IAgent (or just Agent) should have prompt variables, not directly on Prompt,
+    // and the Agent impl applies them into the existing ConversationThread variable system
+    // which get picked up during a request.
+    // Also, perhaps Agents should not have access to ILlmClient (or whatever) but instead only
+    // to the Cells system so they are forced to do everything via cells
+    // public RenderedTranscript RenderTranscript(Prompt prompt, ConversationThread conversationThread)
+    // {
+    //     // There is a special well-known variable name for the conversation history
+    //     // If it is present in prompt template, then populate it within the message, from the conversation thread,
+    //     // following the configured formatting scheme.
+    //     // If not present, apply the conversation thread as messages in the returned transcript.
+    //     // For now, start with the assumption it is not present.
+    //     RenderedPrompt rendered = this.Render(prompt);
+
+    //     throw new NotImplementedException();
+    // }
 }
