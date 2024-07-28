@@ -36,11 +36,6 @@ public class UserConsoleAgent : IAgent
                 "CodeExecutor not configured on the UserConsoleAgent, cannot execute code.");
     }
 
-    public Task<AgentResponse> GetNextResponseAsync(ConversationThread thread)
-    {
-        throw new NotImplementedException("Use GetNextThreadStateAsync instead");
-    }
-
     public Task<Cell<ConversationThread>> GetNextConversationStateAsync()
     {
         Cell<ConversationThread> result = new GetUserInputCell(this.Name, this.Role);

@@ -12,6 +12,4 @@ public interface IAgent
     Task<Cell<ConversationThread>> GetNextConversationStateAsync();
 }
 
-public record AgentName(string Value);
-
-public record AgentResponse(string Text, AgentName AgentName, Role Role, bool IsTerminate = false);
+public sealed record AgentName(string Value);

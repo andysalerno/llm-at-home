@@ -34,6 +34,7 @@ public sealed class CustomAgent : IAgent
     private readonly MessageVisibility messageVisibility;
     private readonly IPromptRenderer promptRenderer;
     private readonly ILlmCompletionsClient completionsClient;
+    private readonly ImmutableDictionary<string, string> variables;
     private readonly JsonElement? responseSchema;
     private readonly ILogger<CustomAgent> logger;
 
@@ -43,6 +44,7 @@ public sealed class CustomAgent : IAgent
         InstructionStrategy instructionStrategy,
         AgentName name,
         MessageVisibility messageVisibility,
+        ImmutableDictionary<string, string> variables,
         IPromptRenderer promptRenderer,
         ILlmCompletionsClient completionsClient,
         JsonElement? responseSchema = null)
@@ -53,6 +55,7 @@ public sealed class CustomAgent : IAgent
         this.completionsClient = completionsClient;
         this.responseSchema = responseSchema;
         this.Name = name;
+        this.variables = variables;
         this.messageVisibility = messageVisibility;
         this.promptRenderer = promptRenderer;
         this.logger = this.GetLogger();
@@ -97,6 +100,7 @@ public sealed class CustomAgent : IAgent
     public class Builder
     {
         private readonly IPromptRenderer promptRenderer;
+        private readonly ImmutableDictionary<string, string>.Builder keyValuePairs;
         private Role? role;
         private Prompt? prompt;
         private AgentName? name;
@@ -111,6 +115,7 @@ public sealed class CustomAgent : IAgent
             this.promptRenderer = promptRenderer;
             this.visibility = new MessageVisibility(ShownToUser: true, ShownToModel: true);
             this.responseSchema = null;
+            this.keyValuePairs = ImmutableDictionary.CreateBuilder<string, string>();
         }
 
         public Builder WithMessageVisibility(MessageVisibility visibility)
@@ -161,6 +166,23 @@ public sealed class CustomAgent : IAgent
             return this;
         }
 
+        public Builder SetVariableValue(string key, string value)
+        {
+            this.keyValuePairs[key] = value;
+
+            return this;
+        }
+
+        public Builder SetVariableValues(IEnumerable<KeyValuePair<string, string>> kvps)
+        {
+            foreach (var kvp in kvps)
+            {
+                this.keyValuePairs[kvp.Key] = kvp.Value;
+            }
+
+            return this;
+        }
+
         public Builder WithName(AgentName name)
         {
             this.name = name;
@@ -175,6 +197,7 @@ public sealed class CustomAgent : IAgent
                 instructionStrategy: this.instructionsStrategy,
                 name: this.name ?? throw new InvalidDataException("Name is required but was null"),
                 messageVisibility: this.visibility,
+                variables: this.keyValuePairs.ToImmutable(),
                 promptRenderer: this.promptRenderer,
                 completionsClient: this.completionsClient
                     ?? throw new InvalidDataException("CompletionsClient is required but was null"),

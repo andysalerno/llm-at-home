@@ -36,6 +36,7 @@ public class ToolAgent : IAgent
         .CreateBuilder()
         .WithName(new AgentName("ToolSelectorAgent"))
         .WithRole(Role.ToolInvocation)
+        .SetVariableValue(key: "tools", value: BuildToolsDefinitions(this.tools))
         .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
