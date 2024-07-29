@@ -96,6 +96,7 @@ public class ToolAgent : IAgent
         [
 
             // Set the template values for the system message:
+            // TODO: remove this
             new SetTemplateValueCell("tools", toolsDefinitions),
 
                 // Get the response from the tool selection agent:

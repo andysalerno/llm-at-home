@@ -1,4 +1,4 @@
-using AgentFlow.WorkSpace;
+using System.Collections.Immutable;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Prompts;
@@ -18,22 +18,34 @@ public sealed class PromptRenderer : IPromptRenderer
         this.config = config;
     }
 
-    public RenderedPrompt Render(Prompt prompt)
+    public RenderedPrompt Render(Prompt prompt, IReadOnlyDictionary<string, string>? keyValuePairs = null)
     {
         var logger = this.GetLogger();
 
+        keyValuePairs ??= ImmutableDictionary<string, string>.Empty;
+
         string result = prompt.TemplateText;
 
-        foreach (var variable in prompt.Variables)
+        string ReplaceVariableInText(string key, string value, string text)
         {
-            string templatedVariableText = "{{" + variable.Name + "}}";
+            string templatedVariableText = "{{" + key + "}}";
             if (!result.Contains(templatedVariableText, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
-                    $"Expected template to include variable {variable.Name}, but was not found");
+                    $"Expected template to include variable {key}, but was not found");
             }
 
-            result = result.Replace(templatedVariableText, variable.Value, StringComparison.Ordinal);
+            return text.Replace(templatedVariableText, value, StringComparison.Ordinal);
+        }
+
+        foreach (var variable in prompt.Variables)
+        {
+            result = ReplaceVariableInText(variable.Name, variable.Value, result);
+        }
+
+        foreach (var (k, v) in keyValuePairs)
+        {
+            result = ReplaceVariableInText(k, v, result);
         }
 
         logger.LogInformation("Replaced {Count} variables in prompt", prompt.Variables.Count);
