@@ -97,16 +97,15 @@ public class ToolAgent : IAgent
 
             // Set the template values for the system message:
             // TODO: remove this
-            new SetTemplateValueCell("tools", toolsDefinitions),
+            // new SetTemplateValueCell("tools", toolsDefinitions),
+            // Get the response from the tool selection agent:
+            new AgentCell(toolSelectionAgent),
 
-                // Get the response from the tool selection agent:
-                new AgentCell(toolSelectionAgent),
+            // Execute the selected tool and add its result to the conversation:
+            new ExecuteToolCell(this.tools),
 
-                // Execute the selected tool and add its result to the conversation:
-                new ExecuteToolCell(this.tools),
-
-                // Get the ultimate response from the responding agent:
-                new AgentCell(responseAgent),
+            // Get the ultimate response from the responding agent:
+            new AgentCell(responseAgent),
         ]);
 
     return Task.FromResult(setupSequence);
