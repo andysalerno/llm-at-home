@@ -30,7 +30,9 @@ public sealed class ChatRequestDiskLogger
             requestId = Guid.NewGuid().ToString();
         }
 
-        string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{requestId}.{requestIndex}.log";
+        string timestamp = DateTime.Now.ToString("dd-MM-yyyy");
+
+        string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{timestamp}.{requestId}.{requestIndex}.log";
         string fullPath = Path.GetFullPath(logFilePath);
 
         logger.LogInformation("Logging chat request to disk at path: {Path}, fullpath: {FullPath}", logFilePath, fullPath);
