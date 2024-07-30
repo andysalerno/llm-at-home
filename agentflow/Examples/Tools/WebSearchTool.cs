@@ -133,23 +133,15 @@ public class WebSearchTool : ITool
             .CreateBuilder()
             .WithName(new AgentName("QueryRewriter"))
             .WithRole(Role.Assistant)
+            .WithInstructionsFromPrompt(this.promptFactory.Create())
             .SetVariableValue("ORIGINAL_QUERY", originalQuery)
             .Build();
 
-        var prompt = this.promptFactory.Create();
+        // Filter out anything except assistant and user messages:
+        var historyWithRewriteInstructions = history
+            .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role));
 
         var logger = this.GetLogger();
-
-        logger.LogDebug("Rewrite prompt is: {Prompt}", prompt);
-
-        // Let's try making the rewrite instructions a new system message, the latest in the conversation, instead of the first:
-        RenderedPrompt renderedPrompt = this.promptRenderer.Render(prompt);
-        var historyWithRewriteInstructions = history
-
-            // Filter out anything except assistant and user messages:
-            .WithMatchingMessages(message => new[] { Role.Assistant, Role.User }.Contains(message.Role))
-            .WithAddedMessage(new Message(new AgentName("system"), Role.System, renderedPrompt.Text));
-
         logger.LogDebug(
             "Current message history for request is: {Messages}",
             JsonSerializer.Serialize(historyWithRewriteInstructions.Messages));
