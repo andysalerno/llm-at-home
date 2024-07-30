@@ -38,17 +38,12 @@ public sealed class PromptRenderer : IPromptRenderer
             return text.Replace(templatedVariableText, value, StringComparison.Ordinal);
         }
 
-        foreach (var variable in prompt.Variables)
-        {
-            result = ReplaceVariableInText(variable.Name, variable.Value, result);
-        }
-
         foreach (var (k, v) in keyValuePairs)
         {
             result = ReplaceVariableInText(k, v, result);
         }
 
-        logger.LogInformation("Replaced {Count} variables in prompt", prompt.Variables.Count);
+        logger.LogInformation("Replaced {Count} variables in prompt", keyValuePairs.Count);
 
         if (result.Contains("{{", StringComparison.Ordinal))
         {

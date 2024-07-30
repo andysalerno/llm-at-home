@@ -88,18 +88,15 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 ("2024 election polls", "seattle heat wave", "stock market performance")),
         ];
 
+        // TODO: these can now go directly in the tool agent, instead of
+        // being injected.
         var toolSelectionPrompt = this.promptFactoryProvider
             .GetFactory(ExamplePrompts.WebsearchExampleSystem)
-            .Create()
-            .AddVariable("CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
+            .Create();
 
         var respondingPrompt = this.promptFactoryProvider
             .GetFactory(ExamplePrompts.WebsearchExampleResponding)
             .Create();
-
-        respondingPrompt.AddVariable(
-            "CUR_DATE",
-            DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo));
 
         return new AgentCell(
             new ToolAgent(

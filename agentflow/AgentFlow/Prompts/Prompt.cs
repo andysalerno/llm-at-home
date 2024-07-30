@@ -32,8 +32,6 @@ public sealed record RenderedTranscript(ImmutableArray<Message> Transcript);
 /// </summary>
 public sealed record Prompt
 {
-    private readonly List<Variable> variables = new();
-
     public Prompt(string templateText, FrontMatter frontMatter)
     {
         this.TemplateText = templateText;
@@ -45,17 +43,9 @@ public sealed record Prompt
     {
     }
 
-    public IReadOnlyList<Variable> Variables => this.variables;
-
     public string TemplateText { get; }
 
     public FrontMatter PromptFrontMatter { get; }
-
-    public Prompt AddVariable(string name, string value)
-    {
-        this.variables.Add(new Variable(name, value));
-        return this;
-    }
 
     /// <summary>
     /// The configuration values present in the prompt.

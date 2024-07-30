@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Text.Json;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -37,6 +38,7 @@ public class ToolAgent : IAgent
         .WithName(new AgentName("ToolSelectorAgent"))
         .WithRole(Role.ToolInvocation)
         .SetVariableValue(key: "tools", value: BuildToolsDefinitions(this.tools))
+        .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
         .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
@@ -47,6 +49,7 @@ public class ToolAgent : IAgent
        .WithName(new AgentName("ResponseAgent"))
        .WithRole(this.Role)
        .WithInstructionsFromPrompt(this.RespondingPrompt)
+       .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
        .Build());
   }
 

@@ -89,7 +89,7 @@ this is some prompt with a variable called foo: {{foo}}
 
         Prompt prompt = parser.Parse(PromptText);
 
-        prompt.AddVariable(name: "foo", value: "bar");
+        // prompt.AddVariable(name: "foo", value: "bar");
 
         RenderedPrompt rendered = this.Renderer.Render(prompt);
 

@@ -133,10 +133,10 @@ public class WebSearchTool : ITool
             .CreateBuilder()
             .WithName(new AgentName("QueryRewriter"))
             .WithRole(Role.Assistant)
+            .SetVariableValue("ORIGINAL_QUERY", originalQuery)
             .Build();
 
         var prompt = this.promptFactory.Create();
-        prompt.AddVariable("ORIGINAL_QUERY", originalQuery);
 
         var logger = this.GetLogger();
 
