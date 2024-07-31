@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 
 namespace AgentFlow.Prompts;
@@ -30,7 +31,7 @@ public sealed record RenderedTranscript(ImmutableArray<Message> Transcript);
 /// <para>A <see cref="IPromptRenderer"/> takes a <see cref="Prompt"/> and renders
 /// it back to a string, replacing any variables provided.</para>
 /// </summary>
-public sealed record Prompt
+public sealed record Prompt : ISelfFactory<Prompt>
 {
     public Prompt(string templateText, FrontMatter frontMatter)
     {

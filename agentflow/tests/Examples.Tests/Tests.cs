@@ -5,6 +5,7 @@ using AgentFlow.Config;
 using AgentFlow.Examples;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
+using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -67,13 +68,27 @@ public class ExampleRunnerTests
             new Uri("http://localhost"),
             new Uri("http://localhost"),
             false,
-            "fake",
+            "Prompts",
             "fake",
             "fake");
 
         containerBuilder
             .RegisterInstance(config)
             .AsImplementedInterfaces();
+
+        // {
+        //     var promptProvider = new Mock<IFactoryProvider<Prompt, PromptName>>(MockBehavior.Strict);
+        //     promptProvider
+        //         .Setup(p => p.GetFactory(It.Is<PromptName>((n) => n == ExamplePrompts.RewriteQuerySystem)))
+        //         .Returns(new Prompt("text"));
+        //     promptProvider
+        //         .Setup(p => p.GetFactory(It.Is<PromptName>((n) => n == ExamplePrompts.WebsearchExampleSystem)))
+        //         .Returns(new Prompt("text"));
+        //     promptProvider
+        //         .Setup(p => p.GetFactory(It.Is<PromptName>((n) => n == ExamplePrompts.WebsearchExampleResponding)))
+        //         .Returns(new Prompt("text"));
+        //     containerBuilder.RegisterInstance(promptProvider.Object).AsImplementedInterfaces();
+        // }
 
         // test-specific:
         {
