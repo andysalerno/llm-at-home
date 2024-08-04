@@ -161,7 +161,7 @@ public class WebSearchTool : ITool
     {
         var logger = this.GetLogger();
 
-        using var client = this.httpClientFactory.CreateClient();
+        using var client = this.httpClientFactory.CreateClient(nameof(WebSearchTool));
 
         var links = searchResults
             .Items

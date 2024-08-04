@@ -107,6 +107,10 @@ public class ExampleRunnerTests
         }
 
         {
+            // httpfactory
+        }
+
+        {
             var envVarProvider = new Mock<IEnvironmentVariableProvider>();
             envVarProvider
                 .Setup(p => p.GetVariableValue(It.IsAny<string>()))
