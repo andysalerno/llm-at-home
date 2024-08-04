@@ -25,6 +25,7 @@ internal sealed class WebSearchExample : IRunnableExample
     private readonly IPromptRenderer promptRenderer;
     private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
     private readonly IFileSystemPromptProviderConfig promptProviderConfig;
+    private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
     private readonly ILoggingConfig loggingConfig;
 
     public WebSearchExample(
@@ -38,6 +39,7 @@ internal sealed class WebSearchExample : IRunnableExample
         IPromptRenderer promptRenderer,
         CustomAgentBuilderFactory customAgentBuilderFactory,
         IFileSystemPromptProviderConfig promptProviderConfig,
+        IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
         ILoggingConfig loggingConfig)
     {
         this.runner = runner;
@@ -50,6 +52,7 @@ internal sealed class WebSearchExample : IRunnableExample
         this.promptRenderer = promptRenderer;
         this.customAgentBuilderFactory = customAgentBuilderFactory;
         this.promptProviderConfig = promptProviderConfig;
+        this.promptFactoryProvider = promptFactoryProvider;
         this.loggingConfig = loggingConfig;
     }
 
@@ -70,18 +73,6 @@ internal sealed class WebSearchExample : IRunnableExample
                 this.httpClientFactory)
         ];
 
-        var toolSelectionPrompt = new FileSystemPromptFactory(
-            ExamplePrompts.WebsearchExampleSystem,
-            this.promptParser,
-            this.promptProviderConfig)
-            .Create();
-
-        var respondingPrompt = new FileSystemPromptFactory(
-            ExamplePrompts.WebsearchExampleResponding,
-            this.promptParser,
-            this.promptProviderConfig)
-            .Create();
-
         // TODO: BeginLoop().WithSequence().AddAgent().AddAgent().EndLoop();
         return new WhileCell<ConversationThread>()
         {
@@ -93,8 +84,7 @@ internal sealed class WebSearchExample : IRunnableExample
                         new ToolAgent(
                             new AgentName("WebSearchAgent"),
                             Role.Assistant,
-                            toolSelectionPrompt,
-                            respondingPrompt,
+                            this.promptFactoryProvider,
                             this.customAgentBuilderFactory,
                             tools)),
                 }.ToImmutableArray()),

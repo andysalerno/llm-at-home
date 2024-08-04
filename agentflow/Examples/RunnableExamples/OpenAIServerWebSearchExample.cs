@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Globalization;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.Examples.Agents;
@@ -52,8 +51,6 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 .CreateBuilder()
                 .WithName(new AgentName("ResponseAgent"))
                 .WithRole(Role.Assistant)
-
-                // .WithPrompt(string.Empty)
                 .Build());
 
         await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);
@@ -62,8 +59,6 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     public Cell<ConversationThread> CreateProgram()
     {
         ImmutableArray<ITool> tools = [
-
-            // new LightSwitchTool(this.httpClientFactory),
             new WebSearchTool(
                 this.agentBuilderFactory,
                 this.runner,
@@ -83,27 +78,16 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 this.promptRenderer,
                 this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
                 this.httpClientFactory,
-                ["nytimes.com", "cnn.com", "apnews.com", "cbsnews.com"],
-                "search_news",
-                ("2024 election polls", "seattle heat wave", "stock market performance")),
+                searchSiteUris: ["nytimes.com", "cnn.com", "apnews.com", "cbsnews.com"],
+                toolName: "search_news",
+                exampleQueries: ("2024 election polls", "seattle heat wave", "stock market performance")),
         ];
-
-        // TODO: these can now go directly in the tool agent, instead of
-        // being injected.
-        var toolSelectionPrompt = this.promptFactoryProvider
-            .GetFactory(ExamplePrompts.WebsearchExampleSystem)
-            .Create();
-
-        var respondingPrompt = this.promptFactoryProvider
-            .GetFactory(ExamplePrompts.WebsearchExampleResponding)
-            .Create();
 
         return new AgentCell(
             new ToolAgent(
                 new AgentName("WebSearchAgent"),
                 Role.Assistant,
-                toolSelectionPrompt,
-                respondingPrompt,
+                this.promptFactoryProvider,
                 this.agentBuilderFactory,
                 tools));
     }

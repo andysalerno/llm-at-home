@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text.Json;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
+using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
@@ -13,6 +14,7 @@ namespace AgentFlow.Examples.Agents;
 // TODO: move out of examples and into AgentFlow lib
 public class ToolAgent : IAgent
 {
+  private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
   private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
   private readonly ImmutableArray<ITool> tools;
   private readonly Lazy<IAgent> toolSelectionAgent;
@@ -21,15 +23,13 @@ public class ToolAgent : IAgent
   public ToolAgent(
       AgentName name,
       Role role,
-      Prompt toolSelectionPrompt,
-      Prompt respondingPrompt,
+      IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
       CustomAgentBuilderFactory customAgentBuilderFactory,
       ImmutableArray<ITool> tools)
   {
     this.Name = name;
     this.Role = role;
-    this.ToolSelectionPrompt = toolSelectionPrompt;
-    this.RespondingPrompt = respondingPrompt;
+    this.promptFactoryProvider = promptFactoryProvider;
     this.customAgentBuilderFactory = customAgentBuilderFactory;
     this.tools = tools;
 
@@ -39,7 +39,8 @@ public class ToolAgent : IAgent
         .WithRole(Role.ToolInvocation)
         .SetVariableValue(key: "tools", value: BuildToolsDefinitions(this.tools))
         .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
-        .WithInstructionsFromPrompt(this.ToolSelectionPrompt)
+        .WithInstructionsFromPrompt(
+          this.promptFactoryProvider.GetFactory(ExamplePrompts.WebsearchExampleSystem).Create())
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
         .Build());
@@ -48,7 +49,8 @@ public class ToolAgent : IAgent
        .CreateBuilder()
        .WithName(new AgentName("ResponseAgent"))
        .WithRole(this.Role)
-       .WithInstructionsFromPrompt(this.RespondingPrompt)
+       .WithInstructionsFromPrompt(
+          this.promptFactoryProvider.GetFactory(ExamplePrompts.WebsearchExampleResponding).Create())
        .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
        .Build());
   }
@@ -56,10 +58,6 @@ public class ToolAgent : IAgent
   public AgentName Name { get; }
 
   public Role Role { get; }
-
-  public Prompt ToolSelectionPrompt { get; }
-
-  public Prompt RespondingPrompt { get; }
 
   private static JsonElement JsonToolSchema { get; }
     = JsonSerializer.Deserialize<JsonElement>(
