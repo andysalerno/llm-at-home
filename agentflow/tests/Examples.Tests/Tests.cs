@@ -3,10 +3,12 @@ using System.Text.Json;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.Config;
+using AgentFlow.ExampleRunner.Tests.Extensions;
 using AgentFlow.Examples;
+using AgentFlow.Examples.Tools;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
-using AgentFlow.Prompts;
+using AgentFlow.LlmClients;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -79,20 +81,6 @@ public class ExampleRunnerTests
             .RegisterInstance(config)
             .AsImplementedInterfaces();
 
-        // {
-        //     var promptProvider = new Mock<IFactoryProvider<Prompt, PromptName>>(MockBehavior.Strict);
-        //     promptProvider
-        //         .Setup(p => p.GetFactory(It.Is<PromptName>((n) => n == ExamplePrompts.RewriteQuerySystem)))
-        //         .Returns(new Prompt("text"));
-        //     promptProvider
-        //         .Setup(p => p.GetFactory(It.Is<PromptName>((n) => n == ExamplePrompts.WebsearchExampleSystem)))
-        //         .Returns(new Prompt("text"));
-        //     promptProvider
-        //         .Setup(p => p.GetFactory(It.Is<PromptName>((n) => n == ExamplePrompts.WebsearchExampleResponding)))
-        //         .Returns(new Prompt("text"));
-        //     containerBuilder.RegisterInstance(promptProvider.Object).AsImplementedInterfaces();
-        // }
-
         // test-specific:
         {
             var client = new Mock<ILlmCompletionsClient>(MockBehavior.Strict);
@@ -106,39 +94,51 @@ public class ExampleRunnerTests
                             FunctionName: "search_web",
                             Invocation: "search_web('pizza')"))));
 
-            containerBuilder.RegisterInstance(client.Object).AsImplementedInterfaces();
+            containerBuilder.RegisterMockInstance(client).AsImplementedInterfaces();
         }
 
+        // HttpClient
         {
-            // httpfactory
-            var handler = new Mock<HttpMessageHandler>();
-            handler.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(JsonSerializer.Serialize(new SearchResults([]))),
-                });
-
             var factory = new Mock<IHttpClientFactory>();
-            factory
-                .Setup(f => f.CreateClient(It.Is<string>(s => s == "WebSearchTool")))
-                .Returns(() => new HttpClient(handler.Object));
+            factory.SetupMockedHttpClient<WebSearchTool, SearchResults>(new SearchResults([]));
 
-            factory
-                .Setup(f => f.CreateClient(It.Is<string>(s => s != "WebSearchTool")))
-                .Returns(() => new HttpClient());
+            factory.SetupMockedHttpClient<OpenAICompletionsClient, object>(new object());
 
-            containerBuilder.RegisterInstance(factory.Object).AsImplementedInterfaces();
+            containerBuilder.RegisterMockInstance(factory).AsImplementedInterfaces();
         }
 
+        // Scraper client
+        {
+            var scraperMock = new Mock<IScraperClient>();
+            scraperMock
+                .Setup(s => s.GetScrapedSiteContentAsync(It.IsAny<IEnumerable<Uri>>()))
+                .ReturnsAsync(() => new ScrapeResponse([]));
+
+            containerBuilder.RegisterMockInstance(scraperMock);
+        }
+
+        // Embeddings client
+        {
+            var embeddingClientMock = new Mock<IEmbeddingsClient>();
+            embeddingClientMock
+                .Setup(s => s.GetEmbeddingsAsync(It.IsAny<string>(), It.IsAny<IEnumerable<Chunk>>()))
+                .ReturnsAsync(() => new EmbeddingResponse([], new EmbeddingData([], 0), "mymodel"));
+
+            embeddingClientMock
+                .Setup(s => s.GetScoresAsync(It.IsAny<string>(), It.IsAny<IEnumerable<Chunk>>()))
+                .ReturnsAsync(() => new ScoresResponse([]));
+
+            containerBuilder.RegisterMockInstance(embeddingClientMock);
+        }
+
+        // Env vars
         {
             var envVarProvider = new Mock<IEnvironmentVariableProvider>();
             envVarProvider
                 .Setup(p => p.GetVariableValue(It.IsAny<string>()))
                 .Returns((string s) => "test");
 
-            containerBuilder.RegisterInstance(envVarProvider.Object).AsImplementedInterfaces();
+            containerBuilder.RegisterMockInstance(envVarProvider).AsImplementedInterfaces();
         }
 
         IContainer container = containerBuilder.Build();

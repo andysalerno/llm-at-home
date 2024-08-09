@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgentFlow.Agents.Extensions;
 using AgentFlow.Config;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
@@ -115,7 +116,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private readonly Uri embeddingsEndpoint;
     private readonly Uri scraperEndpoint;
     private readonly string modelName;
-    private readonly HttpClient httpClient;
+    private readonly Lazy<HttpClient> httpClient;
     private readonly IEnvironmentVariableProvider environmentVariableProvider;
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
@@ -130,7 +131,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         ChatRequestDiskLogger? chatRequestDiskLogger = null)
     {
         this.baseEndpoint = completionsEndpointProviderConfig.CompletionsEndpoint;
-        this.httpClient = httpClientFactory.CreateClient();
+        this.httpClient = new Lazy<HttpClient>(() => httpClientFactory.CreateClient<OpenAICompletionsClient>());
         this.environmentVariableProvider = environmentVariableProvider;
         this.loggingConfig = loggingConfig;
         this.logger = logger;
@@ -149,9 +150,11 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         if (bearerToken != null)
         {
-            this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
+            this.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
         }
     }
+
+    private HttpClient HttpClient => this.httpClient.Value;
 
     public async Task<CompletionsResult> GetCompletionsAsync(CompletionsRequest input)
     {
@@ -163,7 +166,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         using var requestContent = JsonContent.Create(request, options: JsonSerializerOptions);
 
-        var result = await this.httpClient.PostAsync(this.completionsEndpoint, requestContent);
+        var result = await this.HttpClient.PostAsync(this.completionsEndpoint, requestContent);
 
         var resultJson = await result.Content.ReadAsStringAsync();
 
@@ -207,7 +210,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             this.logger.LogInformation("Sending request: {Received}", json);
         }
 
-        var result = await this.httpClient.PostAsync(this.chatCompletionsEndpoint, requestContent);
+        var result = await this.HttpClient.PostAsync(this.chatCompletionsEndpoint, requestContent);
 
         var resultJson = await result.Content.ReadAsStringAsync();
 
@@ -257,7 +260,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();
 
-        HttpResponseMessage response = await this.httpClient.PostAsync(this.embeddingsEndpoint, content);
+        HttpResponseMessage response = await this.HttpClient.PostAsync(this.embeddingsEndpoint, content);
         response.EnsureSuccessStatusCode();
 
         EmbeddingResponse embeddingResponse = await response.Content.ReadFromJsonAsync<EmbeddingResponse>(JsonSerializerOptions)
@@ -277,7 +280,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         var scoresParts = string.Join("/", this.embeddingsEndpoint.AbsoluteUri.Split("/").SkipLast(1));
         scoresParts = scoresParts + "/scores";
 
-        HttpResponseMessage response = await this.httpClient.PostAsync(new Uri(scoresParts), content);
+        HttpResponseMessage response = await this.HttpClient.PostAsync(new Uri(scoresParts), content);
         response.EnsureSuccessStatusCode();
 
         ScoresResponse scoresResponse = await response.Content.ReadFromJsonAsync<ScoresResponse>(JsonSerializerOptions)
@@ -293,7 +296,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         var content = JsonContent.Create(requestBody, options: JsonSerializerOptions);
         await content.LoadIntoBufferAsync();
 
-        HttpResponseMessage response = await this.httpClient.PostAsync(this.scraperEndpoint, content);
+        HttpResponseMessage response = await this.HttpClient.PostAsync(this.scraperEndpoint, content);
         response.EnsureSuccessStatusCode();
 
         ScrapeResponse scrapeResponse = await response.Content.ReadFromJsonAsync<ScrapeResponse>(JsonSerializerOptions)
@@ -304,7 +307,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
     public void Dispose()
     {
-        this.httpClient.Dispose();
+        this.HttpClient.Dispose();
     }
 
     private static Uri CombineUriFragments(string @base, string path)
