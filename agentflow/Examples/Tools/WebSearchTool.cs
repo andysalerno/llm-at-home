@@ -1,8 +1,10 @@
 using System.Collections.Immutable;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
 using AgentFlow.Agents;
+using AgentFlow.Agents.Extensions;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
@@ -188,7 +190,7 @@ public class WebSearchTool : ITool
             ?? throw new InvalidOperationException(
                 $"{SearchKeyCxEnvVarName} environment variable was expected but not found.");
 
-        using var client = this.httpClientFactory.CreateClient();
+        using var client = this.httpClientFactory.CreateClient<WebSearchTool>();
 
         var searchUri = new UriBuilder(Uri);
         {
@@ -208,7 +210,7 @@ public class WebSearchTool : ITool
             ?? throw new InvalidOperationException("Could not parse response as SearchResults");
     }
 
-    private sealed record SearchResults(ImmutableArray<SearchItem> Items);
+    public sealed record SearchResults(ImmutableArray<SearchItem> Items);
 
-    private sealed record SearchItem(string Title, string Link, string DisplayLink, string Snippet);
+    public sealed record SearchItem(string Title, string Link, string DisplayLink, string Snippet);
 }

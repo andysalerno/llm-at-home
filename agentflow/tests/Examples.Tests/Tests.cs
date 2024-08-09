@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -10,6 +11,8 @@ using AgentFlow.WorkSpace;
 using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using Moq.Protected;
+using static AgentFlow.Examples.Tools.WebSearchTool;
 
 namespace AgentFlow.ExampleRunner.Tests;
 
@@ -108,6 +111,25 @@ public class ExampleRunnerTests
 
         {
             // httpfactory
+            var handler = new Mock<HttpMessageHandler>();
+            handler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(JsonSerializer.Serialize(new SearchResults([]))),
+                });
+
+            var factory = new Mock<IHttpClientFactory>();
+            factory
+                .Setup(f => f.CreateClient(It.Is<string>(s => s == "WebSearchTool")))
+                .Returns(() => new HttpClient(handler.Object));
+
+            factory
+                .Setup(f => f.CreateClient(It.Is<string>(s => s != "WebSearchTool")))
+                .Returns(() => new HttpClient());
+
+            containerBuilder.RegisterInstance(factory.Object).AsImplementedInterfaces();
         }
 
         {
