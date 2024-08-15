@@ -19,7 +19,13 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
     {
     }
 
-    // pass promptrenderer here?
+    /// <summary>
+    /// pass promptrenderer here?
+    /// </summary>
+    /// <param name="agentName"></param>
+    /// <param name="agentRole"></param>
+    /// <param name="responseSchema"></param>
+    /// <param name="completionsClient"></param>
     public GetAssistantResponseCell(
         AgentName agentName,
         Role agentRole,

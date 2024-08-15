@@ -9,12 +9,17 @@ namespace AgentFlow.ExampleRunner.Tests.Extensions;
 
 public static class MoqExtensions
 {
-    public static void SetupMockedHttpClient<TClient, TResponse>(this Mock<IHttpClientFactory> factory, TResponse responsePayload)
+    public static void SetupMockedHttpClient<TClient, TResponse>(
+        this Mock<IHttpClientFactory> factory,
+        TResponse responsePayload)
     {
         var handler = new Mock<HttpMessageHandler>();
         handler
             .Protected()
-            .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
             .ReturnsAsync(new HttpResponseMessage
             {
                 StatusCode = HttpStatusCode.OK,
@@ -26,7 +31,9 @@ public static class MoqExtensions
             .Returns(() => new HttpClient(handler.Object));
     }
 
-    public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle> RegisterMockInstance<T>(this ContainerBuilder builder, Mock<T> mock)
+    public static IRegistrationBuilder<T, SimpleActivatorData, SingleRegistrationStyle> RegisterMockInstance<T>(
+        this ContainerBuilder builder,
+        Mock<T> mock)
     where T : class
         => builder.RegisterInstance(mock.Object);
 }

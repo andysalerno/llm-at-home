@@ -100,7 +100,7 @@ public class CellTests
     }
 
     [Fact]
-    public async Task CelSequence_NextIsAStackPush()
+    public async Task CelSequence_NextIsAStackPushAsync()
     {
         var sequence = new[]
         {

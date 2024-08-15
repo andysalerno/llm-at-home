@@ -38,7 +38,8 @@ public class ContainsCodeBlockConditionTests
         var condition = new ContainsCodeBlockCondition();
 
         var conversation = new ConversationThread()
-            .WithAddedMessage(AssistantMessageWithText("Here is some javascript: \n```javascript\nfn someFun() {}\n```"));
+            .WithAddedMessage(
+                AssistantMessageWithText("Here is some javascript: \n```javascript\nfn someFun() {}\n```"));
 
         bool result = condition.Evaluate(conversation);
 
@@ -51,7 +52,8 @@ public class ContainsCodeBlockConditionTests
         var condition = new ContainsCodeBlockCondition();
 
         var conversation = new ConversationThread()
-            .WithAddedMessage(AssistantMessageWithText("Here is some javascript, but not as a codeblock: \njavascript\nfn someFun() {}"));
+            .WithAddedMessage(AssistantMessageWithText(
+                "Here is some javascript, but not as a codeblock: \njavascript\nfn someFun() {}"));
 
         bool result = condition.Evaluate(conversation);
 
@@ -64,7 +66,8 @@ public class ContainsCodeBlockConditionTests
         var condition = new ContainsCodeBlockCondition();
 
         var conversation = new ConversationThread()
-            .WithAddedMessage(AssistantMessageWithText("Here is some javascript: \n```javascript\nfn someFun() {}\n```"))
+            .WithAddedMessage(
+                AssistantMessageWithText("Here is some javascript: \n```javascript\nfn someFun() {}\n```"))
             .WithAddedMessage(AssistantMessageWithText("some other message is the latest one"));
 
         bool result = condition.Evaluate(conversation);

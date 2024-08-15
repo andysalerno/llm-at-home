@@ -7,7 +7,7 @@ namespace AgentFlow.LlmClients;
 
 public sealed class ChatRequestDiskLogger
 {
-    private static readonly object _lock = new object();
+    private static readonly object @lock = new object();
 
     private readonly IChatRequestDiskLoggerConfig config;
 
@@ -55,7 +55,7 @@ public sealed class ChatRequestDiskLogger
     {
         int requestIndexVal = 0;
 
-        lock (_lock)
+        lock (@lock)
         {
             string? requestIndex = Activity.Current?.GetBaggageItem("requestIndex");
 

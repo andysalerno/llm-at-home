@@ -7,7 +7,7 @@ public interface IFactory<out T>
 
 public interface ISelfFactory<out T> : IFactory<T>
 {
-    T IFactory<T>.Create()
+    public T Create()
     {
         if (this is T self)
         {
@@ -16,5 +16,4 @@ public interface ISelfFactory<out T> : IFactory<T>
 
         throw new InvalidOperationException("Expected a ISelfFactory to be of type self");
     }
-
 }

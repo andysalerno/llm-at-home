@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.Json;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -13,7 +12,6 @@ using AgentFlow.WorkSpace;
 using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using Moq.Protected;
 using static AgentFlow.Examples.Tools.WebSearchTool;
 
 namespace AgentFlow.ExampleRunner.Tests;
@@ -88,11 +86,11 @@ public class ExampleRunnerTests
                 .Setup(c => c.GetChatCompletionsAsync(It.IsAny<ChatCompletionsRequest>()))
                 .ReturnsAsync(new ChatCompletionsResult(
                     JsonSerializer.Serialize(
-                        options: JsonSerializerOptions,
                         value: new ExecuteToolCell.ToolSelectionOutput(
                             LastUserMessageIntent: "the user wants a pizza",
                             FunctionName: "search_web",
-                            Invocation: "search_web('pizza')"))));
+                            Invocation: "search_web('pizza')"),
+                        options: JsonSerializerOptions)));
 
             containerBuilder.RegisterMockInstance(client).AsImplementedInterfaces();
         }

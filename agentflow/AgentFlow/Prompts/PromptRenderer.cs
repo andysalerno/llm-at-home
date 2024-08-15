@@ -3,9 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Prompts;
 
-public interface IPromptRendererConfig
-{
-}
+public interface IPromptRendererConfig;
 
 public sealed record PromptRendererConfig() : IPromptRendererConfig;
 
@@ -68,6 +66,6 @@ public sealed class PromptRenderer : IPromptRenderer
     //     // For now, start with the assumption it is not present.
     //     RenderedPrompt rendered = this.Render(prompt);
 
-    //     throw new NotImplementedException();
+    // throw new NotImplementedException();
     // }
 }
