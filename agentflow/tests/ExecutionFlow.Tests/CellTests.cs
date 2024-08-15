@@ -43,8 +43,8 @@ public class CellTests
         var ifCell = new IfCell<int>
         {
             Condition = condition,
-            NextIfTrue = new LambdaCell<int>(i => 100),
-            NextIfFalse = new LambdaCell<int>(i => -100),
+            NextIfTrue = new LambdaCell<int>(_ => 100),
+            NextIfFalse = new LambdaCell<int>(_ => -100),
         };
 
         var runner = new CellRunner<int>();

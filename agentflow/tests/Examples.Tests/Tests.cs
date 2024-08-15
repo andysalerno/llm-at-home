@@ -132,9 +132,9 @@ public class ExampleRunnerTests
         // Env vars
         {
             var envVarProvider = new Mock<IEnvironmentVariableProvider>();
-            envVarProvider
+            _ = envVarProvider
                 .Setup(p => p.GetVariableValue(It.IsAny<string>()))
-                .Returns((string s) => "test");
+                .Returns((string _) => "test");
 
             containerBuilder.RegisterMockInstance(envVarProvider).AsImplementedInterfaces();
         }
