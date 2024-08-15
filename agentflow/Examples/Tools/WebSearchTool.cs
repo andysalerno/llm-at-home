@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
@@ -66,7 +65,7 @@ public class WebSearchTool : ITool
         IHttpClientFactory httpClientFactory,
         ImmutableArray<string> searchSiteUris,
         string toolName,
-        (string, string, string) exampleQueries)
+        (string Example1, string Example2, string Example3) exampleQueries)
     {
         this.agentFactory = agentFactory;
         this.runner = runner;
@@ -83,7 +82,7 @@ public class WebSearchTool : ITool
 
     public string Name { get; }
 
-    public (string, string, string) ExampleQueries { get; }
+    public (string Example1, string Example2, string Example3) ExampleQueries { get; }
 
     public string Definition =>
         $""""
@@ -91,9 +90,9 @@ public class WebSearchTool : ITool
             """
             Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.
             Examples:
-                {this.Name}('{this.ExampleQueries.Item1}')
-                {this.Name}('{this.ExampleQueries.Item2}')
-                {this.Name}('{this.ExampleQueries.Item3}')
+                {this.Name}('{this.ExampleQueries.Example1}')
+                {this.Name}('{this.ExampleQueries.Example2}')
+                {this.Name}('{this.ExampleQueries.Example3}')
             """
             pass # impl omitted
 

@@ -240,6 +240,9 @@ dotnet_diagnostic.CS8604.severity = error
 # CS8622: Nullability of reference types in type of parameter doesn't match the target delegate (possibly because of nullability attributes).
 dotnet_diagnostic.CS8622.severity = error
 
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none
+
 [*.{cpp,h,in}]
 curly_bracket_next_line = true
 indent_brace_style = Allman
