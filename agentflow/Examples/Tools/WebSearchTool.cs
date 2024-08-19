@@ -134,6 +134,7 @@ public class WebSearchTool : ITool
             .CreateBuilder()
             .WithName(new AgentName("QueryRewriter"))
             .WithRole(Role.Assistant)
+            .WithInstructionsStrategy(InstructionStrategy.InlineSystemMessage)
             .WithInstructionsFromPrompt(this.promptFactory.Create())
             .SetVariableValue("ORIGINAL_QUERY", originalQuery)
             .Build();
