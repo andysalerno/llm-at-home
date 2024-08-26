@@ -4,11 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiEndpointInput = document.getElementById('apiEndpoint');
     const stopStringInput = document.getElementById('stopString');
     const userPrefixAutoAdd = document.getElementById('userPrefixAutoAdd');
+    const temperatureInput = document.getElementById('temperature');
 
     // Load saved values from localStorage
     apiEndpointInput.value = localStorage.getItem('apiEndpoint') || '';
     stopStringInput.value = localStorage.getItem('stopString') || '';
     userPrefixAutoAdd.value = localStorage.getItem('userPrefixAutoAdd') || '';
+    temperatureInput.value = localStorage.getItem('temperature') || '0.7';
 
     // Save values to localStorage when they change
     apiEndpointInput.addEventListener('change', () => {
@@ -21,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     userPrefixAutoAdd.addEventListener('change', () => {
         localStorage.setItem('userPrefixAutoAdd', userPrefixAutoAdd.value);
+    });
+    temperatureInput.addEventListener('change', () => {
+        localStorage.setItem('temperature', temperatureInput.value);
     });
 
     sendButton.addEventListener('click', sendMessage);
@@ -59,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     max_tokens: 512,
                     stream: true,
                     stop: stopString ? [stopString] : undefined,
+                    temperature: temperature,
                 }),
             });
 
