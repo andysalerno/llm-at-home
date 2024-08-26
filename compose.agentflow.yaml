@@ -44,6 +44,7 @@ services:
     ports:
       - "80:5173"
     restart: unless-stopped
+    stop_grace_period: 1s
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
