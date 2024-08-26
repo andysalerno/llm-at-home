@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     apiEndpointInput.value = localStorage.getItem('apiEndpoint') || '';
     stopStringInput.value = localStorage.getItem('stopString') || '';
     userPrefixAutoAdd.value = localStorage.getItem('userPrefixAutoAdd') || '';
-    temperatureInput.value = localStorage.getItem('temperature') || '0.7';
+    temperatureInput.value = localStorage.getItem('temperature') !== null ? localStorage.getItem('temperature') : '0.7';
 
     // Save values to localStorage when they change
     apiEndpointInput.addEventListener('change', () => {
@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const stopString = stopStringInput.value.trim();
-        const temperature = parseFloat(temperatureInput.value) || 0.7;
+        const temperature = parseFloat(temperatureInput.value);
+        const validTemperature = !isNaN(temperature) && temperature >= 0 && temperature <= 1;
 
         const cursorPosition = textArea.selectionStart;
         const textBeforeCursor = userInput.substring(0, cursorPosition);
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     max_tokens: 512,
                     stream: true,
                     stop: stopString ? [stopString] : undefined,
-                    temperature: temperature,
+                    temperature: validTemperature ? temperature : undefined,
                 }),
             });
 
