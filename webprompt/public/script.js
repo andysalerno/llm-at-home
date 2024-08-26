@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const stopString = stopStringInput.value.trim();
+        const temperature = parseFloat(temperatureInput.value) || 0.7;
 
         const cursorPosition = textArea.selectionStart;
         const textBeforeCursor = userInput.substring(0, cursorPosition);
