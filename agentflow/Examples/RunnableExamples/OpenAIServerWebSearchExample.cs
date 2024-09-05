@@ -89,6 +89,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 Role.Assistant,
                 this.promptFactoryProvider,
                 this.agentBuilderFactory,
+                InstructionStrategy.InlineSystemMessage,
                 tools));
     }
 }

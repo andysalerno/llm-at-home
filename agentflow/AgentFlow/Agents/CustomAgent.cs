@@ -27,6 +27,12 @@ public enum InstructionStrategy
     /// The system message will appear as a new message with role System in the conversation (as the latest message, NOT as the first message).
     /// </summary>
     InlineSystemMessage,
+
+    /// <summary>
+    /// The system message will appear as the second-to-last message, with the last message being the last user message.
+    /// TODO: fill me in. will probably work best for tool selection.
+    /// </summary>
+    PrecedingLastUserMessage,
 }
 
 public sealed class CustomAgent : IAgent
