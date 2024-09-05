@@ -80,7 +80,7 @@ public sealed class CustomAgent : IAgent
             if (this.Prompt is Prompt p)
             {
                 RenderedPrompt rendered = this.promptRenderer.Render(p, this.variables);
-                cells.Add(new SetSystemMessageCell(this.Name, rendered));
+                cells.Add(new SetSystemMessageCell(this.Name, rendered, this.InstructionStrategy));
             }
             else
             {
