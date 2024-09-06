@@ -29,11 +29,6 @@ internal sealed class JoinMultipleAgentsCell : Cell<ConversationThread>
         this.logger = this.GetLogger();
     }
 
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        return null;
-    }
-
     public override async Task<ConversationThread> RunAsync(ConversationThread input)
     {
         var decisions = new List<Message>();

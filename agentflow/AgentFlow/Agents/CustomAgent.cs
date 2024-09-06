@@ -97,8 +97,7 @@ public sealed class CustomAgent : IAgent
         }
 
         Cell<ConversationThread> sequence = new CellSequence<ConversationThread>(
-            sequence: cells.DrainToImmutable(),
-            next: null);
+            sequence: cells.DrainToImmutable());
 
         return Task.FromResult(sequence);
     }

@@ -39,11 +39,6 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
         this.logger = this.GetLogger();
     }
 
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        return null;
-    }
-
     public override async Task<ConversationThread> RunAsync(ConversationThread input)
     {
         var messages = input.Messages.ToImmutableArray();

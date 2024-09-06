@@ -13,11 +13,6 @@ public class SetTemplateValueCell : Cell<ConversationThread>
         this.templateValue = templateValue;
     }
 
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        return null;
-    }
-
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
         return Task.FromResult(input.WithTemplateValue(this.templateKey, this.templateValue));

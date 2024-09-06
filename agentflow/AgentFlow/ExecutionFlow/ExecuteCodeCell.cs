@@ -16,11 +16,6 @@ public class ExecuteCodeCell : Cell<ConversationThread>
         this.logger = logger;
     }
 
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        return null;
-    }
-
     public override async Task<ConversationThread> RunAsync(ConversationThread input)
     {
         string messageText = input.Messages.Last().Content;

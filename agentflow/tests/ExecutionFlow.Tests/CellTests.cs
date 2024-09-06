@@ -68,7 +68,7 @@ public class CellTests
             .ToImmutableArray();
 
         var cellSequence = new CellSequence<int>(
-            sequence: sequence, next: null);
+            sequence: sequence);
 
         var runner = new CellRunner<int>();
         var result = await runner.RunAsync(cellSequence, rootInput: 0);
@@ -90,7 +90,7 @@ public class CellTests
         .ToImmutableArray();
 
         var cellSequence = new CellSequence<string>(
-            sequence: sequence, next: null);
+            sequence: sequence);
 
         string input = string.Empty;
         var runner = new CellRunner<string>();
@@ -99,30 +99,4 @@ public class CellTests
         Assert.Equal(expected: "abcd", actual: result);
     }
 
-    [Fact]
-    public async Task CelSequence_NextIsAStackPushAsync()
-    {
-        var sequence = new[]
-        {
-            new LambdaCell<string>(s => s + "a"),
-            new LambdaCell<string>(s => s + "b"),
-            new LambdaCell<string>(
-                s => s + "c",
-                next: new LambdaCell<string>(
-                    s => s + "x",
-                    next: new LambdaCell<string>(s => s + "y"))),
-            new LambdaCell<string>(s => s + "d"),
-        }
-        .Cast<Cell<string>>()
-        .ToImmutableArray();
-
-        var cellSequence = new CellSequence<string>(
-            sequence: sequence, next: null);
-
-        string input = string.Empty;
-        var runner = new CellRunner<string>();
-        string result = await runner.RunAsync(cellSequence, rootInput: input);
-
-        Assert.Equal(expected: "abcxyd", actual: result);
-    }
 }

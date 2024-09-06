@@ -17,11 +17,6 @@ internal sealed class GetUserInputCell : Cell<ConversationThread>
         this.logger = this.GetLogger();
     }
 
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        throw new NotImplementedException("Use V2");
-    }
-
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
         Console.Write("User: ");

@@ -5,21 +5,11 @@ namespace AgentFlow;
 
 public abstract class Cell<T>
 {
-    public virtual Cell<T>? GetNext(T input)
-    {
-        return null;
-    }
-
     public abstract Task<T> RunAsync(T input);
 }
 
 public class TerminateCell<T> : Cell<T>
 {
-    public override Cell<T>? GetNext(T input)
-    {
-        return null;
-    }
-
     public override Task<T> RunAsync(T input)
     {
         return Task.FromResult(input);
@@ -29,22 +19,10 @@ public class TerminateCell<T> : Cell<T>
 public class LambdaCell<T> : Cell<T>
 {
     private readonly Func<T, T> _func;
-    private readonly Cell<T>? _next;
 
     public LambdaCell(Func<T, T> func)
     {
         _func = func;
-    }
-
-    public LambdaCell(Func<T, T> func, Cell<T> next)
-    {
-        _func = func;
-        _next = next;
-    }
-
-    public override Cell<T>? GetNext(T input)
-    {
-        return _next;
     }
 
     public override Task<T> RunAsync(T input)
@@ -64,17 +42,6 @@ public sealed class WhileCell<T> : Cell<T>
     public WhileCell()
     {
         _logger = this.GetLogger();
-    }
-
-    public override Cell<T>? GetNext(T input)
-    {
-        // if (Condition.Evaluate(input))
-        // {
-        //     return this;
-        // }
-
-        // return AfterTrue;
-        return null;
     }
 
     public override async Task<T> RunAsync(T input)
@@ -109,11 +76,6 @@ public sealed class DiagnosticCell<T> : Cell<T>
         _logger = this.GetLogger();
     }
 
-    public override Cell<T>? GetNext(T input)
-    {
-        return null;
-    }
-
     public override Task<T> RunAsync(T input)
     {
         _logger.LogInformation("Diagnostic triggered: {Name}", _diagnosticName);
@@ -124,48 +86,32 @@ public sealed class DiagnosticCell<T> : Cell<T>
 
 public sealed class IfCell<T> : Cell<T>
 {
-    public Cell<T> NextIfTrue { get; set; } = new TerminateCell<T>();
+    public Cell<T> NextIfTrue { get; init; } = new TerminateCell<T>();
 
-    public Cell<T> NextIfFalse { get; set; } = new TerminateCell<T>();
+    public Cell<T> NextIfFalse { get; init; } = new TerminateCell<T>();
 
-    public ICondition<T> Condition { get; set; } = new AlwaysTrueCondition<T>();
+    public ICondition<T> Condition { get; init; } = new AlwaysTrueCondition<T>();
 
-    private Cell<T>? _next;
 
-    public override Cell<T>? GetNext(T input)
+    public override async Task<T> RunAsync(T input)
     {
-        return _next;
-    }
+        Cell<T> cell = Condition.Evaluate(input) ? NextIfTrue : NextIfFalse;
 
-    public override Task<T> RunAsync(T input)
-    {
-        Cell<T>? cell = Condition.Evaluate(input) ? NextIfTrue : NextIfFalse;
+        var runner = new CellRunner<T>();
 
-        _next = cell;
-
-        // var task = cell?.RunAsync(input) ?? throw new InvalidOperationException("Expected...");
-        // return await task;
-        return Task.FromResult(input);
+        return await runner.RunAsync(cell, input);
     }
 }
 
 public sealed class StartCell<T> : Cell<T>
 {
-    private readonly Cell<T>? _next;
     private readonly ILogger<StartCell<T>> _logger;
 
     public StartCell(Cell<T>? next, ILogger<StartCell<T>> logger)
     {
-        _next = next;
         _logger = logger;
     }
 
-    public override Cell<T>? GetNext(T input)
-    {
-        // TODO: if we go the route of having a top-level sequence, and do not require
-        // each Cell the responsibility of knowing the next Cell, then this can return null
-        return _next;
-    }
 
     public override Task<T> RunAsync(T input)
     {
@@ -176,7 +122,6 @@ public sealed class StartCell<T> : Cell<T>
 public sealed class CellSequence<T> : Cell<T>
 {
     private readonly ImmutableArray<Cell<T>> _sequence;
-    private readonly Cell<T>? _next;
 
     /// <summary>
     /// TODO: three ways this can work...
@@ -186,20 +131,9 @@ public sealed class CellSequence<T> : Cell<T>
     /// 3. GetNext() returns null, and a single call to RunAsync() will loop over the whole inner sequence 
     /// Let's start by going with option 3.
     /// </summary>
-    public CellSequence(ImmutableArray<Cell<T>> sequence, Cell<T>? next)
+    public CellSequence(ImmutableArray<Cell<T>> sequence)
     {
         _sequence = sequence;
-        _next = next;
-    }
-
-    public CellSequence(ImmutableArray<Cell<T>> sequence)
-        : this(sequence, next: null)
-    {
-    }
-
-    public override Cell<T>? GetNext(T input)
-    {
-        return _next;
     }
 
     public override async Task<T> RunAsync(T input)
@@ -262,11 +196,6 @@ public sealed class ResultCell<T> : Cell<T>
         _result = result;
     }
 
-    public override Cell<T>? GetNext(T input)
-    {
-        return null;
-    }
-
     public override Task<T> RunAsync(T input)
     {
         return Task.FromResult(_result);
@@ -312,7 +241,8 @@ public sealed class CellRunner<T> : ICellRunner<T>
             }
             _logger.LogDebug("Cell output: {CellOutput}", curInput);
 
-            curCell = curCell.GetNext(curInput);
+            // TODO: fixme
+            curCell = null;
 
             // logger.LogInformation("Executing cell: {cellType}", curCell.GetType().Name);
         } while (true);

@@ -10,18 +10,11 @@ namespace AgentFlow.Agents.ExecutionFlow;
 /// </summary>
 public class AugmentCell : Cell<ConversationThread>
 {
-    private readonly Cell<ConversationThread>? next;
     private readonly ILogger<AugmentCell> logger;
 
     public AugmentCell(ILogger<AugmentCell> logger)
     {
-        this.next = null;
         this.logger = logger;
-    }
-
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        return this.next;
     }
 
     public override Task<ConversationThread> RunAsync(ConversationThread input)

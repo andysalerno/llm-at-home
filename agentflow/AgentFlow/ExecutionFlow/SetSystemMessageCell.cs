@@ -23,11 +23,6 @@ public class SetSystemMessageCell : Cell<ConversationThread>
         this.instructionStrategy = instructionStrategy;
     }
 
-    public override Cell<ConversationThread>? GetNext(ConversationThread input)
-    {
-        return null;
-    }
-
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
         if (input.Messages.FirstOrDefault(m => m.Role == Role.System) is Message existingSystemMessage
