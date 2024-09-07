@@ -33,7 +33,7 @@ const DebugSection = () => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('YOUR_API_ENDPOINT_HERE');
+                const response = await fetch('http://nzxt.local:8003/transcripts');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

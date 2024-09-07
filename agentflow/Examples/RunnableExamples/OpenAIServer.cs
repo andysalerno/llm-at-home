@@ -45,49 +45,23 @@ internal sealed class OpenAIServer
             HttpListenerContext ctx = await listener.GetContextAsync(); // Wait for a request
             HttpListenerRequest request = ctx.Request;
             HttpListenerResponse response = ctx.Response;
+
+            logger.LogInformation("AbsolutePath: {Path}", request.Url?.AbsolutePath);
+            logger.LogInformation("AbsoluteUri: {Path}", request.Url?.AbsoluteUri);
+            logger.LogInformation("RawUrl: {Path}", request.RawUrl);
+
             try
             {
-                ChatCompletionRequest chatRequest;
-                using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                var task = request.RawUrl switch
                 {
-                    string content = await reader.ReadToEndAsync();
-                    logger.LogInformation("Got request: {Content}", content);
-                    chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
-                        ?? throw new InvalidOperationException(
-                            $"Could not parse request type as a ChatCompletionRequest: {content}");
-                }
+                    "/v1/chat/completions" =>
+                        HandleChatCompletionsAsync(request, response, program, passthruProgram, runner, logger),
+                    "/transcripts" =>
+                        HandleGetTranscriptsAsync(response, logger),
+                    _ => throw new InvalidOperationException($"Unknown path: {request.RawUrl}"),
+                };
 
-                Cell<ConversationThread> programToUse = program;
-
-                if (chatRequest.Model == PassthruModelName)
-                {
-                    programToUse = passthruProgram;
-
-                    logger.LogInformation("Passthru model requesting - will handle by passthru agent");
-                }
-
-                ConversationThread conversationThread = ToConversationThread(chatRequest);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-                using var activity = new Activity("request")
-                    .AddRequestIdBaggage()
-                    .Start();
-#pragma warning restore CA2000 // Dispose objects before losing scope
-
-                ConversationThread output = await runner.RunAsync(programToUse, rootInput: conversationThread);
-
-                var lastMessage = output.Messages.Last();
-
-                logger.LogDebug("Output last message: {}", lastMessage.Content);
-
-                if (lastMessage.Role != Role.Assistant)
-                {
-                    logger.LogWarning(
-                        "Last message was not from assistant - this might cause quality issues in the response.");
-                }
-
-                // Write the response info
-                await SendResponseAsync(lastMessage.Content, response, logger);
+                await task;
             }
             catch (Exception ex)
             {
@@ -100,6 +74,90 @@ internal sealed class OpenAIServer
                 response.Close();
                 logger.LogInformation("Request complete.");
             }
+        }
+    }
+
+    private static async Task HandleGetTranscriptsAsync(HttpListenerResponse response, ILogger<OpenAIServer> logger)
+    {
+        logger.LogInformation("invoking: transcripts");
+
+        response.ContentType = "application/json";
+
+        // Cors allow all:
+        {
+            response.Headers.Add("Access-Control-Allow-Origin", "*");
+            response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
+        }
+
+        // Get the response output stream
+        await using var output = response.OutputStream;
+        byte[] buffer = Encoding.UTF8.GetBytes(HardcodedJsonResponse);
+        await output.WriteAsync(buffer, 0, buffer.Length);
+    }
+
+    private static async Task HandleChatCompletionsAsync(
+        HttpListenerRequest request,
+        HttpListenerResponse response,
+        Cell<ConversationThread> program,
+        Cell<ConversationThread> passthruProgram,
+        ICellRunner<ConversationThread> runner,
+        ILogger<OpenAIServer> logger)
+    {
+        try
+        {
+            ChatCompletionRequest chatRequest;
+            using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+            {
+                string content = await reader.ReadToEndAsync();
+                logger.LogInformation("Got request: {Content}", content);
+                chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
+                    ?? throw new InvalidOperationException(
+                        $"Could not parse request type as a ChatCompletionRequest: {content}");
+            }
+
+            Cell<ConversationThread> programToUse = program;
+
+            if (chatRequest.Model == PassthruModelName)
+            {
+                programToUse = passthruProgram;
+
+                logger.LogInformation("Passthru model requesting - will handle by passthru agent");
+            }
+
+            ConversationThread conversationThread = ToConversationThread(chatRequest);
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            using var activity = new Activity("request")
+                .AddRequestIdBaggage()
+                .Start();
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
+            ConversationThread output = await runner.RunAsync(programToUse, rootInput: conversationThread);
+
+            var lastMessage = output.Messages.Last();
+
+            logger.LogDebug("Output last message: {}", lastMessage.Content);
+
+            if (lastMessage.Role != Role.Assistant)
+            {
+                logger.LogWarning(
+                    "Last message was not from assistant - this might cause quality issues in the response.");
+            }
+
+            // Write the response info
+            await SendResponseAsync(lastMessage.Content, response, logger);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: "error");
+        }
+        finally
+        {
+            // The docs specify you should invoke `Close()`, instead of using `using`,
+            // even though it's an `IDisposable`...
+            response.Close();
+            logger.LogInformation("Request complete.");
         }
     }
 
@@ -236,4 +294,49 @@ internal sealed class OpenAIServer
             throw new NotImplementedException();
         }
     }
+
+    private const string HardcodedJsonResponse =
+    """
+    {
+    "sessions": [
+        {
+        "id": "session1",
+        "messages": [
+            {
+            "id": "msg1",
+            "content": "Hello",
+            "llmRequests": [
+                {
+                "id": "req1",
+                "prompt": "User said: Hello",
+                "response": "Hello! How can I assist you today?"
+                },
+                {
+                "id": "req2",
+                "prompt": "Analyze sentiment: Hello",
+                "response": "Neutral"
+                }
+            ]
+            },
+            {
+            "id": "msg2",
+            "content": "How are you?",
+            "llmRequests": [
+                {
+                "id": "req3",
+                "prompt": "User said: How are you?",
+                "response": "I'm an AI assistant, so I don't have feelings, but I'm functioning well and ready to help!"
+                },
+                {
+                "id": "req4",
+                "prompt": "Analyze intent: How are you?",
+                "response": "Greeting, Casual conversation"
+                }
+            ]
+            }
+        ]
+        }
+    ]
+    }
+    """;
 }
