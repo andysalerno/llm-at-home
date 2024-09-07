@@ -29,7 +29,7 @@ services:
     volumes:
       - ${MODEL_DIR}:/models
     restart: unless-stopped
-    command: -m /models/${MODEL_NAME} --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192
+    command: -m /models/${MODEL_NAME} --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192 -ts 1,0
     ports:
       - "8000:8000"
     devices:

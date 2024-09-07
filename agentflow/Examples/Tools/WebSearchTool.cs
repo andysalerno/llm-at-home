@@ -124,7 +124,7 @@ public class WebSearchTool : ITool
 
         return string.Join(
             "\n\n",
-            scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] [SCORE {s.Item1}] {s.Item2.Content.Trim()}"));
+            scoresByIndex.Select((s, _) => $"[SOURCE {s.Item2.Uri}] {s.Item2.Content.Trim()}"));
     }
 
     private async Task<string> RewriteQueryAsync(string originalQuery, ConversationThread history)
