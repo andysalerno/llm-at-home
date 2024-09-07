@@ -95,8 +95,8 @@ const DebugSection = () => {
             return (
                 <div>
                     <h3>Request: {item.id}</h3>
-                    <p><strong>Prompt:</strong> {item.prompt}</p>
-                    <p><strong>Response:</strong> {item.response}</p>
+                    <p><strong>Input:</strong> {item.input}</p>
+                    <p><strong>Output:</strong> {item.output}</p>
                 </div>
             );
         }

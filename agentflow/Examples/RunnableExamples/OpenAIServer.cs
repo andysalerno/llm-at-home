@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgentFlow.Examples.Endpoints;
 using AgentFlow.LlmClient;
 using AgentFlow.Util;
 using AgentFlow.WorkSpace;
@@ -57,7 +58,7 @@ internal sealed class OpenAIServer
                     "/v1/chat/completions" =>
                         HandleChatCompletionsAsync(request, response, program, passthruProgram, runner, logger),
                     "/transcripts" =>
-                        HandleGetTranscriptsAsync(response, logger),
+                        TranscriptEndpointHandler.HandleAsync(response, logger),
                     _ => throw new InvalidOperationException($"Unknown path: {request.RawUrl}"),
                 };
 
@@ -75,25 +76,6 @@ internal sealed class OpenAIServer
                 logger.LogInformation("Request complete.");
             }
         }
-    }
-
-    private static async Task HandleGetTranscriptsAsync(HttpListenerResponse response, ILogger<OpenAIServer> logger)
-    {
-        logger.LogInformation("invoking: transcripts");
-
-        response.ContentType = "application/json";
-
-        // Cors allow all:
-        {
-            response.Headers.Add("Access-Control-Allow-Origin", "*");
-            response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
-        }
-
-        // Get the response output stream
-        await using var output = response.OutputStream;
-        byte[] buffer = Encoding.UTF8.GetBytes(HardcodedJsonResponse);
-        await output.WriteAsync(buffer, 0, buffer.Length);
     }
 
     private static async Task HandleChatCompletionsAsync(
@@ -295,48 +277,4 @@ internal sealed class OpenAIServer
         }
     }
 
-    private const string HardcodedJsonResponse =
-    """
-    {
-    "sessions": [
-        {
-        "id": "session1",
-        "messages": [
-            {
-            "id": "msg1",
-            "content": "Hello",
-            "llmRequests": [
-                {
-                "id": "req1",
-                "prompt": "User said: Hello",
-                "response": "Hello! How can I assist you today?"
-                },
-                {
-                "id": "req2",
-                "prompt": "Analyze sentiment: Hello",
-                "response": "Neutral"
-                }
-            ]
-            },
-            {
-            "id": "msg2",
-            "content": "How are you?",
-            "llmRequests": [
-                {
-                "id": "req3",
-                "prompt": "User said: How are you?",
-                "response": "I'm an AI assistant, so I don't have feelings, but I'm functioning well and ready to help!"
-                },
-                {
-                "id": "req4",
-                "prompt": "Analyze intent: How are you?",
-                "response": "Greeting, Casual conversation"
-                }
-            ]
-            }
-        ]
-        }
-    ]
-    }
-    """;
 }
