@@ -38,6 +38,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     </Link>
                     <Link
                         className="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
+                        to="/chat"
+                    >
+                        <CogIcon className="w-6 h-6" />
+                        <span className="mx-3">Chat</span>
+                    </Link>
+                    <Link
+                        className="flex items-center px-6 py-2 mt-4 text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100"
                         to="/debug"
                     >
                         <CogIcon className="w-6 h-6" />
