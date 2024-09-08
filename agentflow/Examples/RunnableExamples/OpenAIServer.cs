@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgentFlow.Examples.Endpoints;
 using AgentFlow.LlmClient;
+using AgentFlow.LlmClients;
 using AgentFlow.Util;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -20,6 +21,7 @@ internal sealed class OpenAIServer
         Cell<ConversationThread> program,
         Cell<ConversationThread> passthruProgram,
         ICellRunner<ConversationThread> runner,
+        ChatRequestDiskLogger diskLogger,
         int port = 8003)
     {
         var logger = this.GetLogger();
@@ -28,7 +30,7 @@ internal sealed class OpenAIServer
         listener.Prefixes.Add($"http://*:{port}/");
         listener.Start();
 
-        await HandleIncomingConnectionsAsync(listener, program, passthruProgram, runner, logger);
+        await HandleIncomingConnectionsAsync(listener, program, passthruProgram, runner, diskLogger, logger);
 
         listener.Close();
     }
@@ -38,6 +40,7 @@ internal sealed class OpenAIServer
         Cell<ConversationThread> program,
         Cell<ConversationThread> passthruProgram,
         ICellRunner<ConversationThread> runner,
+        ChatRequestDiskLogger diskLogger,
         ILogger<OpenAIServer> logger)
     {
         while (true)
@@ -56,9 +59,16 @@ internal sealed class OpenAIServer
                 var task = request.RawUrl switch
                 {
                     "/v1/chat/completions" =>
-                        HandleChatCompletionsAsync(request, response, program, passthruProgram, runner, logger),
+                        HandleChatCompletionsAsync(
+                            request,
+                            response,
+                            program,
+                            passthruProgram,
+                            runner,
+                            diskLogger,
+                            logger),
                     "/transcripts" =>
-                        TranscriptEndpointHandler.HandleAsync(response, logger),
+                        TranscriptEndpointHandler.HandleAsync(response, diskLogger, logger),
                     _ => throw new InvalidOperationException($"Unknown path: {request.RawUrl}"),
                 };
 
@@ -84,6 +94,7 @@ internal sealed class OpenAIServer
         Cell<ConversationThread> program,
         Cell<ConversationThread> passthruProgram,
         ICellRunner<ConversationThread> runner,
+        ChatRequestDiskLogger diskLogger,
         ILogger<OpenAIServer> logger)
     {
         try
@@ -120,6 +131,8 @@ internal sealed class OpenAIServer
             var lastMessage = output.Messages.Last();
 
             logger.LogDebug("Output last message: {}", lastMessage.Content);
+
+            await diskLogger.LogUserVisibleTranscriptToDiskAsync(conversationThread.WithAddedMessage(lastMessage));
 
             if (lastMessage.Role != Role.Assistant)
             {

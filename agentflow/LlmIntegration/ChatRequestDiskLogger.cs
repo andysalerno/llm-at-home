@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
 using AgentFlow.Config;
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.LlmClients;
@@ -16,13 +18,47 @@ public sealed class ChatRequestDiskLogger
         this.config = config;
     }
 
+    public async Task LogUserVisibleTranscriptToDiskAsync(ConversationThread conversationThread)
+    {
+        await this.LogRequestToDiskAsync(conversationThread.Messages, "UserTranscript");
+    }
+
     public async Task LogRequestToDiskAsync(IEnumerable<LlmClient.Message> messages)
+    {
+        int requestIndex = this.GetAndIncrementRequestIndex();
+
+        await this.LogRequestToDiskAsync(messages, requestIndex.ToString());
+    }
+
+    public async Task<ImmutableArray<(string FileName, string FileContent)>> ReadRequestsFromDiskAsync()
+    {
+        string logFileDir = this.config.DiskLoggingPath;
+        string fullPath = Path.GetFullPath(logFileDir);
+
+        var files = new DirectoryInfo(fullPath)
+            .GetFiles()
+            .OrderByDescending(f => f.CreationTimeUtc)
+            .ToImmutableArray();
+
+        var results = ImmutableArray.CreateBuilder<(string, string)>();
+
+        foreach (var file in files)
+        {
+            string content = await File.ReadAllTextAsync(file.FullName);
+
+            results.Add((file.Name, content));
+        }
+
+        this.GetLogger().LogInformation("Read requests from disk: {Count}", results.Count);
+
+        return results.DrainToImmutable();
+    }
+
+    private async Task LogRequestToDiskAsync(IEnumerable<LlmClient.Message> messages, string fileIndex)
     {
         var logger = this.GetLogger();
 
         string? requestId = Activity.Current?.GetBaggageItem("requestId");
-
-        int requestIndex = this.GetAndIncrementRequestIndex();
 
         if (requestId == null)
         {
@@ -32,7 +68,7 @@ public sealed class ChatRequestDiskLogger
 
         string timestamp = DateTime.Now.ToString("dd-MM-yyyy");
 
-        string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{timestamp}.{requestId}.{requestIndex}.log";
+        string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{timestamp}.{requestId}.{fileIndex}.log";
         string fullPath = Path.GetFullPath(logFilePath);
 
         logger.LogInformation("Logging chat request to disk at path: {Path}, fullpath: {FullPath}", logFilePath, fullPath);

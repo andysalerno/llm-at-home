@@ -5,6 +5,7 @@ using AgentFlow.Examples.Agents;
 using AgentFlow.Examples.Tools;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
+using AgentFlow.LlmClients;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
@@ -21,6 +22,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
     private readonly ICellRunner<ConversationThread> runner;
     private readonly IPromptRenderer promptRenderer;
     private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
+    private readonly ChatRequestDiskLogger diskLogger;
 
     public OpenAIServerWebSearchExample(
         IEmbeddingsClient embeddingsClient,
@@ -30,6 +32,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         ICellRunner<ConversationThread> runner,
         IPromptRenderer promptRenderer,
         IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
+        ChatRequestDiskLogger diskLogger,
         CustomAgentBuilderFactory agentBuilderFactory)
     {
         this.embeddingsClient = embeddingsClient;
@@ -39,6 +42,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         this.runner = runner;
         this.promptRenderer = promptRenderer;
         this.promptFactoryProvider = promptFactoryProvider;
+        this.diskLogger = diskLogger;
         this.agentBuilderFactory = agentBuilderFactory;
     }
 
@@ -53,7 +57,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 .WithRole(Role.Assistant)
                 .Build());
 
-        await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner);
+        await new OpenAIServer().ServeAsync(program, passthruProgram, this.runner, this.diskLogger);
     }
 
     public Cell<ConversationThread> CreateProgram()

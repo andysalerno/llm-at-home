@@ -1,15 +1,21 @@
 using System.Collections.Immutable;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgentFlow.LlmClient;
+using AgentFlow.LlmClients;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Examples.Endpoints;
 
 internal static class TranscriptEndpointHandler
 {
-    public static async Task HandleAsync(HttpListenerResponse response, ILogger<OpenAIServer> logger)
+    public static async Task HandleAsync(
+        HttpListenerResponse response,
+        ChatRequestDiskLogger diskLogger,
+        ILogger<OpenAIServer> logger)
     {
         logger.LogInformation("invoking: transcripts");
 
@@ -22,10 +28,104 @@ internal static class TranscriptEndpointHandler
             response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
         }
 
+        var files = await diskLogger.ReadRequestsFromDiskAsync();
+
+        var llmRequests = new List<LlmRequest>();
+
+        foreach (var file in files)
+        {
+            string sessionId;
+            string messageId;
+            string requestId;
+            {
+                var splits = file.FileName.Split(".");
+                sessionId = splits[0];
+                messageId = splits[1];
+                requestId = splits[2];
+            }
+
+            if (requestId == "UserTranscript")
+            {
+                continue;
+            }
+
+            llmRequests.Add(
+                new LlmRequest($"{sessionId}.{messageId}.{requestId}", file.FileContent, Output: string.Empty));
+        }
+
+        var messages = new List<Message>();
+        foreach (var file in files)
+        {
+            string sessionId;
+            string messageId;
+            string requestId;
+            {
+                var splits = file.FileName.Split(".");
+                sessionId = splits[0];
+                messageId = splits[1];
+                requestId = splits[2];
+            }
+
+            if (requestId != "UserTranscript")
+            {
+                continue;
+            }
+
+            messages.Add(new Message(
+                $"{sessionId}.{messageId}",
+                file.FileContent,
+                llmRequests.Where(r => r.Id.StartsWith($"{sessionId}.{messageId}")).ToImmutableArray()));
+        }
+
+        var sessions = messages
+            .GroupBy(m => m.Id.Split(".")[0])
+            .Select(group => new Session(group.Key, group.ToImmutableArray()));
+        var sessionsResponse = new Response(sessions.ToImmutableArray());
+
+        string serialized = JsonSerializer.Serialize(sessionsResponse);
+
         // Get the response output stream
         await using var output = response.OutputStream;
-        byte[] buffer = Encoding.UTF8.GetBytes(GetJsonBody());
+        byte[] buffer = Encoding.UTF8.GetBytes(serialized);
         await output.WriteAsync(buffer, 0, buffer.Length);
+    }
+
+    private sealed record LogFileParts(string SessionId, string MessageId, string RequestId);
+
+    private static ImmutableArray<Session> CreateSessionsFromFileNames(IEnumerable<LogFileParts> parts)
+    {
+        var sessions = ImmutableArray.CreateBuilder<Session>();
+
+        foreach (string sessionId in parts.Select(p => p.SessionId).Distinct())
+        {
+            var messages = CreateMessagesFromFileNames(sessionId, parts);
+
+            sessions.Add(new Session(sessionId, messages));
+        }
+
+        return sessions.DrainToImmutable();
+    }
+
+    private static ImmutableArray<Message> CreateMessagesFromFileNames(string sessionId, IEnumerable<LogFileParts> parts)
+    {
+        // the user-level messages are in the file: <sessionId>.<messageId>.UserTranscript.log
+        var messageIds = parts
+            .Where(part => part.SessionId == sessionId)
+            .Select(part => part.MessageId)
+            .Distinct();
+
+        foreach (string messageId in messageIds)
+        {
+            string transcriptLogName = $"{sessionId}.{messageId}.UserTranscript.log";
+
+        }
+
+        return ImmutableArray.Create<Message>();
+    }
+
+    private static ImmutableArray<LlmRequest> CreateRequestsFromFileNames(IEnumerable<LogFileParts> parts)
+    {
+        return ImmutableArray.Create<LlmRequest>();
     }
 
     private static string GetJsonBody()
@@ -40,51 +140,6 @@ internal static class TranscriptEndpointHandler
 
         return JsonSerializer.Serialize(payload);
     }
-
-    private const string HardcodedJsonResponse =
-    """
-    {
-    "sessions": [
-        {
-        "id": "session1",
-        "messages": [
-            {
-            "id": "msg1",
-            "content": "Hello",
-            "llmRequests": [
-                {
-                "id": "req1",
-                "prompt": "User said: Hello",
-                "response": "Hello! How can I assist you today?"
-                },
-                {
-                "id": "req2",
-                "prompt": "Analyze sentiment: Hello",
-                "response": "Neutral"
-                }
-            ]
-            },
-            {
-            "id": "msg2",
-            "content": "How are you?",
-            "llmRequests": [
-                {
-                "id": "req3",
-                "prompt": "User said: How are you?",
-                "response": "I'm an AI assistant, so I don't have feelings, but I'm functioning well and ready to help!"
-                },
-                {
-                "id": "req4",
-                "prompt": "Analyze intent: How are you?",
-                "response": "Greeting, Casual conversation"
-                }
-            ]
-            }
-        ]
-        }
-    ]
-    }
-    """;
 
     private sealed record Response(
         [property: JsonPropertyName("sessions")]
