@@ -20,11 +20,7 @@ internal static class TranscriptEndpointHandler
         response.ContentType = "application/json";
 
         // Cors allow all:
-        {
-            response.Headers.Add("Access-Control-Allow-Origin", "*");
-            response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-            response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
-        }
+        response.SetCorsAllowAllOrigins();
 
         var files = await diskLogger.ReadRequestsFromDiskAsync();
 

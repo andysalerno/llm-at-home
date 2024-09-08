@@ -97,6 +97,15 @@ internal sealed class OpenAIServer
         ChatRequestDiskLogger diskLogger,
         ILogger<OpenAIServer> logger)
     {
+        if (request.HttpMethod == HttpMethod.Options.Method)
+        {
+            await SendPreflightResponseAsync(response);
+
+            return;
+        }
+
+        response.SetCorsAllowAllOrigins();
+
         try
         {
             ChatCompletionRequest chatRequest;
@@ -154,6 +163,16 @@ internal sealed class OpenAIServer
             response.Close();
             logger.LogInformation("Request complete.");
         }
+    }
+
+    private static async Task SendPreflightResponseAsync(HttpListenerResponse response)
+    {
+        // Cors allow all:
+        response.SetCorsAllowAllOrigins();
+
+        response.ContentEncoding = Encoding.UTF8;
+
+        await response.OutputStream.WriteAsync(default);
     }
 
     private static async Task SendResponseAsync(
@@ -289,5 +308,14 @@ internal sealed class OpenAIServer
             throw new NotImplementedException();
         }
     }
+}
 
+internal static class HttpListenerResponseExtensions
+{
+    public static void SetCorsAllowAllOrigins(this HttpListenerResponse response)
+    {
+        response.Headers.Add("Access-Control-Allow-Origin", "*");
+        response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
+    }
 }

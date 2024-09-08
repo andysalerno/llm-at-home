@@ -1,41 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
 const ChatSection = () => {
-    const [messages, setMessages] = useState([
-        { id: 1, sender: 'user', content: 'Hello, how are you?' },
-        {
-            id: 2, sender: 'bot', content: 'Hello! I\'m doing well, thank you for asking.How can I assist you today?'
-        },
-        { id: 3, sender: 'user', content: 'I have a question about React hooks.' },
-        { id: 4, sender: 'bot', content: 'Certainly! I\'d be happy to help you with React hooks.What specific aspect of hooks would you like to know more about?' },
-    ]);
-
+    const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const messagesEndRef = useRef(null);
 
-    const handleSendMessage = (e) => {
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    const handleSendMessage = async (e) => {
         e.preventDefault();
         if (newMessage.trim() === '') return;
 
-        const newMsg = {
-            id: messages.length + 1,
-            sender: 'user',
+        const userMessage = {
+            role: 'user',
             content: newMessage.trim()
         };
 
-        setMessages([...messages, newMsg]);
+        setMessages(prevMessages => [...prevMessages, userMessage]);
         setNewMessage('');
+        setIsLoading(true);
 
-        // Here you would typically send the message to your API
-        // and then add the bot's response to the messages array
+        try {
+            const response = await axios.post('http://nzxt.local:8003/v1/chat/completions', {
+                messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
+                model: "gpt-3.5-turbo",  // or whichever model you're using
+            });
+
+            const botMessage = response.data.choices[0].message;
+            setMessages(prevMessages => [...prevMessages, botMessage]);
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setMessages(prevMessages => [...prevMessages, { role: 'system', content: 'Sorry, there was an error processing your request.' }]);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <div className="flex flex-col h-full bg-gray-100">
             <div className="flex-1 overflow-auto p-4">
-                {messages.map((message) => (
+                {messages.map((message, index) => (
                     <div
-                        key={message.id}
-                        className={`max-w-[70%] mb-4 p-3 rounded-lg ${message.sender === 'user'
+                        key={index}
+                        className={`max-w-[70%] mb-4 p-3 rounded-lg ${message.role === 'user'
                             ? 'ml-auto bg-blue-500 text-white'
                             : 'mr-auto bg-white text-gray-800'
                             }`}
@@ -43,6 +58,12 @@ const ChatSection = () => {
                         {message.content}
                     </div>
                 ))}
+                {isLoading && (
+                    <div className="mr-auto bg-gray-200 text-gray-800 max-w-[70%] mb-4 p-3 rounded-lg">
+                        Thinking...
+                    </div>
+                )}
+                <div ref={messagesEndRef} />
             </div>
             <form onSubmit={handleSendMessage} className="p-4 bg-white">
                 <div className="flex">
@@ -52,10 +73,12 @@ const ChatSection = () => {
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message here..."
                         className="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={isLoading}
                     />
                     <button
                         type="submit"
-                        className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+                        disabled={isLoading}
                     >
                         Send
                     </button>
