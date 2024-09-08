@@ -81,25 +81,26 @@ const DebugSection = () => {
     };
 
     const renderDetail = () => {
-        if (!selectedItem) return <div>Select an item to view details</div>;
+        if (!selectedItem) return <div className="text-gray-500 italic">Select an item to view details</div>;
 
         let item;
+        let content = '';
         if (selectedItem.type === 'session') {
             item = data.sessions.find(s => s.id === selectedItem.id);
-            return <div>Session ID: {item.id}</div>;
+            content = `Session ID: ${item.id}\n\nMessages: ${item.messages.length}\nTotal Requests: ${item.messages.reduce((total, msg) => total + msg.llmRequests.length, 0)}`;
         } else if (selectedItem.type === 'message') {
             item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
-            return <div>Message: {item.content}</div>;
+            content = `Message ID: ${item.id}\n\n${item.content}`;
         } else if (selectedItem.type === 'request') {
             item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
-            return (
-                <div>
-                    <h3>Request: {item.id}</h3>
-                    <p><strong>Input:</strong> {item.input}</p>
-                    <p><strong>Output:</strong> {item.output}</p>
-                </div>
-            );
+            content = `Request ID: ${item.id}\n\n${item.input}${item.output}`;
         }
+
+        return (
+            <pre className="font-mono text-sm bg-gray-100 p-4 rounded-md shadow-inner h-full overflow-auto whitespace-pre-wrap">
+                {content}
+            </pre>
+        );
     };
 
     if (isLoading) return <div>Loading...</div>;
@@ -111,9 +112,11 @@ const DebugSection = () => {
                 <h2 className="text-xl font-bold mb-4">Navigation</h2>
                 {renderTree(data)}
             </div>
-            <div className="w-2/3 p-4 overflow-auto">
+            <div className="w-2/3 p-4 overflow-auto bg-white">
                 <h2 className="text-xl font-bold mb-4">Detail View</h2>
-                {renderDetail()}
+                <div className="h-[calc(100%-2rem)] bg-gray-100 rounded-md shadow-inner">
+                    {renderDetail()}
+                </div>
             </div>
         </div>
     );
