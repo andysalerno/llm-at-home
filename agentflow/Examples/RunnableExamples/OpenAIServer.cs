@@ -218,7 +218,9 @@ internal sealed class OpenAIServer
         logger.LogInformation("Sending over stream: {Sending}", responseString);
 
         byte[] data = Encoding.UTF8.GetBytes(responseString);
-        await stream.WriteAsync(data, 0, data.Length);
+
+        // await stream.WriteAsync(data, 0, data.Length);
+        await stream.WriteAsync(data);
     }
 
     private static string SerializeStreamingResponse(ChatCompletionStreamingResponse response)

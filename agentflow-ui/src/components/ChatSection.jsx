@@ -5,11 +5,12 @@ const ChatSection = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [streamingMessage, setStreamingMessage] = useState('');
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, streamingMessage]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -27,18 +28,59 @@ const ChatSection = () => {
         setMessages(prevMessages => [...prevMessages, userMessage]);
         setNewMessage('');
         setIsLoading(true);
+        setStreamingMessage('');
 
         try {
-            const response = await axios.post('http://nzxt.local:8003/v1/chat/completions', {
-                messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
-                model: "gpt-3.5-turbo",  // or whichever model you're using
+            const response = await fetch({
+                method: 'POST',
+                url: 'http://nzxt.local:8003/v1/chat/completions',
+                data: {
+                    messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
+                    model: "gpt-3.5-turbo",
+                    stream: true,
+                },
+                responseType: 'stream'
             });
 
-            const botMessage = response.data.choices[0].message;
-            setMessages(prevMessages => [...prevMessages, botMessage]);
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6);
+                        if (data === '[DONE]') {
+                            setMessages(prevMessages => [
+                                ...prevMessages,
+                                { role: 'assistant', content: streamingMessage }
+                            ]);
+                            setStreamingMessage('');
+                        } else {
+                            try {
+                                const parsed = JSON.parse(data);
+                                const content = parsed.choices[0].delta.content;
+                                if (content) {
+                                    setStreamingMessage(prev => prev + content);
+                                }
+                            } catch (error) {
+                                console.error('Error parsing SSE data:', error);
+                            }
+                        }
+                    }
+                }
+            }
         } catch (error) {
             console.error('Error sending message:', error);
-            setMessages(prevMessages => [...prevMessages, { role: 'system', content: 'Sorry, there was an error processing your request.' }]);
+            setMessages(prevMessages => [
+                ...prevMessages,
+                { role: 'system', content: 'Sorry, there was an error processing your request.' }
+            ]);
         } finally {
             setIsLoading(false);
         }
@@ -58,9 +100,9 @@ const ChatSection = () => {
                         {message.content}
                     </div>
                 ))}
-                {isLoading && (
-                    <div className="mr-auto bg-gray-200 text-gray-800 max-w-[70%] mb-4 p-3 rounded-lg">
-                        Thinking...
+                {streamingMessage && (
+                    <div className="mr-auto bg-white text-gray-800 max-w-[70%] mb-4 p-3 rounded-lg">
+                        {streamingMessage}
                     </div>
                 )}
                 <div ref={messagesEndRef} />
