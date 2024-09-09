@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+const STORAGE_KEY = 'chatMessages';
 
 const ChatSection = () => {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(() => {
+        const storedMessages = localStorage.getItem(STORAGE_KEY);
+        return storedMessages ? JSON.parse(storedMessages) : [];
+    });
     const [newMessage, setNewMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState('');
@@ -12,11 +16,15 @@ const ChatSection = () => {
         scrollToBottom();
     }, [messages, streamingMessage]);
 
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    }, [messages]);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    const handleSendMessage = async (e) => {
+    const handleSendMessage = useCallback(async (e) => {
         e.preventDefault();
         if (newMessage.trim() === '') return;
 
@@ -45,9 +53,14 @@ const ChatSection = () => {
             // To recieve data as a string we use TextDecoderStream class in pipethrough
             const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
 
+            let streamingMessageContent = '';
+
             while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
+                const { done, value } = await reader.read();
+                if (done) {
+                    console.info("done");
+                    break;
+                };
 
                 console.info("got line: " + value);
 
@@ -56,26 +69,30 @@ const ChatSection = () => {
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         const data = line.slice(6);
-                        if (data === '[DONE]') {
-                            setMessages(prevMessages => [
-                                ...prevMessages,
-                                { role: 'assistant', content: streamingMessage }
-                            ]);
-                            setStreamingMessage('');
-                        } else {
-                            try {
-                                const parsed = JSON.parse(data);
-                                const content = parsed.choices[0].delta.content;
-                                if (content) {
-                                    setStreamingMessage(prev => prev + content);
-                                }
-                            } catch (error) {
-                                console.error('Error parsing SSE data:', error);
+                        console.info("got data: " + data);
+                        try {
+                            const parsed = JSON.parse(data);
+                            const content = parsed.choices[0].delta.content;
+                            console.info("got content: " + content);
+                            if (content) {
+                                streamingMessageContent = streamingMessageContent + content;
+                                setStreamingMessage(prev => prev + content);
+                                console.log("streamingMessage is now:" + streamingMessage);
                             }
+                        } catch (error) {
+                            console.error('Error parsing SSE data:', error);
                         }
                     }
                 }
             }
+
+            console.log("setting messages with latest message to: " + streamingMessageContent);
+            setMessages(prevMessages => [
+                ...prevMessages,
+                { role: 'assistant', content: streamingMessageContent }
+            ]);
+            setStreamingMessage('');
+
         } catch (error) {
             console.error('Error sending message:', error);
             setMessages(prevMessages => [
@@ -85,7 +102,12 @@ const ChatSection = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [messages, newMessage, streamingMessage]);
+
+    const clearChat = useCallback(() => {
+        setMessages([]);
+        localStorage.removeItem(STORAGE_KEY);
+    }, []);
 
     return (
         <div className="flex flex-col h-full bg-gray-100">
@@ -127,6 +149,14 @@ const ChatSection = () => {
                     </button>
                 </div>
             </form>
+            <div className="p-4 bg-white border-t">
+                <button
+                    onClick={clearChat}
+                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                    Clear Chat
+                </button>
+            </div>
         </div>
     );
 };
