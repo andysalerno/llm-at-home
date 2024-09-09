@@ -58,26 +58,20 @@ const ChatSection = () => {
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) {
-                    console.info("done");
                     break;
                 };
-
-                console.info("got line: " + value);
 
                 const lines = value.split('\n').filter(line => line.trim() !== '');
 
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         const data = line.slice(6);
-                        console.info("got data: " + data);
                         try {
                             const parsed = JSON.parse(data);
                             const content = parsed.choices[0].delta.content;
-                            console.info("got content: " + content);
                             if (content) {
                                 streamingMessageContent = streamingMessageContent + content;
                                 setStreamingMessage(prev => prev + content);
-                                console.log("streamingMessage is now:" + streamingMessage);
                             }
                         } catch (error) {
                             console.error('Error parsing SSE data:', error);
@@ -86,7 +80,6 @@ const ChatSection = () => {
                 }
             }
 
-            console.log("setting messages with latest message to: " + streamingMessageContent);
             setMessages(prevMessages => [
                 ...prevMessages,
                 { role: 'assistant', content: streamingMessageContent }
