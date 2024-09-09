@@ -31,26 +31,27 @@ const ChatSection = () => {
         setStreamingMessage('');
 
         try {
-            const response = await fetch({
-                method: 'POST',
-                url: 'http://nzxt.local:8003/v1/chat/completions',
-                data: {
-                    messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
-                    model: "gpt-3.5-turbo",
-                    stream: true,
-                },
-                responseType: 'stream'
-            });
+            const response = await fetch(
+                'http://nzxt.local:8003/v1/chat/completions',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
+                        model: "gpt-3.5-turbo",
+                        stream: true,
+                    })
+                });
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
+            // To recieve data as a string we use TextDecoderStream class in pipethrough
+            const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
 
             while (true) {
-                const { done, value } = await reader.read();
+                const { value, done } = await reader.read();
                 if (done) break;
 
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                console.info("got line: " + value);
+
+                const lines = value.split('\n').filter(line => line.trim() !== '');
 
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
