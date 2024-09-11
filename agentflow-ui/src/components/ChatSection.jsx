@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const STORAGE_KEY = 'chatMessages';
 
@@ -43,10 +44,11 @@ const ChatSection = () => {
                 'http://nzxt.local:8003/v1/chat/completions',
                 {
                     method: 'POST',
+                    headers: { "X-Correlation-ID": uuidv4() },
                     body: JSON.stringify({
                         messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
                         model: "gpt-3.5-turbo",
-                        stream: true,
+                        stream: true
                     })
                 });
 

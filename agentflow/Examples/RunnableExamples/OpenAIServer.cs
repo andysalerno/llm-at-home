@@ -54,6 +54,21 @@ internal sealed class OpenAIServer
             logger.LogInformation("AbsoluteUri: {Path}", request.Url?.AbsoluteUri);
             logger.LogInformation("RawUrl: {Path}", request.RawUrl);
 
+#pragma warning disable CA2000 // Dispose objects before losing scope
+            using var activity = new Activity("incomingHTTP")
+                .Start();
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
+            if (request.Headers.GetValues("X-Correlation-ID")?.FirstOrDefault()
+                is string correlationId)
+            {
+                activity.AddBaggage("correlationId", correlationId);
+
+                logger.LogInformation("Setting correlationId to: {CorrelationId}", correlationId);
+
+                response.AddHeader("X-Correlation-ID", correlationId);
+            }
+
             try
             {
                 var task = request.RawUrl switch
@@ -318,6 +333,7 @@ internal static class HttpListenerResponseExtensions
     {
         response.Headers.Add("Access-Control-Allow-Origin", "*");
         response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With");
+        response.Headers.Add(
+            "Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, X-Correlation-ID");
     }
 }
