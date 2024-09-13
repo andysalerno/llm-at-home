@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import SplitView from './components/SplitView';
 import TextEditor from './components/TextEditor';
 import DebugSection from './components/DebugSection';
 import ChatSection from './components/ChatSection';
@@ -21,8 +22,7 @@ const App = () => {
                     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
                         <div className="container mx-auto h-full">
                             <Routes>
-                                <Route path="/" element={<TextEditor />} />
-                                <Route path="/chat" element={<ChatSection />} />
+                                <Route path="/" element={<SplitView left={ChatSection} right={DebugSection} />} />
                                 <Route path="/debug" element={<DebugSection />} />
                             </Routes>
                         </div>
