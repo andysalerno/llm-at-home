@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 using AgentFlow.Config;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -75,6 +76,9 @@ public sealed class ChatRequestDiskLogger
 
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath) ?? throw new InvalidOperationException("Could not create directory"));
 
+        string correlationId = Activity.Current?.GetBaggageItem("correlationId")
+            ?? Guid.NewGuid().ToString();
+
         var logContentBuilder = new StringBuilder();
 
         foreach (var message in messages)
@@ -84,7 +88,11 @@ public sealed class ChatRequestDiskLogger
             logContentBuilder.Append("<|end|>\n");
         }
 
-        await File.WriteAllTextAsync(fullPath, logContentBuilder.ToString());
+        var requestData = new RequestData(correlationId, logContentBuilder.ToString());
+
+        var json = JsonSerializer.Serialize(requestData);
+
+        await File.WriteAllTextAsync(fullPath, json);
     }
 
     private int GetAndIncrementRequestIndex()
@@ -102,4 +110,8 @@ public sealed class ChatRequestDiskLogger
 
         return requestIndexVal;
     }
+
+    private sealed record RequestData(
+        string CorrelationId,
+        string FullTranscript);
 }
