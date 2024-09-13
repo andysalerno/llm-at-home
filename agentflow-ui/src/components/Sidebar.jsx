@@ -11,8 +11,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <Link
                 to={to}
                 className={`flex items-center px-6 py-2 mt-4 transition-colors duration-300 ease-in-out ${isActive
-                    ? 'text-white bg-blue-600'
-                    : 'text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'
+                        ? 'text-white bg-blue-600'
+                        : 'text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'
                     }`}
             >
                 <Icon className="w-6 h-6" />
@@ -22,11 +22,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     };
 
     return (
-        <div className="relative">
-            <div
-                className={`fixed inset-y-0 left-0 z-30 h-screen transition-all duration-300 transform bg-gray-900 ${isOpen ? 'w-64' : 'w-20'
-                    } overflow-y-auto lg:translate-x-0 lg:static lg:inset-0`}
-            >
+        <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-300 ${isOpen ? 'w-64' : 'w-20'}`}>
+            <div className="h-full bg-gray-900 overflow-y-auto">
                 <div className={`flex items-center justify-between ${isOpen ? 'px-6' : 'px-4'} py-4`}>
                     <div className={`flex items-center ${isOpen ? 'justify-between w-full' : 'justify-center'}`}>
                         {isOpen && <span className="text-white text-2xl font-semibold">AI Chat App</span>}
