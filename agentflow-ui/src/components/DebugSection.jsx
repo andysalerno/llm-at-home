@@ -90,7 +90,9 @@ const DebugSection = () => {
             content = `Session ID: ${item.id}\n\nMessages: ${item.messages.length}\nTotal Requests: ${item.messages.reduce((total, msg) => total + msg.llmRequests.length, 0)}`;
         } else if (selectedItem.type === 'message') {
             item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
-            content = `Message ID: ${item.id}\n\n${item.content}`;
+            const body = JSON.parse(item.content);
+            // content = `Message ID: ${item.id}\n\n${item.content}`;
+            content = `Message ID: ${item.id}\nCorrelation ID:${body.CorrelationId}\n\n${body.FullTranscript}${item.output}`;
         } else if (selectedItem.type === 'request') {
             item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
             const body = JSON.parse(item.input);

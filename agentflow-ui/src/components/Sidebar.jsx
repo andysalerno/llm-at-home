@@ -10,9 +10,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         return (
             <Link
                 to={to}
-                className={`flex items-center px-6 py-2 mt-4 transition-colors duration-300 ease-in-out ${isActive
-                        ? 'text-white bg-blue-600'
-                        : 'text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'
+                className={`flex items-center px-6 py-2 mt-4 transition-colors ${isActive
+                    ? 'text-white bg-blue-600'
+                    : 'text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'
                     }`}
             >
                 <Icon className="w-6 h-6" />
@@ -22,7 +22,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     };
 
     return (
-        <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-300 ${isOpen ? 'w-64' : 'w-20'}`}>
+        <div className={`fixed inset-y-0 left-0 z-30 transition-all ${isOpen ? 'w-64' : 'w-20'}`}>
             <div className="h-full bg-gray-900 overflow-y-auto">
                 <div className={`flex items-center justify-between ${isOpen ? 'px-6' : 'px-4'} py-4`}>
                     <div className={`flex items-center ${isOpen ? 'justify-between w-full' : 'justify-center'}`}>
