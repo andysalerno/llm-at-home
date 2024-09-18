@@ -6,11 +6,11 @@ const SplitView = ({ left: Left, right: Right }) => {
 
     return (
         <div className="flex h-full">
-            <div className={`flex-grow transition-all duration-300 ${isRightVisible ? 'w-1/2' : 'w-full'}`}>
+            <div className={`flex-grow transition-all duration-0 ${isRightVisible ? 'w-1/2' : 'w-full'}`}>
                 <Left />
             </div>
             <div
-                className={`flex-grow transition-all duration-300 ${isRightVisible ? 'w-1/2' : 'w-0'} overflow-hidden`}
+                className={`flex-grow transition-all duration-0 ${isRightVisible ? 'w-1/2' : 'w-0'} overflow-hidden`}
             >
                 {isRightVisible && <Right />}
             </div>

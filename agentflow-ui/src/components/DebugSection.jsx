@@ -7,7 +7,7 @@ const TreeNode = ({ label, children, onSelect }) => {
     return (
         <div>
             <div
-                className="flex items-center cursor-pointer hover:bg-blue-100 p-2 rounded transition-colors duration-150 ease-in-out"
+                className="flex items-center cursor-pointer hover:bg-blue-100 p-2 rounded transition-colors duration-0 ease-in-out"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
@@ -91,8 +91,7 @@ const DebugSection = () => {
         } else if (selectedItem.type === 'message') {
             item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
             const body = JSON.parse(item.content);
-            // content = `Message ID: ${item.id}\n\n${item.content}`;
-            content = `Message ID: ${item.id}\nCorrelation ID:${body.CorrelationId}\n\n${body.FullTranscript}${item.output}`;
+            content = `Message ID: ${item.id}\nCorrelation ID:${body.CorrelationId}\n\n${body.FullTranscript}`;
         } else if (selectedItem.type === 'request') {
             item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
             const body = JSON.parse(item.input);
