@@ -93,7 +93,8 @@ const DebugSection = () => {
             content = `Message ID: ${item.id}\n\n${item.content}`;
         } else if (selectedItem.type === 'request') {
             item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
-            content = `Request ID: ${item.id}\n\n${item.input}${item.output}`;
+            const body = JSON.parse(item.input);
+            content = `Request ID: ${item.id}\nCorrelation ID:${body.CorrelationId}\n\n${body.FullTranscript}${item.output}`;
         }
 
         return (
