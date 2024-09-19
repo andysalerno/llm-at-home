@@ -8,10 +8,11 @@ services:
 
     # Comment this to build a docker image from source
     image: ghcr.io/theroyallab/tabbyapi:latest
+    command: main.py --host 0.0.0.0 --port 8000 --model-name Phi-3-medium-128k-instruct-exl2-8_0 --max-seq-len 1024 --disable-auth
     ports:
-      - "5000:5000"
+      - "8000:8000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/health"]
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -19,7 +20,7 @@ services:
       - NAME=TabbyAPI
     volumes:
       - /home/tiny/mnt/drive/exl2:/app/models
-      - /home/tiny/repos/monorepo/tabby_config:/
+      # - /home/tiny/repos/monorepo/tabby_config:/
       # - /path/to/api_tokens.yml:/app/api_tokens.yml       # Change me
     devices:
       - nvidia.com/gpu=all
