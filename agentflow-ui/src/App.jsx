@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ChatSection from './components/ChatSection';
 import DebugSection from './components/DebugSection';
 import SplitView from './components/SplitView';
+import ChatDebugSplitView from './components/ChatDebugSplitView';
 
 const App = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -22,6 +23,7 @@ const App = () => {
                         <div className="mx-auto h-full">
                             <Routes>
                                 <Route path="/" element={<SplitView left={ChatSection} right={DebugSection} />} />
+                                <Route path="/test" element={<ChatDebugSplitView />} />
                                 <Route path="/debug" element={<DebugSection />} />
                             </Routes>
                         </div>

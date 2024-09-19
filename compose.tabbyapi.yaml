@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  tabbyapi:
+    # Uncomment this to build a docker image from source
+    #build:
+    #  context: ..
+    #  dockerfile: ./docker/Dockerfile
+
+    # Comment this to build a docker image from source
+    image: ghcr.io/theroyallab/tabbyapi:latest
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      - NAME=TabbyAPI
+    volumes:
+      - /home/tiny/mnt/drive/exl2:/app/models
+      - /home/tiny/repos/monorepo/tabby_config:/
+      # - /path/to/api_tokens.yml:/app/api_tokens.yml       # Change me
+    devices:
+      - nvidia.com/gpu=all

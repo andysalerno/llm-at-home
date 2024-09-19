@@ -23,7 +23,7 @@ const TreeNode = ({ label, children, onSelect }) => {
     );
 };
 
-const DebugSection = () => {
+const DebugSection = ({ focusedCorrelationId }) => {
     const [data, setData] = useState({ sessions: [] });
     const [selectedItem, setSelectedItem] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +49,15 @@ const DebugSection = () => {
 
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (focusedCorrelationId) {
+            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedCorrelationId);
+            if (message) {
+                setSelectedItem({ type: 'message', id: message.id });
+            }
+        }
+    }, [focusedCorrelationId, data]);
 
     const renderTree = (data) => {
         return (

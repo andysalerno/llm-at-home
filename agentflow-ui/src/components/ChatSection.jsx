@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const STORAGE_KEY = 'chatMessages';
 
-const ChatSection = () => {
+const ChatSection = ({ onMessageClick }) => {
     const [messages, setMessages] = useState(() => {
         const storedMessages = localStorage.getItem(STORAGE_KEY);
         return storedMessages ? JSON.parse(storedMessages) : [];
@@ -39,12 +39,14 @@ const ChatSection = () => {
         setIsLoading(true);
         setStreamingMessage('');
 
+        const correlationId = uuidv4();
+
         try {
             const response = await fetch(
                 'http://nzxt.local:8003/v1/chat/completions',
                 {
                     method: 'POST',
-                    headers: { "X-Correlation-ID": uuidv4() },
+                    headers: { "X-Correlation-ID": correlationId },
                     body: JSON.stringify({
                         messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
                         model: "gpt-3.5-turbo",
@@ -84,7 +86,7 @@ const ChatSection = () => {
 
             setMessages(prevMessages => [
                 ...prevMessages,
-                { role: 'assistant', content: streamingMessageContent }
+                { role: 'assistant', content: streamingMessageContent, correlationId: correlationId }
             ]);
             setStreamingMessage('');
 
@@ -114,6 +116,7 @@ const ChatSection = () => {
                             ? 'ml-auto bg-blue-500 text-white'
                             : 'mr-auto bg-white text-gray-800'
                             }`}
+                        onClick={() => onMessageClick(message.correlationId)}
                     >
                         {message.content}
                     </div>
