@@ -38,6 +38,23 @@ services:
       - ./.agentflow.default.env
       - ./.agentflow.env
 
+  # llmhost:
+  #   image: ghcr.io/theroyallab/tabbyapi:latest
+  #   command: main.py --host 0.0.0.0 --port 8000 --model-name Phi-3-medium-128k-instruct-exl2-8_0 --max-seq-len 8192 --disable-auth TRUE
+  #   ports:
+  #     - "8000:8000"
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   environment:
+  #     - NAME=TabbyAPI
+  #   volumes:
+  #     - /home/tiny/mnt/drive/exl2:/app/models
+  #   devices:
+  #     - nvidia.com/gpu=all
+
   chat-ui:
     image: localhost/chat-ui
     build: ./chat-ui
