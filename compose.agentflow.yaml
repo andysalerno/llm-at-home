@@ -23,20 +23,40 @@ services:
     volumes:
       - ./request_logs:/App/LlmRequestLogs
 
+  # llmhost:
+  #   # image: ghcr.io/ggerganov/llama.cpp:server-cuda
+  #   image: localhost/llama.cpp
+  #   volumes:
+  #     - ${MODEL_DIR}:/models
+  #   restart: unless-stopped
+  #   command: -m /models/${MODEL_NAME} --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192 -ts 1,0
+  #   ports:
+  #     - "8000:8000"
+  #   devices:
+  #     - nvidia.com/gpu=all
+  #   env_file:
+  #     - ./.agentflow.default.env
+  #     - ./.agentflow.env
+
   llmhost:
-    # image: ghcr.io/ggerganov/llama.cpp:server-cuda
-    image: localhost/llama.cpp
+    image: ghcr.io/huggingface/text-generation-inference:2.3
     volumes:
-      - ${MODEL_DIR}:/models
-    restart: unless-stopped
-    command: -m /models/${MODEL_NAME} --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192 -ts 1,0
+      - /home/tiny/mnt/drive/.cache/huggingface/hub:/data/hub
+    # restart: unless-stopped
+    command: >
+      --model-id microsoft/Phi-3-medium-128k-instruct
+      --quantize eetq
+      --max-top-n-tokens 1
+      --port 8000
+      --max-concurrent-requests 5 
+      --max-best-of 1 
+      --max-batch-prefill-tokens=8242 --max-total-tokens=8192 --max-input-tokens=8191
+    environment:
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
     ports:
       - "8000:8000"
     devices:
       - nvidia.com/gpu=all
-    env_file:
-      - ./.agentflow.default.env
-      - ./.agentflow.env
 
   # llmhost:
   #   image: ghcr.io/theroyallab/tabbyapi:latest

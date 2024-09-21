@@ -5,9 +5,10 @@ services:
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
     # restart: unless-stopped
-    command: --model bjaidi/Phi-3-medium-128k-instruct-GPTQ-8-bit --served-model-name model --max-model-len 8192
+    # command: --model bjaidi/Phi-3-medium-128k-instruct-GPTQ-8-bit --served-model-name model --max-model-len 8192
+    command: --model microsoft/Phi-3-medium-128k-instruct --served-model-name model --max-model-len 8192 --quantization="deepspeedfp"
     environment:
-      CUDA_DEVICE_ORDER=PCI_BUS_ID
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
     ports:
       - "8000:8000"
     devices:
