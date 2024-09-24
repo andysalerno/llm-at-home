@@ -42,6 +42,7 @@ public sealed class CustomAgent : IAgent
     private readonly ILlmCompletionsClient completionsClient;
     private readonly ImmutableDictionary<string, string> variables;
     private readonly JsonElement? responseSchema;
+    private readonly string? toolChoice;
     private readonly ILogger<CustomAgent> logger;
 
     private CustomAgent(
@@ -53,13 +54,15 @@ public sealed class CustomAgent : IAgent
         ImmutableDictionary<string, string> variables,
         IPromptRenderer promptRenderer,
         ILlmCompletionsClient completionsClient,
-        JsonElement? responseSchema = null)
+        JsonElement? responseSchema = null,
+        string? toolChoice = null)
     {
         this.Role = role;
         this.Prompt = prompt;
         this.InstructionStrategy = instructionStrategy;
         this.completionsClient = completionsClient;
         this.responseSchema = responseSchema;
+        this.toolChoice = toolChoice;
         this.Name = name;
         this.variables = variables;
         this.messageVisibility = messageVisibility;
@@ -93,7 +96,12 @@ public sealed class CustomAgent : IAgent
                 this.logger.LogInformation("No system prompt set; this may be intentional");
             }
 
-            cells.Add(new GetAssistantResponseCell(this.Name, this.Role, this.responseSchema, this.completionsClient));
+            cells.Add(new GetAssistantResponseCell(
+                this.Name,
+                this.Role,
+                this.responseSchema,
+                this.toolChoice,
+                this.completionsClient));
         }
 
         Cell<ConversationThread> sequence = new CellSequence<ConversationThread>(
@@ -113,14 +121,17 @@ public sealed class CustomAgent : IAgent
         private ILlmCompletionsClient completionsClient;
         private JsonElement? responseSchema;
         private MessageVisibility visibility;
+        private string? toolChoice;
 
         public Builder(ILlmCompletionsClient completionsClient, IPromptRenderer promptRenderer)
         {
             this.completionsClient = completionsClient;
             this.promptRenderer = promptRenderer;
             this.visibility = new MessageVisibility(ShownToUser: true, ShownToModel: true);
-            this.responseSchema = null;
             this.keyValuePairs = ImmutableDictionary.CreateBuilder<string, string>();
+
+            this.responseSchema = null;
+            this.toolChoice = null;
         }
 
         public Builder WithMessageVisibility(MessageVisibility visibility)
@@ -154,6 +165,13 @@ public sealed class CustomAgent : IAgent
         public Builder WithJsonResponseSchema(JsonElement responseSchema)
         {
             this.responseSchema = responseSchema;
+
+            return this;
+        }
+
+        public Builder WithToolChoice(string toolChoice)
+        {
+            this.toolChoice = toolChoice;
 
             return this;
         }

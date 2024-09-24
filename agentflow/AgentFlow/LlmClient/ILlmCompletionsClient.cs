@@ -18,6 +18,7 @@ public record ChatCompletionsRequest(
     IEnumerable<Message> Messages,
     IEnumerable<string>? Stop = null,
     JsonElement? JsonSchema = null,
+    string? ToolChoice = null,
     string? PromptTemplate = null);
 
 public record ChatCompletionsResult(string Text);

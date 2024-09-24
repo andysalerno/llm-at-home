@@ -12,29 +12,25 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
     private readonly AgentName agentName;
     private readonly Role agentRole;
     private readonly JsonElement? responseSchema;
+    private readonly string? toolChoice;
     private readonly ILlmCompletionsClient completionsClient;
 
     public GetAssistantResponseCell(AgentName agentName, Role agentRole, ILlmCompletionsClient completionsClient)
-        : this(agentName, agentRole, null, completionsClient)
+        : this(agentName, agentRole, null, null, completionsClient)
     {
     }
 
-    /// <summary>
-    /// pass promptrenderer here?
-    /// </summary>
-    /// <param name="agentName"></param>
-    /// <param name="agentRole"></param>
-    /// <param name="responseSchema"></param>
-    /// <param name="completionsClient"></param>
     public GetAssistantResponseCell(
         AgentName agentName,
         Role agentRole,
         JsonElement? responseSchema,
+        string? toolChoice,
         ILlmCompletionsClient completionsClient)
     {
         this.agentName = agentName;
         this.agentRole = agentRole;
         this.responseSchema = responseSchema;
+        this.toolChoice = toolChoice;
         this.completionsClient = completionsClient;
         this.logger = this.GetLogger();
     }
@@ -54,7 +50,10 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
             .WithMessagesVisibleToAssistant();
 
         var response = await this.completionsClient.GetChatCompletionsAsync(
-            new ChatCompletionsRequest(templateFilled.Messages, JsonSchema: this.responseSchema));
+            new ChatCompletionsRequest(
+                templateFilled.Messages,
+                JsonSchema: this.responseSchema,
+                ToolChoice: this.toolChoice));
 
         // Don't return the template filled version - we only ever want the template filled for sending to the LLM
         return input.WithAddedMessage(new Message(this.agentName, this.agentRole, response.Text));

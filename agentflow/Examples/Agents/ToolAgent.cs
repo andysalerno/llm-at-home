@@ -62,6 +62,7 @@ public class ToolAgent : IAgent
           this.promptFactoryProvider.GetFactory(ExamplePrompts.WebsearchExampleSystem).Create())
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
+        .WithToolChoice("invoke_function")
         .WithInstructionsStrategy(instructionStrategy)
         .Build());
 
@@ -83,24 +84,56 @@ public class ToolAgent : IAgent
     = JsonSerializer.Deserialize<JsonElement>(
 """
 {
-    "title": "AnswerFormat",
-    "type": "object",
-    "properties": {
-      "last_user_message_intent": {
-        "type": "string"
-      },
-      "function_name": {
-        "type": "string"
-      },
-      "invocation": {
-        "type": "string"
+    "type": "function",
+    "function": {
+      "name": "invoke_function",
+      "description": "invoke a function with the given name, invication, and user intent",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "last_user_message_intent": {
+            "type": "string"
+          },
+          "function_name": {
+            "type": "string"
+          },
+          "invocation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "last_user_message_intent",
+          "function_name",
+          "invocation"
+        ]
       }
-    },
-    "required": [
-      "last_user_message_intent",
-      "function_name",
-      "invocation"
-    ]
+  }
+}
+""".Trim());
+
+  private static JsonElement JsonToolSchemaz { get; }
+    = JsonSerializer.Deserialize<JsonElement>(
+"""
+{
+    "type": "json",
+    "value": {
+      "properties": {
+        "last_user_message_intent": {
+          "type": "string"
+        },
+        "function_name": {
+          "type": "string"
+        },
+        "invocation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "last_user_message_intent",
+        "function_name",
+        "invocation"
+      ]
+  }
 }
 """.Trim());
 

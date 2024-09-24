@@ -77,8 +77,32 @@ internal record OpenAIChatCompletionRequest(
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     string? PromptTemplate = null,
 
+    // [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // JsonElement? JsonObject = null);
+
+    // [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // ImmutableArray<Tools>? Tools = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    JsonElement? JsonSchema = null);
+    ImmutableArray<JsonElement>? Tools = null,
+
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    string? ToolChoice = null,
+
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    JsonElement? ResponseFormat = null);
+
+internal sealed record ResponseFormat(JsonElement Value, string Type = "json");
+
+internal sealed record Tools(Function Function, string Type = "function");
+
+internal sealed record Function(string Name, string Description);
+
+internal sealed record Parameters(JsonElement Properties)
+{
+    public string Type { get; } = "object";
+}
+
+internal sealed record Properties();
 
 internal record Choice(
     int Index,
@@ -193,11 +217,18 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             .Cast<IReadOnlyDictionary<string, string>>()
             .ToImmutableArray();
 
+        ImmutableArray<JsonElement>? tools = input.JsonSchema is null ? null : new List<JsonElement> { input.JsonSchema.Value }.ToImmutableArray();
+
         var request = new OpenAIChatCompletionRequest(
             Model: this.modelName,
-            Temperature: 0.01f,
+            Temperature: 0.00f,
             MaxTokens: MaxTokensToGenerate,
-            JsonSchema: input.JsonSchema,
+            // ResponseFormat: input.JsonSchema,
+            // ResponseFormat: input.JsonSchema is not null ? new ResponseFormat(input.JsonSchema.Value) : null,
+            // Tools: input.JsonSchema != null ? [input.JsonSchema] : null,
+            RepetitionPenalty: 0.2f,
+            Tools: tools,
+            ToolChoice: input.ToolChoice,
             PromptTemplate: input.PromptTemplate,
             Stop: input.Stop?.ToImmutableArray(),
             Messages: messages);
