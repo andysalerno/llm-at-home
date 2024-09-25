@@ -62,3 +62,22 @@ This is Huggingface's project text-generation-inference. Its responsibility is t
 ## webprompt
 
 TODO
+
+## results of various model hosts
+
+tgi + phi-3-medium-hf + eetq:
+- loads, fast, but bad outputs / bad function calling?
+
+tgi + phi-3-medium-hf + fp8:
+- loads, fast, but bad outputs / bad function calling?
+- omg figured it out.... :/ it's the Phi-3 prompt format that skips system prompts (I think)
+
+must set prompt format to:
+{% for message in messages %}
+  {{'<|' + message['role'] + '|>\n' + message['content'] + '<|end|>\n' }}
+{% endfor %}
+{% if add_generation_prompt %}
+    {{ '<|assistant|>\n' }}
+{% endif %}
+
+{% for message in messages %}{{'<|' + message['role'] + '|>\n' + message['content'] + '<|end|>\n' }}{% endfor %}{% if add_generation_prompt %}{{ '<|assistant|>\n' }}{% endif %}

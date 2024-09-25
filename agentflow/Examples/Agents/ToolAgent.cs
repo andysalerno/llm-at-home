@@ -84,37 +84,6 @@ public class ToolAgent : IAgent
     = JsonSerializer.Deserialize<JsonElement>(
 """
 {
-    "type": "function",
-    "function": {
-      "name": "invoke_function",
-      "description": "invoke a function with the given name, invication, and user intent",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "last_user_message_intent": {
-            "type": "string"
-          },
-          "function_name": {
-            "type": "string"
-          },
-          "invocation": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "last_user_message_intent",
-          "function_name",
-          "invocation"
-        ]
-      }
-  }
-}
-""".Trim());
-
-  private static JsonElement JsonToolSchemaz { get; }
-    = JsonSerializer.Deserialize<JsonElement>(
-"""
-{
     "type": "json",
     "value": {
       "properties": {

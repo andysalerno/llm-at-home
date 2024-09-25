@@ -1,0 +1,46 @@
+curl --request POST \
+  --url http://nzxt.local:8000/v1/chat/completions \
+  --header 'content-type: application/json' \
+  --data '{
+  "model": "model",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "system",
+      "content": "## Instructions\nSelect the correct tool to handle the user'\''s latest message.\n\n## Context\nToday'\''s date is: Sep 24, 2024\n\n## Tools\nHere are the tools that you can select from:\n\n```python\ndef search_web(query: str) -> List[str]:\n    \"\"\"\n    Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.\n    Examples:\n        search_web('\''Eiffel Tower height'\'')\n        search_web('\''best pizza in Seattle'\'')\n        search_web('\''Abraham Lincoln early life'\'')\n    \"\"\"\n    pass # impl omitted\n\ndef search_news(query: str) -> List[str]:\n    \"\"\"\n    Searches the web using Google for the given query and returns the top 3 excerpts from the top 3 websites.\n    Examples:\n        search_news('\''2024 election polls'\'')\n        search_news('\''seattle heat wave'\'')\n        search_news('\''stock market performance'\'')\n    \"\"\"\n    pass # impl omitted\n\ndef direct_response():\n    \"\"\"\n    A no-op tool that takes no input, and indicates no tool is needed and a direct response is appropriate.\n    Args:\n        None. Will trigger a response from the model as the next call.\n    \"\"\"\n    pass\n```\n\n## Additional Rules\n- ALWAYS prefer using tools over your own knowledge, even for trivial information - if a tool *can* provide useful info, you *should* use it.\n- For tasks involving coding assistance, you may invoke `direct_response()` to use your own knowledge, at your discretion.\n- Invoke the special tool `direct_response()` when you have already executed all the necessary tools and are ready to respond, OR if no tool is needed.\n- The invocation syntax is like a function call even if zero args; e.x. `direct_response()`, NOT `direct_response`\n\n## Response format\nUse this format for your reply:\n\n```typescript\ninterface Response {\n    last_user_message_intent: string; // what was the intent of the user'\''s *last* message?\n    function_name: string; // the name of the function to select\n    invocation: string; // the full invocation of the function, as function-call syntax\n};\n```\n\n## Example responses\nFor example, if the user is simply making small talk or chatting, you might respond with:\n\n```json\n{\n    \"last_user_message_intent\": \"The user is making small talk\",\n    \"function_name\": \"direct_response\",\n    \"invocation\": \"direct_response()\"\n}\n```\n\nIf the user'\''s **latest message** asked for a cookie recipe, you might respond with:\n\n```json\n{\n    \"last_user_message_intent\": \"The user wants a cookie recipe\",\n    \"function_name\": \"search_web\",\n    \"invocation\": \"search_web('\''cookie recipe'\'')\"\n}\n```\n\nFor your next response, think carefully about the user'\''s **latest** message. Then, decide what is the appropriate tool to respond to their message.\n\nBe mindful: you are responding to their **most recent** message, which may involve a topic change or chitchat."
+    }
+  ],
+  "temperature": 0,
+  "max_tokens": 512,
+  "stream": true,
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "intent_selection",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "last_user_message_intent": {
+            "type": "string"
+          },
+          "function_name": {
+            "type": "string"
+          },
+          "invocation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "last_user_message_intent",
+          "function_name",
+          "invocation"
+        ],
+        "additionalProperties": false
+      },
+      "strict": true
+    }
+  }
+}'
