@@ -14,7 +14,7 @@ curl --request POST \
     }
   ],
   "temperature": 0,
-  "max_tokens": 512,
+  "max_tokens": 128,
   "stream": true,
   "response_format": {
     "type": "json_schema",
@@ -23,15 +23,9 @@ curl --request POST \
       "schema": {
         "type": "object",
         "properties": {
-          "last_user_message_intent": {
-            "type": "string"
-          },
-          "function_name": {
-            "type": "string"
-          },
-          "invocation": {
-            "type": "string"
-          }
+          "last_user_message_intent": { "type": "string" },
+          "function_name": { "type": "string" },
+          "invocation": { "type": "string" }
         },
         "required": [
           "last_user_message_intent",

@@ -40,24 +40,26 @@ services:
 
   llmhost:
     image: ghcr.io/huggingface/text-generation-inference:2.3
+    ipc: host
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface/hub:/data/hub
+      - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/chat_template.jinja
     # restart: unless-stopped
+    environment:
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      - MODEL_ID=neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
     command: >
-      --model-id microsoft/Phi-3-medium-128k-instruct
-      --quantize eetq
+      --model-id ${MODEL_ID}
       --max-top-n-tokens 1
       --port 8000
       --max-concurrent-requests 5 
       --max-best-of 1 
       --max-batch-prefill-tokens=8242 --max-total-tokens=8192 --max-input-tokens=8191
-    environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      --chat-template /root/chat_template.jinja
     ports:
       - "8000:8000"
     devices:
       - nvidia.com/gpu=all
-    ipc: host
 
   # llmhost:
   #   image: ghcr.io/theroyallab/tabbyapi:latest
