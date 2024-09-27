@@ -19,7 +19,7 @@ services:
       - OPENAI_URI=http://llmhost:8000
       - MODEL_NAME=
     tty: true
-    command: server http://llmhost:8000 http://embedding-server:8000/embeddings http://scraper:8002/scrape model -v --prompt-dir=Prompts 
+    command: server http://llmhost:8000 http://embedding-server:8000/embeddings http://scraper:8002/scrape model -v --prompt-dir=Prompts -s TopLevelSystemMessage 
     volumes:
       - ./request_logs:/App/LlmRequestLogs
 

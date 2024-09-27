@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
+using AgentFlow.Config;
 using AgentFlow.Examples.Agents;
 using AgentFlow.Examples.Tools;
 using AgentFlow.Generic;
@@ -15,6 +16,7 @@ namespace AgentFlow.Examples;
 internal sealed class OpenAIServerWebSearchExample : IRunnableExample
 {
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
+    private readonly Configuration config;
     private readonly IEmbeddingsClient embeddingsClient;
     private readonly IScraperClient scraperClient;
     private readonly IEnvironmentVariableProvider environmentVariableProvider;
@@ -33,7 +35,8 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         IPromptRenderer promptRenderer,
         IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
         ChatRequestDiskLogger diskLogger,
-        CustomAgentBuilderFactory agentBuilderFactory)
+        CustomAgentBuilderFactory agentBuilderFactory,
+        Configuration config)
     {
         this.embeddingsClient = embeddingsClient;
         this.scraperClient = scraperClient;
@@ -44,6 +47,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
         this.promptFactoryProvider = promptFactoryProvider;
         this.diskLogger = diskLogger;
         this.agentBuilderFactory = agentBuilderFactory;
+        this.config = config;
     }
 
     public async Task RunAsync()
@@ -93,7 +97,7 @@ internal sealed class OpenAIServerWebSearchExample : IRunnableExample
                 Role.Assistant,
                 this.promptFactoryProvider,
                 this.agentBuilderFactory,
-                InstructionStrategy.InlineSystemMessage,
+                this.config.InstructionStrategy,
                 tools));
     }
 }

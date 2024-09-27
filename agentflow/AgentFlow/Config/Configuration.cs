@@ -1,4 +1,5 @@
-﻿using AgentFlow.Prompts;
+﻿using AgentFlow.Agents;
+using AgentFlow.Prompts;
 
 namespace AgentFlow.Config;
 
@@ -35,7 +36,8 @@ public record Configuration(
     bool LogRequestsToLlm,
     string PromptDirectory,
     string ModelName,
-    string DiskLoggingPath) :
+    string DiskLoggingPath,
+    InstructionStrategy InstructionStrategy) :
     ICompletionsEndpointConfig,
     ILoggingConfig,
     IFileSystemPromptProviderConfig,

@@ -241,6 +241,7 @@ public static class Program
 
         containerBuilder
             .RegisterInstance(configuration)
+            .AsSelf()
             .AsImplementedInterfaces();
 
         return containerBuilder.Build();
@@ -254,7 +255,8 @@ public static class Program
             args.Verbose,
             args.PromptDir,
             args.ModelName,
-            args.DiskLoggingDir);
+            args.DiskLoggingDir,
+            args.InstructionStrategy);
 
     private sealed record CommandLineArgs(
         string Uri,
