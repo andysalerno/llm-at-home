@@ -32,11 +32,12 @@ services:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
       - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/chat_template.jinja
     # restart: unless-stopped
+    # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
+    # --chat-template /root/chat_template.jinja
     command: >
-      --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
+      --model unsloth/Llama-3.2-3B-Instruct
       --served-model-name model
       --max-model-len 8192
-      --chat-template /root/chat_template.jinja
     ports:
       - "8000:8000"
     devices:
