@@ -3,14 +3,13 @@ services:
   llmhost:
     image: vllm/vllm-openai:latest
     ipc: host
+    environment:
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
       - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/chat_template.jinja
     # restart: unless-stopped
-    # command: --model neuralmagic/Phi-3-medium-128k-instruct-FP8 --served-model-name model --max-model-len 8192 --chat-template /root/chat_template.jinja
     command: --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8 --served-model-name model --max-model-len 8192 --chat-template /root/chat_template.jinja
-    environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
     ports:
       - "8000:8000"
     devices:

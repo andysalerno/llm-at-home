@@ -226,7 +226,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             ResponseFormat: input.JsonSchema,
             // ResponseFormat: input.JsonSchema is not null ? new ResponseFormat(input.JsonSchema.Value) : null,
             // Tools: input.JsonSchema != null ? [input.JsonSchema] : null,
-            RepetitionPenalty: 1.2f,
+            // RepetitionPenalty: 1.2f,
             // Tools: tools,
             // ToolChoice: input.ToolChoice,
             PromptTemplate: input.PromptTemplate,

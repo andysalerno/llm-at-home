@@ -84,24 +84,24 @@ public class ToolAgent : IAgent
     = JsonSerializer.Deserialize<JsonElement>(
 """
 {
-    "type": "json",
-    "value": {
+  "type": "json_schema",
+  "json_schema": {
+  "name": "",
+  "schema": {
+      "type": "object",
       "properties": {
-        "last_user_message_intent": {
-          "type": "string"
-        },
-        "function_name": {
-          "type": "string"
-        },
-        "invocation": {
-          "type": "string"
-        }
+          "last_user_message_intent": { "type": "string" },
+          "function_name": { "type": "string" },
+          "invocation": { "type": "string" }
       },
       "required": [
-        "last_user_message_intent",
-        "function_name",
-        "invocation"
-      ]
+          "last_user_message_intent",
+          "function_name",
+          "invocation"
+      ],
+      "additionalProperties": false
+  },
+  "strict": true
   }
 }
 """.Trim());
