@@ -14,7 +14,7 @@ namespace AgentFlow.Agents;
 public enum InstructionStrategy
 {
     /// <summary>
-    /// The system message will appear as normal, as a message with role 'System', as the very first message in a conversation.
+    /// The system message will appear as a message with role 'System', as the very first message in a conversation.
     /// </summary>
     TopLevelSystemMessage,
 

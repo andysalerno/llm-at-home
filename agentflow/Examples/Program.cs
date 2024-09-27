@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using AgentFlow.Agents;
 using AgentFlow.Config;
 using AgentFlow.Examples;
 using Autofac;
@@ -45,11 +46,18 @@ public static class Program
             description: "logging dir for requests sent to LLM");
         diskLoggingDir.AddAlias("--request-logging-dir");
 
+        var instructionStrategy = new Option<InstructionStrategy>(
+            name: "-s",
+            getDefaultValue: () => InstructionStrategy.InlineSystemMessage,
+            description: "instruction strategy to use");
+        instructionStrategy.AddAlias("--instruction-strategy");
+
         command.AddArgument(uriArg);
         command.AddArgument(modelName);
         command.AddOption(verbose);
         command.AddOption(promptDir);
         command.AddOption(diskLoggingDir);
+        command.AddOption(instructionStrategy);
 
         command.SetHandler(
             RunBenchmarkAsync,
@@ -57,7 +65,8 @@ public static class Program
             modelName,
             verbose,
             promptDir,
-            diskLoggingDir);
+            diskLoggingDir,
+            instructionStrategy);
 
         return command;
     }
@@ -101,6 +110,12 @@ public static class Program
             description: "logging dir for requests sent to LLM");
         diskLoggingDir.AddAlias("--request-logging-dir");
 
+        var instructionStrategy = new Option<InstructionStrategy>(
+            name: "-s",
+            getDefaultValue: () => InstructionStrategy.InlineSystemMessage,
+            description: "instruction strategy to use");
+        instructionStrategy.AddAlias("--instruction-strategy");
+
         command.AddArgument(uriArg);
         command.AddArgument(embeddingsUriArg);
         command.AddArgument(scraperUriArg);
@@ -108,6 +123,7 @@ public static class Program
         command.AddOption(verbose);
         command.AddOption(promptDir);
         command.AddOption(diskLoggingDir);
+        command.AddOption(instructionStrategy);
 
         command.SetHandler(
             RunServerAsync,
@@ -117,7 +133,8 @@ public static class Program
             modelName,
             verbose,
             promptDir,
-            diskLoggingDir);
+            diskLoggingDir,
+            instructionStrategy);
 
         return command;
     }
@@ -137,11 +154,20 @@ public static class Program
         string modelName,
         bool verbose,
         string promptDir,
-        string diskLoggingDir)
+        string diskLoggingDir,
+        InstructionStrategy instructionsStrategy)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
-        var commandLineArgs = new CommandLineArgs(uri, uri, uri, modelName, verbose, promptDir, diskLoggingDir);
+        var commandLineArgs = new CommandLineArgs(
+            uri,
+            uri,
+            uri,
+            modelName,
+            verbose,
+            promptDir,
+            diskLoggingDir,
+            instructionsStrategy);
 
         Configuration configuration = BuildConfiguration(commandLineArgs);
 
@@ -167,7 +193,8 @@ public static class Program
         string modelName,
         bool verbose,
         string promptDir,
-        string diskLoggingDir)
+        string diskLoggingDir,
+        InstructionStrategy instructionsStrategy)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
@@ -178,7 +205,8 @@ public static class Program
             modelName,
             verbose,
             promptDir,
-            diskLoggingDir);
+            diskLoggingDir,
+            instructionsStrategy);
 
         Configuration configuration = BuildConfiguration(commandLineArgs);
 
@@ -235,5 +263,6 @@ public static class Program
         string ModelName,
         bool Verbose,
         string PromptDir,
-        string DiskLoggingDir);
+        string DiskLoggingDir,
+        InstructionStrategy InstructionStrategy);
 }

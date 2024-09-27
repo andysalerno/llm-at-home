@@ -50,7 +50,7 @@
         {%- set messages = messages[1:] %}
     {%- else %}
         {{- raise_exception(\"Cannot put tools in the first user message when there's no first user message!\") }}
-{%- endif %}
+    {%- endif %}
     {{- '<|start_header_id|>user<|end_header_id|>\\n\\n' -}}
     {{- \"Given the following functions, please respond with a JSON for a function call \" }}
     {{- \"with its proper arguments that best answers the given prompt.\\n\\n\" }}
