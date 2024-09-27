@@ -121,8 +121,8 @@ internal record ChatMessage(
 internal record ChatMessageChoice(
     int Index,
     ChatMessage Message,
-    string FinishReason,
-    string? StopReason);
+    string FinishReason);
+// string? StopReason);
 
 internal record OpenAIChatCompletionResponse(
     string @Object,
