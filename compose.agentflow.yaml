@@ -36,12 +36,14 @@ services:
     # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
     # --model unsloth/Llama-3.2-3B-Instruct
     # --model Qwen/Qwen2.5-14B-Instruct-AWQ
+    # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
     # --chat-template /root/chat_template.jinja
     command: >
-      --model Qwen/Qwen2.5-14B-Instruct-AWQ
+      --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
       --served-model-name model
-      --max-model-len 8192
+      --max-model-len 16384
       --chat-template /root/qwenchat_template.jinja
+      -tp 2
     ports:
       - "8000:8000"
     devices:

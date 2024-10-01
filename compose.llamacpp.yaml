@@ -8,27 +8,36 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
-    command: -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf --metrics --port 8000 --host 0.0.0.0 -ngl 100 -fa --verbose --log-disable -c 8192 -ts 1,0
+    command: >
+      -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf
+      --metrics
+      --port 8000
+      --host 0.0.0.0
+      -ngl 100
+      -fa
+      --verbose
+      -c 8192
+      -ts 0,1
     devices:
       - nvidia.com/gpu=all
 
-  chat-ui:
-    image: localhost/chat-ui
-    build: ./chat-ui
-    ports:
-      - "80:5173"
-    restart: unless-stopped
-    depends_on:
-      - mongo-chatui
-      - openaiapi
+  # chat-ui:
+  #   image: localhost/chat-ui
+  #   build: ./chat-ui
+  #   ports:
+  #     - "80:5173"
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - mongo-chatui
+  #     - openaiapi
 
-  webprompt:
-    image: localhost/webprompt
-    build: ./webprompt
-    ports:
-      - "8004:3000"
-    restart: unless-stopped
+  # webprompt:
+  #   image: localhost/webprompt
+  #   build: ./webprompt
+  #   ports:
+  #     - "8004:3000"
+  #   restart: unless-stopped
 
-  mongo-chatui:
-    image: mongo:latest
-    restart: unless-stopped
+  # mongo-chatui:
+  #   image: mongo:latest
+  #   restart: unless-stopped

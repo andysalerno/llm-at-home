@@ -1,40 +1,20 @@
 version: '3.9'
 services:
-  llmhost:
-    image: ghcr.io/huggingface/text-generation-inference:2.3
-    volumes:
-      - /home/tiny/mnt/drive/.cache/huggingface/hub:/data/hub
-      - ./tokenizer_configs/phi-3-medium-128k-instruct.json:/data/tokenizer_config.json
-    # restart: unless-stopped
-    command: >
-      --model-id microsoft/Phi-3-medium-128k-instruct
-      --quantize eetq
-      --max-top-n-tokens 1
-      --port 8000
-      --max-concurrent-requests 5 
-      --max-best-of 1 
-      --max-batch-prefill-tokens=8242 --max-total-tokens=8192 --max-input-tokens=8191
-      --tokenizer-config-path /data/tokenizer_config.json
-    environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
-    ports:
-      - "8000:8000"
-    devices:
-      - nvidia.com/gpu=all
-    ipc: host
   # llmhost:
   #   image: ghcr.io/huggingface/text-generation-inference:2.3
   #   volumes:
   #     - /home/tiny/mnt/drive/.cache/huggingface/hub:/data/hub
+  #     - ./tokenizer_configs/phi-3-medium-128k-instruct.json:/data/tokenizer_config.json
   #   # restart: unless-stopped
   #   command: >
-  #     --model-id bartowski/Mistral-Nemo-Instruct-2407-exl2
-  #     --revision 8_0
+  #     --model-id microsoft/Phi-3-medium-128k-instruct
+  #     --quantize eetq
   #     --max-top-n-tokens 1
   #     --port 8000
-  #     --max-concurrent-requests 1 
+  #     --max-concurrent-requests 5 
   #     --max-best-of 1 
-  #     --max-batch-prefill-tokens=8192 --max-total-tokens=8192 --max-input-tokens=8191
+  #     --max-batch-prefill-tokens=8242 --max-total-tokens=8192 --max-input-tokens=8191
+  #     --tokenizer-config-path /data/tokenizer_config.json
   #   environment:
   #     - CUDA_DEVICE_ORDER=PCI_BUS_ID
   #   ports:
@@ -42,3 +22,23 @@ services:
   #   devices:
   #     - nvidia.com/gpu=all
   #   ipc: host
+  llmhost:
+    image: ghcr.io/huggingface/text-generation-inference:2.3
+    volumes:
+      - /home/tiny/mnt/drive/.cache/huggingface/hub:/data/hub
+    # restart: unless-stopped
+    command: >
+      --model-id bartowski/Mistral-Nemo-Instruct-2407-exl2
+      --revision 8_0
+      --max-top-n-tokens 1
+      --port 8000
+      --max-concurrent-requests 1 
+      --max-best-of 1 
+      --max-batch-prefill-tokens=8192 --max-total-tokens=8192 --max-input-tokens=8191
+    environment:
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+    ports:
+      - "8000:8000"
+    devices:
+      - nvidia.com/gpu=all
+    ipc: host
