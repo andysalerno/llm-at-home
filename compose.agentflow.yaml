@@ -63,8 +63,7 @@ services:
       --host 0.0.0.0
       -ngl 100
       -fa
-      --verbose
-      --log-prefix
+      --log-disable
       -c 8192
       -ts 0,1
     ports:
