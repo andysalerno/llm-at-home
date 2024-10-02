@@ -80,6 +80,9 @@ public class ToolAgent : IAgent
 
   public Role Role { get; }
 
+  /// <summary>
+  /// Gets a VLLM friendly schema.
+  /// </summary>
   private static JsonElement JsonToolSchema { get; }
     = JsonSerializer.Deserialize<JsonElement>(
 """

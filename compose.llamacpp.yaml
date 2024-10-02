@@ -8,15 +8,16 @@ services:
     ports:
       - "8000:8000"
     restart: unless-stopped
+    # -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf
     command: >
-      -m /models/Phi-3-medium-128k-instruct-Q8_0.gguf
+      -m /models/Phi-3.5-mini-instruct-Q8_0.gguf
       --metrics
       --port 8000
       --host 0.0.0.0
       -ngl 100
       -fa
-      --verbose
       -c 8192
+      --log-disable
       -ts 0,1
     devices:
       - nvidia.com/gpu=all
