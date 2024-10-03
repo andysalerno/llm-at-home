@@ -26,7 +26,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             <div className="h-full bg-gray-900 overflow-y-auto">
                 <div className={`flex items-center justify-between ${isOpen ? 'px-6' : 'px-4'} py-4`}>
                     <div className={`flex items-center ${isOpen ? 'justify-between w-full' : 'justify-center'}`}>
-                        {isOpen && <span className="text-white text-2xl font-semibold">AI Chat App</span>}
+                        {isOpen && <span className="text-white text-2xl font-semibold">Agentfow UI</span>}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
                             className="text-white focus:outline-none"
