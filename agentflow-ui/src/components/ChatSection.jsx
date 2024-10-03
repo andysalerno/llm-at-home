@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 const STORAGE_KEY = 'chatMessages';
 
@@ -106,19 +107,34 @@ const ChatSection = ({ onMessageClick }) => {
         localStorage.removeItem(STORAGE_KEY);
     }, []);
 
+    const handleDeleteMessage = useCallback((correlationId) => {
+        setMessages(prevMessages => prevMessages.filter(message => message.correlationId !== correlationId));
+    }, []);
+
     return (
         <div className="flex flex-col h-full bg-gray-100">
             <div className="flex-1 overflow-auto p-4">
                 {messages.map((message, index) => (
                     <div
-                        key={index}
-                        className={`max-w-[70%] mb-4 p-3 rounded-lg ${message.role === 'user'
-                            ? 'ml-auto bg-blue-500 text-white'
-                            : 'mr-auto bg-white text-gray-800'
+                        key={message.correlationId}
+                        className={`relative max-w-[70%] mb-4 p-3 rounded-lg ${message.role === 'user'
+                                ? 'ml-auto bg-blue-500 text-white'
+                                : 'mr-auto bg-white text-gray-800'
                             }`}
-                        onClick={() => onMessageClick(message.correlationId)}
                     >
-                        {message.content}
+                        <div
+                            className="cursor-pointer"
+                            onClick={() => onMessageClick(message.correlationId)}
+                        >
+                            {message.content}
+                        </div>
+                        <button
+                            onClick={() => handleDeleteMessage(message.correlationId)}
+                            className="absolute top-1 right-1 p-1 text-gray-500 hover:text-red-500 focus:outline-none"
+                            aria-label="Delete message"
+                        >
+                            <TrashIcon className="h-4 w-4" />
+                        </button>
                     </div>
                 ))}
                 {streamingMessage && (
