@@ -43,6 +43,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 <nav className="mt-10">
                     <NavItem to="/" icon={ChatBubbleLeftRightIcon}>Chat</NavItem>
                     <NavItem to="/debug" icon={BugAntIcon}>Debug</NavItem>
+                    <NavItem to="/text" icon={BugAntIcon}>Text</NavItem>
                 </nav>
             </div>
         </div>

@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import ChatSection from './components/ChatSection';
 import DebugSection from './components/DebugSection';
 import SplitView from './components/SplitView';
+import TextCompletionSection from './components/TextCompletionSection';
 import ChatDebugSplitView from './components/ChatDebugSplitView';
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
                                 <Route path="/" element={<SplitView left={ChatSection} right={DebugSection} />} />
                                 <Route path="/test" element={<ChatDebugSplitView />} />
                                 <Route path="/debug" element={<DebugSection />} />
+                                <Route path="/text" element={<TextCompletionSection />} />
                             </Routes>
                         </div>
                     </main>
