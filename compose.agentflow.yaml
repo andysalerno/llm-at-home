@@ -24,9 +24,9 @@ services:
       - ./request_logs:/App/LlmRequestLogs
 
   llmhost:
-    image: vllm/vllm-openai:latest
+    # image: localhost/vllm/vllm-openai:latest
+    image: vllm/vllm-openai:v0.6.2
     # ipc: host
-    shm-size: 1g
     shm_size: 1g
     environment:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
@@ -41,7 +41,7 @@ services:
     # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
     # --chat-template /root/chat_template.jinja
     command: >
-      --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
+      --model CalamitousFelicitousness/Qwen2.5-14B-Instruct-fp8-dynamic
       --served-model-name model
       --max-model-len 8192
       --chat-template /root/qwenchat_template.jinja

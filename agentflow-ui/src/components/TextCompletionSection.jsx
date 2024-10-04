@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import axios from 'axios';
 
 const TextCompletionSection = ({ onCompletion }) => {
     const [inputText, setInputText] = useState('');
@@ -16,10 +15,17 @@ const TextCompletionSection = ({ onCompletion }) => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('YOUR_API_ENDPOINT', {
-                prompt: inputText,
-                model: "text-davinci-002", // or whichever model you're using for text completion
-            });
+            const response = await fetch(
+                'http://nzxt.local:8003/completion',
+                {
+                    method: 'POST',
+                    headers: { "X-Correlation-ID": correlationId },
+                    body: JSON.stringify({
+                        messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
+                        model: "gpt-3.5-turbo",
+                        stream: true
+                    })
+                });
 
             const completedText = inputText + response.data.completion;
             setInputText(completedText);
