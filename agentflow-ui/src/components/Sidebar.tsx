@@ -2,10 +2,16 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChatBubbleLeftRightIcon, BugAntIcon, Bars3Icon, Bars3BottomLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
+interface NavItemProps {
+    to: string;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    children: any;
+}
+
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
 
-    const NavItem = ({ to, icon: Icon }) => {
+    const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, children }) => {
         const isActive = location.pathname === to;
         return (
             <Link
@@ -16,6 +22,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     }`}
             >
                 <Icon className="w-6 h-6" />
+                <span className={`mx-3 ${isOpen ? 'block' : 'hidden'}`}>{children}</span>
             </Link>
         );
     };
@@ -40,9 +47,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 </div>
 
                 <nav className="mt-10">
-                    <NavItem to="/" icon={ChatBubbleLeftRightIcon}>Chat</NavItem>
-                    <NavItem to="/text" icon={Bars3BottomLeftIcon}>Text</NavItem>
-                    <NavItem to="/debug" icon={BugAntIcon}>Debug</NavItem>
+                    <NavItem to="/" icon={ChatBubbleLeftRightIcon} children="Chat" />
+                    <NavItem to="/text" icon={Bars3BottomLeftIcon} children="Text" />
+                    <NavItem to="/debug" icon={BugAntIcon} children="Debug" />
                 </nav>
             </div>
         </div>
