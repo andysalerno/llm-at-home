@@ -21,8 +21,7 @@ const App = () => {
                                 <Route path="/" element={<SplitView left={ChatSection} right={DebugSection} />} />
                                 <Route path="/test" element={<ChatDebugSplitView />} />
                                 <Route path="/debug" element={<DebugSection />} />
-                                {/* <Route path="/text" element={<TextCompletionSection />} /> */}
-                                <Route path="/text" element={<SplitView left={TextCompletionSection} right={DebugSection} />} />
+                                <Route path="/text" element={<TextCompletionSection />} />
                             </Routes>
                         </div>
                     </main>

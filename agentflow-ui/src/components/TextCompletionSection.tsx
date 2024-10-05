@@ -1,14 +1,19 @@
 import React, { useState, useCallback } from 'react';
+import ConfigPanel from './ConfigPanel';
+import SplitView from './SplitView';
 
-const TextCompletionSection = ({ }) => {
-    const [inputText, setInputText] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+const TextCompletionSection: React.FC = ({ }) => {
+    const [inputText, setInputText] = useState<string>('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [temperature, setTemperature] = useState<number>(0.7);
+    const [maxTokens, setMaxTokens] = useState<number>(100);
+    const [stopTokens, setStopTokens] = useState<string[]>([]);
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputText(e.target.value);
     };
 
-    const handleSubmit = useCallback(async (e) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         if (inputText.trim() === '') return;
 
@@ -39,7 +44,7 @@ const TextCompletionSection = ({ }) => {
         }
     }, [inputText]);
 
-    return (
+    const TextInputArea = (
         <div className="flex flex-col h-full bg-gray-100 p-4">
             <textarea
                 value={inputText}
@@ -57,6 +62,25 @@ const TextCompletionSection = ({ }) => {
             </button>
         </div>
     );
+
+    const ConfigPanelWrapper = (
+        <ConfigPanel
+            temperature={temperature}
+            setTemperature={setTemperature}
+            maxTokens={maxTokens}
+            setMaxTokens={setMaxTokens}
+            stopTokens={stopTokens}
+            setStopTokens={setStopTokens}
+        />
+    );
+
+    return (
+        <SplitView
+            left={TextInputArea}
+            right={ConfigPanelWrapper}
+        />
+    );
+
 };
 
 export default TextCompletionSection;
