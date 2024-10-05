@@ -23,31 +23,34 @@ const TreeNode = ({ label, children, onSelect }) => {
     );
 };
 
-interface DebugSectionProps {
-    focusedCorrelationId: string | null;
-}
-
-interface Data {
-    sessions: Array<Session>;
+interface LlmRequest {
+    id: string;
+    prompt: string;
+    response: string;
 }
 
 interface Message {
     id: string;
+    content: string;
     correlationId: string;
-    llmRequests: Array<LlmRequest>;
-}
-
-interface LlmRequest {
-    id: string;
+    llmRequests: LlmRequest[];
 }
 
 interface Session {
     id: string;
-    messages: Array<Message>;
+    messages: Message[];
 }
 
-const DebugSection: React.FC<DebugSectionProps> = (props: DebugSectionProps) => {
-    const [data, setData] = useState<Data>({ sessions: [] });
+interface DebugData {
+    sessions: Session[];
+}
+
+interface DebugSectionProps {
+    focusedMessageId: string | null;
+}
+
+const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
+    const [data, setData] = useState<DebugData>({ sessions: [] });
     const [selectedItem, setSelectedItem] = useState<{ type: string, id: string } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -74,13 +77,13 @@ const DebugSection: React.FC<DebugSectionProps> = (props: DebugSectionProps) => 
     }, []);
 
     useEffect(() => {
-        if (props.focusedCorrelationId) {
-            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === props.focusedCorrelationId);
+        if (focusedMessageId) {
+            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedMessageId);
             if (message) {
                 setSelectedItem({ type: 'message', id: message.id });
             }
         }
-    }, [props.focusedCorrelationId, data]);
+    }, [focusedMessageId, data]);
 
     const renderTree = (data) => {
         return (
@@ -88,12 +91,10 @@ const DebugSection: React.FC<DebugSectionProps> = (props: DebugSectionProps) => 
                 {data.sessions.map(session => (
                     <TreeNode
                         label={`Session: ${session.id}`}
-                        children={session.id}
                         onSelect={() => setSelectedItem({ type: 'session', id: session.id })}
                     >
                         {session.messages.map(message => (
                             <TreeNode
-                                children={message.id}
                                 label={`Message: ${message.content.substring(0, 20)}...`}
                                 onSelect={() => setSelectedItem({ type: 'message', id: message.id })}
                             >

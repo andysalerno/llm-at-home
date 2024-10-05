@@ -20,7 +20,7 @@ const App = () => {
                             <Routes>
                                 <Route path="/" element={<SplitView left={ChatSection} right={DebugSection} />} />
                                 <Route path="/test" element={<ChatDebugSplitView />} />
-                                <Route path="/debug" element={<DebugSection focusedCorrelationId={null} />} />
+                                <Route path="/debug" element={<DebugSection focusedMessageId={null} />} />
                                 <Route path="/text" element={<TextCompletionSection />} />
                             </Routes>
                         </div>
