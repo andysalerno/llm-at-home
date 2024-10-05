@@ -118,8 +118,8 @@ const ChatSection = ({ onMessageClick }) => {
                     <div
                         key={message.correlationId}
                         className={`relative max-w-[70%] mb-4 p-3 rounded-lg ${message.role === 'user'
-                                ? 'ml-auto bg-blue-500 text-white'
-                                : 'mr-auto bg-white text-gray-800'
+                            ? 'ml-auto bg-blue-500 text-white'
+                            : 'mr-auto bg-white text-gray-800'
                             }`}
                     >
                         <div

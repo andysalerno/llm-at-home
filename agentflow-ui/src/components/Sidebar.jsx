@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChatBubbleLeftRightIcon, BugAntIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ChatBubbleLeftRightIcon, BugAntIcon, Bars3Icon, Bars3BottomLeftIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
@@ -42,8 +42,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
                 <nav className="mt-10">
                     <NavItem to="/" icon={ChatBubbleLeftRightIcon}>Chat</NavItem>
+                    <NavItem to="/text" icon={Bars3BottomLeftIcon}>Text</NavItem>
                     <NavItem to="/debug" icon={BugAntIcon}>Debug</NavItem>
-                    <NavItem to="/text" icon={BugAntIcon}>Text</NavItem>
                 </nav>
             </div>
         </div>
