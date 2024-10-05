@@ -5,10 +5,9 @@ import ChatSection from './components/ChatSection';
 import DebugSection from './components/DebugSection';
 import SplitView from './components/SplitView';
 import TextCompletionSection from './components/TextCompletionSection';
-import ChatDebugSplitView from './components/ChatDebugSplitView';
 
-const App = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+const App: React.FC = () => {
+    const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
     return (
         <Router>
@@ -18,8 +17,10 @@ const App = () => {
                     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
                         <div className="mx-auto h-full">
                             <Routes>
-                                <Route path="/" element={<SplitView left={ChatSection} right={DebugSection} />} />
-                                <Route path="/test" element={<ChatDebugSplitView />} />
+                                <Route path="/" element={
+                                    <SplitView
+                                        left={<ChatSection onMessageClick={null} />}
+                                        right={<DebugSection focusedMessageId={null} />} />} />
                                 <Route path="/debug" element={<DebugSection focusedMessageId={null} />} />
                                 <Route path="/text" element={<TextCompletionSection />} />
                             </Routes>

@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
-const SplitView = ({ left: Left, right: Right }) => {
+interface SplitViewProps {
+    left: React.ReactElement;
+    right: React.ReactElement;
+}
+
+const SplitView: React.FC<SplitViewProps> = ({ left, right }) => {
     const [isRightVisible, setIsRightVisible] = useState(false);
 
     return (
         <div className="flex h-full">
             <div className={`flex-grow transition-all duration-0 ${isRightVisible ? 'w-1/2' : 'w-full'}`}>
-                <Left />
+                {left}
             </div>
             <div
                 className={`flex-grow transition-all duration-0 ${isRightVisible ? 'w-1/2' : 'w-0'} overflow-hidden`}
             >
-                {isRightVisible && <Right />}
+                {isRightVisible && right}
             </div>
             <button
                 onClick={() => setIsRightVisible(!isRightVisible)}
