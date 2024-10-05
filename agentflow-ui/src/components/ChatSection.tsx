@@ -56,7 +56,11 @@ const ChatSection = ({ onMessageClick }) => {
                 });
 
             // To recieve data as a string we use TextDecoderStream class in pipethrough
-            const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+            const reader = response?.body?.pipeThrough(new TextDecoderStream()).getReader()
+
+            if (!reader) {
+                return;
+            }
 
             let streamingMessageContent = '';
 

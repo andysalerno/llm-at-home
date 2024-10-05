@@ -5,7 +5,7 @@ import { ChatBubbleLeftRightIcon, BugAntIcon, Bars3Icon, Bars3BottomLeftIcon, XM
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
 
-    const NavItem = ({ to, icon: Icon, children }) => {
+    const NavItem = ({ to, icon: Icon }) => {
         const isActive = location.pathname === to;
         return (
             <Link
@@ -16,7 +16,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     }`}
             >
                 <Icon className="w-6 h-6" />
-                <span className={`mx-3 ${isOpen ? 'block' : 'hidden'}`}>{children}</span>
             </Link>
         );
     };

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 
-const TextCompletionSection = ({ onCompletion }) => {
+const TextCompletionSection = ({ }) => {
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -31,17 +31,13 @@ const TextCompletionSection = ({ onCompletion }) => {
             const body = await response.json();
 
             setInputText(inputText + body.content);
-
-            if (onCompletion) {
-                onCompletion(completedText);
-            }
         } catch (error) {
             console.error('Error sending text completion request:', error);
             // You might want to show an error message to the user here
         } finally {
             setIsLoading(false);
         }
-    }, [inputText, onCompletion]);
+    }, [inputText]);
 
     return (
         <div className="flex flex-col h-full bg-gray-100 p-4">

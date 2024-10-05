@@ -6,11 +6,6 @@ import SplitView from './SplitView';
 const ChatDebugSplitView = () => {
     const [focusedMessageId, setFocusedMessageId] = useState(null);
 
-    const handleMessageClick = (correlationId) => {
-        setFocusedMessageId(correlationId);
-        setIsRightVisible(true);
-    };
-
     return (
         <SplitView left={ChatSection} right={DebugSection} />
     );

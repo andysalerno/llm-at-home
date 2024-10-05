@@ -23,7 +23,11 @@ const TreeNode = ({ label, children, onSelect }) => {
     );
 };
 
-const DebugSection = ({ focusedCorrelationId }) => {
+interface DebugSectionProps {
+    focusedCorrelationId: string | null;
+}
+
+const DebugSection: React.FC<DebugSectionProps> = (props: DebugSectionProps) => {
     const [data, setData] = useState({ sessions: [] });
     const [selectedItem, setSelectedItem] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -51,32 +55,32 @@ const DebugSection = ({ focusedCorrelationId }) => {
     }, []);
 
     useEffect(() => {
-        if (focusedCorrelationId) {
-            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedCorrelationId);
+        if (props.focusedCorrelationId) {
+            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === props.focusedCorrelationId);
             if (message) {
                 setSelectedItem({ type: 'message', id: message.id });
             }
         }
-    }, [focusedCorrelationId, data]);
+    }, [props.focusedCorrelationId, data]);
 
     const renderTree = (data) => {
         return (
             <div>
                 {data.sessions.map(session => (
                     <TreeNode
-                        key={session.id}
+                        children={session.id}
                         label={`Session: ${session.id}`}
                         onSelect={() => setSelectedItem({ type: 'session', id: session.id })}
                     >
                         {session.messages.map(message => (
                             <TreeNode
-                                key={message.id}
+                                children={message.id}
                                 label={`Message: ${message.content.substring(0, 20)}...`}
                                 onSelect={() => setSelectedItem({ type: 'message', id: message.id })}
                             >
                                 {message.llmRequests.map(request => (
                                     <TreeNode
-                                        key={request.id}
+                                        children={request.id}
                                         label={`Request: ${request.id}`}
                                         onSelect={() => setSelectedItem({ type: 'request', id: request.id })}
                                     />
