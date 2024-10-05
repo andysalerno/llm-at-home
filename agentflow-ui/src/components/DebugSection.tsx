@@ -27,9 +27,28 @@ interface DebugSectionProps {
     focusedCorrelationId: string | null;
 }
 
+interface Data {
+    sessions: Array<Session>;
+}
+
+interface Message {
+    id: string;
+    correlationId: string;
+    llmRequests: Array<LlmRequest>;
+}
+
+interface LlmRequest {
+    id: string;
+}
+
+interface Session {
+    id: string;
+    messages: Array<Message>;
+}
+
 const DebugSection: React.FC<DebugSectionProps> = (props: DebugSectionProps) => {
-    const [data, setData] = useState({ sessions: [] });
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [data, setData] = useState<Data>({ sessions: [] });
+    const [selectedItem, setSelectedItem] = useState<{ type: string, id: string } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -68,8 +87,8 @@ const DebugSection: React.FC<DebugSectionProps> = (props: DebugSectionProps) => 
             <div>
                 {data.sessions.map(session => (
                     <TreeNode
-                        children={session.id}
                         label={`Session: ${session.id}`}
+                        children={session.id}
                         onSelect={() => setSelectedItem({ type: 'session', id: session.id })}
                     >
                         {session.messages.map(message => (

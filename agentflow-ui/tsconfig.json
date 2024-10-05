@@ -5,9 +5,16 @@
         "strictNullChecks": true, // enable strict null checks as a best practice
         "module": "ESNext", // specify module code generation
         "moduleResolution": "node", // specify module code generation
-        "jsx": "react", // use typescript to transpile jsx to js
+        "jsx": "react-jsx", // use typescript to transpile jsx to js
         "target": "es5", // specify ECMAScript target version
-        "allowJs": false // allow a partial TypeScript and JavaScript codebase
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "strict": false,
+        "allowJs": false, // allow a partial TypeScript and JavaScript codebase
+        "allowSyntheticDefaultImports": true
     },
     "include": [
         "./src/"
