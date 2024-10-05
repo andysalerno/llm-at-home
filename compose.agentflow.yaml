@@ -23,58 +23,58 @@ services:
     volumes:
       - ./request_logs:/App/LlmRequestLogs
 
-  llmhost:
-    # image: localhost/vllm/vllm-openai:latest
-    image: vllm/vllm-openai:v0.6.2
-    # ipc: host
-    shm_size: 1g
-    environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
-    volumes:
-      - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
-      - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/phi3_chat_template.jinja
-      - ./tokenizer_configs/qwen25-instruct-v2.jinja:/root/qwenchat_template.jinja
-    # restart: unless-stopped
-    # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
-    # --model unsloth/Llama-3.2-3B-Instruct
-    # --model Qwen/Qwen2.5-14B-Instruct-AWQ
-    # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
-    # --chat-template /root/chat_template.jinja
-    command: >
-      --model CalamitousFelicitousness/Qwen2.5-14B-Instruct-fp8-dynamic
-      --served-model-name model
-      --max-model-len 8192
-      --chat-template /root/qwenchat_template.jinja
-      --disable-log-requests
-      --disable-log-stats
-      -tp 2
-    ports:
-      - "8000:8000"
-    devices:
-      - nvidia.com/gpu=all
-
   # llmhost:
-  #   # image: ghcr.io/ggerganov/llama.cpp:server-cuda
-  #   image: localhost/llama.cpp
+  #   # image: localhost/vllm/vllm-openai:latest
+  #   image: vllm/vllm-openai:v0.6.2
+  #   # ipc: host
+  #   shm_size: 1g
+  #   environment:
+  #     - CUDA_DEVICE_ORDER=PCI_BUS_ID
   #   volumes:
-  #     - ${MODEL_DIR}:/models
-  #   restart: unless-stopped
+  #     - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
+  #     - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/phi3_chat_template.jinja
+  #     - ./tokenizer_configs/qwen25-instruct-v2.jinja:/root/qwenchat_template.jinja
+  #   # restart: unless-stopped
+  #   # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
+  #   # --model unsloth/Llama-3.2-3B-Instruct
+  #   # --model Qwen/Qwen2.5-14B-Instruct-AWQ
+  #   # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
+  #   # --chat-template /root/chat_template.jinja
   #   command: >
-  #     -m /models/${MODEL_NAME}
-  #     --metrics
-  #     --port 8000
-  #     --host 0.0.0.0
-  #     -ngl 100
-  #     -fa
-  #     -c 8192
-  #     -ts 0,1
+  #     --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
+  #     --served-model-name model
+  #     --max-model-len 8192
+  #     --chat-template /root/qwenchat_template.jinja
+  #     --disable-log-requests
+  #     --disable-log-stats
+  #     -tp 2
   #   ports:
   #     - "8000:8000"
   #   devices:
   #     - nvidia.com/gpu=all
-  #   env_file:
-  #     - ./.agentflow.default.env
-  #     - ./.agentflow.env
+
+  llmhost:
+    # image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    image: localhost/llama.cpp
+    volumes:
+      - ${MODEL_DIR}:/models
+    # restart: unless-stopped
+    command: >
+      -m /models/${MODEL_NAME}
+      --metrics
+      --port 8000
+      --host 0.0.0.0
+      -ngl 100
+      -fa
+      -c 8192
+      -ts 0,1
+    ports:
+      - "8000:8000"
+    devices:
+      - nvidia.com/gpu=all
+    env_file:
+      - ./.agentflow.default.env
+      - ./.agentflow.env
 
   # llmhost:
   #   image: ghcr.io/huggingface/text-generation-inference:2.3

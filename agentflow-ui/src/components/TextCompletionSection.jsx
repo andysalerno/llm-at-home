@@ -16,19 +16,21 @@ const TextCompletionSection = ({ onCompletion }) => {
 
         try {
             const response = await fetch(
-                'http://nzxt.local:8003/completion',
+                'http://nzxt.local:8000/completion',
                 {
                     method: 'POST',
-                    headers: { "X-Correlation-ID": correlationId },
+                    headers: { "X-Correlation-ID": 'fake' },
                     body: JSON.stringify({
-                        messages: [...messages, userMessage].map(msg => ({ role: msg.role, content: msg.content })),
-                        model: "gpt-3.5-turbo",
-                        stream: true
+                        prompt: inputText,
+                        model: "model",
+                        max_tokens: 256,
+                        stream: false
                     })
                 });
 
-            const completedText = inputText + response.data.completion;
-            setInputText(completedText);
+            const body = await response.json();
+
+            setInputText(inputText + body.content);
 
             if (onCompletion) {
                 onCompletion(completedText);
