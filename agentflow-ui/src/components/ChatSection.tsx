@@ -4,7 +4,13 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 
 const STORAGE_KEY = 'chatMessages';
 
-const ChatSection = ({ onMessageClick }) => {
+interface ChatSectionProps {
+    // setFocusedMessageId: React.Dispatch<React.SetStateAction<string>>;
+    setFocusedMessageId: (id: string) => void;
+
+}
+
+const ChatSection: React.FC<ChatSectionProps> = ({ setFocusedMessageId }) => {
     const [messages, setMessages] = useState(() => {
         const storedMessages = localStorage.getItem(STORAGE_KEY);
         return storedMessages ? JSON.parse(storedMessages) : [];
@@ -128,7 +134,7 @@ const ChatSection = ({ onMessageClick }) => {
                     >
                         <div
                             className="cursor-pointer"
-                            onClick={() => onMessageClick(message.correlationId)}
+                            onClick={() => setFocusedMessageId(message.correlationId)}
                         >
                             {message.content}
                         </div>
