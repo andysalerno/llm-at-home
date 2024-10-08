@@ -78,10 +78,8 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     useEffect(() => {
         if (focusedMessageId) {
-            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedMessageId);
-            if (message) {
-                setSelectedItem({ type: 'message', id: message.id });
-            }
+            // const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedMessageId);
+            setSelectedItem({ type: 'message', id: focusedMessageId });
         }
     }, [focusedMessageId, data]);
 

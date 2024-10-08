@@ -17,8 +17,6 @@ const SplitView: React.FC<SplitViewProps> = ({ left, right, isSplitVisible, setI
         throw new Error();
     }
 
-    // const [isRightVisible, setIsRightVisible] = useState(false);
-
     return (
         <div className="flex h-full">
             <div className={`flex-grow transition-all duration-0 ${isSplitVisible ? 'w-1/2' : 'w-full'}`}>
