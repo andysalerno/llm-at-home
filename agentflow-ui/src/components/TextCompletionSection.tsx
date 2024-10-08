@@ -78,6 +78,8 @@ const TextCompletionSection: React.FC = ({ }) => {
         <SplitView
             left={TextInputArea}
             right={ConfigPanelWrapper}
+            isSplitVisible={null}
+            setIsSplitVisible={null}
         />
     );
 

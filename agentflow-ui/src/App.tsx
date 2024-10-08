@@ -9,9 +9,10 @@ import TextCompletionSection from './components/TextCompletionSection';
 const App: React.FC = () => {
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
     const [focusedMessageId, setFocusedMessageId] = useState<string>('');
+    const [isSplitViewVisible, setIsSplitViewVisible] = useState<boolean>(false);
 
     const setAndOpenMessageId = useCallback((id: string) => {
-        setSidebarOpen(true);
+        setIsSplitViewVisible(true);
         setFocusedMessageId(id);
     }, []);
 
@@ -26,7 +27,10 @@ const App: React.FC = () => {
                                 <Route path="/" element={
                                     <SplitView
                                         left={<ChatSection setFocusedMessageId={setAndOpenMessageId} />}
-                                        right={<DebugSection focusedMessageId={focusedMessageId} />} />} />
+                                        right={<DebugSection focusedMessageId={focusedMessageId} />}
+                                        isSplitVisible={isSplitViewVisible}
+                                        setIsSplitVisible={setIsSplitViewVisible}
+                                    />} />
                                 <Route path="/debug" element={<DebugSection focusedMessageId={focusedMessageId} />} />
                                 <Route path="/text" element={<TextCompletionSection />} />
                             </Routes>
