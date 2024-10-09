@@ -19,7 +19,7 @@ services:
       -fa
       -c 8192
       --log-disable
-      -ts 0,1
+      -ts 1,0
     devices:
       - nvidia.com/gpu=all
 

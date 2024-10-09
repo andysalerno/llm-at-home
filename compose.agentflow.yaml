@@ -67,7 +67,7 @@ services:
       -ngl 100
       -fa
       -c 8192
-      -ts 0,1
+      -ts 1,0
     ports:
       - "8000:8000"
     devices:

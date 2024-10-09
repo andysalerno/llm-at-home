@@ -30,22 +30,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     return (
         <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-0 ${isOpen ? 'w-64' : 'w-20'}`}>
             <div className="h-full bg-gray-900 overflow-y-auto">
-                <div className={`flex items-center justify-between ${isOpen ? 'px-6' : 'px-4'} py-4`}>
-                    <div className={`flex items-center ${isOpen ? 'justify-between w-full' : 'justify-center'}`}>
-                        {isOpen && <span className="text-white text-2xl font-semibold">Agentfow UI</span>}
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="text-white focus:outline-none"
-                        >
-                            {isOpen ? (
-                                <XMarkIcon className="w-6 h-6" />
-                            ) : (
-                                <Bars3Icon className="w-6 h-6" />
-                            )}
-                        </button>
-                    </div>
-                </div>
-
                 <nav className="mt-10">
                     <NavItem to="/" icon={ChatBubbleLeftRightIcon} children="Chat" />
                     <NavItem to="/text" icon={Bars3BottomLeftIcon} children="Text" />
