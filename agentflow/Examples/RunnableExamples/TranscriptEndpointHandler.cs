@@ -69,7 +69,7 @@ internal static class TranscriptEndpointHandler
         // Get the response output stream
         await using var output = response.OutputStream;
         byte[] buffer = Encoding.UTF8.GetBytes(serialized);
-        await output.WriteAsync(buffer);
+        await output.WriteAsync(buffer, 0, buffer.Length);
     }
 
     private sealed record LogFileInfo(
