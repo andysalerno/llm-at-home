@@ -29,7 +29,12 @@ internal static class TranscriptEndpointHandler
             {
                 var nameSplits = f.FileName.Split(".");
 
-                return new LogFileInfo(nameSplits[0], nameSplits[1], nameSplits[2], f.FileContent);
+                return new LogFileInfo(
+                    nameSplits[0],
+                    nameSplits[1],
+                    f.RequestData.CorrelationId,
+                    nameSplits[2],
+                    f.RequestData.FullTranscript);
             })
             .ToImmutableArray();
 
@@ -49,6 +54,7 @@ internal static class TranscriptEndpointHandler
         {
             messages.Add(new Message(
                 $"{file.SessionId}.{file.MessageId}",
+                file.CorrelationId,
                 file.Content,
                 llmRequests.Where(r => r.Id.StartsWith(file.FullMessageId)).ToImmutableArray()));
         }
@@ -63,10 +69,15 @@ internal static class TranscriptEndpointHandler
         // Get the response output stream
         await using var output = response.OutputStream;
         byte[] buffer = Encoding.UTF8.GetBytes(serialized);
-        await output.WriteAsync(buffer, 0, buffer.Length);
+        await output.WriteAsync(buffer);
     }
 
-    private sealed record LogFileInfo(string SessionId, string MessageId, string RequestId, string Content)
+    private sealed record LogFileInfo(
+        string SessionId,
+        string MessageId,
+        string CorrelationId,
+        string RequestId,
+        string Content)
     {
         public string FullMessageId => $"{this.SessionId}.{this.MessageId}";
 
@@ -86,6 +97,8 @@ internal static class TranscriptEndpointHandler
     private sealed record Message(
         [property: JsonPropertyName("id")]
         string Id,
+        [property: JsonPropertyName("correlationId")]
+        string CorrelationId,
         [property: JsonPropertyName("content")]
         string Content,
         [property: JsonPropertyName("llmRequests")]

@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using AgentFlow.Config;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -31,7 +32,7 @@ public sealed class ChatRequestDiskLogger
         await this.LogRequestToDiskAsync(messages, requestIndex.ToString());
     }
 
-    public async Task<ImmutableArray<(string FileName, string FileContent)>> ReadRequestsFromDiskAsync()
+    public async Task<ImmutableArray<(string FileName, RequestData RequestData)>> ReadRequestsFromDiskAsync()
     {
         string logFileDir = this.config.DiskLoggingPath;
         string fullPath = Path.GetFullPath(logFileDir);
@@ -41,13 +42,16 @@ public sealed class ChatRequestDiskLogger
             .OrderByDescending(f => f.CreationTimeUtc)
             .ToImmutableArray();
 
-        var results = ImmutableArray.CreateBuilder<(string, string)>();
+        var results = ImmutableArray.CreateBuilder<(string, RequestData)>();
 
         foreach (var file in files)
         {
             string content = await File.ReadAllTextAsync(file.FullName);
 
-            results.Add((file.Name, content));
+            var requestData = JsonSerializer.Deserialize<RequestData>(content)
+                ?? throw new InvalidOperationException("The file on disk could not be deserialized to RequestData.");
+
+            results.Add((file.Name, requestData));
         }
 
         this.GetLogger().LogInformation("Read requests from disk: {Count}", results.Count);
@@ -111,7 +115,9 @@ public sealed class ChatRequestDiskLogger
         return requestIndexVal;
     }
 
-    private sealed record RequestData(
+    public sealed record RequestData(
+        [property: JsonPropertyName("correlationId")]
         string CorrelationId,
+        [property: JsonPropertyName("fullTranscript")]
         string FullTranscript);
 }

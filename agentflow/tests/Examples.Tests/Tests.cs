@@ -44,7 +44,8 @@ public class ExampleRunnerTests
             false,
             "fake",
             "fake",
-            "fake");
+            "fake",
+            InstructionStrategy.InlineSystemMessage);
 
         containerBuilder
             .RegisterInstance(config)
@@ -73,7 +74,8 @@ public class ExampleRunnerTests
             false,
             "Prompts",
             "fake",
-            "fake");
+            "fake",
+            InstructionStrategy.InlineSystemMessage);
 
         containerBuilder
             .RegisterInstance(config)

@@ -49,9 +49,14 @@ interface DebugSectionProps {
     focusedMessageId: string | null;
 }
 
+interface SelectedItem {
+    type: 'session' | 'message' | 'request';
+    id: string;
+}
+
 const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     const [data, setData] = useState<DebugData>({ sessions: [] });
-    const [selectedItem, setSelectedItem] = useState<{ type: string, id: string } | null>(null);
+    const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
