@@ -7,7 +7,6 @@ import SplitView from './components/SplitView';
 import TextCompletionSection from './components/TextCompletionSection';
 
 const App: React.FC = () => {
-    const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
     const [focusedMessageId, setFocusedMessageId] = useState<string>('');
     const [isSplitViewVisible, setIsSplitViewVisible] = useState<boolean>(false);
 
@@ -19,8 +18,8 @@ const App: React.FC = () => {
     return (
         <Router>
             <div className="flex h-screen bg-gray-100">
-                <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-                <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-0 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+                <Sidebar />
+                <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-0 ml-20`}>
                     <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
                         <div className="mx-auto h-full">
                             <Routes>

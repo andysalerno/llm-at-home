@@ -8,7 +8,7 @@ interface NavItemProps {
     children: any;
 }
 
-const Sidebar = ({ isOpen, setIsOpen }) => {
+const Sidebar = () => {
     const location = useLocation();
 
     const NavItem: React.FC<NavItemProps> = ({ to, icon: Icon, children }) => {
@@ -22,13 +22,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     }`}
             >
                 <Icon className="w-6 h-6" />
-                <span className={`mx-3 ${isOpen ? 'block' : 'hidden'}`}>{children}</span>
+                <span className={`mx-3 hidden`}>{children}</span>
             </Link>
         );
     };
 
     return (
-        <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-0 ${isOpen ? 'w-64' : 'w-20'}`}>
+        <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-0 w-20`}>
             <div className="h-full bg-gray-900 overflow-y-auto">
                 <nav className="mt-10">
                     <NavItem to="/" icon={ChatBubbleLeftRightIcon} children="Chat" />
