@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
-const TreeNode = ({ label, children, onSelect }) => {
+interface TreeNodeProps {
+    label: string;
+    children: any;
+    onSelect: () => void;
+}
+
+function expect<T>(value: T | undefined, message = "Value was undefined"): T {
+    if (value === undefined) {
+        throw new Error(message);
+    }
+    return value;
+}
+
+const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -88,7 +101,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
         }
     }, [focusedMessageId, data]);
 
-    const renderTree = (data) => {
+    const renderTree = (data: DebugData) => {
         return (
             <div>
                 {data.sessions.map(session => (
@@ -119,19 +132,19 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     const renderDetail = () => {
         if (!selectedItem) return <div className="text-gray-500 italic">Select an item to view details</div>;
 
-        let item;
         let content = '';
         if (selectedItem.type === 'session') {
-            item = data.sessions.find(s => s.id === selectedItem.id);
+            let item = data.sessions.find(s => s.id === selectedItem.id);
+            item = expect(item);
             content = `Session ID: ${item.id}\n\nMessages: ${item.messages.length}\nTotal Requests: ${item.messages.reduce((total, msg) => total + msg.llmRequests.length, 0)}`;
         } else if (selectedItem.type === 'message') {
-            item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
-            const body = JSON.parse(item.content);
-            content = `Message ID: ${item.id}\nCorrelation ID:${body.CorrelationId}\n\n${body.FullTranscript}`;
+            let item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
+            item = expect(item);
+            content = `Message ID: ${item.id}\nCorrelation ID:${item.correlationId}\n\n${item.content}`;
         } else if (selectedItem.type === 'request') {
-            item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
-            const body = JSON.parse(item.input);
-            content = `Request ID: ${item.id}\nCorrelation ID:${body.CorrelationId}\n\n${body.FullTranscript}${item.output}`;
+            let item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
+            item = expect(item);
+            content = `Request ID: ${item.id}\n\n\n${item.prompt}${item.response}`;
         }
 
         return (

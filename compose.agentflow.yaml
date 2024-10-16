@@ -24,12 +24,11 @@ services:
       - ./request_logs:/App/LlmRequestLogs
 
   # llmhost:
-  #   # image: localhost/vllm/vllm-openai:latest
-  #   image: vllm/vllm-openai:v0.6.2
+  #   image: vllm/vllm-openai:v0.6.3
   #   # ipc: host
   #   shm_size: 1g
   #   environment:
-  #     - CUDA_DEVICE_ORDER=PCI_BUS_ID
+  #     - CUDA_VISIBLE_DEVICES=1,0
   #   volumes:
   #     - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
   #     - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/phi3_chat_template.jinja
@@ -68,6 +67,7 @@ services:
       -fa
       -c 8192
       -ts 1,0
+      --main-gpu 1
     ports:
       - "8000:8000"
     devices:

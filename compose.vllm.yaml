@@ -1,19 +1,29 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:latest
-    ipc: host
+    image: vllm/vllm-openai:v0.6.3
+    # ipc: host
+    shm_size: 1g
     environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      - CUDA_VISIBLE_DEVICES=1,0
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
-      - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/chat_template.jinja
+      - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/phi3_chat_template.jinja
+      - ./tokenizer_configs/qwen25-instruct-v2.jinja:/root/qwenchat_template.jinja
     # restart: unless-stopped
+    # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
+    # --model unsloth/Llama-3.2-3B-Instruct
+    # --model Qwen/Qwen2.5-14B-Instruct-AWQ
+    # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
+    # --chat-template /root/chat_template.jinja
     command: >
-      --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
+      --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
       --served-model-name model
       --max-model-len 8192
-      --chat-template /root/chat_template.jinja
+      --chat-template /root/qwenchat_template.jinja
+      --disable-log-requests
+      --disable-log-stats
+      -tp 2
     ports:
       - "8000:8000"
     devices:

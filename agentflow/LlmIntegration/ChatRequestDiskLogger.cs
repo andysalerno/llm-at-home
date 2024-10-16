@@ -37,6 +37,8 @@ public sealed class ChatRequestDiskLogger
         string logFileDir = this.config.DiskLoggingPath;
         string fullPath = Path.GetFullPath(logFileDir);
 
+        var logger = this.GetLogger();
+
         var files = new DirectoryInfo(fullPath)
             .GetFiles()
             .OrderByDescending(f => f.CreationTimeUtc)
@@ -46,6 +48,8 @@ public sealed class ChatRequestDiskLogger
 
         foreach (var file in files)
         {
+            logger.LogInformation("Reading requestdata file: {FileName}", file.FullName);
+
             string content = await File.ReadAllTextAsync(file.FullName);
 
             var requestData = JsonSerializer.Deserialize<RequestData>(content)
