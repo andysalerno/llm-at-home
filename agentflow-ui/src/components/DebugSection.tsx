@@ -5,6 +5,13 @@ interface TreeNodeProps {
     label: string;
     children: any;
     onSelect: () => void;
+    updateExpandedState: NodeStateUpdate;
+}
+
+enum NodeStateUpdate {
+    ForceClose,
+    ForceOpen,
+    NoChange
 }
 
 function expect<T>(value: T | undefined, message = "Value was undefined"): T {
@@ -14,8 +21,14 @@ function expect<T>(value: T | undefined, message = "Value was undefined"): T {
     return value;
 }
 
-const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
+const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect, updateExpandedState }) => {
     const [isOpen, setIsOpen] = useState(false);
+
+    if (!isOpen && updateExpandedState === NodeStateUpdate.ForceOpen) {
+        setIsOpen(true);
+    } else if (isOpen && updateExpandedState === NodeStateUpdate.ForceClose) {
+        setIsOpen(false);
+    }
 
     return (
         <div>
@@ -109,17 +122,20 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     <TreeNode
                         label={`Session: ${session.id}`}
                         onSelect={() => setSelectedItem({ type: 'session', id: session.id })}
+                        updateExpandedState={selectedItem?.id.startsWith(session.id) === true ? NodeStateUpdate.ForceOpen : NodeStateUpdate.NoChange}
                     >
                         {session.messages.map(message => (
                             <TreeNode
                                 label={`Message: ${message.content.substring(0, 20)}...`}
                                 onSelect={() => setSelectedItem({ type: 'message', id: message.id })}
+                                updateExpandedState={selectedItem?.id.startsWith(message.id) === true ? NodeStateUpdate.ForceOpen : NodeStateUpdate.NoChange}
                             >
                                 {message.llmRequests.map(request => (
                                     <TreeNode
                                         children={[]}
                                         label={`Request: ${request.id}`}
                                         onSelect={() => setSelectedItem({ type: 'request', id: request.id })}
+                                        updateExpandedState={selectedItem?.id.startsWith(request.id) === true ? NodeStateUpdate.ForceOpen : NodeStateUpdate.NoChange}
                                     />
                                 ))}
                             </TreeNode>
