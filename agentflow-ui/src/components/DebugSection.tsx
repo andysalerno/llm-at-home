@@ -38,8 +38,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
 
 interface LlmRequest {
     id: string;
-    prompt: string;
-    response: string;
+    input: string;
+    output: string;
 }
 
 interface Message {
@@ -116,7 +116,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                             >
                                 {message.llmRequests.map(request => (
                                     <TreeNode
-                                        children={request.id}
+                                        children={[]}
                                         label={`Request: ${request.id}`}
                                         onSelect={() => setSelectedItem({ type: 'request', id: request.id })}
                                     />
@@ -144,7 +144,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
         } else if (selectedItem.type === 'request') {
             let item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
             item = expect(item);
-            content = `Request ID: ${item.id}\n\n\n${item.prompt}${item.response}`;
+            content = `Request ID: ${item.id}\n\n\n${item.input}${item.output}`;
         }
 
         return (
