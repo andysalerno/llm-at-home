@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Nodes;
 using AgentFlow.LlmClient;
 
 namespace AgentFlow;
@@ -17,7 +18,7 @@ public record CompletionsRequest(string Text);
 public record ChatCompletionsRequest(
     IEnumerable<Message> Messages,
     IEnumerable<string>? Stop = null,
-    JsonElement? JsonSchema = null,
+    JsonObject? JsonSchema = null,
     string? ToolChoice = null,
     string? PromptTemplate = null);
 

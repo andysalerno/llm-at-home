@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using AgentFlow.LlmClient;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
     private readonly ILogger<GetAssistantResponseCell> logger;
     private readonly AgentName agentName;
     private readonly Role agentRole;
-    private readonly JsonElement? responseSchema;
+    private readonly JsonObject? responseSchema;
     private readonly string? toolChoice;
     private readonly ILlmCompletionsClient completionsClient;
 
@@ -23,7 +24,7 @@ public class GetAssistantResponseCell : Cell<ConversationThread>
     public GetAssistantResponseCell(
         AgentName agentName,
         Role agentRole,
-        JsonElement? responseSchema,
+        JsonObject? responseSchema,
         string? toolChoice,
         ILlmCompletionsClient completionsClient)
     {

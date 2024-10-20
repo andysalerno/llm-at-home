@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using AgentFlow.Agents.Extensions;
 using AgentFlow.Config;
@@ -89,7 +91,10 @@ internal record OpenAIChatCompletionRequest(
     string? ToolChoice = null,
 
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    JsonElement? ResponseFormat = null);
+    JsonObject? GuidedJson = null,
+
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    JsonObject? ResponseFormat = null);
 
 internal sealed record ResponseFormat(JsonElement Value, string Type = "json");
 
@@ -217,13 +222,21 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             .Cast<IReadOnlyDictionary<string, string>>()
             .ToImmutableArray();
 
-        ImmutableArray<JsonElement>? tools = input.JsonSchema is null ? null : new List<JsonElement> { input.JsonSchema.Value }.ToImmutableArray();
+        ImmutableArray<JsonObject>? tools = input.JsonSchema is null ? null : new List<JsonObject> { input.JsonSchema }.ToImmutableArray();
+
+        JsonObject? schemaWithHeader = null;
+
+        if (input.JsonSchema != null)
+        {
+            schemaWithHeader = CreateJsonSchemaObject(input.JsonSchema);
+        }
 
         var request = new OpenAIChatCompletionRequest(
             Model: this.modelName,
             Temperature: 0.00f,
             MaxTokens: MaxTokensToGenerate,
-            ResponseFormat: input.JsonSchema,
+            // ResponseFormat: schemaWithHeader,
+            GuidedJson: input.JsonSchema,
             // ResponseFormat: input.JsonSchema is not null ? new ResponseFormat(input.JsonSchema.Value) : null,
             // Tools: input.JsonSchema != null ? [input.JsonSchema] : null,
             // RepetitionPenalty: 1.2f,
@@ -339,6 +352,27 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     public void Dispose()
     {
         this.HttpClient.Dispose();
+    }
+
+    private static JsonObject CreateJsonSchemaObject(JsonObject innerSchema)
+    {
+        JsonObject header = JsonSerializer.Deserialize<JsonObject>(
+            """
+            {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "",
+                    "schema": {},
+                    "strict": true
+                }
+            }
+            """.Trim())
+            ?? throw new InvalidCastException("Could not deserialize the json chema template.");
+
+        var schemaProp = header["json_schema"] ?? throw new InvalidOperationException("Expected to find the json_schema");
+        schemaProp["schema"] = innerSchema;
+
+        return header;
     }
 
     private static Uri CombineUriFragments(string @base, string path)
