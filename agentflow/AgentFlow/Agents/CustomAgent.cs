@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
@@ -41,7 +42,7 @@ public sealed class CustomAgent : IAgent
     private readonly IPromptRenderer promptRenderer;
     private readonly ILlmCompletionsClient completionsClient;
     private readonly ImmutableDictionary<string, string> variables;
-    private readonly JsonElement? responseSchema;
+    private readonly JsonObject? responseSchema;
     private readonly string? toolChoice;
     private readonly ILogger<CustomAgent> logger;
 
@@ -54,7 +55,7 @@ public sealed class CustomAgent : IAgent
         ImmutableDictionary<string, string> variables,
         IPromptRenderer promptRenderer,
         ILlmCompletionsClient completionsClient,
-        JsonElement? responseSchema = null,
+        JsonObject? responseSchema = null,
         string? toolChoice = null)
     {
         this.Role = role;
@@ -119,7 +120,7 @@ public sealed class CustomAgent : IAgent
         private AgentName? name;
         private InstructionStrategy instructionsStrategy = InstructionStrategy.TopLevelSystemMessage;
         private ILlmCompletionsClient completionsClient;
-        private JsonElement? responseSchema;
+        private JsonObject? responseSchema;
         private MessageVisibility visibility;
         private string? toolChoice;
 
@@ -162,7 +163,7 @@ public sealed class CustomAgent : IAgent
             return this;
         }
 
-        public Builder WithJsonResponseSchema(JsonElement responseSchema)
+        public Builder WithJsonResponseSchema(JsonObject responseSchema)
         {
             this.responseSchema = responseSchema;
 

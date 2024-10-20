@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.Generic;
@@ -83,31 +84,25 @@ public class ToolAgent : IAgent
   /// <summary>
   /// Gets a VLLM friendly schema.
   /// </summary>
-  private static JsonElement JsonToolSchema { get; }
-    = JsonSerializer.Deserialize<JsonElement>(
-"""
-{
-  "type": "json_schema",
-  "json_schema": {
-  "name": "",
-  "schema": {
-      "type": "object",
-      "properties": {
-          "last_user_message_intent": { "type": "string" },
-          "function_name": { "type": "string" },
-          "invocation": { "type": "string" }
-      },
-      "required": [
-          "last_user_message_intent",
-          "function_name",
-          "invocation"
-      ],
-      "additionalProperties": false
-  },
-  "strict": true
-  }
-}
-""".Trim());
+  private static JsonObject JsonToolSchema { get; }
+    = JsonSerializer.Deserialize<JsonObject>(
+        """
+        {
+            "type": "object",
+            "properties": {
+                "last_user_message_intent": { "type": "string" },
+                "function_name": { "type": "string" },
+                "invocation": { "type": "string" }
+            },
+            "required": [
+                "last_user_message_intent",
+                "function_name",
+                "invocation"
+            ],
+            "additionalProperties": false
+        }
+        """.Trim())
+        ?? throw new InvalidOperationException("Could not deserialize the default JsonToolSchema");
 
   public Task<Cell<ConversationThread>> GetNextConversationStateAsync()
   {
