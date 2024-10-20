@@ -362,7 +362,6 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
                 "type": "json_schema",
                 "json_schema": {
                     "name": "",
-                    "schema": {},
                     "strict": true
                 }
             }
@@ -370,7 +369,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             ?? throw new InvalidCastException("Could not deserialize the json chema template.");
 
         var schemaProp = header["json_schema"] ?? throw new InvalidOperationException("Expected to find the json_schema");
-        schemaProp["schema"] = innerSchema;
+        schemaProp["schema"] = innerSchema.DeepClone();
 
         return header;
     }
