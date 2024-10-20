@@ -1,9 +1,9 @@
-FROM nvidia/cuda:12.1.0-base-ubuntu20.04 as base
+FROM nvidia/cuda:12.6.0-runtime-ubuntu24.04 as base
 
-ARG PYTORCH_VERSION=2.1.1
+ARG PYTORCH_VERSION=2.5.0
 ARG PYTHON_VERSION=3.10
-ARG CUDA_VERSION=12.1
-ARG MAMBA_VERSION=23.3.1-1
+ARG CUDA_VERSION=12.6
+ARG MAMBA_VERSION=24.7.1-2
 ARG CUDA_CHANNEL=nvidia
 ARG INSTALL_CHANNEL=pytorch
 ARG TARGETPLATFORM
@@ -29,7 +29,7 @@ RUN chmod +x ~/mambaforge.sh && \
     rm ~/mambaforge.sh
 
 # Install pytorch
-# On arm64 we exit with an error code
+On arm64 we exit with an error code
 RUN case ${TARGETPLATFORM} in \
          "linux/arm64")  exit 1 ;; \
          *)              /opt/conda/bin/conda update -y conda &&  \
