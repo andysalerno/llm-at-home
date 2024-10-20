@@ -112,18 +112,6 @@ services:
   #   devices:
   #     - nvidia.com/gpu=all
 
-  # chat-ui:
-  #   image: localhost/chat-ui
-  #   build: ./chat-ui
-  #   ports:
-  #     - "80:5173"
-  #   restart: unless-stopped
-  #   stop_grace_period: 1s
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway"
-  #   depends_on:
-  #     - mongo-chatui
-
   embedding-server:
     image: localhost/embedding-server
     build: ./embedding-server
@@ -139,36 +127,3 @@ services:
     ports:
       - "8002:8002"
     restart: unless-stopped
-
-  # webprompt:
-  #   image: localhost/webprompt
-  #   build: ./webprompt
-  #   ports:
-  #     - "8004:3000"
-  #   restart: unless-stopped
-
-  # mongo-chatui:
-  #   image: mongo:latest
-  #   restart: unless-stopped
-  #   volumes:
-  #     - mongo-storage:/data/db
-
-  # prometheus:
-  #   image: prom/prometheus:latest
-  #   volumes:
-  #     - ./.prometheus.config:/etc/prometheus/prometheus.yml
-  #   ports:
-  #     - "9090:9090"
-
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - grafana-storage:/var/lib/grafana
-  #   depends_on:
-  #     - prometheus
-
-volumes:
-  grafana-storage:
-  mongo-storage:
