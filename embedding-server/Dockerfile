@@ -1,9 +1,9 @@
-FROM nvidia/cuda:12.1.0-base-ubuntu20.04 as base
+FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04 as base
 
-ARG PYTORCH_VERSION=2.1.1
+ARG PYTORCH_VERSION=2.5.0
 ARG PYTHON_VERSION=3.10
-ARG CUDA_VERSION=12.1
-ARG MAMBA_VERSION=23.3.1-1
+ARG CUDA_VERSION=12.4
+ARG MAMBA_VERSION=24.7.1-2
 ARG CUDA_CHANNEL=nvidia
 ARG INSTALL_CHANNEL=pytorch
 ARG TARGETPLATFORM
@@ -23,7 +23,7 @@ RUN case ${TARGETPLATFORM} in \
          "linux/arm64")  MAMBA_ARCH=aarch64  ;; \
          *)              MAMBA_ARCH=x86_64   ;; \
     esac && \
-    curl -fsSL -v -o ~/mambaforge.sh -O  "https://github.com/conda-forge/miniforge/releases/download/${MAMBA_VERSION}/Mambaforge-${MAMBA_VERSION}-Linux-${MAMBA_ARCH}.sh"
+    curl -fsSL -v -o ~/mambaforge.sh -O  "https://github.com/conda-forge/miniforge/releases/download/${MAMBA_VERSION}/Miniforge3-${MAMBA_VERSION}-Linux-${MAMBA_ARCH}.sh"
 RUN chmod +x ~/mambaforge.sh && \
     bash ~/mambaforge.sh -b -p /opt/conda && \
     rm ~/mambaforge.sh
