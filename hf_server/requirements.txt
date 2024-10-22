@@ -1,9 +1,0 @@
-flask
-transformers
-flash-attn
-chardet
-accelerate
-bitsandbytes
-optimum
-hqq
-# conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
