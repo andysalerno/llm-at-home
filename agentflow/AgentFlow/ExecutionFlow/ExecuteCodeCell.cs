@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Agents.ExecutionFlow;
 
-public class ExecuteCodeCell : Cell<ConversationThread>
+public sealed record ExecuteCodeCell : Cell<ConversationThread>
 {
     private readonly ICodeExecutor codeExecutor;
     private readonly ILogger<ExecuteCodeCell> logger;

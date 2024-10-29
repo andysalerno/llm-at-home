@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Agents.ExecutionFlow;
 
-public class ExecuteToolCell : Cell<ConversationThread>
+public sealed record ExecuteToolCell : Cell<ConversationThread>
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
     {

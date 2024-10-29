@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -235,8 +234,8 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             Model: this.modelName,
             Temperature: 0.00f,
             MaxTokens: MaxTokensToGenerate,
-            // ResponseFormat: schemaWithHeader,
-            GuidedJson: input.JsonSchema,
+            ResponseFormat: schemaWithHeader,
+            // GuidedJson: input.JsonSchema,
             // ResponseFormat: input.JsonSchema is not null ? new ResponseFormat(input.JsonSchema.Value) : null,
             // Tools: input.JsonSchema != null ? [input.JsonSchema] : null,
             // RepetitionPenalty: 1.2f,

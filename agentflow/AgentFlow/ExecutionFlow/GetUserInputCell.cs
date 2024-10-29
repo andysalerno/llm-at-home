@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Agents.ExecutionFlow;
 
-internal sealed class GetUserInputCell : Cell<ConversationThread>
+internal sealed record GetUserInputCell : Cell<ConversationThread>
 {
     private readonly AgentName name;
     private readonly Role role;

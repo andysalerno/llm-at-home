@@ -26,6 +26,11 @@ internal sealed class OpenAIServer
     {
         var logger = this.GetLogger();
 
+        {
+            string programSerialized = JsonSerializer.Serialize(program);
+            logger.LogInformation("serialized program: {Program}", programSerialized);
+        }
+
         var listener = new HttpListener();
         listener.Prefixes.Add($"http://*:{port}/");
         listener.Start();

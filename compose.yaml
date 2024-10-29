@@ -24,94 +24,28 @@ services:
       - ./request_logs:/App/LlmRequestLogs
 
   llmhost:
-    image: vllm/vllm-openai:v0.6.3.post1
-    # ipc: host
-    shm_size: 1g
-    environment:
-      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+    # image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    image: localhost/llama.cpp
     volumes:
-      - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
-      - ./tokenizer_configs/phi-3-medium-128k-instruct-template.jinja:/root/phi3_chat_template.jinja
-      - ./tokenizer_configs/qwen25-instruct-v2.jinja:/root/qwenchat_template.jinja
+      - ${MODEL_DIR}:/models
     # restart: unless-stopped
-    # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
-    # --model unsloth/Llama-3.2-3B-Instruct
-    # --model Qwen/Qwen2.5-14B-Instruct-AWQ
-    # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
-    # --chat-template /root/chat_template.jinja
     command: >
-      --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
-      --served-model-name model
-      --max-model-len 8192
-      --chat-template /root/qwenchat_template.jinja
-      --disable-log-requests
-      --disable-log-stats
+      -m /models/${MODEL_NAME}
+      --metrics
+      --port 8000
+      --host 0.0.0.0
+      -ngl 100
+      -fa
+      -c 8192
+      -ts 1,0
+      --main-gpu 1
     ports:
       - "8000:8000"
     devices:
-      - nvidia.com/gpu=1
-      # - nvidia.com/gpu=all
-
-  # llmhost:
-  #   # image: ghcr.io/ggerganov/llama.cpp:server-cuda
-  #   image: localhost/llama.cpp
-  #   volumes:
-  #     - ${MODEL_DIR}:/models
-  #   # restart: unless-stopped
-  #   command: >
-  #     -m /models/${MODEL_NAME}
-  #     --metrics
-  #     --port 8000
-  #     --host 0.0.0.0
-  #     -ngl 100
-  #     -fa
-  #     -c 8192
-  #     -ts 1,0
-  #     --main-gpu 1
-  #   ports:
-  #     - "8000:8000"
-  #   devices:
-  #     - nvidia.com/gpu=all
-  #   env_file:
-  #     - ./.agentflow.default.env
-  #     - ./.agentflow.env
-
-  # llmhost:
-  #   image: ghcr.io/huggingface/text-generation-inference:2.3
-  #   ipc: host
-  #   volumes:
-  #     - /home/tiny/mnt/drive/.cache/huggingface/hub:/data/hub
-  #   environment:
-  #     - CUDA_DEVICE_ORDER=PCI_BUS_ID
-  #     - MODEL_ID=neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
-  #   command: >
-  #     --model-id ${MODEL_ID}
-  #     --max-top-n-tokens 1
-  #     --port 8000
-  #     --max-concurrent-requests 5 
-  #     --max-best-of 1 
-  #     --max-batch-prefill-tokens=8242 --max-total-tokens=8192 --max-input-tokens=8191
-  #   ports:
-  #     - "8000:8000"
-  #   devices:
-  #     - nvidia.com/gpu=all
-
-  # llmhost:
-  #   image: ghcr.io/theroyallab/tabbyapi:latest
-  #   command: main.py --host 0.0.0.0 --port 8000 --model-name Phi-3-medium-128k-instruct-exl2-8_0 --max-seq-len 8192 --disable-auth TRUE
-  #   ports:
-  #     - "8000:8000"
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   environment:
-  #     - NAME=TabbyAPI
-  #   volumes:
-  #     - /home/tiny/mnt/drive/exl2:/app/models
-  #   devices:
-  #     - nvidia.com/gpu=all
+      - nvidia.com/gpu=all
+    env_file:
+      - ./.agentflow.default.env
+      - ./.agentflow.env
 
   embedding-server:
     image: localhost/embedding-server

@@ -3,12 +3,12 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow;
 
-public abstract class Cell<T>
+public abstract record Cell<T>
 {
     public abstract Task<T> RunAsync(T input);
 }
 
-public class TerminateCell<T> : Cell<T>
+public sealed record TerminateCell<T> : Cell<T>
 {
     public override Task<T> RunAsync(T input)
     {
@@ -16,7 +16,7 @@ public class TerminateCell<T> : Cell<T>
     }
 }
 
-public class LambdaCell<T> : Cell<T>
+public sealed record LambdaCell<T> : Cell<T>
 {
     private readonly Func<T, T> _func;
 
@@ -31,7 +31,7 @@ public class LambdaCell<T> : Cell<T>
     }
 }
 
-public sealed class WhileCell<T> : Cell<T>
+public sealed record WhileCell<T> : Cell<T>
 {
     private readonly ILogger<WhileCell<T>> _logger;
 
@@ -65,7 +65,7 @@ public sealed class WhileCell<T> : Cell<T>
     }
 }
 
-public sealed class DiagnosticCell<T> : Cell<T>
+public sealed record DiagnosticCell<T> : Cell<T>
 {
     private readonly ILogger<DiagnosticCell<T>> _logger;
     private readonly string _diagnosticName;
@@ -84,7 +84,7 @@ public sealed class DiagnosticCell<T> : Cell<T>
     }
 }
 
-public sealed class IfCell<T> : Cell<T>
+public sealed record IfCell<T> : Cell<T>
 {
     public Cell<T> NextIfTrue { get; init; } = new TerminateCell<T>();
 
@@ -103,7 +103,7 @@ public sealed class IfCell<T> : Cell<T>
     }
 }
 
-public sealed class StartCell<T> : Cell<T>
+public sealed record StartCell<T> : Cell<T>
 {
     private readonly ILogger<StartCell<T>> _logger;
 
@@ -119,7 +119,7 @@ public sealed class StartCell<T> : Cell<T>
     }
 }
 
-public sealed class CellSequence<T> : Cell<T>
+public sealed record CellSequence<T> : Cell<T>
 {
     private readonly ImmutableArray<Cell<T>> _sequence;
 
@@ -171,7 +171,7 @@ public interface ICondition<T>
     bool Evaluate(T input);
 }
 
-public class AlwaysTrueCondition<T> : ICondition<T>
+public sealed class AlwaysTrueCondition<T> : ICondition<T>
 {
     public bool Evaluate(T input)
     {
@@ -179,7 +179,7 @@ public class AlwaysTrueCondition<T> : ICondition<T>
     }
 }
 
-public class AlwaysFalseCondition<T> : ICondition<T>
+public sealed class AlwaysFalseCondition<T> : ICondition<T>
 {
     public bool Evaluate(T input)
     {
@@ -187,7 +187,7 @@ public class AlwaysFalseCondition<T> : ICondition<T>
     }
 }
 
-public sealed class ResultCell<T> : Cell<T>
+public sealed record ResultCell<T> : Cell<T>
 {
     private readonly T _result;
 
