@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "cellflow"
+]
+
+[workspace.lints.clippy]
+pedantic = "warn"
+perf = "warn"
+correctness = "warn"
+complexity = "warn"
+nursery = "warn"
+style = "warn"
+suspicious = "warn"
