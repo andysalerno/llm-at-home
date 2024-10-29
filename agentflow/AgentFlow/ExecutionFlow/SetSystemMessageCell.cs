@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Agents.ExecutionFlow;
 
-public class SetSystemMessageCell : Cell<ConversationThread>
+public sealed record SetSystemMessageCell : Cell<ConversationThread>
 {
     private readonly ILogger<SetSystemMessageCell> logger;
     private readonly AgentName agentName;

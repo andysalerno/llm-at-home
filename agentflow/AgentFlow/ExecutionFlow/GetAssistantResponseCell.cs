@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Agents.ExecutionFlow;
 
-public class GetAssistantResponseCell : Cell<ConversationThread>
+public sealed record GetAssistantResponseCell : Cell<ConversationThread>
 {
     private readonly ILogger<GetAssistantResponseCell> logger;
     private readonly AgentName agentName;

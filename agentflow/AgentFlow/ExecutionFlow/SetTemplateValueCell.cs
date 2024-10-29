@@ -2,7 +2,7 @@ using AgentFlow.WorkSpace;
 
 namespace AgentFlow.Agents.ExecutionFlow;
 
-public class SetTemplateValueCell : Cell<ConversationThread>
+public sealed record SetTemplateValueCell : Cell<ConversationThread>
 {
     private readonly string templateKey;
     private readonly string templateValue;

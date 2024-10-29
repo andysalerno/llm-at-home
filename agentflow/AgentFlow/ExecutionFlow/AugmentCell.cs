@@ -8,7 +8,7 @@ namespace AgentFlow.Agents.ExecutionFlow;
 /// Inserts (augments) information into the conversation
 /// to be used by the bot to respond.
 /// </summary>
-public class AugmentCell : Cell<ConversationThread>
+public sealed record AugmentCell : Cell<ConversationThread>
 {
     private readonly ILogger<AugmentCell> logger;
 
