@@ -2,7 +2,8 @@
 resolver = "2"
 
 members = [
-    "cellflow"
+    "cellflow",
+    "example"
 ]
 
 [workspace.lints.clippy]

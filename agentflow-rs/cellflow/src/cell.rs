@@ -1,28 +1,17 @@
-pub trait Cell<T> {
-    fn run(&self, input: &T) -> T;
+pub enum Cell {
+    If(IfCell),
+    While(WhileCell),
+    Sequence(SequenceCell),
+    Custom,
 }
 
-pub struct NoOpCell<T> {
-    phantom: std::marker::PhantomData<T>,
+pub struct Condition;
+
+pub struct IfCell {
+    on_true: Box<Cell>,
+    on_false: Box<Cell>,
 }
 
-impl<T> NoOpCell<T> {
-    #[must_use]
-    pub const fn new() -> Self {
-        Self {
-            phantom: std::marker::PhantomData,
-        }
-    }
-}
+pub struct WhileCell;
 
-impl<T> Default for NoOpCell<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl<T: Clone> Cell<T> for NoOpCell<T> {
-    fn run(&self, input: &T) -> T {
-        input.clone()
-    }
-}
+pub struct SequenceCell(Vec<Cell>);
