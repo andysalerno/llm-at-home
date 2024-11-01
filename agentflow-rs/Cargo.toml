@@ -6,6 +6,13 @@ members = [
     "example"
 ]
 
+[workspace.lints.rust]
+let-underscore = "warn"
+future-incompatible = "warn"
+refining-impl-trait = "warn"
+rust-2024-compatibility = "warn"
+rust-2018-idioms = "warn"
+
 [workspace.lints.clippy]
 pedantic = "warn"
 perf = "warn"
