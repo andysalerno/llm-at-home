@@ -12,9 +12,21 @@ pub trait ConditionEvaluator<T> {
     fn evaluate(&self, item: &T) -> bool;
 }
 
-enum Handler<T> {
+pub enum Handler<T> {
     Cell(Box<dyn CellHandler<T>>),
     Condition(Box<dyn ConditionEvaluator<T>>),
+}
+
+impl<T> From<Box<dyn ConditionEvaluator<T>>> for Handler<T> {
+    fn from(v: Box<dyn ConditionEvaluator<T>>) -> Self {
+        Self::Condition(v)
+    }
+}
+
+impl<T> From<Box<dyn CellHandler<T>>> for Handler<T> {
+    fn from(v: Box<dyn CellHandler<T>>) -> Self {
+        Self::Cell(v)
+    }
 }
 
 /// A visitor or interpreter that can visit a cell
@@ -24,7 +36,8 @@ pub struct CellVisitor<T> {
 }
 
 impl<T: Clone> CellVisitor<T> {
-    pub fn new(handlers: Vec<Handler<T>>) -> Self {
+    #[must_use]
+    pub const fn new(handlers: Vec<Handler<T>>) -> Self {
         Self { handlers }
     }
 
@@ -33,7 +46,7 @@ impl<T: Clone> CellVisitor<T> {
     }
 
     fn visit(&self, cell: &Cell, input: &T) -> T {
-        match cell {
+        match &cell {
             Cell::If(if_cell) => {
                 let condition_handler = self.select_condition(if_cell.condition().id());
 
@@ -134,26 +147,26 @@ mod tests {
 
     #[test]
     fn test_simple_program_1() {
-        let program = Cell::Sequence(SequenceCell::new(vec![Cell::Custom(Incrementor::id())]));
+        let program = SequenceCell::new(vec![Cell::Custom(Incrementor::id())]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
 
-        let output = visitor.run(&program, &MyState(5));
+        let output = visitor.run(&program.into(), &MyState(5));
 
         assert_eq!(6, output.0);
     }
 
     #[test]
     fn test_simple_program_2() {
-        let program = Cell::Sequence(SequenceCell::new(vec![
+        let program = SequenceCell::new(vec![
             Cell::Custom(Incrementor::id()),
             Cell::Custom(Incrementor::id()),
             Cell::Custom(Incrementor::id()),
-        ]));
+        ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
 
-        let output = visitor.run(&program, &MyState(5));
+        let output = visitor.run(&program.into(), &MyState(5));
 
         assert_eq!(8, output.0);
     }

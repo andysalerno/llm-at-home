@@ -9,6 +9,24 @@ pub enum Cell {
     Custom(Id),
 }
 
+impl From<SequenceCell> for Cell {
+    fn from(v: SequenceCell) -> Self {
+        Self::Sequence(v)
+    }
+}
+
+impl From<WhileCell> for Cell {
+    fn from(v: WhileCell) -> Self {
+        Self::While(v)
+    }
+}
+
+impl From<IfCell> for Cell {
+    fn from(v: IfCell) -> Self {
+        Self::If(v)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Id(String);
 
