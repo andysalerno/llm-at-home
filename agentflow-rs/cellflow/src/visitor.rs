@@ -101,12 +101,30 @@ impl<T: Clone> CellVisitor<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Cell, SequenceCell};
+    use crate::{visitor::Handler, Cell, Id, SequenceCell};
 
     use super::{CellHandler, CellVisitor};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
+
+    struct Incrementor;
+
+    impl Incrementor {
+        fn id() -> crate::Id {
+            Id::new("incrementor".into())
+        }
+    }
+
+    impl CellHandler<MyState> for Incrementor {
+        fn id(&self) -> crate::Id {
+            Self::id()
+        }
+
+        fn handle(&self, item: &MyState) -> MyState {
+            MyState(item.0 + 1)
+        }
+    }
 
     #[test]
     #[should_panic(expected = "checking object safety")]
@@ -115,13 +133,28 @@ mod tests {
     }
 
     #[test]
-    fn test_simple_program() {
-        let program = Cell::Sequence(SequenceCell::new(vec![]));
+    fn test_simple_program_1() {
+        let program = Cell::Sequence(SequenceCell::new(vec![Cell::Custom(Incrementor::id())]));
 
-        let visitor: CellVisitor<MyState> = CellVisitor::new(vec![]);
+        let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
 
         let output = visitor.run(&program, &MyState(5));
 
-        assert_eq!(5, output.0);
+        assert_eq!(6, output.0);
+    }
+
+    #[test]
+    fn test_simple_program_2() {
+        let program = Cell::Sequence(SequenceCell::new(vec![
+            Cell::Custom(Incrementor::id()),
+            Cell::Custom(Incrementor::id()),
+            Cell::Custom(Incrementor::id()),
+        ]));
+
+        let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
+
+        let output = visitor.run(&program, &MyState(5));
+
+        assert_eq!(8, output.0);
     }
 }

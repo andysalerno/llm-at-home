@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{de::value, Deserialize, Serialize};
 
 /// A serializable and deserializable representation of some operation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -11,6 +11,13 @@ pub enum Cell {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Id(String);
+
+impl Id {
+    #[must_use]
+    pub const fn new(value: String) -> Self {
+        Self(value)
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Condition {
