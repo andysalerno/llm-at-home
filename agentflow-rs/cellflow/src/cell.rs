@@ -66,7 +66,16 @@ impl WhileCell {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SequenceCell(Vec<Cell>);
+pub struct SequenceCell {
+    sequence: Vec<Cell>,
+}
+
+impl SequenceCell {
+    #[must_use]
+    pub fn sequence(&self) -> &[Cell] {
+        &self.sequence
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -74,6 +83,8 @@ mod tests {
 
     #[test]
     fn test_simple_sequence() {
-        let _cell = Cell::Sequence(SequenceCell(Vec::new()));
+        let _cell = Cell::Sequence(SequenceCell {
+            sequence: Vec::new(),
+        });
     }
 }

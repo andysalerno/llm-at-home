@@ -23,27 +23,42 @@ pub struct CellVisitor<T> {
     handlers: Vec<Handler<T>>,
 }
 
-impl<T> CellVisitor<T> {
-    pub fn visit(&self, cell: &Cell, input: &T) {
+impl<T: Clone> CellVisitor<T> {
+    pub fn visit(&self, cell: &Cell, input: &T) -> T {
         match cell {
             Cell::If(if_cell) => {
                 let condition_handler = self.select_condition(if_cell.condition().id());
 
                 if condition_handler.evaluate(input) {
-                    self.visit(if_cell.on_true(), input);
+                    self.visit(if_cell.on_true(), input)
                 } else {
-                    self.visit(if_cell.on_false(), input);
+                    self.visit(if_cell.on_false(), input)
                 }
             }
             Cell::While(while_cell) => {
                 let condition_handler = self.select_condition(while_cell.condition().id());
 
+                let mut result = input.clone();
+
                 while condition_handler.evaluate(input) {
-                    self.visit(while_cell.body(), input);
+                    result = self.visit(while_cell.body(), &result);
                 }
+
+                result
             }
-            Cell::Sequence(sequence_cell) => todo!(),
-            Cell::Custom(id) => todo!(),
+            Cell::Sequence(sequence_cell) => {
+                let mut result = input.clone();
+                for cell in sequence_cell.sequence() {
+                    result = self.visit(cell, &result);
+                }
+
+                result
+            }
+            Cell::Custom(id) => {
+                let custom_handler = self.select_handler(id);
+
+                custom_handler.handle(input)
+            }
         }
     }
 
