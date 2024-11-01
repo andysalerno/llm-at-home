@@ -7,14 +7,14 @@ pub trait CellHandler<T> {
     fn handle(&self, item: &T) -> T;
 }
 
-pub trait ConditionHandler<T> {
+pub trait ConditionEvaluator<T> {
     fn id(&self) -> Id;
-    fn handle(&self, item: &T) -> bool;
+    fn evaluate(&self, item: &T) -> bool;
 }
 
 enum Handler<T> {
     Cell(Box<dyn CellHandler<T>>),
-    Condition(Box<dyn ConditionHandler<T>>),
+    Condition(Box<dyn ConditionEvaluator<T>>),
 }
 
 /// A visitor or interpreter that can visit a cell
@@ -28,8 +28,20 @@ impl<T> CellVisitor<T> {
         match cell {
             Cell::If(if_cell) => {
                 let condition_handler = self.select_condition(if_cell.condition().id());
+
+                if condition_handler.evaluate(input) {
+                    self.visit(if_cell.on_true(), input);
+                } else {
+                    self.visit(if_cell.on_false(), input);
+                }
             }
-            Cell::While(while_cell) => todo!(),
+            Cell::While(while_cell) => {
+                let condition_handler = self.select_condition(while_cell.condition().id());
+
+                while condition_handler.evaluate(input) {
+                    self.visit(while_cell.body(), input);
+                }
+            }
             Cell::Sequence(sequence_cell) => todo!(),
             Cell::Custom(id) => todo!(),
         }
@@ -45,14 +57,13 @@ impl<T> CellVisitor<T> {
                 Handler::Cell(handler) => Some(handler),
                 Handler::Condition(_) => None,
             })
-            .filter(|h| h.id() == *id)
-            .next()
+            .find(|h| h.id() == *id)
             .expect("expected a condition to be registered");
 
         found.as_ref()
     }
 
-    fn select_condition(&self, id: &Id) -> &dyn ConditionHandler<T> {
+    fn select_condition(&self, id: &Id) -> &dyn ConditionEvaluator<T> {
         let found = self
             .handlers
             .iter()
@@ -60,8 +71,7 @@ impl<T> CellVisitor<T> {
                 Handler::Cell(_) => None,
                 Handler::Condition(handler) => Some(handler),
             })
-            .filter(|h| h.id() == *id)
-            .next()
+            .find(|h| h.id() == *id)
             .expect("expected a condition to be registered");
 
         found.as_ref()

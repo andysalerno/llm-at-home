@@ -31,15 +31,18 @@ pub struct IfCell {
 }
 
 impl IfCell {
-    pub fn condition(&self) -> &Condition {
+    #[must_use]
+    pub const fn condition(&self) -> &Condition {
         &self.condition
     }
 
-    pub fn on_true(&self) -> &Cell {
+    #[must_use]
+    pub const fn on_true(&self) -> &Cell {
         &self.on_true
     }
 
-    pub fn on_false(&self) -> &Cell {
+    #[must_use]
+    pub const fn on_false(&self) -> &Cell {
         &self.on_false
     }
 }
@@ -48,6 +51,18 @@ impl IfCell {
 pub struct WhileCell {
     condition: Condition,
     body: Box<Cell>,
+}
+
+impl WhileCell {
+    #[must_use]
+    pub const fn condition(&self) -> &Condition {
+        &self.condition
+    }
+
+    #[must_use]
+    pub const fn body(&self) -> &Cell {
+        &self.body
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
