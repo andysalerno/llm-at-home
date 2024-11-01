@@ -43,7 +43,13 @@ pub struct Condition {
 }
 
 impl Condition {
-    pub fn id(&self) -> &Id {
+    #[must_use]
+    pub const fn new(id: Id) -> Self {
+        Self { id }
+    }
+
+    #[must_use]
+    pub const fn id(&self) -> &Id {
         &self.id
     }
 }
@@ -56,6 +62,15 @@ pub struct IfCell {
 }
 
 impl IfCell {
+    #[must_use]
+    pub const fn new(condition: Condition, on_true: Box<Cell>, on_false: Box<Cell>) -> Self {
+        Self {
+            condition,
+            on_true,
+            on_false,
+        }
+    }
+
     #[must_use]
     pub const fn condition(&self) -> &Condition {
         &self.condition

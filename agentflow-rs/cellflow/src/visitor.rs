@@ -114,9 +114,9 @@ impl<T: Clone> CellVisitor<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{visitor::Handler, Cell, Id, SequenceCell};
+    use crate::{visitor::Handler, Cell, Condition, Id, IfCell, SequenceCell};
 
-    use super::{CellHandler, CellVisitor};
+    use super::{CellHandler, CellVisitor, ConditionEvaluator};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
@@ -136,6 +136,24 @@ mod tests {
 
         fn handle(&self, item: &MyState) -> MyState {
             MyState(item.0 + 1)
+        }
+    }
+
+    struct GreaterThanCondition(usize);
+
+    impl GreaterThanCondition {
+        fn id() -> Id {
+            Id::new("greater-than-condition".into())
+        }
+    }
+
+    impl ConditionEvaluator<MyState> for GreaterThanCondition {
+        fn id(&self) -> Id {
+            Self::id()
+        }
+
+        fn evaluate(&self, item: &MyState) -> bool {
+            item.0 > self.0
         }
     }
 
@@ -165,6 +183,29 @@ mod tests {
         ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
+
+        let output = visitor.run(&program.into(), &MyState(5));
+
+        assert_eq!(8, output.0);
+    }
+
+    #[test]
+    fn test_simple_program_3() {
+        let program = SequenceCell::new(vec![
+            Cell::Custom(Incrementor::id()),
+            Cell::Custom(Incrementor::id()),
+            Cell::If(IfCell::new(
+                Condition::new(GreaterThanCondition::id()),
+                Box::new(Cell::Custom(Incrementor::id())),
+                Box::new(Cell::Custom(Incrementor::id())),
+            )),
+            Cell::Custom(Incrementor::id()),
+        ]);
+
+        let visitor = CellVisitor::new(vec![
+            Handler::Cell(Box::new(Incrementor)),
+            Handler::Condition(Box::new(GreaterThanCondition(7))),
+        ]);
 
         let output = visitor.run(&program.into(), &MyState(5));
 
