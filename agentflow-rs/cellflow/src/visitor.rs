@@ -24,7 +24,15 @@ pub struct CellVisitor<T> {
 }
 
 impl<T: Clone> CellVisitor<T> {
-    pub fn visit(&self, cell: &Cell, input: &T) -> T {
+    pub fn new(handlers: Vec<Handler<T>>) -> Self {
+        Self { handlers }
+    }
+
+    pub fn run(&self, program: &Cell, input: &T) -> T {
+        self.visit(program, input)
+    }
+
+    fn visit(&self, cell: &Cell, input: &T) -> T {
         match cell {
             Cell::If(if_cell) => {
                 let condition_handler = self.select_condition(if_cell.condition().id());
@@ -62,8 +70,6 @@ impl<T: Clone> CellVisitor<T> {
         }
     }
 
-    pub fn run(&self, program: &Cell, input: &T) {}
-
     fn select_handler(&self, id: &Id) -> &dyn CellHandler<T> {
         let found = self
             .handlers
@@ -95,11 +101,27 @@ impl<T: Clone> CellVisitor<T> {
 
 #[cfg(test)]
 mod tests {
-    use super::CellHandler;
+    use crate::{Cell, SequenceCell};
+
+    use super::{CellHandler, CellVisitor};
+
+    #[derive(Debug, Clone)]
+    struct MyState(usize);
 
     #[test]
     #[should_panic(expected = "checking object safety")]
     fn verify_object_safety() {
         let _unused: Box<dyn CellHandler<usize>> = todo!("checking object safety");
+    }
+
+    #[test]
+    fn test_simple_program() {
+        let program = Cell::Sequence(SequenceCell::new(vec![]));
+
+        let visitor: CellVisitor<MyState> = CellVisitor::new(vec![]);
+
+        let output = visitor.run(&program, &MyState(5));
+
+        assert_eq!(5, output.0);
     }
 }

@@ -72,6 +72,11 @@ pub struct SequenceCell {
 
 impl SequenceCell {
     #[must_use]
+    pub const fn new(sequence: Vec<Cell>) -> Self {
+        Self { sequence }
+    }
+
+    #[must_use]
     pub fn sequence(&self) -> &[Cell] {
         &self.sequence
     }
