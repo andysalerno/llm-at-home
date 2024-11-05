@@ -41,7 +41,7 @@ impl Id {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
-pub struct Json(serde_json::Value);
+pub struct Json(pub(crate) serde_json::Value);
 
 impl Json {
     pub fn to<T: for<'a> Deserialize<'a>>(&self) -> Result<T, Box<dyn Error>> {

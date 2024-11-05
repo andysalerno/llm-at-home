@@ -1,3 +1,5 @@
+use serde::Deserialize;
+
 use crate::{cell::Cell, Id, Json};
 
 /// A trait representing a handler for a type of cell.
@@ -7,18 +9,36 @@ pub trait CellHandler<T> {
     fn handle(&self, item: &T) -> T;
 }
 
-pub trait ConditionEvaluator<T> {
+pub trait ConditionEvaluatorInner<T> {
     fn id(&self) -> Id;
     fn evaluate(&self, item: &T, condition_body: &Json) -> bool;
 }
 
-pub enum Handler<T> {
-    Cell(Box<dyn CellHandler<T>>),
-    Condition(Box<dyn ConditionEvaluator<T>>),
+pub trait ConditionEvaluator<T> {
+    type Body: for<'a> Deserialize<'a>;
+    fn id(&self) -> Id;
+    fn evaluate(&self, item: &T, condition_body: &Self::Body) -> bool;
 }
 
-impl<T> From<Box<dyn ConditionEvaluator<T>>> for Handler<T> {
-    fn from(v: Box<dyn ConditionEvaluator<T>>) -> Self {
+impl<T, TItem> ConditionEvaluatorInner<TItem> for T where T: ConditionEvaluator<TItem>{
+    fn id(&self) -> Id {
+        ConditionEvaluator::id(self)
+    }
+
+    fn evaluate(&self, item: &TItem, condition_body: &Json) -> bool {
+        let parsed: T::Body = serde_json::from_value(condition_body.0.clone()).unwrap();
+
+        ConditionEvaluator::evaluate(self, item, &parsed)
+    }
+}
+
+pub enum Handler<T> {
+    Cell(Box<dyn CellHandler<T>>),
+    Condition(Box<dyn ConditionEvaluatorInner<T>>),
+}
+
+impl<T> From<Box<dyn ConditionEvaluatorInner<T>>> for Handler<T> {
+    fn from(v: Box<dyn ConditionEvaluatorInner<T>>) -> Self {
         Self::Condition(v)
     }
 }
@@ -100,7 +120,7 @@ impl<T: Clone> CellVisitor<T> {
         found.as_ref()
     }
 
-    fn select_condition(&self, id: &Id) -> &dyn ConditionEvaluator<T> {
+    fn select_condition(&self, id: &Id) -> &dyn ConditionEvaluatorInner<T> {
         let found = self
             .handlers
             .iter()
@@ -121,7 +141,7 @@ mod tests {
 
     use crate::{visitor::Handler, Cell, Condition, Id, IfCell, Json, SequenceCell};
 
-    use super::{CellHandler, CellVisitor, ConditionEvaluator};
+    use super::{CellHandler, CellVisitor, ConditionEvaluator, ConditionEvaluatorInner};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
@@ -156,14 +176,15 @@ mod tests {
     struct GreaterThanConditionEvaluator;
 
     impl ConditionEvaluator<MyState> for GreaterThanConditionEvaluator {
+        type Body = GreaterThanCondition;
         fn id(&self) -> Id {
             GreaterThanCondition::id()
         }
 
-        fn evaluate(&self, item: &MyState, condition_body: &Json) -> bool {
-            let condition: GreaterThanCondition = condition_body.to().unwrap();
+        fn evaluate(&self, item: &MyState, condition: &GreaterThanCondition) -> bool {
             item.0 > condition.0
         }
+        
     }
 
     #[test]
