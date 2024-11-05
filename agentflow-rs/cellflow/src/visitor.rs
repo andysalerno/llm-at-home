@@ -1,4 +1,4 @@
-use crate::{cell::Cell, Id};
+use crate::{cell::Cell, Id, Json};
 
 /// A trait representing a handler for a type of cell.
 /// It maps to the cell type by id.
@@ -9,7 +9,7 @@ pub trait CellHandler<T> {
 
 pub trait ConditionEvaluator<T> {
     fn id(&self) -> Id;
-    fn evaluate(&self, item: &T) -> bool;
+    fn evaluate(&self, item: &T, condition_body: &Json) -> bool;
 }
 
 pub enum Handler<T> {
@@ -49,8 +49,9 @@ impl<T: Clone> CellVisitor<T> {
         match &cell {
             Cell::If(if_cell) => {
                 let condition_handler = self.select_condition(if_cell.condition().id());
+                let condition_body = if_cell.condition().body();
 
-                if condition_handler.evaluate(input) {
+                if condition_handler.evaluate(input, condition_body) {
                     self.visit(if_cell.on_true(), input)
                 } else {
                     self.visit(if_cell.on_false(), input)
@@ -58,10 +59,11 @@ impl<T: Clone> CellVisitor<T> {
             }
             Cell::While(while_cell) => {
                 let condition_handler = self.select_condition(while_cell.condition().id());
+                let condition_body = while_cell.condition().body();
 
                 let mut result = input.clone();
 
-                while condition_handler.evaluate(input) {
+                while condition_handler.evaluate(input, condition_body) {
                     result = self.visit(while_cell.body(), &result);
                 }
 
@@ -117,7 +119,7 @@ impl<T: Clone> CellVisitor<T> {
 mod tests {
     use serde::{Deserialize, Serialize};
 
-    use crate::{visitor::Handler, Cell, Condition, Id, IfCell, SequenceCell};
+    use crate::{visitor::Handler, Cell, Condition, Id, IfCell, Json, SequenceCell};
 
     use super::{CellHandler, CellVisitor, ConditionEvaluator};
 
@@ -151,13 +153,16 @@ mod tests {
         }
     }
 
-    impl ConditionEvaluator<MyState> for GreaterThanCondition {
+    struct GreaterThanConditionEvaluator;
+
+    impl ConditionEvaluator<MyState> for GreaterThanConditionEvaluator {
         fn id(&self) -> Id {
-            Self::id()
+            GreaterThanCondition::id()
         }
 
-        fn evaluate(&self, item: &MyState) -> bool {
-            item.0 > self.0
+        fn evaluate(&self, item: &MyState, condition_body: &Json) -> bool {
+            let condition: GreaterThanCondition = condition_body.to().unwrap();
+            item.0 > condition.0
         }
     }
 
@@ -208,7 +213,7 @@ mod tests {
 
         let visitor = CellVisitor::new(vec![
             Handler::Cell(Box::new(Incrementor)),
-            Handler::Condition(Box::new(GreaterThanCondition(7))),
+            Handler::Condition(Box::new(GreaterThanConditionEvaluator)),
         ]);
 
         let output = visitor.run(&program.into(), &MyState(5));
@@ -231,7 +236,7 @@ mod tests {
 
         let visitor = CellVisitor::new(vec![
             Handler::Cell(Box::new(Incrementor)),
-            Handler::Condition(Box::new(GreaterThanCondition(7))),
+            Handler::Condition(Box::new(GreaterThanConditionEvaluator)),
         ]);
 
         let output = visitor.run(&program.into(), &MyState(5));

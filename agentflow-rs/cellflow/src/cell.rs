@@ -1,3 +1,5 @@
+use std::error::Error;
+
 use serde::{Deserialize, Serialize};
 
 /// A serializable and deserializable representation of some operation.
@@ -41,6 +43,15 @@ impl Id {
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Json(serde_json::Value);
 
+impl Json {
+    pub fn to<T: for<'a> Deserialize<'a>>(&self) -> Result<T, Box<dyn Error>> {
+        match serde_json::from_value(self.0.clone()) {
+            Ok(v) => Ok(v),
+            Err(e) => Err(Box::new(e)),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Condition {
     id: Id,
@@ -59,6 +70,10 @@ impl Condition {
     #[must_use]
     pub const fn id(&self) -> &Id {
         &self.id
+    }
+
+    pub fn body(&self) -> &Json {
+        &self.body
     }
 }
 
