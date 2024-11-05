@@ -1,4 +1,4 @@
-use serde::{de::value, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 /// A serializable and deserializable representation of some operation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,7 +38,7 @@ impl Id {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Condition {
     id: Id,
 }
