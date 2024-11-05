@@ -235,4 +235,32 @@ mod tests {
 
         assert_eq!(9, output.0);
     }
+
+    #[test]
+    fn test_serialize() {
+        let condition = Condition::new(GreaterThanCondition::id());
+
+        let if_cell = Cell::If(IfCell::new(
+            condition,
+            Box::new(Cell::NoOp),
+            Box::new(Cell::NoOp),
+        ));
+
+        let cell = Cell::Sequence(SequenceCell::new(vec![if_cell]));
+
+        let serialized = serde_json::to_string(&cell).unwrap();
+
+        assert_eq!(
+            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\"},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}",
+            &serialized);
+    }
+
+    #[test]
+    fn test_deserialize() {
+        let json = "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\"},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}";
+
+        let deserialized: Cell = serde_json::from_str(json).unwrap();
+
+        assert!(matches!(deserialized, Cell::Sequence(_)));
+    }
 }
