@@ -139,9 +139,9 @@ impl<T: Clone> CellVisitor<T> {
 mod tests {
     use serde::{Deserialize, Serialize};
 
-    use crate::{visitor::Handler, Cell, Condition, Id, IfCell, Json, SequenceCell};
+    use crate::{visitor::Handler, Cell, Condition, Id, IfCell, SequenceCell};
 
-    use super::{CellHandler, CellVisitor, ConditionEvaluator, ConditionEvaluatorInner};
+    use super::{CellHandler, CellVisitor, ConditionEvaluator   };
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
