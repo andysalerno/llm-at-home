@@ -7,6 +7,7 @@ pub enum Cell {
     While(WhileCell),
     Sequence(SequenceCell),
     Custom(Id),
+    NoOp,
 }
 
 impl From<SequenceCell> for Cell {

@@ -80,6 +80,7 @@ impl<T: Clone> CellVisitor<T> {
 
                 custom_handler.handle(input)
             }
+            Cell::NoOp => input.clone(),
         }
     }
 
@@ -197,7 +198,7 @@ mod tests {
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id()),
                 Box::new(Cell::Custom(Incrementor::id())),
-                Box::new(Cell::Custom(Incrementor::id())),
+                Box::new(Cell::NoOp),
             )),
             Cell::Custom(Incrementor::id()),
         ]);
@@ -210,5 +211,28 @@ mod tests {
         let output = visitor.run(&program.into(), &MyState(5));
 
         assert_eq!(8, output.0);
+    }
+
+    #[test]
+    fn test_simple_program_4() {
+        let program = SequenceCell::new(vec![
+            Cell::Custom(Incrementor::id()),
+            Cell::Custom(Incrementor::id()),
+            Cell::If(IfCell::new(
+                Condition::new(GreaterThanCondition::id()),
+                Box::new(Cell::NoOp),
+                Box::new(Cell::Custom(Incrementor::id())),
+            )),
+            Cell::Custom(Incrementor::id()),
+        ]);
+
+        let visitor = CellVisitor::new(vec![
+            Handler::Cell(Box::new(Incrementor)),
+            Handler::Condition(Box::new(GreaterThanCondition(7))),
+        ]);
+
+        let output = visitor.run(&program.into(), &MyState(5));
+
+        assert_eq!(9, output.0);
     }
 }
