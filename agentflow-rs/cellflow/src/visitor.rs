@@ -20,7 +20,10 @@ pub trait ConditionEvaluator<T> {
     fn evaluate(&self, item: &T, condition_body: &Self::Body) -> bool;
 }
 
-impl<T, TItem> ConditionEvaluatorInner<TItem> for T where T: ConditionEvaluator<TItem>{
+impl<T, TItem> ConditionEvaluatorInner<TItem> for T
+where
+    T: ConditionEvaluator<TItem>,
+{
     fn id(&self) -> Id {
         ConditionEvaluator::id(self)
     }
@@ -141,7 +144,7 @@ mod tests {
 
     use crate::{visitor::Handler, Cell, Condition, Id, IfCell, SequenceCell};
 
-    use super::{CellHandler, CellVisitor, ConditionEvaluator   };
+    use super::{CellHandler, CellVisitor, ConditionEvaluator};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
@@ -184,7 +187,6 @@ mod tests {
         fn evaluate(&self, item: &MyState, condition: &GreaterThanCondition) -> bool {
             item.0 > condition.0
         }
-        
     }
 
     #[test]
