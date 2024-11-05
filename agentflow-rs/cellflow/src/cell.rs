@@ -8,7 +8,7 @@ pub enum Cell {
     If(IfCell),
     While(WhileCell),
     Sequence(SequenceCell),
-    Custom(Id),
+    Custom(CustomCell),
     NoOp,
 }
 
@@ -27,6 +27,12 @@ impl From<WhileCell> for Cell {
 impl From<IfCell> for Cell {
     fn from(v: IfCell) -> Self {
         Self::If(v)
+    }
+}
+
+impl From<CustomCell> for Cell {
+    fn from(v: CustomCell) -> Self {
+        Self::Custom(v)
     }
 }
 
@@ -50,6 +56,36 @@ impl Json {
             Err(e) => Err(Box::new(e)),
         }
     }
+
+    pub fn from<T: Serialize>(input: &T) -> Self {
+        Self(serde_json::to_value(input).unwrap())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+pub struct CustomCell {
+    pub id: Id,
+    pub body: Json,
+}
+
+impl CustomCell {
+    #[must_use]
+    pub fn new(id: Id, body: impl Serialize) -> Self {
+        Self {
+            id,
+            body: Json(serde_json::to_value(body).expect("could not serialize the body")),
+        }
+    }
+
+    #[must_use]
+    pub const fn id(&self) -> &Id {
+        &self.id
+    }
+
+    #[must_use]
+    pub const fn body(&self) -> &Json {
+        &self.body
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
@@ -72,7 +108,8 @@ impl Condition {
         &self.id
     }
 
-    pub fn body(&self) -> &Json {
+    #[must_use]
+    pub const fn body(&self) -> &Json {
         &self.body
     }
 }

@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::{cell::Cell, Id, Json};
+use crate::{cell::Cell, CustomCell, Id, Json};
 
 /// A trait representing a handler for a type of cell.
 /// It maps to the cell type by id.
@@ -100,7 +100,7 @@ impl<T: Clone> CellVisitor<T> {
 
                 result
             }
-            Cell::Custom(id) => {
+            Cell::Custom(CustomCell { id, .. }) => {
                 let custom_handler = self.select_handler(id);
 
                 custom_handler.handle(input)
@@ -142,7 +142,7 @@ impl<T: Clone> CellVisitor<T> {
 mod tests {
     use serde::{Deserialize, Serialize};
 
-    use crate::{visitor::Handler, Cell, Condition, Id, IfCell, SequenceCell};
+    use crate::{visitor::Handler, Cell, Condition, CustomCell, Id, IfCell, Json, SequenceCell};
 
     use super::{CellHandler, CellVisitor, ConditionEvaluator};
 
@@ -197,7 +197,11 @@ mod tests {
 
     #[test]
     fn test_simple_program_1() {
-        let program = SequenceCell::new(vec![Cell::Custom(Incrementor::id())]);
+        let program = SequenceCell::new(vec![
+            
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            
+            ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
 
@@ -209,9 +213,9 @@ mod tests {
     #[test]
     fn test_simple_program_2() {
         let program = SequenceCell::new(vec![
-            Cell::Custom(Incrementor::id()),
-            Cell::Custom(Incrementor::id()),
-            Cell::Custom(Incrementor::id()),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
@@ -224,14 +228,14 @@ mod tests {
     #[test]
     fn test_simple_program_3() {
         let program = SequenceCell::new(vec![
-            Cell::Custom(Incrementor::id()),
-            Cell::Custom(Incrementor::id()),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
-                Box::new(Cell::Custom(Incrementor::id())),
+                Box::new(CustomCell::new(Incrementor::id(), Json::from(&"{}")).into()),
                 Box::new(Cell::NoOp),
             )),
-            Cell::Custom(Incrementor::id()),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
@@ -247,14 +251,15 @@ mod tests {
     #[test]
     fn test_simple_program_4() {
         let program = SequenceCell::new(vec![
-            Cell::Custom(Incrementor::id()),
-            Cell::Custom(Incrementor::id()),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
                 Box::new(Cell::NoOp),
-                Box::new(Cell::Custom(Incrementor::id())),
+                Box::new(CustomCell::new(Incrementor::id(), Json::from(&"{}")).into()),
             )),
-            Cell::Custom(Incrementor::id()),
+            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
