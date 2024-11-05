@@ -115,6 +115,8 @@ impl<T: Clone> CellVisitor<T> {
 
 #[cfg(test)]
 mod tests {
+    use serde::{Deserialize, Serialize};
+
     use crate::{visitor::Handler, Cell, Condition, Id, IfCell, SequenceCell};
 
     use super::{CellHandler, CellVisitor, ConditionEvaluator};
@@ -140,6 +142,7 @@ mod tests {
         }
     }
 
+    #[derive(Serialize, Deserialize)]
     struct GreaterThanCondition(usize);
 
     impl GreaterThanCondition {
@@ -196,7 +199,7 @@ mod tests {
             Cell::Custom(Incrementor::id()),
             Cell::Custom(Incrementor::id()),
             Cell::If(IfCell::new(
-                Condition::new(GreaterThanCondition::id()),
+                Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
                 Box::new(Cell::Custom(Incrementor::id())),
                 Box::new(Cell::NoOp),
             )),
@@ -219,7 +222,7 @@ mod tests {
             Cell::Custom(Incrementor::id()),
             Cell::Custom(Incrementor::id()),
             Cell::If(IfCell::new(
-                Condition::new(GreaterThanCondition::id()),
+                Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
                 Box::new(Cell::NoOp),
                 Box::new(Cell::Custom(Incrementor::id())),
             )),
@@ -238,7 +241,7 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let condition = Condition::new(GreaterThanCondition::id());
+        let condition = Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7));
 
         let if_cell = Cell::If(IfCell::new(
             condition,
@@ -251,13 +254,14 @@ mod tests {
         let serialized = serde_json::to_string(&cell).unwrap();
 
         assert_eq!(
-            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\"},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}",
+            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}",
             &serialized);
     }
 
     #[test]
     fn test_deserialize() {
-        let json = "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\"},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}";
+        let json = 
+            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}";
 
         let deserialized: Cell = serde_json::from_str(json).unwrap();
 

@@ -38,15 +38,22 @@ impl Id {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
+pub struct Json(serde_json::Value);
+
+#[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Condition {
     id: Id,
+    body: Json,
 }
 
 impl Condition {
     #[must_use]
-    pub const fn new(id: Id) -> Self {
-        Self { id }
+    pub fn new(id: Id, body: impl Serialize) -> Self {
+        Self {
+            id,
+            body: Json(serde_json::to_value(body).expect("could not serialize the body")),
+        }
     }
 
     #[must_use]
@@ -129,8 +136,6 @@ mod tests {
 
     #[test]
     fn test_simple_sequence() {
-        let _cell = Cell::Sequence(SequenceCell {
-            sequence: Vec::new(),
-        });
+        let _cell = Cell::Sequence(SequenceCell::new(Vec::new()));
     }
 }
