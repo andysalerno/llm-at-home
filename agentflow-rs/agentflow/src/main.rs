@@ -1,6 +1,8 @@
 use cellflow::{CellVisitor, CustomCell, Handler, SequenceCell};
 
+mod agent;
 mod cells;
+mod conversation;
 
 fn main() {
     // let program = SequenceCell::new(vec![

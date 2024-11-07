@@ -307,11 +307,10 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-        let condition = Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7));
 
         let if_cell = Cell::If(IfCell::new(
-            condition,
-            Box::new(Cell::NoOp),
+        Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
+            Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig::new(2)).into()),
             Box::new(Cell::NoOp),
         ));
 
@@ -320,17 +319,26 @@ mod tests {
         let serialized = serde_json::to_string(&cell).unwrap();
 
         assert_eq!(
-            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}",
+            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":{\"Custom\":{\"id\":\"incrementor\",\"body\":{\"increment_by\":2}}},\"on_false\":\"NoOp\"}}]}}",
             &serialized);
     }
 
     #[test]
     fn test_deserialize() {
         let json = 
-            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":\"NoOp\",\"on_false\":\"NoOp\"}}]}}";
+            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":{\"Custom\":{\"id\":\"incrementor\",\"body\":{\"increment_by\":2}}},\"on_false\":\"NoOp\"}}]}}";
 
         let deserialized: Cell = serde_json::from_str(json).unwrap();
 
-        assert!(matches!(deserialized, Cell::Sequence(_)));
+        let visitor = CellVisitor::new(vec![
+            Handler::Cell(Box::new(Incrementor)),
+            Handler::Condition(Box::new(GreaterThanConditionEvaluator)),
+        ]);
+
+        let output = visitor.run(&deserialized, &MyState(8));
+        assert_eq!(10, output.0);
+
+        let output = visitor.run(&deserialized, &MyState(7));
+        assert_eq!(7, output.0);
     }
 }
