@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 cellflow = { path = "../cellflow"}
+serde = { version = "1.0", features = ["derive"] }
 
 [lints]
 workspace = true
