@@ -179,7 +179,13 @@ mod tests {
     }
 
     #[derive(Serialize, Deserialize)]
-    struct IncrementorConfig;
+    struct IncrementorConfig { increment_by: usize }
+    
+    impl IncrementorConfig {
+        const fn new(increment_by: usize) -> Self {
+            Self { increment_by }
+        }
+    }
 
     impl CellHandler<MyState> for Incrementor {
         type Config = IncrementorConfig;
@@ -188,8 +194,8 @@ mod tests {
             Self::name()
         }
 
-        fn evaluate(&self, item: &MyState, _config: &IncrementorConfig) -> MyState {
-            MyState(item.0 + 1)
+        fn evaluate(&self, item: &MyState, config: &IncrementorConfig) -> MyState {
+            MyState(item.0 + config.increment_by)
         }
     }
 
@@ -226,7 +232,7 @@ mod tests {
     fn test_simple_program_1() {
         let program = SequenceCell::new(vec![
             
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
             
             ]);
 
@@ -240,29 +246,29 @@ mod tests {
     #[test]
     fn test_simple_program_2() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(2)).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(3)).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
 
         let output = visitor.run(&program.into(), &MyState(5));
 
-        assert_eq!(8, output.0);
+        assert_eq!(11, output.0);
     }
 
     #[test]
     fn test_simple_program_3() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
-                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig).into()),
+                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into()),
                 Box::new(Cell::NoOp),
             )),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
@@ -278,15 +284,15 @@ mod tests {
     #[test]
     fn test_simple_program_4() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
                 Box::new(Cell::NoOp),
-                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig).into()),
+                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into()),
             )),
-            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
