@@ -1,0 +1,10 @@
+[package]
+name = "agentflow"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cellflow = { path = "../cellflow"}
+
+[lints]
+workspace = true

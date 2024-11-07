@@ -4,9 +4,30 @@ use crate::{cell::Cell, CustomCell, Id, Json};
 
 /// A trait representing a handler for a type of cell.
 /// It maps to the cell type by id.
+pub trait CellHandlerInner<T> {
+    fn name(&self) -> Id;
+    fn evaluate(&self, item: &T, cell_config: &Json) -> T;
+}
+
 pub trait CellHandler<T> {
-    fn id(&self) -> Id;
-    fn handle(&self, item: &T) -> T;
+    type Config: for<'a> Deserialize<'a>;
+    fn name(&self) -> Id;
+    fn evaluate(&self, item: &T, cell_config: &Self::Config) -> T;
+}
+
+impl<T, TItem> CellHandlerInner<TItem> for T
+where
+    T: CellHandler<TItem>,
+{
+    fn name(&self) -> Id {
+        CellHandler::name(self)
+    }
+
+    fn evaluate(&self, item: &TItem, condition_body: &Json) -> TItem {
+        let parsed: T::Config = serde_json::from_value(condition_body.0.clone()).unwrap();
+
+        CellHandler::evaluate(self, item, &parsed)
+    }
 }
 
 pub trait ConditionEvaluatorInner<T> {
@@ -36,7 +57,7 @@ where
 }
 
 pub enum Handler<T> {
-    Cell(Box<dyn CellHandler<T>>),
+    Cell(Box<dyn CellHandlerInner<T>>),
     Condition(Box<dyn ConditionEvaluatorInner<T>>),
 }
 
@@ -46,8 +67,8 @@ impl<T> From<Box<dyn ConditionEvaluatorInner<T>>> for Handler<T> {
     }
 }
 
-impl<T> From<Box<dyn CellHandler<T>>> for Handler<T> {
-    fn from(v: Box<dyn CellHandler<T>>) -> Self {
+impl<T> From<Box<dyn CellHandlerInner<T>>> for Handler<T> {
+    fn from(v: Box<dyn CellHandlerInner<T>>) -> Self {
         Self::Cell(v)
     }
 }
@@ -100,16 +121,16 @@ impl<T: Clone> CellVisitor<T> {
 
                 result
             }
-            Cell::Custom(CustomCell { id, .. }) => {
+            Cell::Custom(CustomCell { id, body }) => {
                 let custom_handler = self.select_handler(id);
 
-                custom_handler.handle(input)
+                custom_handler.evaluate(input, &body)
             }
             Cell::NoOp => input.clone(),
         }
     }
 
-    fn select_handler(&self, id: &Id) -> &dyn CellHandler<T> {
+    fn select_handler(&self, id: &Id) -> &dyn CellHandlerInner<T> {
         let found = self
             .handlers
             .iter()
@@ -117,7 +138,7 @@ impl<T: Clone> CellVisitor<T> {
                 Handler::Cell(handler) => Some(handler),
                 Handler::Condition(_) => None,
             })
-            .find(|h| h.id() == *id)
+            .find(|h| h.name() == *id)
             .expect("expected a condition to be registered");
 
         found.as_ref()
@@ -144,7 +165,7 @@ mod tests {
 
     use crate::{visitor::Handler, Cell, Condition, CustomCell, Id, IfCell, Json, SequenceCell};
 
-    use super::{CellHandler, CellVisitor, ConditionEvaluator};
+    use super::{CellHandler, CellHandlerInner, CellVisitor, ConditionEvaluator};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
@@ -152,17 +173,22 @@ mod tests {
     struct Incrementor;
 
     impl Incrementor {
-        fn id() -> crate::Id {
+        fn name() -> crate::Id {
             Id::new("incrementor".into())
         }
     }
 
+    #[derive(Serialize, Deserialize)]
+    struct IncrementorConfig;
+
     impl CellHandler<MyState> for Incrementor {
-        fn id(&self) -> crate::Id {
-            Self::id()
+        type Config = IncrementorConfig;
+
+        fn name(&self) -> Id {
+            Self::name()
         }
 
-        fn handle(&self, item: &MyState) -> MyState {
+        fn evaluate(&self, item: &MyState, _config: &IncrementorConfig) -> MyState {
             MyState(item.0 + 1)
         }
     }
@@ -180,6 +206,7 @@ mod tests {
 
     impl ConditionEvaluator<MyState> for GreaterThanConditionEvaluator {
         type Body = GreaterThanCondition;
+
         fn id(&self) -> Id {
             GreaterThanCondition::id()
         }
@@ -192,14 +219,14 @@ mod tests {
     #[test]
     #[should_panic(expected = "checking object safety")]
     fn verify_object_safety() {
-        let _unused: Box<dyn CellHandler<usize>> = todo!("checking object safety");
+        let _unused: Box<dyn CellHandlerInner<usize>> = todo!("checking object safety");
     }
 
     #[test]
     fn test_simple_program_1() {
         let program = SequenceCell::new(vec![
             
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
             
             ]);
 
@@ -213,9 +240,9 @@ mod tests {
     #[test]
     fn test_simple_program_2() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
@@ -228,14 +255,14 @@ mod tests {
     #[test]
     fn test_simple_program_3() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
-                Box::new(CustomCell::new(Incrementor::id(), Json::from(&"{}")).into()),
+                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig).into()),
                 Box::new(Cell::NoOp),
             )),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
@@ -251,15 +278,15 @@ mod tests {
     #[test]
     fn test_simple_program_4() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
                 Box::new(Cell::NoOp),
-                Box::new(CustomCell::new(Incrementor::id(), Json::from(&"{}")).into()),
+                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig).into()),
             )),
-            CustomCell::new(Incrementor::id(), Json::from(&"{}")).into(),
+            CustomCell::new(Incrementor::name(), IncrementorConfig).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![

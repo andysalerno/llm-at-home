@@ -64,8 +64,8 @@ impl Json {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct CustomCell {
-    pub id: Id,
-    pub body: Json,
+    pub(crate) id: Id,
+    pub(crate) body: Json,
 }
 
 impl CustomCell {
