@@ -16,11 +16,11 @@ impl AgentCellConfig {
     }
 }
 
-pub struct AgentCell {
+pub struct AgentCellHandler {
     agent: Box<dyn Agent>,
 }
 
-impl AgentCell {
+impl AgentCellHandler {
     pub fn new(agent: Box<dyn Agent>) -> Self {
         Self { agent }
     }
@@ -30,7 +30,7 @@ impl AgentCell {
     }
 }
 
-impl CellHandler<ConversationState> for AgentCell {
+impl CellHandler<ConversationState> for AgentCellHandler {
     type Config = AgentCellConfig;
 
     fn name(&self) -> cellflow::Id {

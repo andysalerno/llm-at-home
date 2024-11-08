@@ -1,6 +1,6 @@
 use agent::Agent;
-use cellflow::{CellVisitor, CustomCell, Handler, SequenceCell};
-use cells::{AgentCell, AgentCellConfig};
+use cellflow::{Cell, CellVisitor, CustomCell, Handler, SequenceCell};
+use cells::{AgentCellConfig, AgentCellHandler};
 use conversation::ConversationState;
 
 mod agent;
@@ -8,17 +8,20 @@ mod cells;
 mod conversation;
 
 fn main() {
-    let program = SequenceCell::new(vec![CustomCell::new(
-        AgentCell::name(),
+    let program: Cell = SequenceCell::new(vec![CustomCell::new(
+        AgentCellHandler::name(),
         AgentCellConfig::new("WebAgent".into()),
     )
-    .into()]);
+    .into()])
+    .into();
 
-    let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(AgentCell::new(Box::new(
+    let handlers = vec![Handler::Cell(Box::new(AgentCellHandler::new(Box::new(
         DummyAgent,
-    ))))]);
+    ))))];
 
-    let output = visitor.run(&program.into(), &ConversationState::empty());
+    let visitor = CellVisitor::new(handlers);
+
+    let output = visitor.run(&program, &ConversationState::empty());
 }
 
 struct DummyAgent;
