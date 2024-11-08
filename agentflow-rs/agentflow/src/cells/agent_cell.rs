@@ -3,13 +3,13 @@ use serde::{Deserialize, Serialize};
 
 use crate::conversation::ConversationState;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct AgentCellConfig {
     name: String,
 }
 
 impl AgentCellConfig {
-    pub fn new(name: String) -> Self {
+    pub const fn new(name: String) -> Self {
         Self { name }
     }
 }
@@ -21,7 +21,7 @@ impl AgentCell {
         Id::new("agent_cell".into())
     }
 
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         AgentCell
     }
 }

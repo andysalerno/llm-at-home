@@ -15,5 +15,5 @@ fn main() {
 
     let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(AgentCell::new()))]);
 
-    let output = visitor.run(&program.into(), &ConversationState::new());
+    let output = visitor.run(&program.into(), &ConversationState::empty());
 }
