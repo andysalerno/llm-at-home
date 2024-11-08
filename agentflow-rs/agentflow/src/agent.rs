@@ -13,7 +13,8 @@ mod tests {
     use super::Agent;
 
     #[test]
-    fn ensure_object_safety() {
-        let _: Box<dyn Agent> = todo!("ensuring object safety");
+    #[should_panic(expected = "checking object safety")]
+    fn verify_object_safety() {
+        let _unused: Box<dyn Agent> = todo!("checking object safety");
     }
 }
