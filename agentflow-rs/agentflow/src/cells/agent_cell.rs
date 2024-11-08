@@ -1,7 +1,9 @@
-use cellflow::{CellHandler, Id};
+use std::cell::Cell;
+
+use cellflow::{CellHandler, CellVisitor, Id};
 use serde::{Deserialize, Serialize};
 
-use crate::conversation::ConversationState;
+use crate::{agent::Agent, conversation::ConversationState};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct AgentCellConfig {
@@ -14,15 +16,17 @@ impl AgentCellConfig {
     }
 }
 
-pub struct AgentCell;
+pub struct AgentCell {
+    agent: Box<dyn Agent>,
+}
 
 impl AgentCell {
-    pub fn name() -> Id {
-        Id::new("agent_cell".into())
+    pub fn new(agent: Box<dyn Agent>) -> Self {
+        Self { agent }
     }
 
-    pub const fn new() -> Self {
-        AgentCell
+    pub fn name() -> Id {
+        Id::new("agent_cell".into())
     }
 }
 
@@ -33,8 +37,15 @@ impl CellHandler<ConversationState> for AgentCell {
         Self::name()
     }
 
-    fn evaluate(&self, item: &ConversationState, cell_config: &Self::Config) -> ConversationState {
-        item.clone()
+    fn evaluate(
+        &self,
+        item: &ConversationState,
+        cell_config: &Self::Config,
+        visitor: &CellVisitor<ConversationState>,
+    ) -> ConversationState {
+        let program = self.agent.behavior();
+
+        visitor.run(&program, item)
     }
 }
 

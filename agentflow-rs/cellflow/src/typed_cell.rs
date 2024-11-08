@@ -5,7 +5,7 @@ pub enum Cell<T> {
     If(IfCell<T>),
     While(WhileCell<T>),
     Sequence(SequenceCell<T>),
-    Custom(CustomCell),
+    Custom(CustomCell<T>),
     NoOp,
 }
 
@@ -27,8 +27,8 @@ impl<T> From<IfCell<T>> for Cell<T> {
     }
 }
 
-impl<T> From<CustomCell> for Cell<T> {
-    fn from(v: CustomCell) -> Self {
+impl<T> From<CustomCell<T>> for Cell<T> {
+    fn from(v: CustomCell<T>) -> Self {
         Self::Custom(v)
     }
 }
@@ -42,9 +42,12 @@ impl Id {
     }
 }
 
-pub struct CustomCell {
+// T is the config, "data"
+// There's a CellHandler with an associated type, "logic"
+// Visitor looks at the cell, finds the right CellHandler, and executes
+pub struct CustomCell<T> {
     pub(crate) id: Id,
-    pub(crate) body: String,
+    pub behavior: Box<dyn FnOnce(&T) -> T>,
 }
 
 pub struct Condition<T> {
