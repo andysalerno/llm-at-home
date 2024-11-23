@@ -1,5 +1,5 @@
 use agent::Agent;
-use cellflow::{Cell, CellVisitor, CustomCell, Handler, SequenceCell};
+use cellflow::{Cell, CellHandler, CellVisitor, CustomCell, SequenceCell};
 use cells::{AgentCellConfig, AgentCellHandler};
 use conversation::ConversationState;
 
@@ -15,9 +15,7 @@ fn main() {
     .into()])
     .into();
 
-    let handlers = vec![Handler::from_cell_handler(AgentCellHandler::new_owned(
-        DummyAgent,
-    ))];
+    let handlers = vec![AgentCellHandler::new(DummyAgent).into_handler()];
 
     let visitor = CellVisitor::new(handlers);
 

@@ -1,5 +1,4 @@
 use serde::Deserialize;
-
 use crate::{cell::Cell, CustomCell, Id, Json};
 
 /// A trait representing a handler for a type of cell.
@@ -20,6 +19,10 @@ pub trait CellHandler<T> {
     type Config: for<'a> Deserialize<'a>;
     fn name(&self) -> Id;
     fn evaluate(&self, item: &T, cell_config: &Self::Config, visitor: &CellVisitor<T>) -> T;
+    fn into_handler(self) -> Handler<T> 
+        where Self: Sized + 'static{
+        Handler::Cell(Box::new(self))
+    }
 }
 
 impl<T, TItem> CellHandlerInner<TItem> for T
@@ -63,6 +66,7 @@ where
     }
 }
 
+// TODO: I don't like having an enum that represents both... let's split this up later.
 pub enum Handler<T> {
     Cell(Box<dyn CellHandlerInner<T>>),
     Condition(Box<dyn ConditionEvaluatorInner<T>>),

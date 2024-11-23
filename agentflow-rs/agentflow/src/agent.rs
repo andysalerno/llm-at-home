@@ -1,11 +1,19 @@
-use cellflow::Cell;
-
 use crate::conversation::{AgentName, Role};
+use cellflow::Cell;
 
 pub trait Agent {
     fn name(&self) -> AgentName;
     fn role(&self) -> Role;
     fn behavior(&self) -> Cell;
+}
+
+impl<T> From<T> for Box<dyn Agent>
+where
+    T: Agent + 'static,
+{
+    fn from(value: T) -> Self {
+        Box::new(value)
+    }
 }
 
 #[cfg(test)]

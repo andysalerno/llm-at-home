@@ -1,9 +1,6 @@
-use std::cell::Cell;
-
+use crate::{agent::Agent, conversation::ConversationState};
 use cellflow::{CellHandler, CellVisitor, Id};
 use serde::{Deserialize, Serialize};
-
-use crate::{agent::Agent, conversation::ConversationState};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct AgentCellConfig {
@@ -21,12 +18,13 @@ pub struct AgentCellHandler {
 }
 
 impl AgentCellHandler {
-    pub fn new(agent: Box<dyn Agent>) -> Self {
-        Self { agent }
-    }
-
-    pub fn new_owned(agent: impl Agent + 'static) -> Self {
-        Self::new(Box::new(agent))
+    pub fn new<T>(value: T) -> Self
+    where
+        T: Into<Box<dyn Agent>>,
+    {
+        Self {
+            agent: value.into(),
+        }
     }
 
     pub fn name() -> Id {
