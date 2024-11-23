@@ -59,8 +59,10 @@ pub struct CellVisitor<T> {
 
 impl<T: Clone> CellVisitor<T> {
     #[must_use]
-    pub const fn new(handlers: Vec<Handler<T>>) -> Self {
-        Self { handlers }
+    pub fn new<TInto: Into<Vec<Handler<T>>>>(handlers: TInto) -> Self {
+        Self {
+            handlers: handlers.into(),
+        }
     }
 
     pub fn run(&self, program: &Cell, input: &T) -> T {

@@ -50,3 +50,40 @@ where
 pub trait CellHandlerConfig: Serialize + for<'a> Deserialize<'a> {
     fn id() -> Id;
 }
+
+pub struct HandlerCollection<T> {
+    handlers: Vec<Box<dyn CellHandlerInner<T>>>,
+}
+
+impl<T> HandlerCollection<T> {
+    pub fn new() -> Self {
+        Self {
+            handlers: Vec::new(),
+        }
+    }
+
+    pub fn add<H: CellHandler<T> + 'static>(mut self, handler: H) -> Self {
+        self.handlers.push(Box::new(handler));
+        self
+    }
+
+    pub fn take_all(self) -> Vec<Box<dyn CellHandlerInner<T>>> {
+        self.handlers
+    }
+}
+
+impl<T> From<HandlerCollection<T>> for Vec<Handler<T>> {
+    fn from(collection: HandlerCollection<T>) -> Self {
+        collection
+            .take_all()
+            .into_iter()
+            .map(|h| Handler::Cell(h))
+            .collect()
+    }
+}
+
+impl<T> Default for HandlerCollection<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}

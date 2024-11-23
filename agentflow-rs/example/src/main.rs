@@ -2,7 +2,9 @@ use agentflow::{
     Agent, AgentCellConfig, AgentCellHandler, AgentName, CellHandler, ConversationState, Message,
     Role,
 };
-use cellflow::{Cell, CellHandlerConfig, CellVisitor, CustomCell, Id, SequenceCell};
+use cellflow::{
+    Cell, CellHandlerConfig, CellVisitor, CustomCell, HandlerCollection, Id, SequenceCell,
+};
 use log::info;
 use serde::{Deserialize, Serialize};
 
@@ -15,10 +17,9 @@ fn main() {
     .into()])
     .into();
 
-    let handlers = vec![
-        AgentCellHandler::new(DummyAgent).into_handler(),
-        ReplyWithMessageCellHandler.into_handler(),
-    ];
+    let handlers = HandlerCollection::new()
+        .add(AgentCellHandler::new(DummyAgent))
+        .add(ReplyWithMessageCellHandler);
 
     let visitor = CellVisitor::new(handlers);
 
