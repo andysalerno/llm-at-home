@@ -8,7 +8,8 @@ pub struct AgentCellConfig {
 }
 
 impl AgentCellConfig {
-    #[must_use] pub const fn new(name: String) -> Self {
+    #[must_use]
+    pub const fn new(name: String) -> Self {
         Self { name }
     }
 }
@@ -33,7 +34,8 @@ impl AgentCellHandler {
         }
     }
 
-    #[must_use] pub fn id() -> Id {
+    #[must_use]
+    pub fn id() -> Id {
         AgentCellConfig::id()
     }
 }
