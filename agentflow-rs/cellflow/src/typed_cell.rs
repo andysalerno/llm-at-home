@@ -1,4 +1,4 @@
-use std::{error::Error, marker::PhantomData};
+use std::marker::PhantomData;
 
 /// A serializable and deserializable representation of some operation.
 pub enum Cell<T> {
