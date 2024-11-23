@@ -25,6 +25,10 @@ impl AgentCellHandler {
         Self { agent }
     }
 
+    pub fn new_owned(agent: impl Agent + 'static) -> Self {
+        Self::new(Box::new(agent))
+    }
+
     pub fn name() -> Id {
         Id::new("agent_cell".into())
     }

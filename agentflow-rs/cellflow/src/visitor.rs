@@ -68,6 +68,12 @@ pub enum Handler<T> {
     Condition(Box<dyn ConditionEvaluatorInner<T>>),
 }
 
+impl<T> Handler<T> {
+    pub fn from_cell_handler(cell_handler: impl CellHandlerInner<T> + 'static) -> Self {
+        Self::Cell(Box::new(cell_handler))
+    }
+}
+
 impl<T> From<Box<dyn ConditionEvaluatorInner<T>>> for Handler<T> {
     fn from(v: Box<dyn ConditionEvaluatorInner<T>>) -> Self {
         Self::Condition(v)

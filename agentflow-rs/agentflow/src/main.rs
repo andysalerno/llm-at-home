@@ -15,9 +15,9 @@ fn main() {
     .into()])
     .into();
 
-    let handlers = vec![Handler::Cell(Box::new(AgentCellHandler::new(Box::new(
+    let handlers = vec![Handler::from_cell_handler(AgentCellHandler::new_owned(
         DummyAgent,
-    ))))];
+    ))];
 
     let visitor = CellVisitor::new(handlers);
 
