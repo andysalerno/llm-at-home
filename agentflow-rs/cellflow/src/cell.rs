@@ -41,8 +41,12 @@ pub struct Id(String);
 
 impl Id {
     #[must_use]
-    pub const fn new(value: String) -> Self {
+    pub const fn new_const(value: String) -> Self {
         Self(value)
+    }
+
+    pub fn new(value: impl Into<String>) -> Self {
+        Self(value.into())
     }
 }
 

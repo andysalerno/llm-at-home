@@ -28,7 +28,7 @@ impl AgentCellHandler {
     }
 
     pub fn name() -> Id {
-        Id::new("agent_cell".into())
+        Id::new("agent_cell")
     }
 }
 

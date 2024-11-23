@@ -191,7 +191,7 @@ mod tests {
 
     impl Incrementor {
         fn name() -> crate::Id {
-            Id::new("incrementor".into())
+            Id::new("incrementor")
         }
     }
 
@@ -221,7 +221,7 @@ mod tests {
 
     impl GreaterThanCondition {
         fn id() -> Id {
-            Id::new("greater-than-condition".into())
+            Id::new("greater-than-condition")
         }
     }
 

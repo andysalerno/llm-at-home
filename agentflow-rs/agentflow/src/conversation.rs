@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ConversationState {
     messages: Vec<Message>,
 }
@@ -15,17 +15,47 @@ impl ConversationState {
             messages: Vec::new(),
         }
     }
+
+    pub fn messages(&self) -> &[Message] {
+        &self.messages
+    }
+
+    pub fn add_message(&mut self, message: Message) {
+        self.messages.push(message);
+    }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct AgentName(String);
 
-#[derive(Clone, Serialize, Deserialize)]
+impl AgentName {
+    pub fn new(name: impl Into<String>) -> Self {
+        Self(name.into())
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Role(String);
 
-#[derive(Clone, Serialize, Deserialize)]
+impl Role {
+    pub fn new(role: impl Into<String>) -> Self {
+        Self(role.into())
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Message {
     agent_name: AgentName,
     role: Role,
     content: String,
+}
+
+impl Message {
+    pub fn new(agent_name: AgentName, role: Role, content: String) -> Self {
+        Self {
+            agent_name,
+            role,
+            content,
+        }
+    }
 }
