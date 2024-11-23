@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use crate::{cell::Cell, CellHandlerInner, CustomCell, Id, Json};
+use serde::Deserialize;
 
 pub trait ConditionEvaluatorInner<T> {
     fn id(&self) -> Id;
@@ -139,9 +139,12 @@ impl<T: Clone> CellVisitor<T> {
 
 #[cfg(test)]
 mod tests {
-    use serde::{Deserialize, Serialize};
-    use crate::{visitor::Handler, Cell, CellHandler, CellHandlerConfig, Condition, CustomCell, Id, IfCell, SequenceCell};
     use super::{CellHandlerInner, CellVisitor, ConditionEvaluator};
+    use crate::{
+        visitor::Handler, Cell, CellHandler, CellHandlerConfig, Condition, CustomCell, Id, IfCell,
+        SequenceCell,
+    };
+    use serde::{Deserialize, Serialize};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
@@ -149,8 +152,10 @@ mod tests {
     struct Incrementor;
 
     #[derive(Serialize, Deserialize)]
-    struct IncrementorConfig { increment_by: usize }
-    
+    struct IncrementorConfig {
+        increment_by: usize,
+    }
+
     impl IncrementorConfig {
         const fn new(increment_by: usize) -> Self {
             Self { increment_by }
@@ -170,7 +175,12 @@ mod tests {
             Self::Config::id()
         }
 
-        fn evaluate(&self, item: &MyState, config: &IncrementorConfig, _visitor: &CellVisitor<MyState>) -> MyState {
+        fn evaluate(
+            &self,
+            item: &MyState,
+            config: &IncrementorConfig,
+            _visitor: &CellVisitor<MyState>,
+        ) -> MyState {
             MyState(item.0 + config.increment_by)
         }
     }
@@ -206,11 +216,7 @@ mod tests {
 
     #[test]
     fn test_simple_program_1() {
-        let program = SequenceCell::new(vec![
-            
-            CustomCell::new(IncrementorConfig::new(1)).into(),
-            
-            ]);
+        let program = SequenceCell::new(vec![CustomCell::new(IncrementorConfig::new(1)).into()]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
 
@@ -283,9 +289,8 @@ mod tests {
 
     #[test]
     fn test_serialize() {
-
         let if_cell = Cell::If(IfCell::new(
-        Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
+            Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
             Box::new(CustomCell::new(IncrementorConfig::new(2)).into()),
             Box::new(Cell::NoOp),
         ));
