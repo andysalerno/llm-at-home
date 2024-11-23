@@ -1,6 +1,7 @@
 use crate::conversation::{AgentName, Role};
 use cellflow::Cell;
 
+/// An `Agent` has some behavior that can be executed in a conversation.
 pub trait Agent {
     fn name(&self) -> AgentName;
     fn role(&self) -> Role;

@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 cellflow = { path = "../cellflow"}
+agentflow = { path = "../agentflow"}
 
 [lints]
 workspace = true

@@ -50,9 +50,3 @@ impl CellHandler<ConversationState> for AgentCellHandler {
         visitor.run(&program, item)
     }
 }
-
-// impl AgentCell {
-//     pub fn into_cell(self) -> CustomCell {
-//         CustomCell::new()
-//     }
-// }
