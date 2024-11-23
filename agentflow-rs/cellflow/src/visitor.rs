@@ -306,7 +306,7 @@ mod tests {
 
     #[test]
     fn test_deserialize() {
-        let json = 
+        let json =
             "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":{\"Custom\":{\"id\":\"incrementor\",\"body\":{\"increment_by\":2}}},\"on_false\":\"NoOp\"}}]}}";
 
         let deserialized: Cell = serde_json::from_str(json).unwrap();
