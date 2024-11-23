@@ -7,6 +7,8 @@ use log::info;
 use serde::{Deserialize, Serialize};
 
 fn main() {
+    env_logger::init();
+
     let program: Cell = SequenceCell::new(vec![CustomCell::new(
         AgentCellHandler::name(),
         AgentCellConfig::new("WebAgent".into()),
@@ -24,6 +26,9 @@ fn main() {
     let output = visitor.run(&program, &ConversationState::empty());
 
     info!("Output: {:?}", output);
+
+    let json = serde_json::to_string(&program).unwrap();
+    info!("Program: {:?}", json);
 }
 
 struct DummyAgent;
