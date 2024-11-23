@@ -6,17 +6,17 @@ pub struct ConversationState {
 }
 
 impl ConversationState {
-    pub const fn new(messages: Vec<Message>) -> Self {
+    #[must_use] pub const fn new(messages: Vec<Message>) -> Self {
         Self { messages }
     }
 
-    pub const fn empty() -> Self {
+    #[must_use] pub const fn empty() -> Self {
         Self {
             messages: Vec::new(),
         }
     }
 
-    pub fn messages(&self) -> &[Message] {
+    #[must_use] pub fn messages(&self) -> &[Message] {
         &self.messages
     }
 
@@ -51,7 +51,7 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn new(agent_name: AgentName, role: Role, content: String) -> Self {
+    #[must_use] pub const fn new(agent_name: AgentName, role: Role, content: String) -> Self {
         Self {
             agent_name,
             role,

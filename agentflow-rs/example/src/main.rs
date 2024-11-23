@@ -60,7 +60,7 @@ struct ReplyWithMessageCellConfig {
 }
 
 impl ReplyWithMessageCellConfig {
-    fn new(message: Message) -> Self {
+    const fn new(message: Message) -> Self {
         Self { message }
     }
 }
