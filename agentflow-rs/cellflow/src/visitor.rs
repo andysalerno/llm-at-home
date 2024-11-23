@@ -116,7 +116,7 @@ impl<T: Clone> CellVisitor<T> {
                 Handler::Cell(handler) => Some(handler),
                 Handler::Condition(_) => None,
             })
-            .find(|h| h.name() == *id)
+            .find(|h| h.id() == *id)
             .expect("expected a condition to be registered");
 
         found.as_ref()
@@ -140,19 +140,13 @@ impl<T: Clone> CellVisitor<T> {
 #[cfg(test)]
 mod tests {
     use serde::{Deserialize, Serialize};
-    use crate::{visitor::Handler, Cell, CellHandler, Condition, CustomCell, Id, IfCell, SequenceCell};
+    use crate::{visitor::Handler, Cell, CellHandler, CellHandlerConfig, Condition, CustomCell, Id, IfCell, SequenceCell};
     use super::{CellHandlerInner, CellVisitor, ConditionEvaluator};
 
     #[derive(Debug, Clone)]
     struct MyState(usize);
 
     struct Incrementor;
-
-    impl Incrementor {
-        fn name() -> crate::Id {
-            Id::new("incrementor")
-        }
-    }
 
     #[derive(Serialize, Deserialize)]
     struct IncrementorConfig { increment_by: usize }
@@ -163,11 +157,17 @@ mod tests {
         }
     }
 
+    impl CellHandlerConfig for IncrementorConfig {
+        fn id() -> Id {
+            Id::new("incrementor")
+        }
+    }
+
     impl CellHandler<MyState> for Incrementor {
         type Config = IncrementorConfig;
 
-        fn name(&self) -> Id {
-            Self::name()
+        fn id(&self) -> Id {
+            Self::Config::id()
         }
 
         fn evaluate(&self, item: &MyState, config: &IncrementorConfig, _visitor: &CellVisitor<MyState>) -> MyState {
@@ -208,7 +208,7 @@ mod tests {
     fn test_simple_program_1() {
         let program = SequenceCell::new(vec![
             
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
             
             ]);
 
@@ -222,9 +222,9 @@ mod tests {
     #[test]
     fn test_simple_program_2() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(2)).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(3)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(2)).into(),
+            CustomCell::new(IncrementorConfig::new(3)).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![Handler::Cell(Box::new(Incrementor))]);
@@ -237,14 +237,14 @@ mod tests {
     #[test]
     fn test_simple_program_3() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
-                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into()),
+                Box::new(CustomCell::new(IncrementorConfig::new(1)).into()),
                 Box::new(Cell::NoOp),
             )),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
@@ -260,15 +260,15 @@ mod tests {
     #[test]
     fn test_simple_program_4() {
         let program = SequenceCell::new(vec![
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
             Cell::If(IfCell::new(
                 Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
                 Box::new(Cell::NoOp),
-                Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into()),
+                Box::new(CustomCell::new(IncrementorConfig::new(1)).into()),
             )),
-            CustomCell::new(Incrementor::name(), IncrementorConfig::new(1)).into(),
+            CustomCell::new(IncrementorConfig::new(1)).into(),
         ]);
 
         let visitor = CellVisitor::new(vec![
@@ -286,7 +286,7 @@ mod tests {
 
         let if_cell = Cell::If(IfCell::new(
         Condition::new(GreaterThanCondition::id(), GreaterThanCondition(7)),
-            Box::new(CustomCell::new(Incrementor::name(), IncrementorConfig::new(2)).into()),
+            Box::new(CustomCell::new(IncrementorConfig::new(2)).into()),
             Box::new(Cell::NoOp),
         ));
 

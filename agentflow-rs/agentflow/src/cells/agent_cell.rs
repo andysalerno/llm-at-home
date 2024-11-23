@@ -1,5 +1,5 @@
 use crate::{agent::Agent, conversation::ConversationState};
-use cellflow::{CellHandler, CellVisitor, Id};
+use cellflow::{CellHandler, CellHandlerConfig, CellVisitor, Id};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -10,6 +10,12 @@ pub struct AgentCellConfig {
 impl AgentCellConfig {
     pub const fn new(name: String) -> Self {
         Self { name }
+    }
+}
+
+impl CellHandlerConfig for AgentCellConfig {
+    fn id() -> Id {
+        Id::new("agent-cell")
     }
 }
 
@@ -27,17 +33,13 @@ impl AgentCellHandler {
         }
     }
 
-    pub fn name() -> Id {
-        Id::new("agent_cell")
+    pub fn id() -> Id {
+        AgentCellConfig::id()
     }
 }
 
 impl CellHandler<ConversationState> for AgentCellHandler {
     type Config = AgentCellConfig;
-
-    fn name(&self) -> cellflow::Id {
-        Self::name()
-    }
 
     fn evaluate(
         &self,

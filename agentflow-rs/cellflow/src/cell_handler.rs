@@ -1,10 +1,10 @@
 use crate::{CellVisitor, Handler, Id, Json};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// A trait representing a handler for a type of cell.
 /// It maps to the cell type by id.
 pub trait CellHandlerInner<T> {
-    fn name(&self) -> Id;
+    fn id(&self) -> Id;
     fn evaluate(&self, item: &T, cell_config: &Json, visitor: &CellVisitor<T>) -> T;
 }
 
@@ -16,9 +16,14 @@ pub trait CellHandlerInner<T> {
 /// The given `CellVisitor` is responsible for providing all the handlers available
 /// to run any other cells in this way.
 pub trait CellHandler<T> {
-    type Config: for<'a> Deserialize<'a>;
-    fn name(&self) -> Id;
+    type Config: CellHandlerConfig;
+
+    fn id(&self) -> Id {
+        Self::Config::id()
+    }
+
     fn evaluate(&self, item: &T, cell_config: &Self::Config, visitor: &CellVisitor<T>) -> T;
+
     fn into_handler(self) -> Handler<T>
     where
         Self: Sized + 'static,
@@ -31,8 +36,8 @@ impl<T, TItem> CellHandlerInner<TItem> for T
 where
     T: CellHandler<TItem>,
 {
-    fn name(&self) -> Id {
-        CellHandler::name(self)
+    fn id(&self) -> Id {
+        CellHandler::id(self)
     }
 
     fn evaluate(&self, item: &TItem, condition_body: &Json, visitor: &CellVisitor<TItem>) -> TItem {
@@ -40,4 +45,8 @@ where
 
         CellHandler::evaluate(self, item, &parsed, visitor)
     }
+}
+
+pub trait CellHandlerConfig: Serialize + for<'a> Deserialize<'a> {
+    fn id() -> Id;
 }

@@ -2,6 +2,8 @@ use std::error::Error;
 
 use serde::{Deserialize, Serialize};
 
+use crate::CellHandlerConfig;
+
 /// A serializable and deserializable representation of some operation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Cell {
@@ -73,11 +75,18 @@ pub struct CustomCell {
 }
 
 impl CustomCell {
-    #[must_use]
-    pub fn new(id: Id, body: impl Serialize) -> Self {
+    // #[must_use]
+    // pub fn new(id: Id, body: impl Serialize) -> Self {
+    //     Self {
+    //         id,
+    //         body: Json(serde_json::to_value(body).expect("could not serialize the body")),
+    //     }
+    // }
+
+    pub fn new<T: CellHandlerConfig>(config: T) -> Self {
         Self {
-            id,
-            body: Json(serde_json::to_value(body).expect("could not serialize the body")),
+            id: T::id(),
+            body: Json(serde_json::to_value(config).expect("could not serialize the body")),
         }
     }
 

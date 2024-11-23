@@ -2,17 +2,16 @@ use agentflow::{
     Agent, AgentCellConfig, AgentCellHandler, AgentName, CellHandler, ConversationState, Message,
     Role,
 };
-use cellflow::{Cell, CellVisitor, CustomCell, Id, SequenceCell};
+use cellflow::{Cell, CellHandlerConfig, CellVisitor, CustomCell, Id, SequenceCell};
 use log::info;
 use serde::{Deserialize, Serialize};
 
 fn main() {
     env_logger::init();
 
-    let program: Cell = SequenceCell::new(vec![CustomCell::new(
-        AgentCellHandler::name(),
-        AgentCellConfig::new("WebAgent".into()),
-    )
+    let program: Cell = SequenceCell::new(vec![CustomCell::new(AgentCellConfig::new(
+        "WebAgent".into(),
+    ))
     .into()])
     .into();
 
@@ -49,7 +48,7 @@ impl Agent for DummyAgent {
             "Hi!".to_string(),
         ));
 
-        let cell = CustomCell::new(Id::new("reply-with-message-cell"), cell);
+        let cell = CustomCell::new(cell);
 
         SequenceCell::new(vec![cell.into()]).into()
     }
@@ -66,14 +65,16 @@ impl ReplyWithMessageCellConfig {
     }
 }
 
+impl CellHandlerConfig for ReplyWithMessageCellConfig {
+    fn id() -> Id {
+        Id::new("reply-with-message")
+    }
+}
+
 struct ReplyWithMessageCellHandler;
 
 impl CellHandler<ConversationState> for ReplyWithMessageCellHandler {
     type Config = ReplyWithMessageCellConfig;
-
-    fn name(&self) -> Id {
-        Id::new("reply-with-message-cell")
-    }
 
     fn evaluate(
         &self,
