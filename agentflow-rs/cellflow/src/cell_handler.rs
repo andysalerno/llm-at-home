@@ -68,7 +68,7 @@ pub struct HandlerCollection<T> {
 }
 
 impl<T> HandlerCollection<T> {
-    pub fn new() -> Self {
+    #[must_use] pub fn new() -> Self {
         Self {
             handlers: Vec::new(),
         }
@@ -79,7 +79,7 @@ impl<T> HandlerCollection<T> {
         self
     }
 
-    pub fn take_all(self) -> Vec<Box<dyn CellHandlerInner<T>>> {
+    #[must_use] pub fn take_all(self) -> Vec<Box<dyn CellHandlerInner<T>>> {
         self.handlers
     }
 }

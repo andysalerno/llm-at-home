@@ -110,7 +110,7 @@ impl CustomCell {
 
 impl<T: CellHandlerConfig> From<T> for CustomCell {
     fn from(config: T) -> Self {
-        CustomCell::new(config)
+        Self::new(config)
     }
 }
 
@@ -213,8 +213,14 @@ pub struct SequenceCellBuilder {
     sequence: Vec<Cell>,
 }
 
+impl Default for SequenceCellBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SequenceCellBuilder {
-    pub fn new() -> Self {
+    #[must_use] pub const fn new() -> Self {
         Self {
             sequence: Vec::new(),
         }
@@ -226,7 +232,7 @@ impl SequenceCellBuilder {
         self
     }
 
-    pub fn build(self) -> SequenceCell {
+    #[must_use] pub fn build(self) -> SequenceCell {
         SequenceCell::new(self.sequence)
     }
 }
