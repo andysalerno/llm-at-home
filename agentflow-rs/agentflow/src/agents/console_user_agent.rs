@@ -10,7 +10,7 @@ pub struct ConsoleUserAgent {
 }
 
 impl ConsoleUserAgent {
-    pub fn new(agent_name: AgentName, role: Role) -> Self {
+    #[must_use] pub const fn new(agent_name: AgentName, role: Role) -> Self {
         Self { agent_name, role }
     }
 }
@@ -37,7 +37,7 @@ pub struct GetUserConsoleInputCellConfig {
 }
 
 impl GetUserConsoleInputCellConfig {
-    pub fn new(agent_name: AgentName, role: Role) -> Self {
+    #[must_use] pub const fn new(agent_name: AgentName, role: Role) -> Self {
         Self { agent_name, role }
     }
 }
