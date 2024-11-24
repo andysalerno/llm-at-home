@@ -106,7 +106,7 @@ impl<T: Clone> CellVisitor<T> {
             Cell::Custom(CustomCell { id, body }) => {
                 let custom_handler = self.select_handler(id);
 
-                info!("Running cell with custom handler: {custom_handler:?}");
+                info!("Running custom cell handler: {custom_handler:?}");
 
                 custom_handler.evaluate(input, body, self)
             }
