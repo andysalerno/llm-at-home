@@ -1,6 +1,6 @@
 use agentflow::{
-    Agent, AgentCellConfig, AgentCellHandler, AgentName, CellHandler, ConversationState, Message,
-    Role,
+    Agent, AgentCellConfig, AgentCellHandler, AgentName, CellHandler, ConsoleUserAgent,
+    ConversationState, GetUserConsoleInputCellHandler, Message, Role,
 };
 use cellflow::{
     Cell, CellHandlerConfig, CellVisitor, CustomCell, HandlerCollection, Id, SequenceCell,
@@ -15,7 +15,12 @@ fn main() {
     // All handlers that will be available for the program:
     let handlers = HandlerCollection::new()
         .add(AgentCellHandler::new(DummyAgent, Id::new("DummyBot")))
-        .add(ReplyWithMessageCellHandler);
+        .add(AgentCellHandler::new(
+            ConsoleUserAgent::new(AgentName::new("ConsoleUser"), Role::new("unset")),
+            Id::new("ConsoleUser"),
+        ))
+        .add(ReplyWithMessageCellHandler)
+        .add(GetUserConsoleInputCellHandler);
 
     // The program definition, which will be run:
     let program = SequenceCellBuilder::new()
@@ -23,10 +28,10 @@ fn main() {
             "unset".into(),
             Id::new("DummyBot"),
         )))
-        // .add(CustomCell::new(AgentCellConfig::new(
-        //     "unset".into(),
-        //     Id::new("ConsoleUser"),
-        // )))
+        .add(CustomCell::new(AgentCellConfig::new(
+            "unset".into(),
+            Id::new("ConsoleUser"),
+        )))
         .build();
 
     let program: Cell = program.into();
