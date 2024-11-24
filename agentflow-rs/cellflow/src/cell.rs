@@ -50,6 +50,20 @@ impl Id {
     pub fn new(value: impl Into<String>) -> Self {
         Self(value.into())
     }
+
+    #[must_use]
+    pub const fn new_empty() -> Self {
+        Self(String::new())
+    }
+
+    #[must_use]
+    pub fn concat(&self, other: &Self) -> Self {
+        let mut combined = String::new();
+        combined.push_str(&self.0);
+        combined.push_str(&other.0);
+
+        Self::new(combined)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
@@ -77,7 +91,7 @@ pub struct CustomCell {
 impl CustomCell {
     pub fn new<T: CellHandlerConfig>(config: T) -> Self {
         Self {
-            id: T::id(),
+            id: T::cell_type_id().concat(&config.instance_id()),
             body: Json(serde_json::to_value(config).expect("could not serialize the body")),
         }
     }

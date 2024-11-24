@@ -4,7 +4,8 @@ use serde::{Deserialize, Serialize};
 /// A trait representing a handler for a type of cell.
 /// It maps to the cell type by id.
 pub trait CellHandlerInner<T>: std::fmt::Debug {
-    fn id(&self) -> Id;
+    fn cell_type_id(&self) -> Id;
+    fn instance_id(&self) -> Id;
     fn evaluate(&self, item: &T, cell_config: &Json, visitor: &CellVisitor<T>) -> T;
 }
 
@@ -18,8 +19,12 @@ pub trait CellHandlerInner<T>: std::fmt::Debug {
 pub trait CellHandler<T>: std::fmt::Debug {
     type Config: CellHandlerConfig;
 
-    fn id(&self) -> Id {
-        Self::Config::id()
+    fn cell_type_id(&self) -> Id {
+        Self::Config::cell_type_id()
+    }
+
+    fn instance_id(&self) -> Id {
+        Id::new_empty()
     }
 
     fn evaluate(&self, item: &T, cell_config: &Self::Config, visitor: &CellVisitor<T>) -> T;
@@ -36,19 +41,26 @@ impl<T, TItem> CellHandlerInner<TItem> for T
 where
     T: CellHandler<TItem>,
 {
-    fn id(&self) -> Id {
-        CellHandler::id(self)
-    }
-
     fn evaluate(&self, item: &TItem, condition_body: &Json, visitor: &CellVisitor<TItem>) -> TItem {
         let parsed: T::Config = serde_json::from_value(condition_body.0.clone()).unwrap();
 
         CellHandler::evaluate(self, item, &parsed, visitor)
     }
+
+    fn cell_type_id(&self) -> Id {
+        self.cell_type_id()
+    }
+
+    fn instance_id(&self) -> Id {
+        self.instance_id()
+    }
 }
 
 pub trait CellHandlerConfig: Serialize + for<'a> Deserialize<'a> {
-    fn id() -> Id;
+    fn cell_type_id() -> Id;
+    fn instance_id(&self) -> Id {
+        Id::new_empty()
+    }
 }
 
 pub struct HandlerCollection<T> {

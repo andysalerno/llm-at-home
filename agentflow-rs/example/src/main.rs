@@ -14,13 +14,19 @@ fn main() {
 
     // All handlers that will be available for the program:
     let handlers = HandlerCollection::new()
-        .add(AgentCellHandler::new(DummyAgent))
+        .add(AgentCellHandler::new(DummyAgent, Id::new("DummyBot")))
         .add(ReplyWithMessageCellHandler);
 
     // The program definition, which will be run:
     let program = SequenceCellBuilder::new()
-        .add(CustomCell::new(AgentCellConfig::new("WebAgent".into())))
-        .add(CustomCell::new(AgentCellConfig::new("WebAgent".into())))
+        .add(CustomCell::new(AgentCellConfig::new(
+            "unset".into(),
+            Id::new("DummyBot"),
+        )))
+        // .add(CustomCell::new(AgentCellConfig::new(
+        //     "unset".into(),
+        //     Id::new("ConsoleUser"),
+        // )))
         .build();
 
     let program: Cell = program.into();
@@ -75,7 +81,7 @@ impl ReplyWithMessageCellConfig {
 }
 
 impl CellHandlerConfig for ReplyWithMessageCellConfig {
-    fn id() -> Id {
+    fn cell_type_id() -> Id {
         Id::new("reply-with-message")
     }
 }

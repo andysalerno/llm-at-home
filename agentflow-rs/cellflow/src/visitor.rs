@@ -122,8 +122,8 @@ impl<T: Clone> CellVisitor<T> {
                 Handler::Cell(handler) => Some(handler),
                 Handler::Condition(_) => None,
             })
-            .find(|h| h.id() == *id)
-            .expect("expected a condition to be registered");
+            .find(|h| h.cell_type_id().concat(&h.instance_id()) == *id)
+            .unwrap_or_else(|| panic!("expected a cell handler to be registered with id {id:?}"));
 
         found.as_ref()
     }
@@ -170,7 +170,7 @@ mod tests {
     }
 
     impl CellHandlerConfig for IncrementorConfig {
-        fn id() -> Id {
+        fn cell_type_id() -> Id {
             Id::new("incrementor")
         }
     }
@@ -178,8 +178,8 @@ mod tests {
     impl CellHandler<MyState> for Incrementor {
         type Config = IncrementorConfig;
 
-        fn id(&self) -> Id {
-            Self::Config::id()
+        fn cell_type_id(&self) -> Id {
+            Self::Config::cell_type_id()
         }
 
         fn evaluate(
