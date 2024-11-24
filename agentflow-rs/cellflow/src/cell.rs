@@ -220,7 +220,8 @@ impl Default for SequenceCellBuilder {
 }
 
 impl SequenceCellBuilder {
-    #[must_use] pub const fn new() -> Self {
+    #[must_use]
+    pub const fn new() -> Self {
         Self {
             sequence: Vec::new(),
         }
@@ -232,7 +233,8 @@ impl SequenceCellBuilder {
         self
     }
 
-    #[must_use] pub fn build(self) -> SequenceCell {
+    #[must_use]
+    pub fn build(self) -> SequenceCell {
         SequenceCell::new(self.sequence)
     }
 }
