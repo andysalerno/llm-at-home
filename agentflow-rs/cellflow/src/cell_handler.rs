@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 /// A trait representing a handler for a type of cell.
 /// It maps to the cell type by id.
-pub trait CellHandlerInner<T> {
+pub trait CellHandlerInner<T>: std::fmt::Debug {
     fn id(&self) -> Id;
     fn evaluate(&self, item: &T, cell_config: &Json, visitor: &CellVisitor<T>) -> T;
 }
@@ -15,7 +15,7 @@ pub trait CellHandlerInner<T> {
 /// may actually imply running many.
 /// The given `CellVisitor` is responsible for providing all the handlers available
 /// to run any other cells in this way.
-pub trait CellHandler<T> {
+pub trait CellHandler<T>: std::fmt::Debug {
     type Config: CellHandlerConfig;
 
     fn id(&self) -> Id {

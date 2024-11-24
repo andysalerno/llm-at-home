@@ -106,6 +106,8 @@ impl<T: Clone> CellVisitor<T> {
             Cell::Custom(CustomCell { id, body }) => {
                 let custom_handler = self.select_handler(id);
 
+                info!("Running cell with custom handler: {custom_handler:?}");
+
                 custom_handler.evaluate(input, body, self)
             }
             Cell::NoOp => input.clone(),
@@ -153,6 +155,7 @@ mod tests {
     #[derive(Debug, Clone)]
     struct MyState(usize);
 
+    #[derive(Debug, Clone)]
     struct Incrementor;
 
     #[derive(Serialize, Deserialize)]

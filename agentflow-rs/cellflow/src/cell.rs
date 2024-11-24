@@ -93,6 +93,12 @@ impl CustomCell {
     }
 }
 
+impl<T: CellHandlerConfig> From<T> for CustomCell {
+    fn from(config: T) -> Self {
+        CustomCell::new(config)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Condition {
     id: Id,

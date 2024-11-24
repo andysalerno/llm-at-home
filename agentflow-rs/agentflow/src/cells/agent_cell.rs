@@ -20,6 +20,7 @@ impl CellHandlerConfig for AgentCellConfig {
     }
 }
 
+#[derive(Debug)]
 pub struct AgentCellHandler {
     agent: Box<dyn Agent>,
 }

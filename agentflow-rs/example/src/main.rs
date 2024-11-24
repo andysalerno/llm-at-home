@@ -12,6 +12,12 @@ use serde::{Deserialize, Serialize};
 fn main() {
     env_logger::init();
 
+    // All handlers that will be available for the program:
+    let handlers = HandlerCollection::new()
+        .add(AgentCellHandler::new(DummyAgent))
+        .add(ReplyWithMessageCellHandler);
+
+    // The program definition, which will be run:
     let program = SequenceCellBuilder::new()
         .add(CustomCell::new(AgentCellConfig::new("WebAgent".into())))
         .add(CustomCell::new(AgentCellConfig::new("WebAgent".into())))
@@ -19,20 +25,20 @@ fn main() {
 
     let program: Cell = program.into();
 
-    let handlers = HandlerCollection::new()
-        .add(AgentCellHandler::new(DummyAgent))
-        .add(ReplyWithMessageCellHandler);
+    // Debug
+    {
+        let json = serde_json::to_string(&program).unwrap();
+        info!("Program: {json}");
+    }
 
     let visitor = CellVisitor::new(handlers);
 
     let output = visitor.run(&program, &ConversationState::empty());
 
     info!("Output: {:?}", output);
-
-    let json = serde_json::to_string(&program).unwrap();
-    info!("Program: {json}");
 }
 
+#[derive(Debug)]
 struct DummyAgent;
 
 impl Agent for DummyAgent {
@@ -74,6 +80,7 @@ impl CellHandlerConfig for ReplyWithMessageCellConfig {
     }
 }
 
+#[derive(Debug)]
 struct ReplyWithMessageCellHandler;
 
 impl CellHandler<ConversationState> for ReplyWithMessageCellHandler {
