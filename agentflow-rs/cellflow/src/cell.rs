@@ -60,6 +60,7 @@ impl Id {
     pub fn concat(&self, other: &Self) -> Self {
         let mut combined = String::new();
         combined.push_str(&self.0);
+        combined.push(':');
         combined.push_str(&other.0);
 
         Self::new(combined)
