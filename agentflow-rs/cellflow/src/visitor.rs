@@ -1,4 +1,5 @@
 use crate::{cell::Cell, CellHandlerInner, CustomCell, Id, Json};
+use log::info;
 use serde::Deserialize;
 
 pub trait ConditionEvaluatorInner<T> {
@@ -70,6 +71,7 @@ impl<T: Clone> CellVisitor<T> {
     }
 
     fn visit(&self, cell: &Cell, input: &T) -> T {
+        info!("Visiting cell: {cell:?}");
         match &cell {
             Cell::If(if_cell) => {
                 let condition_handler = self.select_condition(if_cell.condition().id());

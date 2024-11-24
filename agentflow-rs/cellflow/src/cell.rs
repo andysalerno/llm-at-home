@@ -75,14 +75,6 @@ pub struct CustomCell {
 }
 
 impl CustomCell {
-    // #[must_use]
-    // pub fn new(id: Id, body: impl Serialize) -> Self {
-    //     Self {
-    //         id,
-    //         body: Json(serde_json::to_value(body).expect("could not serialize the body")),
-    //     }
-    // }
-
     pub fn new<T: CellHandlerConfig>(config: T) -> Self {
         Self {
             id: T::id(),
