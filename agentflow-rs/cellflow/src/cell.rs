@@ -187,6 +187,29 @@ impl SequenceCell {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SequenceCellBuilder {
+    sequence: Vec<Cell>,
+}
+
+impl SequenceCellBuilder {
+    pub fn new() -> Self {
+        Self {
+            sequence: Vec::new(),
+        }
+    }
+
+    pub fn add<TCell: Into<Cell>>(mut self, cell: TCell) -> Self {
+        self.sequence.push(cell.into());
+
+        self
+    }
+
+    pub fn build(self) -> SequenceCell {
+        SequenceCell::new(self.sequence)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::{Cell, SequenceCell};

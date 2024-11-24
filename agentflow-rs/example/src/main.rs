@@ -4,6 +4,7 @@ use agentflow::{
 };
 use cellflow::{
     Cell, CellHandlerConfig, CellVisitor, CustomCell, HandlerCollection, Id, SequenceCell,
+    SequenceCellBuilder,
 };
 use log::info;
 use serde::{Deserialize, Serialize};
@@ -11,11 +12,12 @@ use serde::{Deserialize, Serialize};
 fn main() {
     env_logger::init();
 
-    let program: Cell = SequenceCell::new(vec![CustomCell::new(AgentCellConfig::new(
-        "WebAgent".into(),
-    ))
-    .into()])
-    .into();
+    let program = SequenceCellBuilder::new()
+        .add(CustomCell::new(AgentCellConfig::new("WebAgent".into())))
+        .add(CustomCell::new(AgentCellConfig::new("WebAgent".into())))
+        .build();
+
+    let program: Cell = program.into();
 
     let handlers = HandlerCollection::new()
         .add(AgentCellHandler::new(DummyAgent))
@@ -28,7 +30,7 @@ fn main() {
     info!("Output: {:?}", output);
 
     let json = serde_json::to_string(&program).unwrap();
-    info!("Program: {:?}", json);
+    info!("Program: {json}");
 }
 
 struct DummyAgent;
