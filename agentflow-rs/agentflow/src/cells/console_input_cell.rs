@@ -52,6 +52,7 @@ impl CellHandler<ConversationState> for ConsoleInputCellHandler {
             println!("User input: ");
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
+            input.pop();
             input
         };
 
