@@ -1,4 +1,7 @@
-use crate::{agent::Agent, conversation::ConversationState};
+use crate::{
+    agent::{self, Agent},
+    conversation::ConversationState,
+};
 use cellflow::{CellHandler, CellHandlerConfig, CellVisitor, Id};
 use serde::{Deserialize, Serialize};
 
@@ -10,7 +13,14 @@ pub struct AgentCellConfig {
 
 impl AgentCellConfig {
     #[must_use]
-    pub const fn new(name: String, agent_id: Id) -> Self {
+    pub fn new(name: impl Into<String>, agent_id: impl Into<Id>) -> Self {
+        let name = name.into();
+        let agent_id = agent_id.into();
+        Self { name, agent_id }
+    }
+
+    #[must_use]
+    pub const fn new_const(name: String, agent_id: Id) -> Self {
         Self { name, agent_id }
     }
 }
@@ -32,10 +42,11 @@ pub struct AgentCellHandler {
 }
 
 impl AgentCellHandler {
-    pub fn new<T>(value: T, agent_id: Id) -> Self
+    pub fn new<T>(value: T, agent_id: impl Into<Id>) -> Self
     where
         T: Into<Box<dyn Agent>>,
     {
+        let agent_id = agent_id.into();
         Self {
             agent: value.into(),
             agent_id,

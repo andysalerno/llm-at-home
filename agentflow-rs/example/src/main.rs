@@ -14,18 +14,18 @@ fn main() {
 
     // All handlers that will be available for the program:
     let handlers = HandlerCollection::new()
-        .add(AgentCellHandler::new(DummyAgent, Id::new("DummyBot")))
+        .add(AgentCellHandler::new(DummyAgent, "DummyBot"))
         .add(AgentCellHandler::new(
             ConsoleUserAgent::new(),
-            Id::new("ConsoleUser"),
+            "ConsoleUser",
         ))
         .add(ReplyWithMessageCellHandler)
         .add(ConsoleInputCellHandler::new());
 
     // The program definition, which will be run:
     let program = SequenceCellBuilder::new()
-        .add(AgentCellConfig::new("unset".into(), Id::new("DummyBot")))
-        .add(AgentCellConfig::new("unset".into(), Id::new("ConsoleUser")))
+        .add(AgentCellConfig::new("unset", "DummyBot"))
+        .add(AgentCellConfig::new("unset", "ConsoleUser"))
         .build();
 
     let program: Cell = program.into();

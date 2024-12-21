@@ -50,6 +50,18 @@ where
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Id(String);
 
+impl From<String> for Id {
+    fn from(value: String) -> Self {
+        Self(value)
+    }
+}
+
+impl From<&str> for Id {
+    fn from(value: &str) -> Self {
+        Self(value.to_string())
+    }
+}
+
 impl Id {
     #[must_use]
     pub const fn new_const(value: String) -> Self {
