@@ -307,7 +307,7 @@ mod tests {
         let serialized = serde_json::to_string(&cell).unwrap();
 
         assert_eq!(
-            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":{\"Custom\":{\"id\":\"incrementor\",\"body\":{\"increment_by\":2}}},\"on_false\":\"NoOp\"}}]}}",
+            "{\"Sequence\":{\"sequence\":[{\"If\":{\"condition\":{\"id\":\"greater-than-condition\",\"body\":7},\"on_true\":{\"Custom\":{\"id\":\"incrementor:\",\"body\":{\"increment_by\":2}}},\"on_false\":\"NoOp\"}}]}}",
             &serialized);
     }
 
