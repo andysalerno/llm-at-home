@@ -24,14 +24,8 @@ fn main() {
 
     // The program definition, which will be run:
     let program = SequenceCellBuilder::new()
-        .add(CustomCell::new(AgentCellConfig::new(
-            "unset".into(),
-            Id::new("DummyBot"),
-        )))
-        .add(CustomCell::new(AgentCellConfig::new(
-            "unset".into(),
-            Id::new("ConsoleUser"),
-        )))
+        .add(AgentCellConfig::new("unset".into(), Id::new("DummyBot")))
+        .add(AgentCellConfig::new("unset".into(), Id::new("ConsoleUser")))
         .build();
 
     let program: Cell = program.into();
