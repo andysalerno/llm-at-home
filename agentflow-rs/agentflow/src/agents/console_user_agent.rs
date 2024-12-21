@@ -1,7 +1,12 @@
+use std::cell::Cell;
+
 use cellflow::{CellHandler, CellHandlerConfig, CustomCell, Id};
 use serde::{Deserialize, Serialize};
 
-use crate::{Agent, AgentName, ConversationState, Message, Role};
+use crate::{
+    cells::{ConsoleInputCellConfig, ConsoleInputCellHandler},
+    Agent, AgentName, ConversationState, Message, Role,
+};
 
 #[derive(Debug)]
 pub struct ConsoleUserAgent {
@@ -60,18 +65,10 @@ impl CellHandler<ConversationState> for GetUserConsoleInputCellHandler {
         &self,
         item: &ConversationState,
         cell_config: &Self::Config,
-        _: &cellflow::CellVisitor<ConversationState>,
+        visitor: &cellflow::CellVisitor<ConversationState>,
     ) -> ConversationState {
-        let user_input = "some user input";
+        let cell = CustomCell::new(ConsoleInputCellConfig::new());
 
-        let mut next_state = item.clone();
-
-        next_state.add_message(Message::new(
-            cell_config.agent_name.clone(),
-            cell_config.role.clone(),
-            user_input.into(),
-        ));
-
-        next_state
+        visitor.run(&cell.into(), item)
     }
 }
