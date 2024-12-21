@@ -1,4 +1,4 @@
-use agentflow::{AgentName, ConversationState, Message, Role};
+use crate::{AgentName, ConversationState, Message, Role};
 use cellflow::{CellHandler, CellHandlerConfig, CellVisitor, Id};
 use serde::{Deserialize, Serialize};
 

@@ -38,6 +38,15 @@ impl From<CustomCell> for Cell {
     }
 }
 
+impl<T> From<T> for Cell
+where
+    T: CellHandlerConfig,
+{
+    fn from(v: T) -> Self {
+        Self::Custom(CustomCell::new(v))
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Id(String);
 
