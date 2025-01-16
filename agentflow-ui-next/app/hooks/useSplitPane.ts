@@ -1,9 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 
 interface UseSplitPaneProps {
+    defaultSize?: number;
     minSize?: number;
     maxSize?: number;
-    defaultSize?: number;
     onChange?: (size: number) => void;
 }
 

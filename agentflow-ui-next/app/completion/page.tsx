@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import AppShell from '../components/layout/AppShell'
 import TextCompletionSection from '../components/completion/TextCompletionSection'
-import SplitView from '../components/layout/SplitView'
-import ConfigPanel from '../components/ConfigPanel'
+import SplitPane from '../components/layout/SplitPane'
+import ConfigPanel from '../components/completion/ConfigPanel'
 
 export default function TextCompletion() {
     const [temperature, setTemperature] = useState<number>(0.7);
@@ -18,7 +18,7 @@ export default function TextCompletion() {
 
     return (
         <AppShell>
-            <SplitView
+            <SplitPane
                 left={
                     <TextCompletionSection
                         onCompletion={handleCompletion}

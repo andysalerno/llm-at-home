@@ -1,48 +1,17 @@
 'use client'
 
 import { ChatContainer } from '../components/chat/ChatContainer';
-import DebugSection from '../components/DebugSection'
+import DebugSection from '../components/debug/DebugSection'
 import AppShell from '../components/layout/AppShell';
-import SplitView from '../components/layout/SplitView'
-
-// export default function ChatPage() {
-//     return (
-//         <div className="h-full p-4">
-//             <ChatContainer />
-//         </div>
-//     )
-// }
+import SplitPane from '../components/layout/SplitPane';
 
 export default function ChatPage() {
     return (
         <AppShell>
-            <SplitView
+            <SplitPane
                 left={<ChatContainer />}
                 right={<DebugSection focusedMessageId={null} />}
             />
         </AppShell>
     )
 }
-
-// import { useState } from 'react'
-// import SplitView from './components/SplitView'
-// import ChatSection from './components/ChatSection'
-// import DebugSection from './components/DebugSection'
-// import AppShell from './components/layout/AppShell'
-
-// export default function Home() {
-//   const [focusedMessageId, setFocusedMessageId] = useState<string | null>(null);
-
-//   const handleMessageClick = (correlationId: string) => {
-//     setFocusedMessageId(correlationId);
-//   };
-
-//   return (
-//     <AppShell>
-//       <SplitView
-//         left={<ChatSection onMessageClick={handleMessageClick} />}
-//         right={<DebugSection focusedMessageId={focusedMessageId} />}
-//       />
-//     </AppShell>
-//   )
-// }

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react';
 import { Button } from '@fluentui/react-components';
 import {
     ChevronLeft24Regular,
@@ -7,7 +8,6 @@ import {
 } from '@fluentui/react-icons';
 import { useSplitPane } from '../../hooks/useSplitPane';
 import { mergeClasses } from '@fluentui/react-components';
-import { useState } from 'react';
 
 interface SplitPaneProps {
     left: React.ReactNode;
@@ -19,7 +19,7 @@ interface SplitPaneProps {
     className?: string;
 }
 
-export function SplitPane({
+export default function SplitPane({
     left,
     right,
     defaultLeftSize = 50,
