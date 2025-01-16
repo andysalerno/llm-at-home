@@ -1,7 +1,11 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { Button } from '@fluentui/react-components';
+import {
+    ChevronLeft24Regular,
+    ChevronRight24Regular
+} from '@fluentui/react-icons';
 
 interface SplitViewProps {
     left: React.ReactNode;
@@ -28,7 +32,6 @@ const SplitView: React.FC<SplitViewProps> = ({ left, right }) => {
             if (container) {
                 const containerRect = container.getBoundingClientRect();
                 const newLeftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-                // Restrict the divider to stay within 20% to 80% of the container width
                 setLeftWidth(Math.min(Math.max(newLeftWidth, 20), 80));
             }
         }
@@ -70,17 +73,13 @@ const SplitView: React.FC<SplitViewProps> = ({ left, right }) => {
                 </>
             )}
 
-            <button
+            <Button
+                icon={isRightVisible ? <ChevronRight24Regular /> : <ChevronLeft24Regular />}
+                appearance="subtle"
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-blue-600 text-white hover:bg-blue-700 rounded-l-md rounded-r-none"
                 onClick={() => setIsRightVisible(!isRightVisible)}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-l-md hover:bg-blue-600 transition-colors"
                 aria-label={isRightVisible ? "Hide right panel" : "Show right panel"}
-            >
-                {isRightVisible ? (
-                    <ChevronRightIcon className="h-6 w-6" />
-                ) : (
-                    <ChevronLeftIcon className="h-6 w-6" />
-                )}
-            </button>
+            />
         </div>
     );
 };

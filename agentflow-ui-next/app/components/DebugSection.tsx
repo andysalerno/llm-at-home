@@ -1,7 +1,17 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import {
+    Button,
+    Text,
+    Spinner,
+    Card,
+    CardHeader,
+} from '@fluentui/react-components';
+import {
+    ChevronDown24Regular,
+    ChevronRight24Regular
+} from '@fluentui/react-icons';
 
 interface LlmRequest {
     id: string;
@@ -39,20 +49,27 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     return (
-        <div>
-            <div
-                className="flex items-center cursor-pointer hover:bg-blue-100 p-2 rounded transition-colors duration-150 ease-in-out"
+        <div className="my-1">
+            <Button
+                appearance="subtle"
+                className="w-full flex items-center p-2 hover:bg-gray-100 rounded text-left"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
                 }}
             >
                 {children && (
-                    isOpen ? <ChevronDownIcon className="w-4 h-4 mr-2 text-blue-500" /> : <ChevronRightIcon className="w-4 h-4 mr-2 text-blue-500" />
+                    isOpen ?
+                        <ChevronDown24Regular className="w-5 h-5 mr-2 text-blue-600" /> :
+                        <ChevronRight24Regular className="w-5 h-5 mr-2 text-blue-600" />
                 )}
-                <span>{label}</span>
-            </div>
-            {isOpen && children && <div className="pl-4 border-l border-gray-200 ml-2">{children}</div>}
+                <Text>{label}</Text>
+            </Button>
+            {isOpen && children && (
+                <div className="pl-4 border-l border-gray-200 ml-2">
+                    {children}
+                </div>
+            )}
         </div>
     );
 };
@@ -73,10 +90,10 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                 }
                 const result = await response.json();
                 setData(result);
-                setIsLoading(false);
             } catch (e) {
                 console.error("An error occurred while fetching the data: ", e);
                 setError(e instanceof Error ? e.message : String(e));
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -94,34 +111,72 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     }, [focusedMessageId, data]);
 
     const renderDetail = () => {
-        if (!selectedItem) return <div>Select an item to view details</div>;
+        if (!selectedItem) return (
+            <Text>Select an item to view details</Text>
+        );
 
         let item;
         if (selectedItem.type === 'session') {
             item = data.sessions.find(s => s.id === selectedItem.id);
-            return <div>Session ID: {item?.id}</div>;
+            return (
+                <Card className="p-4">
+                    <CardHeader>
+                        <Text size={500} weight="semibold">Session Details</Text>
+                    </CardHeader>
+                    <Text>Session ID: {item?.id}</Text>
+                </Card>
+            );
         } else if (selectedItem.type === 'message') {
             item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
-            return <div>Message: {item?.content}</div>;
+            return (
+                <Card className="p-4">
+                    <CardHeader>
+                        <Text size={500} weight="semibold">Message Details</Text>
+                    </CardHeader>
+                    <Text>Message: {item?.content}</Text>
+                </Card>
+            );
         } else if (selectedItem.type === 'request') {
             item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
             return (
-                <pre className="font-mono text-sm bg-gray-100 p-4 rounded-md shadow-inner overflow-auto whitespace-pre-wrap">
-                    <h3>Request: {item?.id}</h3>
-                    <p><strong>Prompt:</strong> {item?.prompt}</p>
-                    <p><strong>Response:</strong> {item?.response}</p>
-                </pre>
+                <Card className="p-4">
+                    <CardHeader>
+                        <Text size={500} weight="semibold">Request Details</Text>
+                    </CardHeader>
+                    <div className="font-mono text-sm bg-gray-50 p-4 rounded-md shadow-inner overflow-auto whitespace-pre-wrap">
+                        <Text weight="semibold">Request ID: {item?.id}</Text>
+                        <div className="mt-4">
+                            <Text weight="semibold">Prompt:</Text>
+                            <div className="mt-2">{item?.prompt}</div>
+                        </div>
+                        <div className="mt-4">
+                            <Text weight="semibold">Response:</Text>
+                            <div className="mt-2">{item?.response}</div>
+                        </div>
+                    </div>
+                </Card>
             );
         }
     };
 
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (isLoading) return (
+        <div className="flex items-center justify-center h-full">
+            <Spinner size="large" />
+        </div>
+    );
+
+    if (error) return (
+        <div className="p-4 text-red-600">
+            Error: {error}
+        </div>
+    );
 
     return (
         <div className="flex h-full">
             <div className="w-1/3 overflow-auto border-r p-4 bg-gray-50">
-                <h2 className="text-xl font-bold mb-4">Navigation</h2>
+                <Text size={600} weight="semibold" className="mb-4 block">
+                    Navigation
+                </Text>
                 {data.sessions.map(session => (
                     <TreeNode
                         key={session.id}
@@ -147,7 +202,9 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                 ))}
             </div>
             <div className="w-2/3 p-4 overflow-auto bg-white">
-                <h2 className="text-xl font-bold mb-4">Detail View</h2>
+                <Text size={600} weight="semibold" className="mb-4 block">
+                    Detail View
+                </Text>
                 <div className="h-[calc(100%-2rem)]">
                     {renderDetail()}
                 </div>

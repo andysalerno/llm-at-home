@@ -1,7 +1,13 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import {
+    Button,
+    Input,
+    Card,
+    CardHeader,
+} from '@fluentui/react-components';
+import { Delete24Regular, Send24Regular } from '@fluentui/react-icons';
 
 interface Message {
     role: 'user' | 'assistant' | 'system';
@@ -17,7 +23,6 @@ interface ChatSectionProps {
 
 const ChatSection: React.FC<ChatSectionProps> = ({ onMessageClick }) => {
     const [messages, setMessages] = useState<Message[]>(() => {
-        // Initialize from localStorage if available
         if (typeof window !== 'undefined') {
             const stored = localStorage.getItem(STORAGE_KEY);
             return stored ? JSON.parse(stored) : [];
@@ -51,14 +56,12 @@ const ChatSection: React.FC<ChatSectionProps> = ({ onMessageClick }) => {
             correlationId: Date.now().toString()
         };
 
-        // Update messages with the new user message
         setMessages(prevMessages => [...prevMessages, userMessage]);
         setNewMessage('');
         setIsLoading(true);
         setStreamingMessage('');
 
         try {
-            // Here's the key fix - we need to send ALL previous messages
             const response = await fetch(
                 'http://nzxt.local:8003/v1/chat/completions',
                 {
@@ -67,7 +70,6 @@ const ChatSection: React.FC<ChatSectionProps> = ({ onMessageClick }) => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        // Include ALL messages, not just the new one
                         messages: [...messages, userMessage].map(msg => ({
                             role: msg.role,
                             content: msg.content
@@ -85,9 +87,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ onMessageClick }) => {
 
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) {
-                    break;
-                };
+                if (done) break;
 
                 const lines = value.split('\n').filter(line => line.trim() !== '');
 
@@ -110,7 +110,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ onMessageClick }) => {
 
             setMessages(prevMessages => [
                 ...prevMessages,
-                { role: 'assistant', content: streamingMessageContent, correlationId: "emptyfornow" }
+                { role: 'assistant', content: streamingMessageContent, correlationId: Date.now().toString() }
             ]);
             setStreamingMessage('');
 
@@ -127,148 +127,70 @@ const ChatSection: React.FC<ChatSectionProps> = ({ onMessageClick }) => {
         } finally {
             setIsLoading(false);
         }
-
-    }, [messages, newMessage, streamingMessage]);
-
-    // const handleSendMessage = useCallback(async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     if (newMessage.trim() === '') return;
-
-    //     const userMessage: Message = {
-    //         role: 'user',
-    //         content: newMessage.trim(),
-    //         correlationId: Date.now().toString()
-    //     };
-
-    //     setMessages(prevMessages => [...prevMessages, userMessage]);
-    //     setNewMessage('');
-    //     setIsLoading(true);
-    //     setStreamingMessage('');
-
-    //     try {
-    //         const response = await fetch(
-    //             'http://nzxt.local:8003/v1/chat/completions',
-    //             {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify({
-    //                     messages: [...messages, userMessage],
-    //                 }),
-    //             });
-
-    //         if (!response.body) throw new Error('No response body');
-
-    //         const reader = response.body
-    //             .pipeThrough(new TextDecoderStream())
-    //             .getReader();
-
-    //         while (true) {
-    //             const { done, value } = await reader.read();
-    //             if (done) break;
-
-    //             const lines = value.split('\n').filter(line => line.trim() !== '');
-
-    //             for (const line of lines) {
-    //                 if (line.startsWith('data: ')) {
-    //                     const data = line.slice(6);
-    //                     if (data === '[DONE]') {
-    //                         setMessages(prevMessages => {
-    //                             const lastMessage = {
-    //                                 role: 'assistant' as const,
-    //                                 content: streamingMessage,
-    //                                 correlationId: Date.now().toString()
-    //                             };
-    //                             const newMessages = [...prevMessages, lastMessage];
-    //                             localStorage.setItem(STORAGE_KEY, JSON.stringify(newMessages));
-
-    //                             return newMessages;
-    //                         });
-    //                         setStreamingMessage('');
-    //                     } else {
-    //                         try {
-    //                             const parsed = JSON.parse(data);
-    //                             const content = parsed.choices[0].delta.content;
-    //                             if (content) {
-    //                                 setStreamingMessage(prev => prev + content);
-    //                             }
-    //                         } catch (error) {
-    //                             console.error('Error parsing SSE data:', error);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Error sending message:', error);
-    //         setMessages(prevMessages => [
-    //             ...prevMessages,
-    //             {
-    //                 role: 'system',
-    //                 content: 'Sorry, there was an error processing your request.',
-    //                 correlationId: Date.now().toString()
-    //             }
-    //         ]);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // }, [messages, newMessage, streamingMessage]);
+    }, [messages, newMessage]);
 
     const handleDeleteMessage = useCallback((correlationId: string) => {
         setMessages(prevMessages => prevMessages.filter(message => message.correlationId !== correlationId));
     }, []);
 
     return (
-        <div className="flex flex-col h-full bg-gray-100">
+        <div className="flex flex-col h-full bg-gray-50">
             <div className="flex-1 overflow-auto p-4">
                 {messages.map((message) => (
                     <div
                         key={message.correlationId}
-                        className={`relative max-w-[70%] mb-4 p-3 rounded-lg hover:shadow-md transition-shadow duration-200 ${message.role === 'user'
-                            ? 'ml-auto bg-blue-500 text-white'
-                            : 'mr-auto bg-white text-gray-800'
+                        className={`relative max-w-[70%] mb-4 group ${message.role === 'user' ? 'ml-auto' : 'mr-auto'
                             }`}
                     >
-                        <div
-                            className="cursor-pointer"
+                        <Card
+                            className={`cursor-pointer transition-shadow duration-200 ${message.role === 'user'
+                                    ? 'bg-blue-600 text-white hover:shadow-lg'
+                                    : 'bg-white hover:shadow-md'
+                                }`}
                             onClick={() => onMessageClick?.(message.correlationId)}
                         >
-                            {message.content}
-                        </div>
-                        <button
+                            <CardHeader>
+                                <div className="p-2">{message.content}</div>
+                            </CardHeader>
+                        </Card>
+                        <Button
+                            icon={<Delete24Regular />}
+                            appearance="subtle"
+                            className={`absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 
+                                ${message.role === 'user' ? 'text-white' : 'text-gray-600'}`}
                             onClick={() => handleDeleteMessage(message.correlationId)}
-                            className="absolute top-1 right-1 p-1 text-gray-500 hover:text-red-500 focus:outline-none opacity-0 hover:opacity-100 transition-opacity duration-200"
                             aria-label="Delete message"
-                        >
-                            <TrashIcon className="h-4 w-4" />
-                        </button>
+                        />
                     </div>
                 ))}
                 {streamingMessage && (
-                    <div className="mr-auto bg-white text-gray-800 max-w-[70%] mb-4 p-3 rounded-lg">
-                        {streamingMessage}
+                    <div className="max-w-[70%] mr-auto mb-4">
+                        <Card className="bg-white">
+                            <CardHeader>
+                                <div className="p-2">{streamingMessage}</div>
+                            </CardHeader>
+                        </Card>
                     </div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
-            <form onSubmit={handleSendMessage} className="p-4 bg-white">
-                <div className="flex">
-                    <input
-                        type="text"
+            <form onSubmit={handleSendMessage} className="p-4 bg-white border-t">
+                <div className="flex gap-2">
+                    <Input
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message here..."
-                        className="flex-1 p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1"
                         disabled={isLoading}
                     />
-                    <button
+                    <Button
+                        icon={<Send24Regular />}
                         type="submit"
-                        className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+                        appearance="primary"
                         disabled={isLoading}
                     >
                         Send
-                    </button>
+                    </Button>
                 </div>
             </form>
         </div>

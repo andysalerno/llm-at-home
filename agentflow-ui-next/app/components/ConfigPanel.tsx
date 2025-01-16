@@ -1,6 +1,14 @@
 'use client'
 
 import React from 'react';
+import {
+    Card,
+    CardHeader,
+    Text,
+    Slider,
+    Input,
+    Textarea,
+} from '@fluentui/react-components';
 
 interface ConfigPanelProps {
     temperature: number;
@@ -25,60 +33,59 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({
     };
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm h-full">
-            <h2 className="text-lg font-semibold mb-6">Configuration</h2>
-
-            <div className="space-y-6">
+        <Card className="h-full">
+            <CardHeader>
+                <Text size={600} weight="semibold">Configuration</Text>
+            </CardHeader>
+            <div className="p-6 space-y-6">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Text weight="medium" className="block mb-2">
                         Temperature: {temperature.toFixed(1)}
-                    </label>
-                    <input
-                        type="range"
-                        min="0"
-                        max="2"
-                        step="0.1"
+                    </Text>
+                    <Slider
+                        min={0}
+                        max={2}
+                        step={0.1}
                         value={temperature}
-                        onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                        onChange={(_, data) => setTemperature(data.value)}
                     />
-                    <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Precise</span>
-                        <span>Creative</span>
+                    <div className="flex justify-between text-sm text-gray-500 mt-1">
+                        <Text>Precise</Text>
+                        <Text>Creative</Text>
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Text weight="medium" className="block mb-2">
                         Max Tokens: {maxTokens}
-                    </label>
-                    <input
+                    </Text>
+                    <Input
                         type="number"
-                        value={maxTokens}
+                        value={maxTokens.toString()}
                         onChange={(e) => setMaxTokens(parseInt(e.target.value))}
-                        min="1"
-                        max="4000"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        min={1}
+                        max={4000}
+                        className="w-full"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Text weight="medium" className="block mb-2">
                         Stop Sequences
-                    </label>
-                    <textarea
+                    </Text>
+                    <Textarea
                         value={stopTokens.join(', ')}
                         onChange={handleStopTokensChange}
                         placeholder="Enter comma-separated stop sequences"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        className="w-full"
                         rows={3}
                     />
-                    <p className="mt-1 text-xs text-gray-500">
+                    <Text size={200} className="mt-1 text-gray-500">
                         Comma-separated list of sequences where the API will stop generating further tokens
-                    </p>
+                    </Text>
                 </div>
             </div>
-        </div>
+        </Card>
     );
 };
 
