@@ -3,7 +3,7 @@
 import { ChatContainer } from '../components/chat/ChatContainer';
 import DebugSection from '../components/DebugSection'
 import AppShell from '../components/layout/AppShell';
-import SplitView from '../components/SplitView'
+import SplitView from '../components/layout/SplitView'
 
 // export default function ChatPage() {
 //     return (

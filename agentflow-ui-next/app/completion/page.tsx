@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import AppShell from '../components/layout/AppShell'
-import TextCompletionSection from '../components/TextCompletionSection'
-import SplitView from '../components/SplitView'
+import TextCompletionSection from '../components/completion/TextCompletionSection'
+import SplitView from '../components/layout/SplitView'
 import ConfigPanel from '../components/ConfigPanel'
 
 export default function TextCompletion() {
