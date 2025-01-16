@@ -1,4 +1,28 @@
-// 'use client'
+'use client'
+
+import { ChatContainer } from '../components/chat/ChatContainer';
+import DebugSection from '../components/DebugSection'
+import AppShell from '../components/layout/AppShell';
+import SplitView from '../components/SplitView'
+
+// export default function ChatPage() {
+//     return (
+//         <div className="h-full p-4">
+//             <ChatContainer />
+//         </div>
+//     )
+// }
+
+export default function ChatPage() {
+    return (
+        <AppShell>
+            <SplitView
+                left={<ChatContainer />}
+                right={<DebugSection focusedMessageId={null} />}
+            />
+        </AppShell>
+    )
+}
 
 // import { useState } from 'react'
 // import SplitView from './components/SplitView'
@@ -22,10 +46,3 @@
 //     </AppShell>
 //   )
 // }
-
-// src/app/page.tsx
-import { redirect } from 'next/navigation'
-
-export default function Home() {
-  redirect('/chat')
-}

@@ -1,5 +1,4 @@
-import { Message } from '../../types';
-import { AppConfig } from '../../types/config';
+import { Message, AppConfig } from '../../types';
 
 export class ChatAPI {
     private static instance: ChatAPI;

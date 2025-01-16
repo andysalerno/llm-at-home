@@ -17,7 +17,7 @@ interface NavigationProps {
 }
 
 const navigationItems = [
-    { href: '/', icon: Chat24Regular, label: 'Chat' },
+    { href: '/chat', icon: Chat24Regular, label: 'Chat' },
     { href: '/completion', icon: TextExpand24Regular, label: 'Text Completion' },
     { href: '/debug', icon: Bug24Regular, label: 'Debug' },
 ];
