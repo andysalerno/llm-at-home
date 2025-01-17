@@ -36,7 +36,9 @@ export const ChatMessage = memo(function ChatMessage({
                 onClick={() => onClick?.(message.correlationId)}
             >
                 <CardHeader>
-                    <div className="p-2">{message.content}</div>
+                    {/* <div className="p-2">{message.content}</div> */}
+                    {/* {message.content} */}
+                    hi there
                 </CardHeader>
             </Card>
             {onDelete && (

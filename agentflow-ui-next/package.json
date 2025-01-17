@@ -13,7 +13,8 @@
     "@fluentui/react-icons": "^2.0.270",
     "next": "15.1.4",
     "react": "18.x",
-    "react-dom": "18.x"
+    "react-dom": "18.x",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

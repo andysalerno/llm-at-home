@@ -1,7 +1,6 @@
-// src/hooks/useChat.ts
-
 import { useState, useCallback } from 'react';
 import { Message } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
 const STORAGE_KEY = 'chatMessages';
 
@@ -20,11 +19,11 @@ export function useChat() {
         if (!content.trim()) return;
 
         const userMessage: Message = {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             role: 'user',
             content: content.trim(),
             timestamp: new Date().toISOString(),
-            correlationId: crypto.randomUUID()
+            correlationId: uuidv4()
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -79,11 +78,11 @@ export function useChat() {
             setMessages(prev => [
                 ...prev,
                 {
-                    id: crypto.randomUUID(),
+                    id: uuidv4(),
                     role: 'assistant',
                     content: streamContent,
                     timestamp: new Date().toISOString(),
-                    correlationId: crypto.randomUUID()
+                    correlationId: uuidv4()
                 }
             ]);
         } catch (error) {
@@ -91,11 +90,11 @@ export function useChat() {
             setMessages(prev => [
                 ...prev,
                 {
-                    id: crypto.randomUUID(),
+                    id: uuidv4(),
                     role: 'system',
                     content: 'Sorry, there was an error processing your request.',
                     timestamp: new Date().toISOString(),
-                    correlationId: crypto.randomUUID()
+                    correlationId: uuidv4()
                 }
             ]);
         } finally {
