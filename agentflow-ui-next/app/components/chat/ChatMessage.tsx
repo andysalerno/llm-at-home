@@ -1,7 +1,7 @@
 'use client'
 
 import { memo } from 'react';
-import { Button, Card, CardHeader } from '@fluentui/react-components';
+import { Body1, Button, Card, CardHeader } from '@fluentui/react-components';
 import { Delete24Regular } from '@fluentui/react-icons';
 import { Message } from '../../types';
 import { mergeClasses } from '@fluentui/react-components';
@@ -30,16 +30,17 @@ export const ChatMessage = memo(function ChatMessage({
                 className={mergeClasses(
                     'cursor-pointer transition-shadow duration-200',
                     isUser
-                        ? 'bg-brand-primary text-white hover:shadow-lg'
-                        : 'bg-white hover:shadow-md'
+                        ? 'bg-brand-primary hover:shadow-lg'
+                        : 'hover:shadow-md'
                 )}
                 onClick={() => onClick?.(message.correlationId)}
             >
-                <CardHeader>
-                    {/* <div className="p-2">{message.content}</div> */}
-                    {/* {message.content} */}
-                    hi there
-                </CardHeader>
+                <CardHeader
+                    header={
+                        <Body1>
+                            <div className="p-2">{message.content}</div>
+                        </Body1>
+                    } />
             </Card>
             {onDelete && (
                 <Button
