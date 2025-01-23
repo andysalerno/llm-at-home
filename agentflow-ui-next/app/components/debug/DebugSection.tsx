@@ -15,8 +15,8 @@ import {
 
 interface LlmRequest {
     id: string;
-    prompt: string;
-    response: string;
+    input: string;
+    output: string;
 }
 
 interface Message {
@@ -147,11 +147,11 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                         <Text weight="semibold">Request ID: {item?.id}</Text>
                         <div className="mt-4">
                             <Text weight="semibold">Prompt:</Text>
-                            <div className="mt-2">{item?.prompt}</div>
+                            <div className="mt-2">{item?.input}</div>
                         </div>
                         <div className="mt-4">
                             <Text weight="semibold">Response:</Text>
-                            <div className="mt-2">{item?.response}</div>
+                            <div className="mt-2">{item?.output}</div>
                         </div>
                     </div>
                 </Card>
