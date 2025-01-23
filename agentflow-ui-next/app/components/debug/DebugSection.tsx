@@ -84,7 +84,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('/api/debug-data');
+                const response = await fetch('http://nzxt.local:8003/transcripts');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

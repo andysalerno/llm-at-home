@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef } from 'react';
-// import { Text } from '@fluentui/react-components';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { useChat } from '../../hooks/useChat';
