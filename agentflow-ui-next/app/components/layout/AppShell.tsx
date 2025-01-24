@@ -21,7 +21,7 @@ export default function AppShell({ children }: AppShellProps) {
                 className="flex flex-col flex-grow overflow-hidden transition-[margin-left] duration-300"
                 style={{ marginLeft: isNavigationOpen ? '256px' : '48px' }}
             >
-                <header className="bg-white shadow-md z-10">
+                {/* <header className="bg-white shadow-md z-10">
                     <div className="max-w-7xl mx-auto px-6">
                         <Text
                             size={600}
@@ -31,7 +31,7 @@ export default function AppShell({ children }: AppShellProps) {
                             AI Assistant
                         </Text>
                     </div>
-                </header>
+                </header> */}
                 <main className="flex-grow overflow-x-hidden overflow-y-auto bg-neutral-100 h-full">
                     {children}
                 </main>

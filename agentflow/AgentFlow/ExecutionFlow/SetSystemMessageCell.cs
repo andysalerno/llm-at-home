@@ -36,15 +36,18 @@ public sealed record SetSystemMessageCell : Cell<ConversationThread>
 
         ConversationThread updated = this.instructionStrategy switch
         {
-            InstructionStrategy.TopLevelSystemMessage =>
-                withoutSystem.WithFirstMessageSystemMessage(
-                    new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
-            InstructionStrategy.InlineUserMessage =>
-                withoutSystem.WithAddedMessage(
-                    new Message(this.agentName, Role.User, this.systemMessageContent.Text)),
-            InstructionStrategy.InlineSystemMessage =>
-                withoutSystem.WithAddedMessage(
-                    new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
+        InstructionStrategy.TopLevelSystemMessage =>
+            withoutSystem.WithFirstMessageSystemMessage(
+                new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
+        InstructionStrategy.InlineUserMessage =>
+            withoutSystem.WithAddedMessage(
+                new Message(this.agentName, Role.User, this.systemMessageContent.Text)),
+        InstructionStrategy.InlineSystemMessage =>
+            withoutSystem.WithAddedMessage(
+                new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
+        InstructionStrategy.AppendedToUserMessage =>
+                    return withoutSystem.WithAddedMessage(
+                        new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
             _ => throw new NotImplementedException(),
         };
 

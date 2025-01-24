@@ -29,6 +29,8 @@ public enum InstructionStrategy
     /// </summary>
     InlineSystemMessage,
 
+    AppendedToUserMessage,
+
     /// <summary>
     /// The system message will appear as the second-to-last message, with the last message being the last user message.
     /// TODO: fill me in. will probably work best for tool selection.

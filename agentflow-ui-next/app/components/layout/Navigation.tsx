@@ -31,11 +31,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
                 ${isOpen ? 'w-64' : 'w-12'}`}
         >
             <div className="flex items-center justify-between p-4 border-b border-neutral-200">
-                {isOpen && (
-                    <Text size={600} weight="semibold">
-                        AI Assistant
-                    </Text>
-                )}
+                <div />
                 <Button
                     icon={isOpen ? <DismissRegular /> : <Navigation24Regular />}
                     appearance="subtle"
