@@ -8,6 +8,7 @@ using AgentFlow.Examples.Tools;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.LlmClients;
+using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 using Autofac;
 using Microsoft.Extensions.Logging.Abstractions;

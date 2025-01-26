@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using AgentFlow.LlmClient;
+using AgentFlow.Prompts;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +15,16 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
     private readonly JsonObject? responseSchema;
     private readonly string? toolChoice;
     private readonly ILlmCompletionsClient completionsClient;
+    private readonly InstructionStrategy strategy;
 
-    public GetAssistantResponseCell(AgentName agentName, Role agentRole, ILlmCompletionsClient completionsClient)
-        : this(agentName, agentRole, null, null, completionsClient)
+    public GetAssistantResponseCell(
+        AgentName agentName,
+        Role agentRole,
+        InstructionStrategy strategy,
+        ILlmCompletionsClient completionsClient)
+        : this(agentName, agentRole, null, null, strategy, completionsClient)
     {
+        this.strategy = strategy;
     }
 
     public GetAssistantResponseCell(
@@ -26,6 +32,7 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
         Role agentRole,
         JsonObject? responseSchema,
         string? toolChoice,
+        InstructionStrategy strategy,
         ILlmCompletionsClient completionsClient)
     {
         this.agentName = agentName;
@@ -38,6 +45,7 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
 
     public override async Task<ConversationThread> RunAsync(ConversationThread input)
     {
+        // this should be where we apply the instruction strategy
         var messages = input.Messages.ToImmutableArray();
 
         if (messages.LastOrDefault() is Message lastMessage && lastMessage.Role == Role.Assistant)
@@ -49,6 +57,12 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
         ConversationThread templateFilled = input
             .WithTemplateAppliedToSystem()
             .WithMessagesVisibleToAssistant();
+
+        // At this point, update the conversation with the strategy:
+        ConversationThread withInstructionStrategyApplied = InstructionStrategyApplicator.ApplyStrategy(
+            this.strategy,
+            this.agentName,
+            templateFilled);
 
         var response = await this.completionsClient.GetChatCompletionsAsync(
             new ChatCompletionsRequest(

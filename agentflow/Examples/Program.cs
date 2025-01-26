@@ -2,6 +2,7 @@
 using AgentFlow.Agents;
 using AgentFlow.Config;
 using AgentFlow.Examples;
+using AgentFlow.Prompts;
 using Autofac;
 using Microsoft.Extensions.Logging;
 
