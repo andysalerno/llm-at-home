@@ -26,19 +26,6 @@ public static class ToolStrategyApplicator
         ToolOutputStrategy strategy,
         ConversationThread input)
     {
-        var conversationWithoutToolOutputs = input.WithMatchingMessages(m => m.Role != Role.ToolOutput);
-
-        var lastUserMessage = input.Messages.Last(m => m.Role == Role.User);
-
-        var lastToolMessage = input.Messages.Last(m => m.Role == Role.ToolOutput);
-
-        string updatedContent =
-            $"{lastUserMessage.Content}\n\n<tool_output>\n{lastToolMessage.Content}\n</tool_output>";
-
-        Message updatedUserMessage = lastUserMessage with { Content = updatedContent };
-
-        var messagesWithoutLastUser = input.WithMatchingMessages(m => m != lastUserMessage);
-
         return strategy switch
         {
             ToolOutputStrategy.InlineToolOutputMessage =>
@@ -60,13 +47,16 @@ public static class ToolStrategyApplicator
             return input;
         }
 
-        var conversationWithoutToolOutputs = input.WithMatchingMessages(m => m.Role != Role.ToolOutput);
+        var withoutToolInvocation = input.WithMatchingMessages(m => m.Role != Role.ToolInvocation);
 
-        var lastUserMessage = input.Messages.Last();
+        var conversationWithoutToolOutputs = withoutToolInvocation.WithMatchingMessages(m => m.Role != Role.ToolOutput);
+
+        var lastUserMessage = conversationWithoutToolOutputs.Messages.Last();
 
         if (lastUserMessage.Role != Role.User)
         {
-            throw new InvalidOperationException("Last message in the conversation thread was not a user message.");
+            throw new InvalidOperationException(
+                $"Last message in the conversation thread was not a user message, was: {lastUserMessage.Role}");
         }
 
         string updatedContent =
@@ -74,7 +64,8 @@ public static class ToolStrategyApplicator
 
         Message updatedUserMessage = lastUserMessage with { Content = updatedContent };
 
-        var messagesWithoutLastUser = input.WithMatchingMessages(m => !object.Equals(m, lastUserMessage));
+        var messagesWithoutLastUser = withoutToolInvocation
+            .WithMatchingMessages(m => !object.Equals(m, lastUserMessage));
 
         return messagesWithoutLastUser.WithAddedMessage(updatedUserMessage);
     }
