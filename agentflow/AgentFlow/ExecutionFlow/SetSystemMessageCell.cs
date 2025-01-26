@@ -36,21 +36,41 @@ public sealed record SetSystemMessageCell : Cell<ConversationThread>
 
         ConversationThread updated = this.instructionStrategy switch
         {
-        InstructionStrategy.TopLevelSystemMessage =>
-            withoutSystem.WithFirstMessageSystemMessage(
-                new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
-        InstructionStrategy.InlineUserMessage =>
-            withoutSystem.WithAddedMessage(
-                new Message(this.agentName, Role.User, this.systemMessageContent.Text)),
-        InstructionStrategy.InlineSystemMessage =>
-            withoutSystem.WithAddedMessage(
-                new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
-        InstructionStrategy.AppendedToUserMessage =>
-                    return withoutSystem.WithAddedMessage(
-                        new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
+            InstructionStrategy.TopLevelSystemMessage =>
+                withoutSystem.WithFirstMessageSystemMessage(
+                    new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
+            InstructionStrategy.InlineUserMessage =>
+                withoutSystem.WithAddedMessage(
+                    new Message(this.agentName, Role.User, this.systemMessageContent.Text)),
+            InstructionStrategy.InlineSystemMessage =>
+                withoutSystem.WithAddedMessage(
+                    new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
+            InstructionStrategy.AppendedToUserMessage =>
+                AddSystemMessageToLastUserMessage(withoutSystem, this.systemMessageContent.Text),
             _ => throw new NotImplementedException(),
         };
 
         return Task.FromResult(updated);
+    }
+
+    private static ConversationThread AddSystemMessageToLastUserMessage(
+        ConversationThread input,
+        string systemMessageContent)
+    {
+        var lastUserMessage = input.Messages.Last();
+
+        if (lastUserMessage.Role != Role.User)
+        {
+            throw new InvalidOperationException("Last message in the conversation thread was not a user message.");
+        }
+
+        string updatedContent = $"{lastUserMessage.Content}\n\n<instructions>{systemMessageContent}</instructions>";
+
+        Message updatedUserMessage = lastUserMessage with { Content = updatedContent };
+
+        var messagesWithoutLast = input.Messages.Take(input.Messages.Count - 1);
+
+        return new ConversationThread()
+            .WithAddedMessages(messagesWithoutLast.Append(updatedUserMessage));
     }
 }
