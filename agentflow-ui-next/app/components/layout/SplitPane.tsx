@@ -47,7 +47,7 @@ export default function SplitPane({
         >
             <div
                 className={mergeClasses(
-                    'transition-[width] duration-300 overflow-auto',
+                    'overflow-auto',
                     isDragging && 'pointer-events-none'
                 )}
                 style={{ width: showRight ? `${size}%` : '100%' }}
@@ -72,7 +72,7 @@ export default function SplitPane({
                     />
                     <div
                         className={mergeClasses(
-                            'transition-[width] duration-300 overflow-auto',
+                            'transitionoverflow-auto',
                             isDragging && 'pointer-events-none'
                         )}
                         style={{ width: `${100 - size}%` }}
