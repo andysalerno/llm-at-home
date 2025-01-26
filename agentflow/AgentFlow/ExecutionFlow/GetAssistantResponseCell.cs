@@ -24,7 +24,6 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
         ILlmCompletionsClient completionsClient)
         : this(agentName, agentRole, null, null, strategy, completionsClient)
     {
-        this.strategy = strategy;
     }
 
     public GetAssistantResponseCell(
@@ -40,6 +39,7 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
         this.responseSchema = responseSchema;
         this.toolChoice = toolChoice;
         this.completionsClient = completionsClient;
+        this.strategy = strategy;
         this.logger = this.GetLogger();
     }
 
@@ -64,9 +64,13 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
             this.agentName,
             templateFilled);
 
+        ConversationThread withToolOutputStrategyApplied = ToolStrategyApplicator.ApplyStrategy(
+            ToolOutputStrategy.AppendedToUserMessage,
+            withInstructionStrategyApplied);
+
         var response = await this.completionsClient.GetChatCompletionsAsync(
             new ChatCompletionsRequest(
-                templateFilled.Messages,
+                withToolOutputStrategyApplied.Messages,
                 JsonSchema: this.responseSchema,
                 ToolChoice: this.toolChoice));
 
