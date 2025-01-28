@@ -1,66 +1,67 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Message } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 const STORAGE_KEY = 'chatMessages';
 
+function createMessage(
+    role: Message['role'],
+    content: string,
+    correlationId?: string
+): Message {
+    return {
+        id: uuidv4(),
+        role,
+        content,
+        timestamp: new Date().toISOString(),
+        correlationId: correlationId || uuidv4(),
+    };
+}
+
 export function useChat() {
-    const [messages, setMessages] = useState<Message[]>(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : [];
-        }
-        return [];
-    });
+    const [messages, setMessages] = useState<Message[]>([]);
     const [streamingMessage, setStreamingMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
-    const sendMessage = useCallback(async (content: string) => {
-        if (!content.trim()) return;
+    // Load messages from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                setMessages(JSON.parse(stored));
+            } catch (error) {
+                console.error('Error parsing stored messages:', error);
+            }
+        }
+    }, []);
 
-        const userMessage: Message = {
-            id: uuidv4(),
-            role: 'user',
-            content: content.trim(),
-            timestamp: new Date().toISOString(),
-            correlationId: uuidv4()
-        };
+    // Persist messages to localStorage
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    }, [messages]);
 
-        setMessages(prev => [...prev, userMessage]);
-        setIsLoading(true);
-        setStreamingMessage('');
+    const processStream = async (
+        reader: ReadableStreamDefaultReader<string>,
+        correlationId: string
+    ) => {
+        let buffer = '';
+        let streamContent = '';
 
         try {
-            const response = await fetch('http://nzxt.local:8003/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    messages: [...messages, userMessage].map(msg => ({
-                        role: msg.role,
-                        content: msg.content
-                    })),
-                }),
-            });
-
-            if (!response.body) throw new Error('No response body');
-
-            const reader = response.body
-                .pipeThrough(new TextDecoderStream())
-                .getReader();
-
-            let streamContent = '';
-
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
 
-                const lines = value.split('\n').filter(line => line.trim() !== '');
+                buffer += value;
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
 
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         const data = line.slice(6);
+                        if (data === '[DONE]') continue;
+
                         try {
                             const parsed = JSON.parse(data);
                             const content = parsed.choices[0].delta.content;
@@ -74,51 +75,83 @@ export function useChat() {
                     }
                 }
             }
+        } finally {
+            reader.releaseLock();
+        }
 
-            const nextTranscript: Message[] = [...messages, userMessage,
-            {
-                id: uuidv4(),
-                role: 'assistant',
-                content: streamContent,
-                timestamp: new Date().toISOString(),
-                correlationId: uuidv4()
+        return streamContent;
+    };
+
+    const sendMessage = useCallback(async (content: string) => {
+        if (!content.trim() || isLoading) return;
+
+        const userMessage = createMessage('user', content.trim());
+        const correlationId = userMessage.correlationId;
+
+        setMessages((prev) => [...prev, userMessage]);
+        setIsLoading(true);
+        setStreamingMessage('');
+        abortControllerRef.current = new AbortController();
+
+        try {
+            const response = await fetch('http://nzxt.local:8003/v1/chat/completions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: abortControllerRef.current.signal,
+                body: JSON.stringify({
+                    messages: [...messages, userMessage].map(({ role, content }) => ({
+                        role,
+                        content,
+                    })),
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            ]
+            if (!response.body) throw new Error('No response body');
 
-            setMessages(nextTranscript);
+            const reader = response.body
+                .pipeThrough(new TextDecoderStream())
+                .getReader();
 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(nextTranscript));
+            const streamContent = await processStream(reader, correlationId);
 
-        } catch (error) {
-            console.error('Error sending message:', error);
-            setMessages(prev => [
+            setMessages((prev) => [
                 ...prev,
-                {
-                    id: uuidv4(),
-                    role: 'system',
-                    content: 'Sorry, there was an error processing your request.',
-                    timestamp: new Date().toISOString(),
-                    correlationId: uuidv4()
-                }
+                createMessage('assistant', streamContent, correlationId),
             ]);
+        } catch (error) {
+            if ((error as Error).name === 'AbortError') {
+                setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id));
+            } else {
+                console.error('Error sending message:', error);
+                setMessages((prev) => [
+                    ...prev,
+                    createMessage('system', 'Sorry, there was an error processing your request.'),
+                ]);
+            }
         } finally {
             setIsLoading(false);
             setStreamingMessage('');
+            abortControllerRef.current = null;
         }
-    }, [messages]);
+    }, [isLoading, messages]);
+
+    const cancelStream = useCallback(() => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        setIsLoading(false);
+        setStreamingMessage('');
+    }, []);
 
     const deleteMessage = useCallback((id: string) => {
-        console.log('(2)Deleting message with id:', id);
-        setMessages(prev => prev.filter(msg => msg.id !== id));
+        setMessages((prev) => prev.filter((msg) => msg.id !== id));
     }, []);
 
     const clearMessages = useCallback(() => {
         setMessages([]);
-    }, []);
-
-    const cancelStream = useCallback(() => {
-        setStreamingMessage('');
-        setIsLoading(false);
     }, []);
 
     return {
