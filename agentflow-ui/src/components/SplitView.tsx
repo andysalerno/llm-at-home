@@ -19,11 +19,11 @@ const SplitView: React.FC<SplitViewProps> = ({ left, right, isSplitVisible, setI
 
     return (
         <div className="flex h-full">
-            <div className={`flex-grow transition-all duration-0 ${isSplitVisible ? 'w-1/2' : 'w-full'}`}>
+            <div className={`flex-grow transition-all ${isSplitVisible ? 'w-1/2' : 'w-full'}`}>
                 {left}
             </div>
             <div
-                className={`flex-grow transition-all duration-0 ${isSplitVisible ? 'w-1/2' : 'w-0'} overflow-hidden`}
+                className={`flex-grow transition-all ${isSplitVisible ? 'w-1/2' : 'w-0'} overflow-hidden`}
             >
                 {isSplitVisible && right}
             </div>

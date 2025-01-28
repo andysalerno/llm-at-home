@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { Navigation } from './Navigation';
+import { makeStyles, mergeClasses } from '@fluentui/react-components';
+
+const useStyles = makeStyles({
+    // root: { backgroundColor: 'red' },
+    root: {},
+});
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -10,17 +16,20 @@ interface AppShellProps {
 export default function AppShell({ children }: AppShellProps) {
     const [isNavigationOpen, setIsNavigationOpen] = useState(true);
 
+    const classes = useStyles();
+
     return (
-        <div className="flex h-screen bg-neutral-50">
+        // <div className="ui-component flex h-screen">
+        <div className={mergeClasses('ui-component', 'flex', 'h-screen', classes.root)}>
             <Navigation
                 isOpen={isNavigationOpen}
                 onOpenChange={setIsNavigationOpen}
             />
             <div
-                className="flex flex-col flex-grow overflow-hidden transition-[margin-left] duration-300"
+                className="ui-component flex flex-col flex-grow overflow-hidden transition-[margin-left]"
                 style={{ marginLeft: isNavigationOpen ? '256px' : '48px' }}
             >
-                <main className="flex-grow overflow-x-hidden overflow-y-auto bg-neutral-100 h-full">
+                <main className="ui-component flex-grow overflow-x-hidden overflow-y-auto  h-full">
                     {children}
                 </main>
             </div>

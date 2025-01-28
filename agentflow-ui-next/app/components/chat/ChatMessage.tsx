@@ -28,7 +28,7 @@ export const ChatMessage = memo(function ChatMessage({
         >
             <Card
                 className={mergeClasses(
-                    'cursor-pointer transition-shadow duration-200',
+                    'cursor-pointer transition-shadow',
                     isUser
                         ? 'bg-brand-primary hover:shadow-lg'
                         : 'hover:shadow-md'
@@ -47,8 +47,7 @@ export const ChatMessage = memo(function ChatMessage({
                     icon={<Delete24Regular />}
                     appearance="subtle"
                     className={mergeClasses(
-                        'absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200',
-                        isUser ? 'text-white' : 'text-neutral-600'
+                        'absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity'
                     )}
                     onClick={() => onDelete(message.correlationId)}
                     aria-label="Delete message"

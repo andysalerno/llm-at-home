@@ -59,9 +59,7 @@ export default function SplitPane({
                 <>
                     <div
                         className={mergeClasses(
-                            'w-1 cursor-col-resize transition-colors',
-                            'hover:bg-brand-subtle active:bg-brand-pressed',
-                            'bg-neutral-200'
+                            'w-1 cursor-col-resize transition-colors'
                         )}
                         onMouseDown={handleMouseDown}
                         role="separator"

@@ -52,7 +52,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
         <div className="my-1">
             <Button
                 appearance="subtle"
-                className="w-full flex items-center p-2 hover:bg-gray-100 rounded text-left"
+                className="w-full flex items-center p-2 rounded text-left"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
@@ -143,7 +143,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     <CardHeader>
                         <Text size={500} weight="semibold">Request Details</Text>
                     </CardHeader>
-                    <div className="font-mono text-sm bg-gray-50 p-4 rounded-md shadow-inner overflow-auto whitespace-pre-wrap">
+                    <div className="font-mono text-sm p-4 rounded-md shadow-inner overflow-auto whitespace-pre-wrap">
                         <Text weight="semibold">Request ID: {item?.id}</Text>
                         <div className="mt-4">
                             <Text weight="semibold">Prompt:</Text>
@@ -173,7 +173,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     return (
         <div className="flex h-full">
-            <div className="w-1/3 overflow-auto border-r p-4 bg-gray-50">
+            <div className="w-1/3 overflow-auto border-r p-4">
                 <Text size={600} weight="semibold" className="mb-4 block">
                     Navigation
                 </Text>
@@ -201,7 +201,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     </TreeNode>
                 ))}
             </div>
-            <div className="w-2/3 p-4 overflow-auto bg-white">
+            <div className="w-2/3 p-4 overflow-auto">
                 <Text size={600} weight="semibold" className="mb-4 block">
                     Detail View
                 </Text>

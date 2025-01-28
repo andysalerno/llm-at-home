@@ -76,7 +76,7 @@ const TextCompletionSection: React.FC<TextCompletionSectionProps> = ({ onComplet
     }, [inputText, onCompletion]);
 
     return (
-        <div className="flex flex-col h-full bg-gray-100">
+        <div className="flex flex-col h-full">
             <textarea
                 value={inputText}
                 onChange={handleInputChange}

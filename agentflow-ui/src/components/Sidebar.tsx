@@ -16,10 +16,7 @@ const Sidebar = () => {
         return (
             <Link
                 to={to}
-                className={`flex items-center px-6 py-2 mt-4 transition-colors ${isActive
-                    ? 'text-white bg-blue-600'
-                    : 'text-gray-100 hover:bg-gray-700 hover:bg-opacity-25 hover:text-gray-100'
-                    }`}
+                className={`flex items-center px-6 py-2 mt-4 transition-colors`}
             >
                 <Icon className="w-6 h-6" />
                 <span className={`mx-3 hidden`}>{children}</span>
@@ -28,8 +25,8 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`fixed inset-y-0 left-0 z-30 transition-all duration-0 w-20`}>
-            <div className="h-full bg-gray-900 overflow-y-auto">
+        <div className={`fixed inset-y-0 left-0 z-30 transition-all w-20`}>
+            <div className="h-full overflow-y-auto">
                 <nav className="mt-10">
                     <NavItem to="/" icon={ChatBubbleLeftRightIcon} children="Chat" />
                     <NavItem to="/text" icon={Bars3BottomLeftIcon} children="Text" />

@@ -27,7 +27,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
 
     return (
         <nav
-            className={`fixed inset-y-0 left-0 bg-white shadow-lg transition-[width] duration-300 z-30
+            className={`fixed inset-y-0 left-0 shadow-lg transition-[width] z-30
                 ${isOpen ? 'w-64' : 'w-12'}`}
         >
             <div className="flex items-center justify-between p-4 border-b border-neutral-200">
@@ -46,10 +46,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
                         <Link
                             key={href}
                             href={href}
-                            className={`flex items-center w-full px-4 py-2 mb-1 text-sm transition-colors
-                                ${isActive
-                                    ? 'bg-brand-subtle text-brand-foreground'
-                                    : 'text-neutral-700 hover:bg-neutral-100'}`}
+                            className={`flex items-center w-full px-4 py-2 mb-1 text-sm transition-colors`}
                         >
                             <Icon className="shrink-0" />
                             {isOpen && <span className="ml-3">{label}</span>}

@@ -24,7 +24,7 @@ export function ChatContainer() {
     }, [messages, streamingMessage]);
 
     return (
-        <div className="flex flex-col h-full bg-neutral-50">
+        <div className="flex flex-col h-full">
             <div className="flex-1 overflow-y-auto p-6">
                 {messages.map((message: Message) => (
                     <ChatMessage

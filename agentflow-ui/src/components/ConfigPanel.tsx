@@ -23,11 +23,11 @@ const ConfigPanel: React.FC<ConfigPanelProps> = ({
     };
 
     return (
-        <div className="bg-white p-4 rounded-lg shadow">
+        <div className="p-4 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">Configuration</h2>
 
             <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Temperature: {temperature}</label>
+                <label className="block text-sm font-medium">Temperature: {temperature}</label>
                 <input
                     type="range"
                     min="0"

@@ -45,7 +45,7 @@ const TextCompletionSection: React.FC = ({ }) => {
     }, [inputText]);
 
     const TextInputArea = (
-        <div className="flex flex-col h-full bg-gray-100 p-4">
+        <div className="flex flex-col h-full p-4">
             <textarea
                 value={inputText}
                 onChange={handleInputChange}

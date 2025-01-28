@@ -48,7 +48,7 @@ services:
   #     - ./.agentflow.env
   
   llmhost:
-    image: vllm/vllm-openai:v0.6.6.post1
+    image: vllm/vllm-openai:v0.7.0
     # ipc: host
     shm_size: 1g
     environment:

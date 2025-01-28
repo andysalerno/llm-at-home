@@ -33,18 +33,18 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect, updateEx
     return (
         <div>
             <div
-                className="flex items-center cursor-pointer hover:bg-blue-100 p-2 rounded transition-colors duration-0 ease-in-out"
+                className="flex items-center cursor-pointer p-2 rounded transition-colors ease-in-out"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
                 }}
             >
                 {children && (
-                    isOpen ? <ChevronDownIcon className="w-4 h-4 mr-2 text-blue-500" /> : <ChevronRightIcon className="w-4 h-4 mr-2 text-blue-500" />
+                    isOpen ? <ChevronDownIcon className="w-4 h-4 mr-2" /> : <ChevronRightIcon className="w-4 h-4 mr-2" />
                 )}
                 <span>{label}</span>
             </div>
-            {isOpen && children && <div className="pl-4 border-l border-gray-200 ml-2">{children}</div>}
+            {isOpen && children && <div className="pl-4 border-l ml-2">{children}</div>}
         </div>
     );
 };
@@ -147,7 +147,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     };
 
     const renderDetail = () => {
-        if (!selectedItem) return <div className="text-gray-500 italic">Select an item to view details</div>;
+        if (!selectedItem) return <div className="italic">Select an item to view details</div>;
 
         let content = '';
         if (selectedItem.type === 'session') {
@@ -165,7 +165,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
         }
 
         return (
-            <pre className="font-mono text-sm bg-gray-100 p-4 rounded-md shadow-inner h-full overflow-auto whitespace-pre-wrap">
+            <pre className="font-mono text-sm p-4 rounded-md shadow-inner h-full overflow-auto whitespace-pre-wrap">
                 {content}
             </pre>
         );
@@ -176,13 +176,13 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     return (
         <div className="flex h-full">
-            <div className="w-1/3 overflow-auto border-r p-4 bg-gray-50">
+            <div className="w-1/3 overflow-auto border-r p-4">
                 <h2 className="text-xl font-bold mb-4">Navigation</h2>
                 {renderTree(data)}
             </div>
-            <div className="w-2/3 p-4 overflow-auto bg-white">
+            <div className="w-2/3 p-4 overflow-auto">
                 <h2 className="text-xl font-bold mb-4">Detail View</h2>
-                <div className="h-[calc(100%-2rem)] bg-gray-100 rounded-md shadow-inner">
+                <div className="h-[calc(100%-2rem)] rounded-md shadow-inner">
                     {renderDetail()}
                 </div>
             </div>
