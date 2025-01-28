@@ -33,7 +33,7 @@ export const ChatMessage = memo(function ChatMessage({
                         ? 'bg-brand-primary hover:shadow-lg'
                         : 'hover:shadow-md'
                 )}
-                onClick={() => onClick?.(message.correlationId)}
+                onClick={() => onClick?.(message.id)}
             >
                 <CardHeader
                     header={
@@ -49,7 +49,7 @@ export const ChatMessage = memo(function ChatMessage({
                     className={mergeClasses(
                         'absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity'
                     )}
-                    onClick={() => onDelete(message.correlationId)}
+                    onClick={() => onDelete(message.id)}
                     aria-label="Delete message"
                 />
             )}

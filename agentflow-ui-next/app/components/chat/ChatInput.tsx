@@ -9,12 +9,14 @@ import {
 } from '@fluentui/react-components';
 import {
     Send24Regular,
-    Stop24Regular
+    Stop24Regular,
+    BinRecycle20Regular
 } from '@fluentui/react-icons';
 
 interface ChatInputProps {
     onSubmit: (message: string) => void;
     onCancel?: () => void;
+    onClear?: () => void;
     disabled?: boolean;
     className?: string;
     placeholder?: string;
@@ -23,6 +25,7 @@ interface ChatInputProps {
 export function ChatInput({
     onSubmit,
     onCancel,
+    onClear,
     disabled = false,
     className,
     placeholder = "Type your message here..."
@@ -90,7 +93,16 @@ export function ChatInput({
                     >
                         Send
                     </Button>
-                )}
+                )
+                }
+                <Button
+                    icon={<BinRecycle20Regular />}
+                    type="submit"
+                    title="Send message"
+                    onClick={onClear}
+                >
+                    Clear
+                </Button>
             </div>
         </form>
     );

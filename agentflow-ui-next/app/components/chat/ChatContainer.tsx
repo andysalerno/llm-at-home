@@ -8,9 +8,10 @@ import { Message } from '../../types';
 
 export function ChatContainer() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const { messages, streamingMessage, sendMessage, cancelStream, deleteMessage } = useChat();
+    const { messages, streamingMessage, sendMessage, cancelStream, clearMessages, deleteMessage } = useChat();
 
     const handleDeleteMessage = (id: string) => {
+        console.log('(1)Deleting message with id:', id);
         deleteMessage(id);
     };
 
@@ -52,6 +53,7 @@ export function ChatContainer() {
             <ChatInput
                 onSubmit={sendMessage}
                 onCancel={cancelStream}
+                onClear={clearMessages}
                 disabled={streamingMessage !== ''}
             />
         </div>

@@ -30,7 +30,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
             className={`fixed inset-y-0 left-0 shadow-lg transition-[width] z-30
                 ${isOpen ? 'w-64' : 'w-12'}`}
         >
-            <div className="flex items-center justify-between p-4 border-b border-neutral-200">
+            <div className="flex justify-between p-4 border-b">
                 <div />
                 <Button
                     icon={isOpen ? <DismissRegular /> : <Navigation24Regular />}
@@ -46,7 +46,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
                         <Link
                             key={href}
                             href={href}
-                            className={`flex items-center w-full px-4 py-2 mb-1 text-sm transition-colors`}
+                            className={`flex w-full px-4 py-2 mb-1 text-sm transition-colors`}
                         >
                             <Icon className="shrink-0" />
                             {isOpen && <span className="ml-3">{label}</span>}

@@ -83,8 +83,7 @@ export default function SplitPane({
             <Button
                 icon={showRight ? <ChevronRight24Regular /> : <ChevronLeft24Regular />}
                 appearance="subtle"
-                className="absolute right-0 top-1/2 -translate-y-1/2 bg-brand-primary text-white 
-                    hover:bg-brand-hover rounded-l-md rounded-r-none"
+                className="absolute right-0 top-1/2 -translate-y-1/2 bg-brand-primary hover:bg-brand-hover rounded-l-md rounded-r-none"
                 onClick={() => setShowRight(!showRight)}
                 aria-label={showRight ? "Hide right panel" : "Show right panel"}
             />

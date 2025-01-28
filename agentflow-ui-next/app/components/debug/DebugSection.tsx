@@ -52,7 +52,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
         <div className="my-1">
             <Button
                 appearance="subtle"
-                className="w-full flex items-center p-2 rounded text-left"
+                className="w-full flex p-2 rounded text-left"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();

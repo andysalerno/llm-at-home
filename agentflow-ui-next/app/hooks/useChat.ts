@@ -75,16 +75,20 @@ export function useChat() {
                 }
             }
 
-            setMessages(prev => [
-                ...prev,
-                {
-                    id: uuidv4(),
-                    role: 'assistant',
-                    content: streamContent,
-                    timestamp: new Date().toISOString(),
-                    correlationId: uuidv4()
-                }
-            ]);
+            const nextTranscript: Message[] = [...messages, userMessage,
+            {
+                id: uuidv4(),
+                role: 'assistant',
+                content: streamContent,
+                timestamp: new Date().toISOString(),
+                correlationId: uuidv4()
+            }
+            ]
+
+            setMessages(nextTranscript);
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(nextTranscript));
+
         } catch (error) {
             console.error('Error sending message:', error);
             setMessages(prev => [
@@ -104,7 +108,12 @@ export function useChat() {
     }, [messages]);
 
     const deleteMessage = useCallback((id: string) => {
+        console.log('(2)Deleting message with id:', id);
         setMessages(prev => prev.filter(msg => msg.id !== id));
+    }, []);
+
+    const clearMessages = useCallback(() => {
+        setMessages([]);
     }, []);
 
     const cancelStream = useCallback(() => {
@@ -118,6 +127,7 @@ export function useChat() {
         isLoading,
         sendMessage,
         deleteMessage,
+        clearMessages,
         cancelStream,
     };
 }
