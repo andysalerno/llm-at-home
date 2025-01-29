@@ -58,7 +58,7 @@ export function ChatInput({
         <form
             onSubmit={handleSubmit}
             className={mergeClasses(
-                'p-4 bg-card border-t border-divider',
+                'p-4 bg-card border-divider',
                 className
             )}
         >

@@ -176,7 +176,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     return (
         <div className="flex h-full">
-            <div className="w-1/3 overflow-auto border-r p-4">
+            <div className="w-1/3 overflow-auto p-4">
                 <h2 className="text-xl font-bold mb-4">Navigation</h2>
                 {renderTree(data)}
             </div>

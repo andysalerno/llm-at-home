@@ -30,7 +30,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
             className={`fixed inset-y-0 left-0 shadow-lg transition-[width] z-30
                 ${isOpen ? 'w-64' : 'w-12'}`}
         >
-            <div className="flex justify-between p-4 border-b">
+            <div className="flex justify-between p-4">
                 <div />
                 <Button
                     icon={isOpen ? <DismissRegular /> : <Navigation24Regular />}

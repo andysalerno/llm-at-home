@@ -81,7 +81,7 @@ const TextCompletionSection: React.FC<TextCompletionSectionProps> = ({ onComplet
                 value={inputText}
                 onChange={handleInputChange}
                 placeholder="Enter your text here..."
-                className="flex-1 p-4 border border-gray-300 rounded-t-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-mono text-sm"
+                className="flex-1 p-4 border rounded-t-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-mono text-sm"
                 disabled={isLoading}
                 spellCheck={false}
             />

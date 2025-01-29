@@ -66,7 +66,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
                 <Text>{label}</Text>
             </Button>
             {isOpen && children && (
-                <div className="pl-4 border-l border-gray-200 ml-2">
+                <div className="pl-4 ml-2">
                     {children}
                 </div>
             )}
@@ -173,7 +173,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     return (
         <div className="flex h-full">
-            <div className="w-1/3 overflow-auto border-r p-4">
+            <div className="w-1/3 overflow-auto p-4">
                 <Text size={600} weight="semibold" className="mb-4 block">
                     Navigation
                 </Text>
