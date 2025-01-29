@@ -42,11 +42,12 @@ interface DebugSectionProps {
 interface TreeNodeProps {
     label: string;
     children?: React.ReactNode;
+    forceOpen: boolean;
     onSelect?: () => void;
 }
 
-const TreeNode: React.FC<TreeNodeProps> = ({ label, children, onSelect }) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelect }) => {
+    const [isOpen, setIsOpen] = useState<boolean>(forceOpen);
 
     return (
         <div className="my-1">
@@ -80,6 +81,8 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    console.log(`selectedItem is ${selectedItem?.type} ${selectedItem?.id}`);
+
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
@@ -103,8 +106,10 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     useEffect(() => {
         if (focusedMessageId) {
+            console.log(`looking for message with corr id: ${focusedMessageId}`);
             const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedMessageId);
             if (message) {
+                console.log(`setting focused to message with id: ${focusedMessageId}`);
                 setSelectedItem({ type: 'message', id: message.id });
             }
         }
@@ -181,18 +186,21 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     <TreeNode
                         key={session.id}
                         label={`Session: ${session.id}`}
+                        forceOpen={false}
                         onSelect={() => setSelectedItem({ type: 'session', id: session.id })}
                     >
                         {session.messages.map(message => (
                             <TreeNode
                                 key={message.id}
                                 label={`Message: ${message.content.substring(0, 20)}...`}
+                                forceOpen={selectedItem?.type === 'message' && selectedItem.id === message.id}
                                 onSelect={() => setSelectedItem({ type: 'message', id: message.id })}
                             >
                                 {message.llmRequests.map(request => (
                                     <TreeNode
                                         key={request.id}
                                         label={`Request: ${request.id}`}
+                                        forceOpen={false}
                                         onSelect={() => setSelectedItem({ type: 'request', id: request.id })}
                                     />
                                 ))}

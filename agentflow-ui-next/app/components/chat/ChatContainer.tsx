@@ -5,8 +5,12 @@ import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import { useChat } from '../../hooks/useChat';
 import { Message } from '../../types';
+import { useSearchParams, useRouter } from 'next/navigation'
 
 export function ChatContainer() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { messages, streamingMessage, sendMessage, cancelStream, clearMessages, deleteMessage } = useChat();
 
@@ -18,6 +22,11 @@ export function ChatContainer() {
     const handleMessageClick = (id: string) => {
         // Handle message click - you might want to implement this based on your needs
         console.log('Message clicked:', id);
+        const params = new URLSearchParams(searchParams)
+        params.set('selectedMessageId', id)
+
+        // Update the URL without a full page refresh
+        router.push(`?${params.toString()}`)
     };
 
     useEffect(() => {

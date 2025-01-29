@@ -7,14 +7,14 @@ const STORAGE_KEY = 'chatMessages';
 function createMessage(
     role: Message['role'],
     content: string,
-    correlationId?: string
+    correlationId: string
 ): Message {
     return {
         id: uuidv4(),
         role,
         content,
         timestamp: new Date().toISOString(),
-        correlationId: correlationId || uuidv4(),
+        correlationId: correlationId,
     };
 }
 
@@ -85,7 +85,7 @@ export function useChat() {
     const sendMessage = useCallback(async (content: string) => {
         if (!content.trim() || isLoading) return;
 
-        const userMessage = createMessage('user', content.trim());
+        const userMessage = createMessage('user', content.trim(), uuidv4());
         const correlationId = userMessage.correlationId;
 
         setMessages((prev) => [...prev, userMessage]);
@@ -128,7 +128,7 @@ export function useChat() {
                 console.error('Error sending message:', error);
                 setMessages((prev) => [
                     ...prev,
-                    createMessage('system', 'Sorry, there was an error processing your request.'),
+                    createMessage('system', 'Sorry, there was an error processing your request.', uuidv4()),
                 ]);
             }
         } finally {

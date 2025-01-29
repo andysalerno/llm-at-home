@@ -176,7 +176,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({ setFocusedMessageId }) => {
             <div className="p-4 border-t">
                 <button
                     onClick={clearChat}
-                    className="px-4 py-2 bg-red-500 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                     Clear Chat
                 </button>

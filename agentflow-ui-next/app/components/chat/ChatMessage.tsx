@@ -34,7 +34,7 @@ export const ChatMessage = memo(function ChatMessage({
                         ? 'bg-brand-primary hover:shadow-lg'
                         : 'hover:shadow-md'
                 )}
-                onClick={() => onClick?.(message.id)}
+                onClick={() => message.correlationId && onClick?.(message.correlationId)}
             >
                 <CardHeader
                     header={
