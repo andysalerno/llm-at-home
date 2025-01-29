@@ -5,6 +5,7 @@ import { Body1, Button, Card, CardHeader } from '@fluentui/react-components';
 import { Delete24Regular } from '@fluentui/react-icons';
 import { Message } from '../../types';
 import { mergeClasses } from '@fluentui/react-components';
+import { marked } from 'marked';
 
 interface ChatMessageProps {
     message: Message;
@@ -38,7 +39,7 @@ export const ChatMessage = memo(function ChatMessage({
                 <CardHeader
                     header={
                         <Body1>
-                            <div className="p-2">{message.content}</div>
+                            <div className="p-2" dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
                         </Body1>
                     } />
             </Card>

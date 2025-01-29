@@ -128,15 +128,9 @@ internal sealed class OpenAIServer
 
         try
         {
-            ChatCompletionRequest chatRequest;
-            using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
-            {
-                string content = await reader.ReadToEndAsync();
-                logger.LogInformation("Got request: {Content}", content);
-                chatRequest = JsonSerializer.Deserialize<ChatCompletionRequest>(content)
-                    ?? throw new InvalidOperationException(
-                        $"Could not parse request type as a ChatCompletionRequest: {content}");
-            }
+            var chatRequest = await JsonSerializer.DeserializeAsync<ChatCompletionRequest>(request.InputStream)
+            ?? throw new InvalidOperationException(
+                    "Could not parse request type as a ChatCompletionRequest");
 
             Cell<ConversationThread> programToUse = program;
 

@@ -70,11 +70,11 @@ services:
     # --model Qwen/Qwen2.5-14B-Instruct-GPTQ-Int8
     # --model Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4
     #                   [--tool-call-parser {granite-20b-fc,granite,hermes,internlm,jamba,llama3_json,mistral,pythonic} or name registered in --tool-parser-plugin]
+    # --enable-auto-tool-choice
+    # --tool-call-parser hermes
     command: >
       --model Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4
       --served-model-name model
-      --enable-auto-tool-choice
-      --tool-call-parser hermes
       --max-model-len 8192
       --kv-cache-dtype fp8
       -tp 2
