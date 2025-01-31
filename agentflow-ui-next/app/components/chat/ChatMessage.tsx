@@ -4,7 +4,7 @@ import { memo } from 'react';
 import { Body1, Button, Card, CardHeader } from '@fluentui/react-components';
 import { Delete24Regular } from '@fluentui/react-icons';
 import { Message } from '../../types';
-import { mergeClasses } from '@fluentui/react-components';
+import { mergeClasses, makeStyles, tokens } from '@fluentui/react-components';
 import { marked } from 'marked';
 
 interface ChatMessageProps {
@@ -13,11 +13,16 @@ interface ChatMessageProps {
     onClick?: (id: string) => void;
 }
 
+const useStyles = makeStyles({
+    botMessageColor: { backgroundColor: tokens.colorBrandForeground1 },
+});
+
 export const ChatMessage = memo(function ChatMessage({
     message,
     onDelete,
     onClick
 }: ChatMessageProps) {
+    const classes = useStyles();
     const isUser = message.role === 'user';
 
     return (
@@ -32,7 +37,7 @@ export const ChatMessage = memo(function ChatMessage({
                     'cursor-pointer transition-shadow',
                     isUser
                         ? 'bg-brand-primary hover:shadow-lg'
-                        : 'hover:shadow-md'
+                        : mergeClasses('hover:shadow-md', classes.botMessageColor)
                 )}
                 onClick={() => message.correlationId && onClick?.(message.correlationId)}
             >

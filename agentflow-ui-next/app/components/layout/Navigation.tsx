@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Text, Button } from '@fluentui/react-components';
+import { Text, Button, makeStyles, tokens, mergeClasses } from '@fluentui/react-components';
 import {
     Navigation24Regular,
     DismissRegular,
@@ -16,6 +16,10 @@ interface NavigationProps {
     onOpenChange: (isOpen: boolean) => void;
 }
 
+const useStyles = makeStyles({
+    navigationBackground: { backgroundColor: tokens.colorNeutralBackground2 },
+});
+
 const navigationItems = [
     { href: '/chat', icon: Chat24Regular, label: 'Chat' },
     { href: '/completion', icon: TextExpand24Regular, label: 'Text Completion' },
@@ -23,12 +27,13 @@ const navigationItems = [
 ];
 
 export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
+    const classes = useStyles();
     const pathname = usePathname();
 
     return (
         <nav
-            className={`fixed inset-y-0 left-0 shadow-lg transition-[width] z-30
-                ${isOpen ? 'w-64' : 'w-12'}`}
+            className={mergeClasses(`fixed inset-y-0 left-0 shadow-lg transition-[width] z-30
+                ${isOpen ? 'w-64' : 'w-12'}`, classes.navigationBackground)}
         >
             <div className="flex justify-between p-4">
                 <div />

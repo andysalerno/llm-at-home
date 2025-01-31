@@ -7,6 +7,9 @@ import {
     Spinner,
     Card,
     CardHeader,
+    makeStyles,
+    tokens,
+    mergeClasses,
 } from '@fluentui/react-components';
 import {
     ChevronDown24Regular,
@@ -46,6 +49,10 @@ interface TreeNodeProps {
     onSelect?: () => void;
 }
 
+const useStyles = makeStyles({
+    debugBackground: { backgroundColor: tokens.colorNeutralBackground2 },
+});
+
 const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelect }) => {
     const [isOpen, setIsOpen] = useState<boolean>(forceOpen);
 
@@ -80,6 +87,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     const [selectedItem, setSelectedItem] = useState<{ type: string; id: string } | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const classes = useStyles();
 
     console.log(`selectedItem is ${selectedItem?.type} ${selectedItem?.id}`);
 
@@ -171,14 +179,14 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     );
 
     if (error) return (
-        <div className="p-4 text-red-600">
+        <div className={mergeClasses("h-full p-4 text-red-600", classes.debugBackground)}>
             Error: {error}
         </div>
     );
 
     return (
         <div className="flex h-full">
-            <div className="w-1/3 overflow-auto p-4">
+            <div className={mergeClasses("w-1/3 overflow-auto p-4", classes.debugBackground)}>
                 <Text size={600} weight="semibold" className="mb-4 block">
                     Navigation
                 </Text>
