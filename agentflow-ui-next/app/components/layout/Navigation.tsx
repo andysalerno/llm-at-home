@@ -8,7 +8,8 @@ import {
     DismissRegular,
     Chat24Regular,
     TextExpand24Regular,
-    Bug24Regular
+    Bug24Regular,
+    Settings24Regular
 } from '@fluentui/react-icons';
 
 interface NavigationProps {
@@ -24,6 +25,7 @@ const navigationItems = [
     { href: '/chat', icon: Chat24Regular, label: 'Chat' },
     { href: '/completion', icon: TextExpand24Regular, label: 'Text Completion' },
     { href: '/debug', icon: Bug24Regular, label: 'Debug' },
+    { href: '/config', icon: Settings24Regular, label: 'Config' },
 ];
 
 export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
