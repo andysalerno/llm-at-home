@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Net;
@@ -48,63 +49,79 @@ internal sealed class OpenAIServer
         ChatRequestDiskLogger diskLogger,
         ILogger<OpenAIServer> logger)
     {
+        var threadPool = new TaskPool();
+
         while (true)
         {
             logger.LogInformation("Waiting for request...");
             HttpListenerContext ctx = await listener.GetContextAsync(); // Wait for a request
-            HttpListenerRequest request = ctx.Request;
-            HttpListenerResponse response = ctx.Response;
 
-            logger.LogInformation("AbsolutePath: {Path}", request.Url?.AbsolutePath);
-            logger.LogInformation("AbsoluteUri: {Path}", request.Url?.AbsoluteUri);
-            logger.LogInformation("RawUrl: {Path}", request.RawUrl);
+            threadPool.Add(HandleRequestAsync(ctx, logger, program, passthruProgram, runner, diskLogger));
+        }
+    }
+
+    private static async Task HandleRequestAsync(
+        HttpListenerContext ctx,
+        ILogger<OpenAIServer> logger,
+        Cell<ConversationThread> program,
+        Cell<ConversationThread> passthruProgram,
+        ICellRunner<ConversationThread> runner,
+        ChatRequestDiskLogger diskLogger)
+    {
+        HttpListenerRequest request = ctx.Request;
+        HttpListenerResponse response = ctx.Response;
 
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            using var activity = new Activity("incomingHTTP")
-                .Start();
+        using var activity = new Activity("incomingHTTP")
+            .Start();
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
-            if (request.Headers.GetValues("X-Correlation-ID")?.FirstOrDefault()
-                is string correlationId)
-            {
-                activity.AddBaggage("correlationId", correlationId);
+        logger.LogInformation("AbsolutePath: {Path}", request.Url?.AbsolutePath);
+        logger.LogInformation("AbsoluteUri: {Path}", request.Url?.AbsoluteUri);
+        logger.LogInformation("RawUrl: {Path}", request.RawUrl);
 
-                logger.LogInformation("Setting correlationId to: {CorrelationId}", correlationId);
+        if (request.Headers.GetValues("X-Correlation-ID")?.FirstOrDefault()
+            is string correlationId)
+        {
+            activity.AddBaggage("correlationId", correlationId);
 
-                response.AddHeader("X-Correlation-ID", correlationId);
-            }
+            logger.LogInformation("Setting correlationId to: {CorrelationId}", correlationId);
 
-            try
-            {
-                var task = request.RawUrl switch
-                {
-                    "/v1/chat/completions" =>
-                        HandleChatCompletionsAsync(
-                            request,
-                            response,
-                            program,
-                            passthruProgram,
-                            runner,
-                            diskLogger,
-                            logger),
-                    "/transcripts" =>
-                        TranscriptEndpointHandler.HandleAsync(response, diskLogger, logger),
-                    _ => throw new InvalidOperationException($"Unknown path: {request.RawUrl}"),
-                };
+            response.AddHeader("X-Correlation-ID", correlationId);
+        }
 
-                await task;
-            }
-            catch (Exception ex)
+        try
+        {
+            var task = request.RawUrl switch
             {
-                logger.LogError(ex, message: "error");
-            }
-            finally
-            {
-                // The docs specify you should invoke `Close()`, instead of using `using`,
-                // even though it's an `IDisposable`...
-                response.Close();
-                logger.LogInformation("Request complete.");
-            }
+                "/v1/chat/completions" =>
+                    HandleChatCompletionsAsync(
+                        request,
+                        response,
+                        program,
+                        passthruProgram,
+                        runner,
+                        diskLogger,
+                        logger),
+                "/transcripts" =>
+                    TranscriptEndpointHandler.HandleAsync(response, diskLogger, logger),
+                "/config" =>
+                    ConfigEngpointHandler.HandleAsync(response, diskLogger, logger),
+                _ => throw new InvalidOperationException($"Unknown path: {request.RawUrl}"),
+            };
+
+            await task;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, message: "error");
+        }
+        finally
+        {
+            // The docs specify you should invoke `Close()`, instead of using `using`,
+            // even though it's an `IDisposable`...
+            response.Close();
+            logger.LogInformation("Request complete.");
         }
     }
 
@@ -334,5 +351,34 @@ internal static class HttpListenerResponseExtensions
         response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.Headers.Add(
             "Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, X-Correlation-ID");
+    }
+}
+
+internal sealed class TaskPool
+{
+    private readonly ConcurrentBag<Task> tasks = new();
+
+    public void Add(Task task)
+    {
+        this.tasks.Add(task);
+
+        if (this.tasks.Count > 10)
+        {
+            this.Cleanup();
+        }
+    }
+
+    public void Cleanup()
+    {
+        var incompleteTasks = new ConcurrentBag<Task>(this.tasks.Where(t => !t.IsCompleted));
+        while (!this.tasks.IsEmpty)
+        {
+            this.tasks.TryTake(out _);
+        }
+
+        foreach (var task in incompleteTasks)
+        {
+            this.tasks.Add(task);
+        }
     }
 }

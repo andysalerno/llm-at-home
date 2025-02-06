@@ -33,8 +33,9 @@ export const ChatMessage = memo(function ChatMessage({
             )}
         >
             <Card
+                style={{ maxWidth: '100%' }}
                 className={mergeClasses(
-                    'cursor-pointer transition-shadow',
+                    'cursor-pointer transition-shadow max-w-full',
                     isUser
                         ? 'bg-brand-primary hover:shadow-lg'
                         : mergeClasses('hover:shadow-md', classes.botMessageColor)
@@ -42,10 +43,16 @@ export const ChatMessage = memo(function ChatMessage({
                 onClick={() => message.correlationId && onClick?.(message.correlationId)}
             >
                 <CardHeader
-                    header={
-                        <Body1>
-                            <div className="p-2" dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
-                        </Body1>
+                    className='max-w-full'
+                    style={{ maxWidth: '100%' }}
+                    description={
+                        // <Body1
+                        //     as='div'
+                        //     styles={{ root: { maxWidth: '100%' } }}
+                        //     className='max-w-full'>
+                        //     {/* <div className="p-2 max-w-full">{message.content}</div> */}
+                        // </Body1>
+                        <div className="p-2 max-w-full" style={{ maxWidth: '100%' }} dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
                     } />
             </Card>
             {onDelete && (
