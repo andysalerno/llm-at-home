@@ -1,7 +1,7 @@
 'use client'
 
 import { memo } from 'react';
-import { Body1, Button, Card, CardHeader } from '@fluentui/react-components';
+import { Button, Card, CardHeader } from '@fluentui/react-components';
 import { Delete24Regular } from '@fluentui/react-icons';
 import { Message } from '../../types';
 import { mergeClasses, makeStyles, tokens } from '@fluentui/react-components';

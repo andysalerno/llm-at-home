@@ -43,7 +43,7 @@ export function useChat() {
 
     const processStream = async (
         reader: ReadableStreamDefaultReader<string>,
-        correlationId: string
+        // correlationId: string
     ) => {
         let buffer = '';
         let streamContent = '';
@@ -115,7 +115,7 @@ export function useChat() {
                 .pipeThrough(new TextDecoderStream())
                 .getReader();
 
-            const streamContent = await processStream(reader, correlationId);
+            const streamContent = await processStream(reader); //, correlationId);
 
             setMessages((prev) => [
                 ...prev,

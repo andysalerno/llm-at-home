@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Text, Button, makeStyles, tokens, mergeClasses } from '@fluentui/react-components';
+import { Button, makeStyles, tokens, mergeClasses } from '@fluentui/react-components';
 import {
     Navigation24Regular,
     DismissRegular,
@@ -30,7 +29,6 @@ const navigationItems = [
 
 export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
     const classes = useStyles();
-    const pathname = usePathname();
 
     return (
         <nav
@@ -48,7 +46,6 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
             </div>
             <div className="py-6">
                 {navigationItems.map(({ href, icon: Icon, label }) => {
-                    const isActive = pathname === href;
                     return (
                         <Link
                             key={href}

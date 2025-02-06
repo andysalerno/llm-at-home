@@ -1,6 +1,6 @@
 'use client'
 
-import { FluentProvider, webLightTheme, webDarkTheme } from '@fluentui/react-components'
+import { FluentProvider, webDarkTheme } from '@fluentui/react-components'
 
 export default function FluentUIProvider({
     children
