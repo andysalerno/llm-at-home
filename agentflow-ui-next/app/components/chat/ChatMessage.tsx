@@ -52,7 +52,7 @@ export const ChatMessage = memo(function ChatMessage({
                         //     className='max-w-full'>
                         //     {/* <div className="p-2 max-w-full">{message.content}</div> */}
                         // </Body1>
-                        <div className="p-2 max-w-full" style={{ maxWidth: '100%' }} dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
+                        <div className="p-2 max-w-full TextMessage" style={{ maxWidth: '100%' }} dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
                     } />
             </Card>
             {onDelete && (

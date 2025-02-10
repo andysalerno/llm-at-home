@@ -47,7 +47,7 @@ services:
   #     - ./.agentflow.env
   
   llmhost:
-    image: vllm/vllm-openai:v0.7.1
+    image: vllm/vllm-openai:v0.7.2
     # ipc: host
     shm_size: 1g
     environment:
@@ -80,6 +80,7 @@ services:
       --served-model-name model
       --max-model-len 8192
       --kv-cache-dtype fp8
+      --enable-prefix-caching
       -tp 2
     ports:
       - "8000:8000"
