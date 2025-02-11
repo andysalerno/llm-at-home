@@ -51,7 +51,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
                         <Link
                             key={href}
                             href={href}
-                            className={mergeClasses(`flex w-full px-3 py-2 mb-1 text-sm hover:bg-colorNeutralForeground2-100`, classes.navigationButton)}
+                            className={mergeClasses(`flex w-full px-3 py-2 mb-1 text-sm`, classes.navigationButton)}
                         >
                             <Icon className="shrink-0" />
                             {isOpen && <span className="ml-3">{label}</span>}

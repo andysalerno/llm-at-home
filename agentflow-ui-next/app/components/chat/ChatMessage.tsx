@@ -60,7 +60,7 @@ export const ChatMessage = memo(function ChatMessage({
                     icon={<Delete24Regular />}
                     appearance="subtle"
                     className={mergeClasses(
-                        'absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity'
+                        'absolute top-0 right-0 opacity-0 group-hover:opacity-100'
                     )}
                     onClick={() => onDelete(message.id)}
                     aria-label="Delete message"
