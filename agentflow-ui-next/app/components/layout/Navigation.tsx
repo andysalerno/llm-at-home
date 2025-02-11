@@ -18,6 +18,7 @@ interface NavigationProps {
 
 const useStyles = makeStyles({
     navigationBackground: { backgroundColor: tokens.colorNeutralBackground2 },
+    navigationButton: { ':hover': { backgroundColor: tokens.colorNeutralBackground2Hover } },
 });
 
 const navigationItems = [
@@ -32,10 +33,10 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
 
     return (
         <nav
-            className={mergeClasses(`fixed inset-y-0 left-0 shadow-lg transition-[width] z-30
+            className={mergeClasses(`fixed inset-y-0 left-0 shadow-lg z-30
                 ${isOpen ? 'w-64' : 'w-12'}`, classes.navigationBackground)}
         >
-            <div className="flex justify-between p-4">
+            <div className="flex justify-between p-2">
                 <div />
                 <Button
                     icon={isOpen ? <DismissRegular /> : <Navigation24Regular />}
@@ -50,7 +51,7 @@ export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
                         <Link
                             key={href}
                             href={href}
-                            className={`flex w-full px-4 py-2 mb-1 text-sm transition-colors`}
+                            className={mergeClasses(`flex w-full px-3 py-2 mb-1 text-sm hover:bg-colorNeutralForeground2-100`, classes.navigationButton)}
                         >
                             <Icon className="shrink-0" />
                             {isOpen && <span className="ml-3">{label}</span>}

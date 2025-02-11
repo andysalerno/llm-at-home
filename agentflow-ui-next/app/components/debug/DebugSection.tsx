@@ -60,7 +60,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
         <div className="my-1">
             <Button
                 appearance="subtle"
-                className="w-full flex p-2 rounded text-left"
+                className="w-1/2 flex p-2 rounded text-left"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
@@ -200,14 +200,14 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                         {session.messages.map(message => (
                             <TreeNode
                                 key={message.id}
-                                label={`Message: ${message.content.substring(0, 20)}...`}
+                                label={`${message.content.substring(0, 20)}...`}
                                 forceOpen={selectedItem?.type === 'message' && selectedItem.id === message.id}
                                 onSelect={() => setSelectedItem({ type: 'message', id: message.id })}
                             >
                                 {message.llmRequests.map(request => (
                                     <TreeNode
                                         key={request.id}
-                                        label={`Request: ${request.id}`}
+                                        label={`${request.id}`}
                                         forceOpen={false}
                                         onSelect={() => setSelectedItem({ type: 'request', id: request.id })}
                                     />
