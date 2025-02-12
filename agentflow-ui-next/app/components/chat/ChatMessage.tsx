@@ -15,6 +15,7 @@ interface ChatMessageProps {
 
 const useStyles = makeStyles({
     botMessageColor: { backgroundColor: tokens.colorBrandForeground1 },
+    userMessage: { backgroundColor: tokens.colorNeutralBackground1Hover },
 });
 
 export const ChatMessage = memo(function ChatMessage({
@@ -35,9 +36,9 @@ export const ChatMessage = memo(function ChatMessage({
             <Card
                 style={{ maxWidth: '100%' }}
                 className={mergeClasses(
-                    'cursor-pointer transition-shadow max-w-full',
+                    'cursor-pointer max-w-full',
                     isUser
-                        ? 'bg-brand-primary hover:shadow-lg'
+                        ? mergeClasses('hover:shadow-lg', classes.userMessage)
                         : mergeClasses('hover:shadow-md', classes.botMessageColor)
                 )}
                 onClick={() => message.correlationId && onClick?.(message.correlationId)}
