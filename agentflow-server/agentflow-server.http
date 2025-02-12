@@ -1,0 +1,15 @@
+@agentflow_server_HostAddress = http://nzxt.local:8006
+
+GET {{agentflow_server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{agentflow_server_HostAddress}}/v1/chat/completions/
+Accept: application/json
+Content-Type: application/json
+
+{
+}
+
+###
