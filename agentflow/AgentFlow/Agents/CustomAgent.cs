@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using AgentFlow.Agents.ExecutionFlow;
 using AgentFlow.LlmClient;
@@ -8,33 +7,6 @@ using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.Agents;
-
-/// <summary>
-/// Defines the strategies that may be used for presenting the system message to the LLM.
-/// </summary>
-public enum InstructionStrategy
-{
-    /// <summary>
-    /// The system message will appear as a message with role 'System', as the very first message in a conversation.
-    /// </summary>
-    TopLevelSystemMessage,
-
-    /// <summary>
-    /// The system message will appear as a new message with role 'User' in the conversation.
-    /// </summary>
-    InlineUserMessage,
-
-    /// <summary>
-    /// The system message will appear as a new message with role System in the conversation (as the latest message, NOT as the first message).
-    /// </summary>
-    InlineSystemMessage,
-
-    /// <summary>
-    /// The system message will appear as the second-to-last message, with the last message being the last user message.
-    /// TODO: fill me in. will probably work best for tool selection.
-    /// </summary>
-    PrecedingLastUserMessage,
-}
 
 public sealed class CustomAgent : IAgent
 {
@@ -90,7 +62,7 @@ public sealed class CustomAgent : IAgent
             if (this.Prompt is Prompt p)
             {
                 RenderedPrompt rendered = this.promptRenderer.Render(p, this.variables);
-                cells.Add(new SetSystemMessageCell(this.Name, rendered, this.InstructionStrategy));
+                cells.Add(new SetSystemMessageCell(this.Name, rendered));
             }
             else
             {
@@ -102,6 +74,7 @@ public sealed class CustomAgent : IAgent
                 this.Role,
                 this.responseSchema,
                 this.toolChoice,
+                this.InstructionStrategy,
                 this.completionsClient));
         }
 

@@ -2,6 +2,7 @@
 using AgentFlow.Agents;
 using AgentFlow.Config;
 using AgentFlow.Examples;
+using AgentFlow.Prompts;
 using Autofac;
 using Microsoft.Extensions.Logging;
 
@@ -112,7 +113,8 @@ public static class Program
 
         var instructionStrategy = new Option<InstructionStrategy>(
             name: "-s",
-            getDefaultValue: () => InstructionStrategy.InlineSystemMessage,
+            // getDefaultValue: () => InstructionStrategy.InlineSystemMessage,
+            getDefaultValue: () => InstructionStrategy.AppendedToUserMessage,
             description: "instruction strategy to use");
         instructionStrategy.AddAlias("--instruction-strategy");
 

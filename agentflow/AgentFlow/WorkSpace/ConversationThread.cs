@@ -55,11 +55,18 @@ public sealed class ConversationThread
     /// <returns>A copy of the <see cref="ConversationThread"/> with the added <paramref name="message"/>.</returns>
     /// <param name="message">The message to add.</param>
     public ConversationThread WithAddedMessage(Message message)
+        => this.WithAddedMessages(new[] { message });
+
+    public ConversationThread WithAddedMessages(IEnumerable<Message> messages)
     {
-        return new Builder()
-            .CopyFrom(this)
-            .AddMessage(message)
-            .Build();
+        var builder = new Builder().CopyFrom(this);
+
+        foreach (var message in messages)
+        {
+            builder.AddMessage(message);
+        }
+
+        return builder.Build();
     }
 
     public ConversationThread WithMatchingMessages(Func<Message, bool> predicate)

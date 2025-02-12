@@ -10,17 +10,14 @@ public sealed record SetSystemMessageCell : Cell<ConversationThread>
     private readonly ILogger<SetSystemMessageCell> logger;
     private readonly AgentName agentName;
     private readonly RenderedPrompt systemMessageContent;
-    private readonly InstructionStrategy instructionStrategy;
 
     public SetSystemMessageCell(
         AgentName agentName,
-        RenderedPrompt systemMessageContent,
-        InstructionStrategy instructionStrategy = InstructionStrategy.TopLevelSystemMessage)
+        RenderedPrompt systemMessageContent)
     {
         this.logger = this.GetLogger();
         this.agentName = agentName;
         this.systemMessageContent = systemMessageContent;
-        this.instructionStrategy = instructionStrategy;
     }
 
     public override Task<ConversationThread> RunAsync(ConversationThread input)
@@ -34,19 +31,8 @@ public sealed record SetSystemMessageCell : Cell<ConversationThread>
 
         ConversationThread withoutSystem = input.WithMatchingMessages(m => m.Role != Role.System);
 
-        ConversationThread updated = this.instructionStrategy switch
-        {
-            InstructionStrategy.TopLevelSystemMessage =>
-                withoutSystem.WithFirstMessageSystemMessage(
-                    new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
-            InstructionStrategy.InlineUserMessage =>
-                withoutSystem.WithAddedMessage(
-                    new Message(this.agentName, Role.User, this.systemMessageContent.Text)),
-            InstructionStrategy.InlineSystemMessage =>
-                withoutSystem.WithAddedMessage(
-                    new Message(this.agentName, Role.System, this.systemMessageContent.Text)),
-            _ => throw new NotImplementedException(),
-        };
+        ConversationThread updated = withoutSystem.WithAddedMessage(
+                    new Message(this.agentName, Role.System, this.systemMessageContent.Text));
 
         return Task.FromResult(updated);
     }
