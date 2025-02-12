@@ -11,4 +11,5 @@ internal sealed class ConfigHandler : IHandler<ConfigRequest, ConfigResponse>
 }
 
 internal sealed record ConfigRequest();
+
 internal sealed record ConfigResponse();
