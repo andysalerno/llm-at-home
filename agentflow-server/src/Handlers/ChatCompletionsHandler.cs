@@ -9,8 +9,6 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionsRequest, 
         this.logger = logger;
     }
 
-    public string Path => "/v1/chat/completions";
-
     public Task<ChatCompletionsResponse> HandleAsync(ChatCompletionsRequest payload)
     {
         this.logger.LogInformation("payload received :)");

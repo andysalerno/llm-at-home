@@ -11,6 +11,7 @@ builder.Services.AddLogging();
 
 builder.Services.AddSingleton<ChatCompletionsHandler>();
 builder.Services.AddSingleton<ConfigHandler>();
+builder.Services.AddSingleton<TranscriptHandler>();
 
 var app = builder.Build();
 
@@ -30,6 +31,12 @@ app.MapPost(
 app.MapPost(
     "/config",
     async ([FromServices] ConfigHandler handler, [FromBody] ConfigRequest request)
+        => await handler.HandleAsync(request))
+    .WithOpenApi();
+
+app.MapGet(
+    "/transcripts",
+    async ([FromServices] TranscriptHandler handler, [FromBody] TranscriptRequest request)
         => await handler.HandleAsync(request))
     .WithOpenApi();
 
