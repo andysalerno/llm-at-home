@@ -1,29 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>agentflow_server</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../agentflow/AgentFlow/AgentFlow.csproj" />
-    <ProjectReference Include="../agentflow/AgentFlow.Agents/AgentFlow.Agents.csproj" />
-    <ProjectReference Include="../agentflow/LlmIntegration/LlmIntegration.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <ProjectReference Include="../AgentFlow/AgentFlow.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-</ItemGroup>
+    <Content Include="Prompts\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always" />
+  </ItemGroup>
 
-    <!-- begin analyzers -->
+  <!-- begin analyzers -->
   <PropertyGroup>
     <AnalysisMode>All</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>

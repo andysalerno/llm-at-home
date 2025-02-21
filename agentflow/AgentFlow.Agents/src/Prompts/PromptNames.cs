@@ -1,8 +1,8 @@
 using AgentFlow.Prompts;
 
-namespace AgentFlow.Examples;
+namespace AgentFlow.Agents.Prompts;
 
-public static class ExamplePromptsOld
+public static class PromptNames
 {
     public static PromptName CodeAssistantSystem { get; } = new PromptName("example_assistant_system");
 

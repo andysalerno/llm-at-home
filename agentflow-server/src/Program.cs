@@ -1,4 +1,6 @@
+using Agentflow.Server;
 using Agentflow.Server.Handler;
+using AgentFlow.Config;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddLogging();
+
+builder.Services.AddLogging(c => c.AddSimpleConsole(o =>
+{
+    o.IncludeScopes = true;
+    o.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff ";
+    o.SingleLine = true;
+    o.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;
+}));
+
+builder.Services.AddHttpClient();
+builder.Services.AddAgentFlow();
 
 builder.Services.AddSingleton<ChatCompletionsHandler>();
 builder.Services.AddSingleton<ConfigHandler>();

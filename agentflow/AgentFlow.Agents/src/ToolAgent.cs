@@ -4,16 +4,16 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
+using AgentFlow.Agents.Prompts;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
 
-namespace AgentFlow.Examples.Agents;
+namespace AgentFlow.Agents;
 
-// TODO: move out of examples and into AgentFlow lib
-public class ToolAgentOld : IAgent
+public sealed class ToolAgent : IAgent
 {
   private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
   private readonly CustomAgentBuilderFactory customAgentBuilderFactory;
@@ -21,7 +21,7 @@ public class ToolAgentOld : IAgent
   private readonly Lazy<IAgent> toolSelectionAgent;
   private readonly Lazy<IAgent> responseAgent;
 
-  public ToolAgentOld(
+  public ToolAgent(
       AgentName name,
       Role role,
       IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
@@ -60,7 +60,7 @@ public class ToolAgentOld : IAgent
             key: "CUR_DATE",
             DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
         .WithInstructionsFromPrompt(
-          this.promptFactoryProvider.GetFactory(ExamplePrompts.WebsearchExampleSystem).Create())
+          this.promptFactoryProvider.GetFactory(PromptNames.WebsearchExampleSystem).Create())
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
         .WithToolChoice("invoke_function")
@@ -72,7 +72,7 @@ public class ToolAgentOld : IAgent
        .WithName(new AgentName("ResponseAgent"))
        .WithRole(this.Role)
        .WithInstructionsFromPrompt(
-          this.promptFactoryProvider.GetFactory(ExamplePrompts.WebsearchExampleResponding).Create())
+          this.promptFactoryProvider.GetFactory(PromptNames.WebsearchExampleResponding).Create())
        .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
        .Build());
   }
