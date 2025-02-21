@@ -11,6 +11,7 @@
     <ProjectReference Include="../agentflow/AgentFlow/AgentFlow.csproj" />
     <ProjectReference Include="../agentflow/AgentFlow.Agents/AgentFlow.Agents.csproj" />
     <ProjectReference Include="../agentflow/LlmIntegration/LlmIntegration.csproj" />
+    <ProjectReference Include="../agentflow/Logging/Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

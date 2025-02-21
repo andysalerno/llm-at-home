@@ -1,6 +1,5 @@
 using Agentflow.Server;
 using Agentflow.Server.Handler;
-using AgentFlow.Config;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +25,8 @@ builder.Services.AddSingleton<ConfigHandler>();
 builder.Services.AddSingleton<TranscriptHandler>();
 
 var app = builder.Build();
+
+AgentFlow.Logging.RegisterLoggerFactory(app.Services.GetRequiredService<ILoggerFactory>());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
