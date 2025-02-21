@@ -33,7 +33,8 @@ public static class ServiceCollectionExtensions
         // services.AddSingleton<IChatRequestDiskLoggerConfig>(configuration);
         // services.AddSingleton<IPromptRendererConfig>(configuration);
         var configBuilder = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+            .AddEnvironmentVariables();
 
         var configuration = configBuilder.Build().GetRequiredSection("AgentFlow").Get<Configuration>()
             ?? throw new InvalidOperationException("Configuration section 'agentflow' is missing or invalid.");
