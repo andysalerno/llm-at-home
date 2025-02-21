@@ -2,11 +2,13 @@ using System.Collections.Immutable;
 using AgentFlow;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
+using AgentFlow.Agents.Prompts;
 using AgentFlow.Config;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
+using AgentFlow.Agents.Tools;
 using AgentFlow.WorkSpace;
 
 namespace Agentflow.Server.Handler;
@@ -14,19 +16,37 @@ namespace Agentflow.Server.Handler;
 internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionsRequest, ChatCompletionsResponse>
 {
     private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
+    private readonly ICellRunner<ConversationThread> runner;
+    private readonly IEnvironmentVariableProvider environmentVariableProvider;
+    private readonly IEmbeddingsClient embeddingsClient;
+    private readonly IScraperClient scraperClient;
+    private readonly IPromptRenderer promptRenderer;
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
     private readonly Configuration configuration;
+    private readonly IHttpClientFactory httpClientFactory;
     private readonly ILogger<ChatCompletionsHandler> logger;
 
     public ChatCompletionsHandler(
         IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
+        ICellRunner<ConversationThread> runner,
+        IEnvironmentVariableProvider environmentVariableProvider,
+        IEmbeddingsClient embeddingsClient,
+        IScraperClient scraperClient,
+        IPromptRenderer promptRenderer,
         CustomAgentBuilderFactory agentBuilderFactory,
         Configuration configuration,
+        IHttpClientFactory httpClientFactory,
         ILogger<ChatCompletionsHandler> logger)
     {
         this.promptFactoryProvider = promptFactoryProvider;
+        this.runner = runner;
+        this.environmentVariableProvider = environmentVariableProvider;
+        this.embeddingsClient = embeddingsClient;
+        this.scraperClient = scraperClient;
+        this.promptRenderer = promptRenderer;
         this.agentBuilderFactory = agentBuilderFactory;
         this.configuration = configuration;
+        this.httpClientFactory = httpClientFactory;
         this.logger = logger;
     }
 
@@ -39,28 +59,28 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionsRequest, 
     public Cell<ConversationThread> CreateProgram()
     {
         ImmutableArray<ITool> tools = [
-            // new WebSearchTool(
-            //     this.agentBuilderFactory,
-            //     this.runner,
-            //     this.environmentVariableProvider,
-            //     this.embeddingsClient,
-            //     this.scraperClient,
-            //     this.promptRenderer,
-            //     this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
-            //     this.httpClientFactory),
+            new WebSearchTool(
+                this.agentBuilderFactory,
+                this.runner,
+                this.environmentVariableProvider,
+                this.embeddingsClient,
+                this.scraperClient,
+                this.promptRenderer,
+                this.promptFactoryProvider.GetFactory(PromptNames.RewriteQuerySystem),
+                this.httpClientFactory),
 
-            // new WebSearchTool(
-            //     this.agentBuilderFactory,
-            //     this.runner,
-            //     this.environmentVariableProvider,
-            //     this.embeddingsClient,
-            //     this.scraperClient,
-            //     this.promptRenderer,
-            //     this.promptFactoryProvider.GetFactory(ExamplePrompts.RewriteQuerySystem),
-            //     this.httpClientFactory,
-            //     searchSiteUris: ["nytimes.com", "cnn.com", "apnews.com", "cbsnews.com"],
-            //     toolName: "search_news",
-            //     exampleQueries: ("2024 election polls", "seattle heat wave", "stock market performance")),
+            new WebSearchTool(
+                this.agentBuilderFactory,
+                this.runner,
+                this.environmentVariableProvider,
+                this.embeddingsClient,
+                this.scraperClient,
+                this.promptRenderer,
+                this.promptFactoryProvider.GetFactory(PromptNames.RewriteQuerySystem),
+                this.httpClientFactory,
+                searchSiteUris: ["nytimes.com", "cnn.com", "apnews.com", "cbsnews.com"],
+                toolName: "search_news",
+                exampleQueries: ("2024 election polls", "seattle heat wave", "stock market performance")),
         ];
 
         return new AgentCell(

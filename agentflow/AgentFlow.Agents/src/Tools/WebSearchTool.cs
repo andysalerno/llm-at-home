@@ -11,9 +11,9 @@ using AgentFlow.Tools;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
-namespace AgentFlow.Examples.Tools;
+namespace AgentFlow.Agents.Tools;
 
-public class WebSearchToolOld : ITool
+public sealed class WebSearchTool : ITool
 {
     private const int NumChunksToRAG = 5;
     private const int NumPagesToRead = 5;
