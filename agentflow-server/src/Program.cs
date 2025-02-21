@@ -37,7 +37,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapPost(
     "/v1/chat/completions",
-    async ([FromServices] ChatCompletionsHandler handler, [FromBody] ChatCompletionsRequest request)
+    async ([FromServices] ChatCompletionsHandler handler, [FromBody] ChatCompletionRequest request)
         => await handler.HandleAsync(request))
     .WithOpenApi();
 

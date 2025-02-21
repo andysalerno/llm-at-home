@@ -10,6 +10,12 @@ Accept: application/json
 Content-Type: application/json
 
 {
+    "messages": [
+        {
+            "role": "user",
+            "content": "What is the weather like in New York City?"
+        }
+    ]
 }
 
 ###
