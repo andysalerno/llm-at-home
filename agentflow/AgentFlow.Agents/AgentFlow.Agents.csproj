@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../AgentFlow/AgentFlow.csproj" />
+    <ProjectReference Include="../Prompts/AgentFlow.Prompts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

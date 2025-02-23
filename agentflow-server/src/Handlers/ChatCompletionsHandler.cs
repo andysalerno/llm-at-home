@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using AgentFlow;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
-using AgentFlow.Agents.Prompts;
 using AgentFlow.Agents.Tools;
 using AgentFlow.Config;
 using AgentFlow.Generic;
@@ -66,7 +65,7 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, C
     private static ConversationThread ToConversationThread(ChatCompletionRequest request)
     {
         var messages = request.Messages.Select(m => new AgentFlow.LlmClient.Message(
-            AgentName: new AgentFlow.Agents.AgentName(m.Role),
+            AgentName: new AgentName(m.Role),
             Role: Role.ExpectFromName(m.Role),
             Content: m.Content.Text));
 
@@ -83,7 +82,7 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, C
                 this.embeddingsClient,
                 this.scraperClient,
                 this.promptRenderer,
-                this.promptFactoryProvider.GetFactory(PromptNames.RewriteQuerySystem),
+                this.promptFactoryProvider.GetFactory(DefaultPrompts.RewriteQuerySystem),
                 this.httpClientFactory),
 
             new WebSearchTool(
@@ -93,7 +92,7 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, C
                 this.embeddingsClient,
                 this.scraperClient,
                 this.promptRenderer,
-                this.promptFactoryProvider.GetFactory(PromptNames.RewriteQuerySystem),
+                this.promptFactoryProvider.GetFactory(DefaultPrompts.RewriteQuerySystem),
                 this.httpClientFactory,
                 searchSiteUris: ["nytimes.com", "cnn.com", "apnews.com", "cbsnews.com"],
                 toolName: "search_news",

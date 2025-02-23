@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
-using AgentFlow.Agents.Prompts;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
@@ -60,7 +59,7 @@ public sealed class ToolAgent : IAgent
             key: "CUR_DATE",
             DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
         .WithInstructionsFromPrompt(
-          this.promptFactoryProvider.GetFactory(PromptNames.WebsearchExampleSystem).Create())
+          this.promptFactoryProvider.GetFactory(DefaultPrompts.WebsearchExampleSystem).Create())
         .WithMessageVisibility(new MessageVisibility(ShownToUser: false, ShownToModel: true))
         .WithJsonResponseSchema(JsonToolSchema)
         .WithToolChoice("invoke_function")
@@ -72,7 +71,7 @@ public sealed class ToolAgent : IAgent
        .WithName(new AgentName("ResponseAgent"))
        .WithRole(this.Role)
        .WithInstructionsFromPrompt(
-          this.promptFactoryProvider.GetFactory(PromptNames.WebsearchExampleResponding).Create())
+          this.promptFactoryProvider.GetFactory(DefaultPrompts.WebsearchExampleResponding).Create())
        .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
        .Build());
   }
