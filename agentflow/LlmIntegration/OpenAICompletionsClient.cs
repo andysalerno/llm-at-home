@@ -255,6 +255,8 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         var result = await this.HttpClient.PostAsync(this.chatCompletionsEndpoint, requestContent);
 
+        result.EnsureSuccessStatusCode();
+
         var resultJson = await result.Content.ReadAsStringAsync();
 
         if (this.loggingConfig.LogRequestsToLlm)
