@@ -1,4 +1,4 @@
-@agentflow_server_HostAddress = http://localhost:8006
+@agentflow_server_HostAddress = http://localhost:8003
 
 GET {{agentflow_server_HostAddress}}/weatherforecast/
 Accept: application/json
