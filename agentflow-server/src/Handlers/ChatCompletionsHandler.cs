@@ -59,7 +59,13 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, C
 
         ConversationThread output = await this.runner.RunAsync(this.CreateProgram(), rootInput: conversationThread);
 
-        return new ChatCompletionStreamingResponse([]);
+        return new ChatCompletionStreamingResponse(
+            [
+                new ChatChoice(
+                Index: 0,
+                Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))
+            ],
+            Model: payload.Model);
     }
 
     private static ConversationThread ToConversationThread(ChatCompletionRequest request)
