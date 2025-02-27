@@ -14,7 +14,7 @@ using AgentFlow.WorkSpace;
 
 namespace Agentflow.Server.Handler;
 
-internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, ChatCompletionStreamingResponse>
+internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionRequest>
 {
     private readonly IFactoryProvider<Prompt, PromptName> promptFactoryProvider;
     private readonly ICellRunner<ConversationThread> runner;
@@ -51,7 +51,10 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, C
         this.logger = logger;
     }
 
-    public async Task<ChatCompletionStreamingResponse> HandleAsync(ChatCompletionRequest payload)
+    public async Task HandleAsync(
+        ChatCompletionRequest payload,
+        IStreamingPublisher publisher,
+        CancellationToken ct)
     {
         this.logger.LogInformation("payload received :)");
 
@@ -59,13 +62,21 @@ internal sealed class ChatCompletionsHandler : IHandler<ChatCompletionRequest, C
 
         ConversationThread output = await this.runner.RunAsync(this.CreateProgram(), rootInput: conversationThread);
 
-        return new ChatCompletionStreamingResponse(
-            [
-                new ChatChoice(
-                Index: 0,
-                Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))
-            ],
-            Model: payload.Model);
+        await publisher.PublishAsync(
+            JsonSerializer.Serialize(new ChatCompletionStreamingResponse(
+                Choices: [new ChatChoice(
+                    Index: 0,
+                    Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))],
+                Model: payload.Model)),
+            ct);
+
+        // return new ChatCompletionStreamingResponse(
+        //     [
+        //         new ChatChoice(
+        //         Index: 0,
+        //         Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))
+        //     ],
+        //     Model: payload.Model);
     }
 
     private static ConversationThread ToConversationThread(ChatCompletionRequest request)

@@ -17,6 +17,7 @@ builder.Services.AddLogging(c => c.AddSimpleConsole(o =>
 }));
 
 builder.Services.AddHttpClient();
+builder.Services.AddCors();
 builder.Services.AddAgentFlow();
 
 builder.Services.AddSingleton<ChatCompletionsHandler>();
@@ -33,10 +34,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// allow OPTIONS requests via CORS:
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+
 app.MapPost(
     "/v1/chat/completions",
-    async ([FromServices] ChatCompletionsHandler handler, [FromBody] ChatCompletionRequest request)
-        => await handler.HandleAsync(request))
+    async (
+            HttpContext context,
+            [FromServices] ChatCompletionsHandler handler,
+            [FromBody] ChatCompletionRequest request,
+            CancellationToken ct)
+        => await handler.HandleAsync(request, new HttpContextStreamingPublisher(context), ct))
     .WithOpenApi();
 
 app.MapPost(
