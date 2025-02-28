@@ -47,7 +47,7 @@ app.MapPost(
             [FromServices] ChatCompletionsHandler handler,
             [FromBody] ChatCompletionRequest request,
             CancellationToken ct)
-        => await handler.HandleAsync(request, new HttpContextStreamingPublisher(context), ct))
+        => await PostCompletionsStreamingAsync(context, handler, request, ct))
     .WithOpenApi();
 
 app.MapPost(
@@ -61,5 +61,16 @@ app.MapGet(
     async ([FromServices] TranscriptHandler handler, [FromBody] TranscriptRequest request)
         => await handler.HandleAsync(request))
     .WithOpenApi();
+
+async Task PostCompletionsStreamingAsync(
+    HttpContext context,
+    ChatCompletionsHandler handler,
+    ChatCompletionRequest request,
+    CancellationToken ct)
+{
+    var stream = new HttpContextStreamingPublisher(context);
+
+    await handler.HandleAsync(request, stream, ct);
+}
 
 app.Run();
