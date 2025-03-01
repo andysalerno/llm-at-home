@@ -69,14 +69,6 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                     Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))],
                 Model: payload.Model)),
             ct);
-
-        // return new ChatCompletionStreamingResponse(
-        //     [
-        //         new ChatChoice(
-        //         Index: 0,
-        //         Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))
-        //     ],
-        //     Model: payload.Model);
     }
 
     private static ConversationThread ToConversationThread(ChatCompletionRequest request)
