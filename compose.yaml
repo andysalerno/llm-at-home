@@ -17,6 +17,7 @@ services:
       - AgentFlow__ScraperEndpoint=http://scraper:8002/scrape
       # - AgentFlow__CompletionsEndpoint=http://llmhost:8000
       - AgentFlow__PromptDirectory=./PromptFiles/
+      - AgentFlow__DiskLoggingPath=/App/LlmRequestLogs/
       - MODEL_NAME=
       - ASPNETCORE_URLS=http://+:8003
     tty: true

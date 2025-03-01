@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICellRunner<ConversationThread>, CellRunner<ConversationThread>>();
         services.AddSingleton<IMessageFormatter, ChatMLMessageFormatter>();
         services.AddSingleton<IEnvironmentVariableProvider, EnvironmentVariableProvider>();
+        services.AddSingleton<ChatRequestDiskLogger>();
 
         services.AddSingleton<ILlmCompletionsClient, OpenAICompletionsClient>();
         services.AddSingleton<IEmbeddingsClient, OpenAICompletionsClient>();
@@ -26,12 +27,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IFactoryProvider<Prompt, PromptName>, FileSystemPromptFactoryProvider>();
         services.AddSingleton<CustomAgentBuilderFactory>();
 
-        // services.AddSingleton<Configuration>(configuration);
-        // services.AddSingleton<ICompletionsEndpointConfig>(configuration);
-        // services.AddSingleton<ILoggingConfig>(configuration);
-        // services.AddSingleton<IFileSystemPromptProviderConfig>(configuration);
-        // services.AddSingleton<IChatRequestDiskLoggerConfig>(configuration);
-        // services.AddSingleton<IPromptRendererConfig>(configuration);
         var configBuilder = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
             .AddEnvironmentVariables();
