@@ -58,8 +58,8 @@ app.MapPost(
 
 app.MapGet(
     "/transcripts",
-    async ([FromServices] TranscriptHandler handler, [FromBody] TranscriptRequest request)
-        => await handler.HandleAsync(request))
+    async ([FromServices] TranscriptHandler handler)
+        => await handler.HandleAsync(new TranscriptRequest()))
     .WithOpenApi();
 
 async Task PostCompletionsStreamingAsync(

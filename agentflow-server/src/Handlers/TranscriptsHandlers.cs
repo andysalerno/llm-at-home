@@ -7,15 +7,18 @@ namespace Agentflow.Server.Handler;
 internal sealed class TranscriptHandler : IHandler<TranscriptRequest, TranscriptResponse>
 {
     private readonly ChatRequestDiskLogger diskLogger;
+    private readonly ILogger<TranscriptHandler> logger;
 
-    public TranscriptHandler(ChatRequestDiskLogger diskLogger)
+    public TranscriptHandler(ChatRequestDiskLogger diskLogger, ILogger<TranscriptHandler> logger)
     {
         this.diskLogger = diskLogger;
+        this.logger = logger;
     }
 
     public async Task<TranscriptResponse> HandleAsync(
         TranscriptRequest payload)
     {
+        this.logger.LogInformation("Handling transcript request...");
         var files = await this.diskLogger.ReadRequestsFromDiskAsync();
 
         var filesSplit = files
