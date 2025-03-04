@@ -75,7 +75,7 @@ public sealed class ChatRequestDiskLogger
             requestId = Guid.NewGuid().ToString();
         }
 
-        string timestamp = DateTime.Now.ToString("dd-MM-yyyy");
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd");
 
         string logFilePath = $"{this.config.DiskLoggingPath.TrimEnd('/')}/{timestamp}.{requestId}.{fileIndex}.log";
         string fullPath = Path.GetFullPath(logFilePath);
