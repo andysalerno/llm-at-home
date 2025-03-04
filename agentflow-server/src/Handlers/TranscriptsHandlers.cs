@@ -89,16 +89,16 @@ internal sealed record TranscriptResponse(
     ImmutableArray<Session> Sessions);
 
 internal sealed record Session(
-    [property: JsonPropertyName("id")]
-    string Id,
+    [property: JsonPropertyName("conversationId")]
+    string ConversationId,
     [property: JsonPropertyName("messages")]
     ImmutableArray<TranscriptMessage> Messages);
 
 internal sealed record TranscriptMessage(
     [property: JsonPropertyName("id")]
     string Id,
-    [property: JsonPropertyName("correlationId")]
-    string CorrelationId,
+    [property: JsonPropertyName("conversationId")]
+    string ConversationId,
     [property: JsonPropertyName("content")]
     string Content,
     [property: JsonPropertyName("llmRequests")]

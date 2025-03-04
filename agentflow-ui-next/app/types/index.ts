@@ -5,7 +5,7 @@ export interface Message {
     role: 'user' | 'assistant' | 'system';
     content: string;
     timestamp: string;
-    correlationId: string;
+    conversationId: string;
 }
 
 export interface ChatState {

@@ -25,12 +25,12 @@ interface LlmRequest {
 interface Message {
     id: string;
     content: string;
-    correlationId: string;
+    conversationId: string;
     llmRequests: LlmRequest[];
 }
 
 interface Session {
-    id: string;
+    conversationId: string;
     messages: Message[];
 }
 
@@ -114,8 +114,8 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
     useEffect(() => {
         if (focusedMessageId) {
-            console.log(`looking for message with corr id: ${focusedMessageId}`);
-            const message = data.sessions.flatMap(s => s.messages).find(m => m.correlationId === focusedMessageId);
+            console.log(`looking for message with id: ${focusedMessageId}`);
+            const message = data.sessions.flatMap(s => s.messages).find(m => m.id === focusedMessageId);
             if (message) {
                 console.log(`setting focused to message with id: ${focusedMessageId}`);
                 setSelectedItem({ type: 'message', id: message.id });
@@ -130,13 +130,13 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
         let item;
         if (selectedItem.type === 'session') {
-            item = data.sessions.find(s => s.id === selectedItem.id);
+            item = data.sessions.find(s => s.conversationId === selectedItem.id);
             return (
                 <Card className="p-4">
                     <CardHeader>
                         <Text size={500} weight="semibold">Session Details</Text>
                     </CardHeader>
-                    <Text>Session ID: {item?.id}</Text>
+                    <Text>Session ID: {item?.conversationId}</Text>
                 </Card>
             );
         } else if (selectedItem.type === 'message') {
@@ -192,10 +192,10 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                 </Text>
                 {data.sessions.map(session => (
                     <TreeNode
-                        key={session.id}
-                        label={`Session: ${session.id}`}
+                        key={session.conversationId}
+                        label={`Session: ${session.conversationId}`}
                         forceOpen={false}
-                        onSelect={() => setSelectedItem({ type: 'session', id: session.id })}
+                        onSelect={() => setSelectedItem({ type: 'session', id: session.conversationId })}
                     >
                         {session.messages.map(message => (
                             <TreeNode

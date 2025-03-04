@@ -12,7 +12,9 @@ export function ChatContainer() {
     const searchParams = useSearchParams();
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const { messages, streamingMessage, sendMessage, cancelStream, clearMessages, deleteMessage } = useChat();
+    const { messages, streamingMessage, sendMessage, cancelStream, clearMessages, deleteMessage, conversationId } = useChat();
+
+    console.log('Conversation id: ', conversationId);
 
     const handleDeleteMessage = (id: string) => {
         console.log('(1)Deleting message with id:', id);
@@ -52,7 +54,7 @@ export function ChatContainer() {
                                 role: 'assistant',
                                 content: streamingMessage,
                                 timestamp: new Date().toISOString(),
-                                correlationId: 'streaming'
+                                conversationId: conversationId
                             }}
                         />
                     </div>
