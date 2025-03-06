@@ -19,23 +19,31 @@ public sealed class ConversationThread
     // TODO: deprecate?
     private readonly Dictionary<string, string> templateKeyValuePairs;
 
-    public ConversationThread()
+    public ConversationThread(ConversationId conversationId)
     {
         this.messageList = ImmutableArray<Message>.Empty;
         this.templateKeyValuePairs = new Dictionary<string, string>();
+        this.ConversationId = conversationId;
     }
 
-    private ConversationThread(ImmutableArray<Message> messages)
+    private ConversationThread(ConversationId conversationId, ImmutableArray<Message> messages)
     {
         this.messageList = messages;
         this.templateKeyValuePairs = new Dictionary<string, string>();
+        this.ConversationId = conversationId;
     }
 
-    private ConversationThread(ImmutableArray<Message> messages, IDictionary<string, string> keyValuePairs)
-        : this(messages)
+    private ConversationThread(
+        ConversationId conversationId,
+        ImmutableArray<Message> messages,
+        IDictionary<string, string> keyValuePairs)
     {
+        this.messageList = messages;
         this.templateKeyValuePairs = keyValuePairs.ToDictionary();
+        this.ConversationId = conversationId;
     }
+
+    public ConversationId ConversationId { get; }
 
     public IReadOnlyList<Message> Messages => this.messageList;
 
@@ -44,9 +52,9 @@ public sealed class ConversationThread
     /// </summary>
     public IEnumerable<AgentName> AgentNames => this.messageList.Select(m => m.AgentName).Distinct();
 
-    public static Builder CreateBuilder()
+    public static Builder CreateBuilder(ConversationId conversationId)
     {
-        return new Builder();
+        return new Builder(conversationId);
     }
 
     /// <summary>
@@ -59,7 +67,7 @@ public sealed class ConversationThread
 
     public ConversationThread WithAddedMessages(IEnumerable<Message> messages)
     {
-        var builder = new Builder().CopyFrom(this);
+        var builder = new Builder(this.ConversationId).CopyFrom(this);
 
         foreach (var message in messages)
         {
@@ -71,7 +79,7 @@ public sealed class ConversationThread
 
     public ConversationThread WithMatchingMessages(Func<Message, bool> predicate)
     {
-        return new Builder()
+        return new Builder(this.ConversationId)
             .CopyFrom(this, predicate)
             .Build();
     }
@@ -82,7 +90,7 @@ public sealed class ConversationThread
     /// <param name="systemMessage">The system message to set.</param>
     public ConversationThread WithFirstMessageSystemMessage(Message systemMessage)
     {
-        return new Builder()
+        return new Builder(this.ConversationId)
             .CopyFrom(this)
             .RemoveTopSystemMessage()
             .AddMessageToFront(systemMessage)
@@ -92,7 +100,7 @@ public sealed class ConversationThread
     // TODO: deprecate?
     public ConversationThread WithTemplateValue(string key, string value)
     {
-        var output = new Builder().CopyFrom(this).Build();
+        var output = new Builder(this.ConversationId).CopyFrom(this).Build();
 
         output.templateKeyValuePairs[key] = value;
 
@@ -103,7 +111,7 @@ public sealed class ConversationThread
     {
         var messages = this.messageList.Where(m => m.Visibility?.ShownToModel ?? true);
 
-        return new Builder()
+        return new Builder(this.ConversationId)
             .CopyFrom(this)
             .ReplaceMessages(messages)
             .Build();
@@ -134,11 +142,13 @@ public sealed class ConversationThread
     {
         private readonly ImmutableArray<Message>.Builder messages;
         private readonly Dictionary<string, string> templateKeyValuePairs;
+        private readonly ConversationId conversationId;
 
-        internal Builder()
+        internal Builder(ConversationId conversationId)
         {
             this.templateKeyValuePairs = new Dictionary<string, string>();
             this.messages = ImmutableArray.CreateBuilder<Message>();
+            this.conversationId = conversationId;
         }
 
         public Builder CopyFrom(ConversationThread other)
@@ -202,7 +212,10 @@ public sealed class ConversationThread
 
         public ConversationThread Build()
         {
-            return new ConversationThread(this.messages.DrainToImmutable(), this.templateKeyValuePairs);
+            return new ConversationThread(
+                this.conversationId,
+                this.messages.DrainToImmutable(),
+                this.templateKeyValuePairs);
         }
     }
 }

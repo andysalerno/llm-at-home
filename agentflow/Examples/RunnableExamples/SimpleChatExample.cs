@@ -29,7 +29,7 @@ internal sealed class SimpleChatExample : IRunnableExample
 
         await this.runner.RunAsync(
             definition,
-            new ConversationThread());
+            new ConversationThread(new ConversationId("ExampleChat")));
     }
 
     private Cell<ConversationThread> CreateDefinition()

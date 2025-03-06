@@ -10,10 +10,11 @@ Accept: application/json
 Content-Type: application/json
 
 {
+    "conversationId": "123",
     "messages": [
         {
             "role": "user",
-            "content": "What's the latest news?"
+            "content": "hi"
         }
     ]
 }

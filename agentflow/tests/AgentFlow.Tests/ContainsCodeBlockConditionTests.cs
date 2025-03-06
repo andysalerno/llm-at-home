@@ -7,12 +7,14 @@ namespace AgentFlow.Tests;
 
 public class ContainsCodeBlockConditionTests
 {
+    private static ConversationId ConversationId => new ConversationId("test");
+
     [Fact]
     public void EmptyConversation_ReturnsFalse()
     {
         var condition = new ContainsCodeBlockCondition();
 
-        var conversation = new ConversationThread();
+        var conversation = new ConversationThread(ConversationId);
 
         bool result = condition.Evaluate(conversation);
 
@@ -24,7 +26,7 @@ public class ContainsCodeBlockConditionTests
     {
         var condition = new ContainsCodeBlockCondition();
 
-        var conversation = new ConversationThread()
+        var conversation = new ConversationThread(ConversationId)
             .WithAddedMessage(AssistantMessageWithText("```javascript\nfn someFun() {}\n```"));
 
         bool result = condition.Evaluate(conversation);
@@ -37,7 +39,7 @@ public class ContainsCodeBlockConditionTests
     {
         var condition = new ContainsCodeBlockCondition();
 
-        var conversation = new ConversationThread()
+        var conversation = new ConversationThread(ConversationId)
             .WithAddedMessage(
                 AssistantMessageWithText("Here is some javascript: \n```javascript\nfn someFun() {}\n```"));
 
@@ -51,7 +53,7 @@ public class ContainsCodeBlockConditionTests
     {
         var condition = new ContainsCodeBlockCondition();
 
-        var conversation = new ConversationThread()
+        var conversation = new ConversationThread(ConversationId)
             .WithAddedMessage(AssistantMessageWithText(
                 "Here is some javascript, but not as a codeblock: \njavascript\nfn someFun() {}"));
 
@@ -65,7 +67,7 @@ public class ContainsCodeBlockConditionTests
     {
         var condition = new ContainsCodeBlockCondition();
 
-        var conversation = new ConversationThread()
+        var conversation = new ConversationThread(ConversationId)
             .WithAddedMessage(
                 AssistantMessageWithText("Here is some javascript: \n```javascript\nfn someFun() {}\n```"))
             .WithAddedMessage(AssistantMessageWithText("some other message is the latest one"));

@@ -114,7 +114,7 @@ internal sealed class AgentBenchExample : IRunnableExample
 
         this.logger.LogInformation("Total parsed messages: {Count}", messages.Count);
 
-        return ConversationThread.CreateBuilder().AddMessages(messages).Build();
+        return ConversationThread.CreateBuilder(new ConversationId("Example")).AddMessages(messages).Build();
     }
 
     private async Task<ConversationThread> GetScenarioConversationAsync(string scenarioName)

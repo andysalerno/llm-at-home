@@ -275,7 +275,7 @@ internal sealed class OpenAIServer
             Role: Role.ExpectFromName(m.Role),
             Content: m.Content.Text));
 
-        return ConversationThread.CreateBuilder().AddMessages(messages).Build();
+        return ConversationThread.CreateBuilder(new ConversationId("DeprecatedExample")).AddMessages(messages).Build();
     }
 
     private sealed record ChatCompletionRequest(

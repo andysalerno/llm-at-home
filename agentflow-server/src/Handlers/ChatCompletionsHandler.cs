@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Agentflow.Server.Utilities;
 using AgentFlow;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -12,6 +10,7 @@ using AgentFlow.Generic;
 using AgentFlow.LlmClient;
 using AgentFlow.Prompts;
 using AgentFlow.Tools;
+using AgentFlow.Utilities;
 using AgentFlow.WorkSpace;
 
 namespace Agentflow.Server.Handler;
@@ -58,15 +57,14 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         IStreamingPublisher publisher,
         CancellationToken ct)
     {
-        this.logger.LogInformation("payload received :)");
+        this.logger.LogInformation(
+            "ChatCompletions request received. ConversationId: {ConversationId}", payload.ConversationId);
 
-#pragma warning disable CA2000 // Dispose objects before losing scope
-        using var activity = new Activity("chatCompletionsRequest")
-            .AddRequestIdBaggage()
-            .Start();
-#pragma warning restore CA2000 // Dispose objects before losing scope
+        var conversationId = new ConversationId(payload.ConversationId ?? Guid.NewGuid().ToString());
 
-        ConversationThread conversationThread = ToConversationThread(payload);
+        using var activity = ActivityUtilities.StartConversationActivity(conversationId);
+
+        ConversationThread conversationThread = ToConversationThread(payload, conversationId);
 
         ConversationThread output = await this.runner.RunAsync(this.CreateProgram(), rootInput: conversationThread);
 
@@ -79,14 +77,14 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
             ct);
     }
 
-    private static ConversationThread ToConversationThread(ChatCompletionRequest request)
+    private static ConversationThread ToConversationThread(ChatCompletionRequest request, ConversationId conversationId)
     {
         var messages = request.Messages.Select(m => new AgentFlow.LlmClient.Message(
             AgentName: new AgentName(m.Role),
             Role: Role.ExpectFromName(m.Role),
             Content: m.Content.Text));
 
-        return ConversationThread.CreateBuilder().AddMessages(messages).Build();
+        return ConversationThread.CreateBuilder(conversationId).AddMessages(messages).Build();
     }
 
     private Cell<ConversationThread> CreateProgram()
@@ -129,6 +127,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
 
 internal sealed record ChatCompletionRequest(
     [property: JsonPropertyName("model")] string Model,
+    [property: JsonPropertyName("conversationId")] string? ConversationId,
     [property: JsonPropertyName("messages")] ImmutableArray<Message> Messages);
 
 internal sealed record Message(

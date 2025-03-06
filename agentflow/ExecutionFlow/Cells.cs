@@ -228,7 +228,7 @@ public sealed class CellRunner<T> : ICellRunner<T>
         {
             if (curCell == null)
             {
-                _logger.LogInformation("RunLoop complete");
+                _logger.LogDebug("RunLoop complete");
 
                 return curInput;
             }
@@ -239,7 +239,7 @@ public sealed class CellRunner<T> : ICellRunner<T>
             {
                 curInput = await curCell.RunAsync(curInput);
             }
-            _logger.LogDebug("Cell output: {CellOutput}", curInput);
+            _logger.LogTrace("Cell output: {CellOutput}", curInput);
 
             // TODO: fixme
             curCell = null;

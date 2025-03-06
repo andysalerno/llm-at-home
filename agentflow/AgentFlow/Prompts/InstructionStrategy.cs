@@ -88,7 +88,7 @@ public static class InstructionStrategyApplicator
 
         var messagesWithoutLast = input.Messages.Take(input.Messages.Count - 1);
 
-        return new ConversationThread()
+        return new ConversationThread(input.ConversationId)
             .WithAddedMessages(messagesWithoutLast.Append(updatedUserMessage));
     }
 

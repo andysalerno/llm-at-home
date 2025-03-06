@@ -8,6 +8,7 @@ using AgentFlow.Agents.Extensions;
 using AgentFlow.Config;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.LlmClients;
@@ -149,6 +150,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
     private readonly ChatRequestDiskLogger? chatRequestDiskLogger;
+    private readonly IConversationPersistenceWriter? conversationPersistenceWriter;
 
     public OpenAICompletionsClient(
         ICompletionsEndpointConfig completionsEndpointProviderConfig,
@@ -156,7 +158,8 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         IHttpClientFactory httpClientFactory,
         ILoggingConfig loggingConfig,
         ILogger<OpenAICompletionsClient> logger,
-        ChatRequestDiskLogger? chatRequestDiskLogger = null)
+        ChatRequestDiskLogger? chatRequestDiskLogger = null,
+        IConversationPersistenceWriter? conversationPersistenceWriter = null)
     {
         this.baseEndpoint = completionsEndpointProviderConfig.CompletionsEndpoint;
         this.httpClient = new Lazy<HttpClient>(() => httpClientFactory.CreateClient<OpenAICompletionsClient>());
@@ -164,6 +167,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         this.loggingConfig = loggingConfig;
         this.logger = logger;
         this.chatRequestDiskLogger = chatRequestDiskLogger;
+        this.conversationPersistenceWriter = conversationPersistenceWriter;
         this.embeddingsEndpoint = completionsEndpointProviderConfig.EmbeddingsEndpoint;
         this.scraperEndpoint = completionsEndpointProviderConfig.ScraperEndpoint;
 
@@ -292,6 +296,18 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
                 {
                     new Message(new Agents.AgentName("unused"), Role.Assistant, trimmed),
                 }));
+        }
+
+        if (this.conversationPersistenceWriter is IConversationPersistenceWriter conversationPersistenceWriter)
+        {
+            var requestToStore = new StoredLlmRequest(
+                Input: input.Messages.Select(m => new StoredMessage(m.Role.Name, m.Content)).ToImmutableArray(),
+                Output: new StoredMessage(Role.Assistant.Name, trimmed));
+
+            await conversationPersistenceWriter.StoreLlmRequestAsync(
+                new ConversationId("unused"),
+                new IncomingRequestId("unused"),
+                requestToStore);
         }
 
         return new ChatCompletionsResult(trimmed);
