@@ -222,13 +222,13 @@ public static class Program
             Logging.RegisterLoggerFactory(loggerFactory);
         }
 
-        var example = scope.Resolve<OpenAIServerWebSearchExample>();
+        // var example = scope.Resolve<OpenAIServerWebSearchExample>();
 
         Logging.Factory
             .CreateLogger<Configuration>()
             .LogInformation("Starting up with configuration: {Configuration}", configuration);
 
-        await example.RunAsync();
+        // await example.RunAsync();
     }
 
     private static IContainer ConfigureContainer(Configuration configuration)

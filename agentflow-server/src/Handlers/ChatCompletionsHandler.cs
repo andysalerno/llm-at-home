@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Agentflow.Server.Utilities;
 using AgentFlow;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -58,6 +60,12 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
     {
         this.logger.LogInformation("payload received :)");
 
+#pragma warning disable CA2000 // Dispose objects before losing scope
+        using var activity = new Activity("chatCompletionsRequest")
+            .AddRequestIdBaggage()
+            .Start();
+#pragma warning restore CA2000 // Dispose objects before losing scope
+
         ConversationThread conversationThread = ToConversationThread(payload);
 
         ConversationThread output = await this.runner.RunAsync(this.CreateProgram(), rootInput: conversationThread);
@@ -81,7 +89,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         return ConversationThread.CreateBuilder().AddMessages(messages).Build();
     }
 
-    public Cell<ConversationThread> CreateProgram()
+    private Cell<ConversationThread> CreateProgram()
     {
         ImmutableArray<ITool> tools = [
             new WebSearchTool(
