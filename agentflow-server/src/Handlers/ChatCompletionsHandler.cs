@@ -57,12 +57,16 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         IStreamingPublisher publisher,
         CancellationToken ct)
     {
+        var requestId = new IncomingRequestId(Guid.NewGuid().ToString());
+
         this.logger.LogInformation(
-            "ChatCompletions request received. ConversationId: {ConversationId}", payload.ConversationId);
+            "ChatCompletions request received. ConversationId from caller: {ConversationId} Generated RequestId: {RequestId}",
+            payload.ConversationId,
+            requestId);
 
         var conversationId = new ConversationId(payload.ConversationId ?? Guid.NewGuid().ToString());
 
-        using var activity = ActivityUtilities.StartConversationActivity(conversationId);
+        using var activity = ActivityUtilities.StartConversationActivity(conversationId, requestId);
 
         ConversationThread conversationThread = ToConversationThread(payload, conversationId);
 

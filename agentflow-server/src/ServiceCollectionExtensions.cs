@@ -1,3 +1,4 @@
+using Agentflow.Server.Persistence;
 using AgentFlow;
 using AgentFlow.Agents;
 using AgentFlow.Config;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMessageFormatter, ChatMLMessageFormatter>();
         services.AddSingleton<IEnvironmentVariableProvider, EnvironmentVariableProvider>();
         services.AddSingleton<ChatRequestDiskLogger>();
+        services.AddSingleton<IConversationPersistenceWriter, DiskConversationPersistence>();
 
         services.AddSingleton<ILlmCompletionsClient, OpenAICompletionsClient>();
         services.AddSingleton<IEmbeddingsClient, OpenAICompletionsClient>();

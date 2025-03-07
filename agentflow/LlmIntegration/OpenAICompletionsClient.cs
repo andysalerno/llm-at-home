@@ -8,6 +8,7 @@ using AgentFlow.Agents.Extensions;
 using AgentFlow.Config;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
+using AgentFlow.Utilities;
 using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
@@ -291,23 +292,43 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         if (this.chatRequestDiskLogger is ChatRequestDiskLogger chatRequestDiskLogger)
         {
-            await chatRequestDiskLogger.LogRequestToDiskAsync(input.Messages.Concat(
-                new[]
-                {
-                    new Message(new Agents.AgentName("unused"), Role.Assistant, trimmed),
-                }));
+            // await chatRequestDiskLogger.LogRequestToDiskAsync(input.Messages.Concat(
+            //     new[]
+            //     {
+            //         new Message(new Agents.AgentName("unused"), Role.Assistant, trimmed),
+            //     }));
+            this.logger.LogWarning("Skipping logging to disk.");
         }
 
         if (this.conversationPersistenceWriter is IConversationPersistenceWriter conversationPersistenceWriter)
         {
-            var requestToStore = new StoredLlmRequest(
-                Input: input.Messages.Select(m => new StoredMessage(m.Role.Name, m.Content)).ToImmutableArray(),
-                Output: new StoredMessage(Role.Assistant.Name, trimmed));
+            if (ActivityUtilities.TryGetConversationIdFromCurrentActivity(out ConversationId? conversationId))
+            {
+                if (ActivityUtilities.TryGetIncomingRequestIdFromCurrentActivity(out IncomingRequestId? incomingRequestId))
+                {
+                    this.logger.LogInformation("Persisting request during ConversationId: {ConversationId} and IncomingRequestId: {IncomingRequestId}", conversationId, incomingRequestId);
+                    var requestToStore = new StoredLlmRequest(
+                        Input: input.Messages.Select(m => new StoredMessage(m.Role.Name, m.Content)).ToImmutableArray(),
+                        Output: new StoredMessage(Role.Assistant.Name, trimmed));
 
-            await conversationPersistenceWriter.StoreLlmRequestAsync(
-                new ConversationId("unused"),
-                new IncomingRequestId("unused"),
-                requestToStore);
+                    await conversationPersistenceWriter.StoreLlmRequestAsync(
+                        conversationId,
+                        incomingRequestId,
+                        requestToStore);
+                }
+                else
+                {
+                    this.logger.LogWarning("Failed to get IncomingRequestId from current activity.");
+                }
+            }
+            else
+            {
+                this.logger.LogWarning("Failed to get ConversationId from current activity.");
+            }
+        }
+        else
+        {
+            this.logger.LogWarning("Skipping persistence of request.");
         }
 
         return new ChatCompletionsResult(trimmed);
