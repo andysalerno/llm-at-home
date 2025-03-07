@@ -182,10 +182,6 @@ public static class Program
             ILoggerFactory loggerFactory = scope.Resolve<ILoggerFactory>();
             Logging.RegisterLoggerFactory(loggerFactory);
         }
-
-        var example = scope.Resolve<AgentBenchExample>();
-
-        await example.RunAsync();
     }
 
     private static async Task RunServerAsync(

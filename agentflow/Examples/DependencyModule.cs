@@ -32,7 +32,6 @@ internal sealed class DependencyModule : Module
 
         // Runnable example classes:
         builder.RegisterType<SimpleChatExample>();
-        builder.RegisterType<AgentBenchExample>();
         builder.RegisterType<ChatRequestDiskLogger>();
     }
 }
