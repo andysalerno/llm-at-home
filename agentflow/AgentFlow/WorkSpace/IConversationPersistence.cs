@@ -14,6 +14,8 @@ public interface IConversationPersistenceReader
     Task<ImmutableArray<StoredMessage>> ReadUserMessagesAsync(ConversationId conversationId);
 
     Task<ImmutableArray<StoredLlmRequest>> ReadLlmRequestsAsync(ConversationId conversationId);
+
+    Task<ImmutableArray<ConversationId>> ReadAllConversationIdsAsync();
 }
 
 public sealed record StoredMessage(string Role, string Content);

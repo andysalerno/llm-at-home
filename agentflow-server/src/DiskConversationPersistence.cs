@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using AgentFlow;
 using AgentFlow.Config;
@@ -5,7 +6,7 @@ using AgentFlow.WorkSpace;
 
 namespace Agentflow.Server.Persistence;
 
-public sealed class DiskConversationPersistence : IConversationPersistenceWriter
+public sealed class DiskConversationPersistence : IConversationPersistenceWriter, IConversationPersistenceReader
 {
     private readonly IChatRequestDiskLoggerConfig config;
 
@@ -70,18 +71,24 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
         throw new NotImplementedException();
     }
 
+    public Task<ImmutableArray<StoredMessage>> ReadUserMessagesAsync(ConversationId conversationId)
+        => throw new NotImplementedException();
+
+    public Task<ImmutableArray<StoredLlmRequest>> ReadLlmRequestsAsync(ConversationId conversationId)
+        => throw new NotImplementedException();
+
     private string GetConversationParentDir()
     {
-        return Path.Join(
-            this.config.DiskLoggingPath,
-            DateTime.Now.ToString("yyyy-MM-dd"));
+        // return Path.Join(
+        //     this.config.DiskLoggingPath,
+        //     DateTime.Now.ToString("yyyy-MM-dd"));
+        return this.config.DiskLoggingPath;
     }
 
     private string GetFullConversationDirPath(ConversationId conversationId)
     {
         return Path.Join(
             this.config.DiskLoggingPath,
-            DateTime.Now.ToString("yyyy-MM-dd"),
             conversationId.Value);
     }
 
@@ -111,5 +118,24 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
     private static int CountDirsInDir(string dirPath)
     {
         return Directory.GetDirectories(dirPath).Length;
+    }
+
+    public Task<ImmutableArray<ConversationId>> ReadAllConversationIdsAsync()
+    {
+        // read all the Conversation IDs from the disk:
+        string parentDirPath = this.GetConversationParentDir();
+
+        if (!Directory.Exists(parentDirPath))
+        {
+            return Task.FromResult(ImmutableArray<ConversationId>.Empty);
+        }
+
+        var conversationIds = Directory.GetDirectories(parentDirPath)
+            .Select(dir => Path.GetFileName(dir))
+            .Where(name => !string.IsNullOrEmpty(name))
+            .Select(name => new ConversationId(name))
+            .ToImmutableArray();
+
+        return Task.FromResult(conversationIds);
     }
 }

@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IEnvironmentVariableProvider, EnvironmentVariableProvider>();
         services.AddSingleton<ChatRequestDiskLogger>();
         services.AddSingleton<IConversationPersistenceWriter, DiskConversationPersistence>();
+        services.AddSingleton<IConversationPersistenceReader, DiskConversationPersistence>();
 
         services.AddSingleton<ILlmCompletionsClient, OpenAICompletionsClient>();
         services.AddSingleton<IEmbeddingsClient, OpenAICompletionsClient>();

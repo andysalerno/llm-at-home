@@ -1,6 +1,6 @@
 @agentflow_server_HostAddress = http://localhost:8003
 
-GET {{agentflow_server_HostAddress}}/weatherforecast/
+GET {{agentflow_server_HostAddress}}/transcripts/
 Accept: application/json
 
 ###
@@ -10,7 +10,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "conversationId": "123",
+    "conversationId": "456",
     "messages": [
         {
             "role": "user",
