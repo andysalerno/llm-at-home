@@ -25,6 +25,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
     private readonly IPromptRenderer promptRenderer;
     private readonly CustomAgentBuilderFactory agentBuilderFactory;
     private readonly Configuration configuration;
+    private readonly IConversationPersistenceWriter conversationPersistenceWriter;
     private readonly IHttpClientFactory httpClientFactory;
     private readonly ILogger<ChatCompletionsHandler> logger;
 
@@ -37,6 +38,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         IPromptRenderer promptRenderer,
         CustomAgentBuilderFactory agentBuilderFactory,
         Configuration configuration,
+        IConversationPersistenceWriter conversationPersistenceWriter,
         IHttpClientFactory httpClientFactory,
         ILogger<ChatCompletionsHandler> logger)
     {
@@ -48,6 +50,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         this.promptRenderer = promptRenderer;
         this.agentBuilderFactory = agentBuilderFactory;
         this.configuration = configuration;
+        this.conversationPersistenceWriter = conversationPersistenceWriter;
         this.httpClientFactory = httpClientFactory;
         this.logger = logger;
     }

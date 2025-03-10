@@ -41,12 +41,12 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
         string conversationDirPath = this.GetFullConversationDirPath(conversationId);
         Directory.CreateDirectory(conversationDirPath);
 
-        string requestDirPath = this.GetFullRequestDirPath(conversationDirPath, requestId);
+        string requestDirPath = this.GetFullRequestDirPath(conversationId, requestId);
         Directory.CreateDirectory(requestDirPath);
 
         int existingFilesCount = CountFilesInDir(requestDirPath);
 
-        string requestFilePath = Path.Join(requestDirPath, $"{existingFilesCount}_{requestId.Value}.log");
+        string requestFilePath = Path.Join(requestDirPath, $"{existingFilesCount}.log");
 
         logger.LogInformation(
             "Logging chat request to disk at path: {Path}", requestFilePath);
@@ -66,9 +66,19 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
         await File.WriteAllTextAsync(requestFilePath, logContentBuilder.ToString());
     }
 
-    public Task StoreUserMessageAsync(ConversationId conversationId, IncomingRequestId requestId, StoredMessage message)
+    public async Task StoreUserMessageAsync(
+        ConversationId conversationId,
+        IncomingRequestId requestId,
+        StoredMessage message)
     {
-        throw new NotImplementedException();
+        string conversationDirPath = this.GetFullRequestDirPath(conversationId, requestId);
+
+        var pathToWrite = Path.Join(conversationDirPath, "incoming_request.log");
+
+        this.GetLogger().LogInformation(
+            "Logging user message to disk at path: {Path}", pathToWrite);
+
+        await File.WriteAllTextAsync(pathToWrite, message.Content);
     }
 
     public Task<ImmutableArray<StoredMessage>> ReadUserMessagesAsync(ConversationId conversationId)
@@ -92,7 +102,27 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
             conversationId.Value);
     }
 
-    private string GetFullRequestDirPath(string conversationDirPath, IncomingRequestId incomingRequestId)
+    private string GetFullRequestDirPath(ConversationId conversationId, IncomingRequestId incomingRequestId)
+    {
+        // List all the directories in the conversation directory:
+        string conversationDirPath = this.GetFullConversationDirPath(conversationId);
+        var existingRequestDirs = Directory.GetDirectories(conversationDirPath)
+            .Select(dir => new { requestId = dir.Split('_').Last(), dir = dir })
+            .ToImmutableArray();
+
+        if (existingRequestDirs.FirstOrDefault(
+            x => x.requestId == incomingRequestId.Value) is { dir: string existingDir })
+        {
+            return existingDir;
+        }
+
+        int existingRequestDirsCount = existingRequestDirs.Length;
+        return Path.Join(
+            conversationDirPath,
+            $"{existingRequestDirsCount}_{incomingRequestId.Value}");
+    }
+
+    private string GetFullRequestDirPathOld(string conversationDirPath, IncomingRequestId incomingRequestId)
     {
         int existingRequestDirsCount = CountDirsInDir(conversationDirPath);
 
