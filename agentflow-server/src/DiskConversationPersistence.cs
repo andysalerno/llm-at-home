@@ -70,14 +70,16 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
             var content = await File.ReadAllTextAsync(file);
             var llmRequest = JsonSerializer.Deserialize<LlmRequest>(content);
 
-            if (llmRequest != null)
+            if (llmRequest == null)
             {
-                var storedRequest = new StoredLlmRequest(
-                    llmRequest.Input.Select(m => new StoredMessage(m.Role, m.Content)).ToImmutableArray(),
-                    new StoredMessage(llmRequest.Output.Role, llmRequest.Output.Content));
-
-                requests.Add(storedRequest);
+                throw new InvalidOperationException("Failed to deserialize LLM request.");
             }
+
+            var storedRequest = new StoredLlmRequest(
+                llmRequest.Input.Select(m => new StoredMessage(m.Role, m.Content)).ToImmutableArray(),
+                new StoredMessage(llmRequest.Output.Role, llmRequest.Output.Content));
+
+            requests.Add(storedRequest);
         }
 
         return requests.ToImmutableArray();
@@ -98,7 +100,7 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
 
         if (requests == null)
         {
-            return ImmutableArray<StoredMessage>.Empty;
+            throw new InvalidOperationException("Failed to deserialize messages.");
         }
 
         var messages = new List<StoredMessage>();
@@ -121,6 +123,9 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
         var llmRequestsDir = Path.Combine(conversationDir, "llm_requests");
 
         Directory.CreateDirectory(llmRequestsDir);
+        int countOfExistingRequests = Directory.GetFiles(llmRequestsDir, "*.json").Length;
+
+        Directory.CreateDirectory(llmRequestsDir);
 
         var llmRequest = new LlmRequest(
             conversationId.Value,
@@ -130,7 +135,7 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
             Milliseconds: 0);
 
         var json = JsonSerializer.Serialize(llmRequest);
-        var filePath = Path.Combine(llmRequestsDir, $"req_{requestId.Value}.json");
+        var filePath = Path.Combine(llmRequestsDir, $"{countOfExistingRequests}_req_{requestId.Value[..8]}.json");
 
         await File.WriteAllTextAsync(filePath, json);
 
@@ -163,8 +168,8 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
         messages.Add(new ConversationRequest(
             conversationId.Value,
             message.Role,
-            message.Content
-        ));
+            message.Content,
+            requestId));
 
         var json = JsonSerializer.Serialize(messages);
         await File.WriteAllTextAsync(messagesFile, json);
@@ -190,8 +195,7 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
         var metadata = new Metadata(
             conversationId.Value,
             messageCount,
-            DateTimeOffset.UtcNow
-        );
+            DateTimeOffset.UtcNow);
 
         var json = JsonSerializer.Serialize(metadata);
         await File.WriteAllTextAsync(metadataFile, json);
@@ -208,7 +212,8 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
     internal sealed record ConversationRequest(
         string ConversationId,
         string Role,
-        string Message);
+        string Message,
+        IncomingRequestId? RequestId = null);
 
     /// <summary>
     /// A request to the LLM.

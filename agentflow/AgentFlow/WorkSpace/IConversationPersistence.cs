@@ -18,14 +18,18 @@ public interface IConversationPersistenceReader
     Task<ImmutableArray<ConversationId>> ReadAllConversationIdsAsync();
 }
 
-public sealed record StoredMessage(string Role, string Content);
+public sealed record StoredMessage(string Role, string Content, IncomingRequestId RequestId);
 
 /// <summary>
 /// Represents a request to the LLM.
 /// </summary>
 /// <param name="Input">The input messages to the LLM.</param>
 /// <param name="Output">The output response from the LLM.</param>
-public sealed record StoredLlmRequest(ImmutableArray<StoredMessage> Input, StoredMessage Output);
+/// <param name="RequestId">The corresponding request ID that spawned this llm request.</param>
+public sealed record StoredLlmRequest(
+    ImmutableArray<StoredMessage> Input,
+    StoredMessage Output,
+    IncomingRequestId RequestId);
 
 public sealed record ConversationId(string Value);
 

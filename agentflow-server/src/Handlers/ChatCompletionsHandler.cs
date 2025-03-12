@@ -82,6 +82,16 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                     Delta: new Delta(Role: "assistant", Content: output.Messages.Last().Content))],
                 Model: payload.Model)),
             ct);
+
+        await this.conversationPersistenceWriter.StoreUserMessageAsync(
+            conversationId,
+            requestId,
+            new StoredMessage(Role: "user", Content: payload.Messages.Last().Content.Text));
+
+        await this.conversationPersistenceWriter.StoreUserMessageAsync(
+            conversationId,
+            requestId,
+            new StoredMessage(Role: "assistant", Content: output.Messages.Last().Content));
     }
 
     private static ConversationThread ToConversationThread(ChatCompletionRequest request, ConversationId conversationId)

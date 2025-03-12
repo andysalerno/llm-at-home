@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Text.Json.Serialization;
-using AgentFlow.LlmClients;
 using AgentFlow.WorkSpace;
 
 namespace Agentflow.Server.Handler;
@@ -22,9 +21,33 @@ internal sealed class TranscriptHandler : IHandler<TranscriptRequest, Transcript
     {
         var allConversationIds = await this.conversationReader.ReadAllConversationIdsAsync();
 
+        var sessions = new List<Session>();
+
+        foreach (var conversationId in allConversationIds)
+        {
+            var llmRequests = await this.conversationReader.ReadLlmRequestsAsync(conversationId);
+            this.logger.LogInformation(
+                "Loading llmRequests for conversationId {ConversationId}: {LlmRequests}", conversationId, llmRequests);
+
+            var conversationMessages = await this.conversationReader.ReadUserMessagesAsync(conversationId);
+
+            var session = new Session(
+                ConversationId: conversationId.Value,
+                Messages: conversationMessages.Select(
+                    message => new TranscriptMessage(
+                        Id: message.,
+                        ConversationId: message.CorrelationId,
+                        Content: message.Content,
+                        LlmRequests: llmRequests
+                            .Where(r => r.Id.StartsWith($"{message.SessionId}.{message.MessageId}"))
+                            .Select(r => new LlmRequest(r.Id, r.Input, r.Output))
+                            .ToImmutableArray()))
+                    .ToImmutableArray());
+        }
+
         this.logger.LogInformation("Loading all conversationIds: {ConversationIds}", allConversationIds);
 
-        throw new NotImplementedException();
+        return new TranscriptResponse(sessions.ToImmutableArray());
     }
 
     // public async Task<TranscriptResponse> HandleAsync(

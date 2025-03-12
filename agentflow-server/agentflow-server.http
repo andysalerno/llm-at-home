@@ -15,6 +15,14 @@ Content-Type: application/json
         {
             "role": "user",
             "content": "hi"
+        },
+        {
+            "role": "assistant",
+            "content": "Hello! How can I assist you today?"
+        },
+        {
+            "role": "user",
+            "content": "tell me a joke"
         }
     ]
 }
