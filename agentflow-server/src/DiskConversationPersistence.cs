@@ -75,9 +75,19 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
                 throw new InvalidOperationException("Failed to deserialize LLM request.");
             }
 
+            var incomingRequestId = new IncomingRequestId(llmRequest.RequestId);
+
             var storedRequest = new StoredLlmRequest(
-                llmRequest.Input.Select(m => new StoredMessage(m.Role, m.Content)).ToImmutableArray(),
-                new StoredMessage(llmRequest.Output.Role, llmRequest.Output.Content));
+                llmRequest.Input.Select(
+                    m => new StoredMessage(
+                        m.Role,
+                        m.Content,
+                        incomingRequestId)).ToImmutableArray(),
+                new StoredMessage(
+                    llmRequest.Output.Role,
+                    llmRequest.Output.Content,
+                    incomingRequestId),
+                incomingRequestId);
 
             requests.Add(storedRequest);
         }
@@ -107,7 +117,8 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
 
         foreach (var request in requests)
         {
-            var message = new StoredMessage(request.Role, request.Message);
+            var requestId = request.RequestId ?? throw new InvalidOperationException("Request ID is missing.");
+            var message = new StoredMessage(request.Role, request.Message, requestId);
             messages.Add(message);
         }
 
