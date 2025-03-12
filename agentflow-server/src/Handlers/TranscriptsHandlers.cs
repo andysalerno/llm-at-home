@@ -35,12 +35,14 @@ internal sealed class TranscriptHandler : IHandler<TranscriptRequest, Transcript
                 ConversationId: conversationId.Value,
                 Messages: conversationMessages.Select(
                     message => new TranscriptMessage(
-                        Id: message.,
-                        ConversationId: message.CorrelationId,
+                        Id: message.RequestId.Value,
+                        ConversationId: conversationId.Value,
                         Content: message.Content,
                         LlmRequests: llmRequests
-                            .Where(r => r.Id.StartsWith($"{message.SessionId}.{message.MessageId}"))
-                            .Select(r => new LlmRequest(r.Id, r.Input, r.Output))
+                            .Select(r => new LlmRequest(
+                                r.RequestId.Value,
+                                r.Input.Select(i => (i.Role, i.Content)).ToImmutableArray(),
+                                r.Output.Content))
                             .ToImmutableArray()))
                     .ToImmutableArray());
         }
@@ -135,6 +137,6 @@ internal sealed record LlmRequest(
     [property: JsonPropertyName("id")]
     string Id,
     [property: JsonPropertyName("input")]
-    string Input,
+    ImmutableArray<(string Role, string Content)> Input,
     [property: JsonPropertyName("output")]
     string Output);

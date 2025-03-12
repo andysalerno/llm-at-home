@@ -86,12 +86,12 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         await this.conversationPersistenceWriter.StoreUserMessageAsync(
             conversationId,
             requestId,
-            new StoredMessage(Role: "user", Content: payload.Messages.Last().Content.Text));
+            new StoredMessage(Role: "user", Content: payload.Messages.Last().Content.Text, requestId));
 
         await this.conversationPersistenceWriter.StoreUserMessageAsync(
             conversationId,
             requestId,
-            new StoredMessage(Role: "assistant", Content: output.Messages.Last().Content));
+            new StoredMessage(Role: "assistant", Content: output.Messages.Last().Content, requestId));
     }
 
     private static ConversationThread ToConversationThread(ChatCompletionRequest request, ConversationId conversationId)
