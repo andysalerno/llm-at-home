@@ -1,0 +1,5 @@
+default:
+  just --list
+
+debug:
+  npx next dev --port 8004

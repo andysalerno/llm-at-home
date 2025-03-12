@@ -17,25 +17,30 @@ import {
 } from '@fluentui/react-icons';
 
 interface LlmRequest {
-    id: string;
-    input: string;
+    parentIncomingRequestId: string;
+    input: LlmRequestInput[];
     output: string;
 }
 
+interface LlmRequestInput {
+    role: string;
+    content: string;
+}
+
 interface Message {
-    id: string;
+    incomingRequestId: string;
     content: string;
     conversationId: string;
     llmRequests: LlmRequest[];
 }
 
-interface Session {
+interface Conversation {
     conversationId: string;
     messages: Message[];
 }
 
 interface DebugData {
-    sessions: Session[];
+    conversations: Conversation[];
 }
 
 interface DebugSectionProps {
@@ -83,7 +88,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
 };
 
 const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
-    const [data, setData] = useState<DebugData>({ sessions: [] });
+    const [data, setData] = useState<DebugData>({ conversations: [] });
     const [selectedItem, setSelectedItem] = useState<{ type: string; id: string } | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -115,10 +120,14 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
     useEffect(() => {
         if (focusedMessageId) {
             console.log(`looking for message with id: ${focusedMessageId}`);
-            const message = data.sessions.flatMap(s => s.messages).find(m => m.id === focusedMessageId);
+
+            const message = data.conversations
+                .flatMap(s => s.messages)
+                .find(m => m.incomingRequestId === focusedMessageId);
+
             if (message) {
                 console.log(`setting focused to message with id: ${focusedMessageId}`);
-                setSelectedItem({ type: 'message', id: message.id });
+                setSelectedItem({ type: 'message', id: message.incomingRequestId }); // must be fixed?
             }
         }
     }, [focusedMessageId, data]);
@@ -130,7 +139,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
         let item;
         if (selectedItem.type === 'session') {
-            item = data.sessions.find(s => s.conversationId === selectedItem.id);
+            item = data.conversations.find(s => s.conversationId === selectedItem.id);
             return (
                 <Card className="p-4">
                     <CardHeader>
@@ -140,7 +149,10 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                 </Card>
             );
         } else if (selectedItem.type === 'message') {
-            item = data.sessions.flatMap(s => s.messages).find(m => m.id === selectedItem.id);
+            item = data.conversations
+                .flatMap(s => s.messages)
+                .find(m => m.incomingRequestId === selectedItem.id);
+
             return (
                 <Card className="p-4">
                     <CardHeader>
@@ -150,17 +162,22 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                 </Card>
             );
         } else if (selectedItem.type === 'request') {
-            item = data.sessions.flatMap(s => s.messages).flatMap(m => m.llmRequests).find(r => r.id === selectedItem.id);
+            item = data.conversations
+                .flatMap(s => s.messages)
+                .flatMap(m => m.llmRequests)
+                .find(r => r.parentIncomingRequestId === selectedItem.id);
+
             return (
                 <Card className="p-4">
                     <CardHeader>
                         <Text size={500} weight="semibold">Request Details</Text>
                     </CardHeader>
                     <div className="font-mono text-sm p-4 rounded-md shadow-inner overflow-auto whitespace-pre-wrap">
-                        <Text weight="semibold">Request ID: {item?.id}</Text>
+                        <Text weight="semibold">Request ID: {item?.parentIncomingRequestId}</Text>
                         <div className="mt-4">
                             <Text weight="semibold">Prompt:</Text>
-                            <div className="mt-2">{item?.input}</div>
+                            {/* <div className="mt-2">{item?.input}</div> */}
+                            <div className="mt-2">No input yet, need to fix</div>
                         </div>
                         <div className="mt-4">
                             <Text weight="semibold">Response:</Text>
@@ -190,26 +207,26 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                 <Text size={600} weight="semibold" className="mb-4 block">
                     Navigation
                 </Text>
-                {data.sessions.map(session => (
+                {data.conversations.map(session => (
                     <TreeNode
                         key={session.conversationId}
                         label={`Session: ${session.conversationId}`}
                         forceOpen={false}
                         onSelect={() => setSelectedItem({ type: 'session', id: session.conversationId })}
                     >
-                        {session.messages.map(message => (
+                        {session.messages.map((message, i) => (
                             <TreeNode
-                                key={message.id}
+                                key={10000 + i}
                                 label={`${message.content.substring(0, 20)}...`}
-                                forceOpen={selectedItem?.type === 'message' && selectedItem.id === message.id}
-                                onSelect={() => setSelectedItem({ type: 'message', id: message.id })}
+                                forceOpen={selectedItem?.type === 'message' && selectedItem.id === message.incomingRequestId}
+                                onSelect={() => setSelectedItem({ type: 'message', id: message.incomingRequestId })}
                             >
-                                {message.llmRequests.map(request => (
+                                {message.llmRequests.map((request, i) => (
                                     <TreeNode
-                                        key={request.id}
-                                        label={`${request.id}`}
+                                        key={i}
+                                        label={`${request.parentIncomingRequestId}`}
                                         forceOpen={false}
-                                        onSelect={() => setSelectedItem({ type: 'request', id: request.id })}
+                                        onSelect={() => setSelectedItem({ type: 'request', id: request.parentIncomingRequestId })}
                                     />
                                 ))}
                             </TreeNode>
