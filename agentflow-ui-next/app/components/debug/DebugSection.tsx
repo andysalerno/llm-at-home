@@ -121,13 +121,22 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
         if (focusedMessageId) {
             console.log(`looking for message with id: ${focusedMessageId}`);
 
-            const message = data.conversations
-                .flatMap(s => s.messages)
-                .find(m => m.incomingRequestId === focusedMessageId);
-
-            if (message) {
-                console.log(`setting focused to message with id: ${focusedMessageId}`);
-                setSelectedItem({ type: 'message', id: message.incomingRequestId }); // must be fixed?
+            // Find the message in our data structure
+            for (let sessionIndex = 0; sessionIndex < data.conversations.length; sessionIndex++) {
+                const session = data.conversations[sessionIndex];
+                
+                for (let messageIndex = 0; messageIndex < session.messages.length; messageIndex++) {
+                    const message = session.messages[messageIndex];
+                    
+                    if (message.incomingRequestId === focusedMessageId) {
+                        console.log(`setting focused to message with id: ${focusedMessageId}`);
+                        
+                        // Create composite ID for this message
+                        const messageId = generateUniqueId('message', session.conversationId, message.incomingRequestId, messageIndex);
+                        setSelectedItem({ type: 'message', id: messageId });
+                        return;
+                    }
+                }
             }
         }
     }, [focusedMessageId, data]);
@@ -137,9 +146,12 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
             <Text>Select an item to view details</Text>
         );
 
+        // Parse the composite ID to get its components
+        const parsedId = parseUniqueId(selectedItem.id);
+        
         let item;
-        if (selectedItem.type === 'session') {
-            item = data.conversations.find(s => s.conversationId === selectedItem.id);
+        if (parsedId.type === 'session') {
+            item = data.conversations.find(s => s.conversationId === parsedId.id);
             return (
                 <Card className="p-4">
                     <CardHeader>
@@ -148,10 +160,14 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     <Text>Session ID: {item?.conversationId}</Text>
                 </Card>
             );
-        } else if (selectedItem.type === 'message') {
-            item = data.conversations
-                .flatMap(s => s.messages)
-                .find(m => m.incomingRequestId === selectedItem.id);
+        } else if (parsedId.type === 'message') {
+            // First find the correct session using the parentId
+            const session = data.conversations.find(s => s.conversationId === parsedId.parentId);
+            // Then get the message from that session
+            item = session?.messages[parsedId.index] || 
+                   data.conversations
+                     .flatMap(s => s.messages)
+                     .find(m => m.incomingRequestId === parsedId.id);
 
             return (
                 <Card className="p-4">
@@ -161,11 +177,17 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     <Text>Message: {item?.content}</Text>
                 </Card>
             );
-        } else if (selectedItem.type === 'request') {
-            item = data.conversations
+        } else if (parsedId.type === 'request') {
+            // First find the correct message using the parentId
+            const message = data.conversations
                 .flatMap(s => s.messages)
-                .flatMap(m => m.llmRequests)
-                .find(r => r.parentIncomingRequestId === selectedItem.id);
+                .find(m => m.incomingRequestId === parsedId.parentId);
+            // Then get the request from that message
+            item = message?.llmRequests[parsedId.index] ||
+                   data.conversations
+                     .flatMap(s => s.messages)
+                     .flatMap(m => m.llmRequests)
+                     .find(r => r.parentIncomingRequestId === parsedId.id);
 
             return (
                 <Card className="p-4">
@@ -176,8 +198,11 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                         <Text weight="semibold">Request ID: {item?.parentIncomingRequestId}</Text>
                         <div className="mt-4">
                             <Text weight="semibold">Prompt:</Text>
-                            {/* <div className="mt-2">{item?.input}</div> */}
-                            <div className="mt-2">No input yet, need to fix</div>
+                            {item?.input?.map((input, i) => (
+                                <div key={i} className="mt-2">
+                                    <strong>{input.role}:</strong> {input.content}
+                                </div>
+                            )) || <div className="mt-2">No input available</div>}
                         </div>
                         <div className="mt-4">
                             <Text weight="semibold">Response:</Text>
@@ -201,38 +226,66 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
         </div>
     );
 
+    // Create unique IDs by combining parent IDs with the item's own ID
+    const generateUniqueId = (type: string, parentId: string, itemId: string, index: number): string => {
+        return `${type}:${parentId}:${itemId}:${index}`;
+    };
+
+    // Parse a composite ID back into its components
+    const parseUniqueId = (compositeId: string): { type: string; id: string; parentId: string; index: number } => {
+        const [type, parentId, id, indexStr] = compositeId.split(':');
+        return {
+            type,
+            id,
+            parentId,
+            index: parseInt(indexStr, 10)
+        };
+    };
+
     return (
         <div className="flex h-full">
             <div className={mergeClasses("w-1/3 overflow-auto p-4", classes.debugBackground)}>
                 <Text size={600} weight="semibold" className="mb-4 block">
                     Navigation
                 </Text>
-                {data.conversations.map(session => (
+                {data.conversations.map((session, sessionIndex) => {
+                    const sessionId = generateUniqueId('session', 'root', session.conversationId, sessionIndex);
+                    
+                    return (
                     <TreeNode
-                        key={session.conversationId}
+                        key={sessionId}
                         label={`Session: ${session.conversationId}`}
                         forceOpen={false}
-                        onSelect={() => setSelectedItem({ type: 'session', id: session.conversationId })}
+                        onSelect={() => setSelectedItem({ type: 'session', id: sessionId })}
                     >
-                        {session.messages.map((message, i) => (
+                        {session.messages.map((message, messageIndex) => {
+                            const messageId = generateUniqueId('message', session.conversationId, message.incomingRequestId, messageIndex);
+                            
+                            return (
                             <TreeNode
-                                key={10000 + i}
+                                key={messageId}
                                 label={`${message.content.substring(0, 20)}...`}
-                                forceOpen={selectedItem?.type === 'message' && selectedItem.id === message.incomingRequestId}
-                                onSelect={() => setSelectedItem({ type: 'message', id: message.incomingRequestId })}
+                                forceOpen={selectedItem?.type === 'message' && selectedItem.id === messageId}
+                                onSelect={() => setSelectedItem({ type: 'message', id: messageId })}
                             >
-                                {message.llmRequests.map((request, i) => (
+                                {message.llmRequests.map((request, requestIndex) => {
+                                    const requestId = generateUniqueId('request', message.incomingRequestId, request.parentIncomingRequestId, requestIndex);
+                                    
+                                    return (
                                     <TreeNode
-                                        key={i}
+                                        key={requestId}
                                         label={`${request.parentIncomingRequestId}`}
                                         forceOpen={false}
-                                        onSelect={() => setSelectedItem({ type: 'request', id: request.parentIncomingRequestId })}
+                                        onSelect={() => setSelectedItem({ type: 'request', id: requestId })}
                                     />
-                                ))}
+                                    );
+                                })}
                             </TreeNode>
-                        ))}
+                            );
+                        })}
                     </TreeNode>
-                ))}
+                    );
+                })}
             </div>
             <div className="w-2/3 p-4 overflow-auto">
                 <Text size={600} weight="semibold" className="mb-4 block">
