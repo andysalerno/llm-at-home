@@ -308,8 +308,9 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
                 {
                     this.logger.LogInformation("Persisting request during ConversationId: {ConversationId} and IncomingRequestId: {IncomingRequestId}", conversationId, incomingRequestId);
                     var requestToStore = new StoredLlmRequest(
-                        Input: input.Messages.Select(m => new StoredMessage(m.Role.Name, m.Content)).ToImmutableArray(),
-                        Output: new StoredMessage(Role.Assistant.Name, trimmed));
+                        Input: input.Messages.Select(m => new StoredMessage(m.Role.Name, m.Content, incomingRequestId)).ToImmutableArray(),
+                        Output: new StoredMessage(Role.Assistant.Name, trimmed, incomingRequestId),
+                        incomingRequestId);
 
                     await conversationPersistenceWriter.StoreLlmRequestAsync(
                         conversationId,
