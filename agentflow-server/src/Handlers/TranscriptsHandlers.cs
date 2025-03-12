@@ -21,7 +21,7 @@ internal sealed class TranscriptHandler : IHandler<TranscriptRequest, Transcript
     {
         var allConversationIds = await this.conversationReader.ReadAllConversationIdsAsync();
 
-        var sessions = new List<Session>();
+        var sessions = new List<Conversation>();
 
         foreach (var conversationId in allConversationIds)
         {
@@ -31,23 +31,23 @@ internal sealed class TranscriptHandler : IHandler<TranscriptRequest, Transcript
 
             var conversationMessages = await this.conversationReader.ReadUserMessagesAsync(conversationId);
 
-            var session = new Session(
+            var session = new Conversation(
                 ConversationId: conversationId.Value,
                 Messages: conversationMessages.Select(
                     message => new TranscriptMessage(
-                        Id: message.RequestId.Value,
+                        IncomingRequestId: message.RequestId.Value,
                         ConversationId: conversationId.Value,
                         Content: message.Content,
                         LlmRequests: llmRequests
                             .Select(r => new LlmRequest(
                                 r.RequestId.Value,
-                                r.Input.Select(i => (i.Role, i.Content)).ToImmutableArray(),
+                                r.Input.Select(i => new LlmRequestInput(i.Role, i.Content)).ToImmutableArray(),
                                 r.Output.Content))
                             .ToImmutableArray()))
                     .ToImmutableArray());
-        }
 
-        this.logger.LogInformation("Loading all conversationIds: {ConversationIds}", allConversationIds);
+            sessions.Add(session);
+        }
 
         return new TranscriptResponse(sessions.ToImmutableArray());
     }
@@ -114,18 +114,18 @@ internal sealed record LogFileInfo(
 internal sealed record TranscriptRequest();
 
 internal sealed record TranscriptResponse(
-    [property: JsonPropertyName("sessions")]
-    ImmutableArray<Session> Sessions);
+    [property: JsonPropertyName("conversations")]
+    ImmutableArray<Conversation> Conversations);
 
-internal sealed record Session(
+internal sealed record Conversation(
     [property: JsonPropertyName("conversationId")]
     string ConversationId,
     [property: JsonPropertyName("messages")]
     ImmutableArray<TranscriptMessage> Messages);
 
 internal sealed record TranscriptMessage(
-    [property: JsonPropertyName("id")]
-    string Id,
+    [property: JsonPropertyName("incomingRequestId")]
+    string IncomingRequestId,
     [property: JsonPropertyName("conversationId")]
     string ConversationId,
     [property: JsonPropertyName("content")]
@@ -134,9 +134,15 @@ internal sealed record TranscriptMessage(
     ImmutableArray<LlmRequest> LlmRequests);
 
 internal sealed record LlmRequest(
-    [property: JsonPropertyName("id")]
-    string Id,
+    [property: JsonPropertyName("parentIncomingRequestId")]
+    string ParentIncomingRequestId,
     [property: JsonPropertyName("input")]
-    ImmutableArray<(string Role, string Content)> Input,
+    ImmutableArray<LlmRequestInput> Input,
     [property: JsonPropertyName("output")]
     string Output);
+
+internal sealed record LlmRequestInput(
+    [property: JsonPropertyName("role")]
+    string Role,
+    [property: JsonPropertyName("content")]
+    string Content);

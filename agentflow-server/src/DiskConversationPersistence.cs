@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text.Json;
+using AgentFlow;
 using AgentFlow.Config;
 using AgentFlow.WorkSpace;
 
@@ -45,6 +46,8 @@ public sealed class DiskConversationPersistence : IConversationPersistenceWriter
             var dirName = Path.GetFileName(dir);
             conversationIds.Add(new ConversationId(dirName));
         }
+
+        this.GetLogger().LogInformation("Found {Count} conversations.", conversationIds.Count);
 
         return conversationIds.ToImmutableArray();
     }
