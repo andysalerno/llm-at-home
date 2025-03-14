@@ -41,7 +41,7 @@ export const ChatMessage = memo(function ChatMessage({
                         ? mergeClasses('hover:shadow-lg', classes.userMessage)
                         : mergeClasses('hover:shadow-md', classes.botMessageColor)
                 )}
-                onClick={() => message.correlationId && onClick?.(message.correlationId)}
+                onClick={() => message.id && onClick?.(message.id)}
             >
                 <CardHeader
                     className='max-w-full'
