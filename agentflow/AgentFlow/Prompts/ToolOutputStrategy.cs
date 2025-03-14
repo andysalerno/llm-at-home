@@ -64,7 +64,7 @@ public static class ToolStrategyApplicator
 
         Message updatedUserMessage = lastUserMessage with { Content = updatedContent };
 
-        var messagesWithoutLastUser = withoutToolInvocation
+        var messagesWithoutLastUser = conversationWithoutToolOutputs
             .WithMatchingMessages(m => !object.Equals(m, lastUserMessage));
 
         return messagesWithoutLastUser.WithAddedMessage(updatedUserMessage);

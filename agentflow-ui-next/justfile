@@ -3,3 +3,7 @@ default:
 
 debug:
   npx next dev --port 8004
+
+run:
+  npm run build
+  npx serve@latest out -l 8004

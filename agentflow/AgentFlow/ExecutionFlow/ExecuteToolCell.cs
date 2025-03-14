@@ -42,7 +42,8 @@ public sealed record ExecuteToolCell : Cell<ConversationThread>
         ToolSelectionOutput toolSelection = JsonSerializer.Deserialize<ToolSelectionOutput>(
             content,
             JsonSerializerOptions)
-            ?? throw new InvalidOperationException("Could not parse the last message as a ToolSelectionOutput");
+            ?? throw new InvalidOperationException(
+                $"Could not parse the last message as a ToolSelectionOutput: {content}");
 
         this.logger.LogInformation("Saw tool selection: {Selection}", toolSelection);
 
