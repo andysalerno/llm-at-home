@@ -62,10 +62,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
     const [isOpen, setIsOpen] = useState<boolean>(forceOpen);
 
     return (
-        <div className="my-1">
+        <div className="my-0.5">
             <Button
                 appearance="subtle"
-                className="w-1/2 flex p-2 rounded text-left"
+                className="w-full flex items-center p-1 rounded text-left h-6"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
@@ -73,13 +73,13 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
             >
                 {children && (
                     isOpen ?
-                        <ChevronDown24Regular className="w-5 h-5 mr-2 text-blue-600" /> :
-                        <ChevronRight24Regular className="w-5 h-5 mr-2 text-blue-600" />
+                        <ChevronDown24Regular className="w-4 h-4 mr-1 text-blue-600 flex-shrink-0" /> :
+                        <ChevronRight24Regular className="w-4 h-4 mr-1 text-blue-600 flex-shrink-0" />
                 )}
-                <Text>{label}</Text>
+                <Text className="truncate text-xs">{label}</Text>
             </Button>
             {isOpen && children && (
-                <div className="pl-4 ml-2">
+                <div className="pl-3 ml-1">
                     {children}
                 </div>
             )}
