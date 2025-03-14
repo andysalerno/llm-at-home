@@ -65,7 +65,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
         <div className="my-0.5">
             <Button
                 appearance="subtle"
-                className="w-full flex items-center p-1 rounded text-left h-6"
+                className="w-full flex items-center justify-start p-1 rounded text-left h-6 overflow-hidden"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
@@ -76,7 +76,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
                         <ChevronDown24Regular className="w-4 h-4 mr-1 text-blue-600 flex-shrink-0" /> :
                         <ChevronRight24Regular className="w-4 h-4 mr-1 text-blue-600 flex-shrink-0" />
                 )}
-                <Text className="truncate text-xs">{label}</Text>
+                <span className="truncate text-xs overflow-hidden whitespace-nowrap flex-1 flex items-center">{label}</span>
             </Button>
             {isOpen && children && (
                 <div className="pl-3 ml-1">
