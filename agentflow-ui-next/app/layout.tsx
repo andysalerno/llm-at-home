@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import FluentUIProvider from './components/providers/FluentUIProvider'
-import { ReactNode } from 'react';
 import { ConfigProvider } from './hooks/useConfig';
 
 const inter = Inter({ subsets: ['latin'] })
