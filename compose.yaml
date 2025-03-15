@@ -19,7 +19,7 @@ services:
       - AgentFlow__PromptDirectory=./PromptFiles/
       - AgentFlow__DiskLoggingPath=/App/LlmRequestLogs/
       - AgentFlow__InstructionStrategy=TopLevelSystemMessage
-      - AgentFlow__ModelName=google/gemma-3-12b-it:free
+      - AgentFlow__ModelName=google/gemma-3-27b-it:free
       - MODEL_NAME=
       - ASPNETCORE_URLS=http://+:8003
     tty: true
