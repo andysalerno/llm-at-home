@@ -31,6 +31,10 @@ internal sealed class TranscriptHandler : IHandler<TranscriptRequest, Transcript
 
             var conversationMessages = await this.conversationReader.ReadUserMessagesAsync(conversationId);
 
+            var requestsByIncomingRequestId = llmRequests
+                .GroupBy(r => r.RequestId)
+                .ToDictionary(g => g.Key, g => g.ToImmutableArray());
+
             var session = new Conversation(
                 ConversationId: conversationId.Value,
                 Messages: conversationMessages.Select(
@@ -38,12 +42,17 @@ internal sealed class TranscriptHandler : IHandler<TranscriptRequest, Transcript
                         IncomingRequestId: message.RequestId.Value,
                         ConversationId: conversationId.Value,
                         Content: message.Content,
-                        LlmRequests: llmRequests
-                            .Select(r => new LlmRequest(
-                                r.RequestId.Value,
-                                r.Input.Select(i => new LlmRequestInput(i.Role, i.Content)).ToImmutableArray(),
-                                r.Output.Content))
-                            .ToImmutableArray()))
+                        LlmRequests: message.Role.Equals("user", StringComparison.OrdinalIgnoreCase) switch
+                        {
+                            true => [],
+                            false => requestsByIncomingRequestId.TryGetValue(message.RequestId, out var requests)
+                                ? requests.Select(r =>
+                                    new LlmRequest(
+                                        r.RequestId.Value,
+                                        r.Input.Select(i => new LlmRequestInput(i.Role, i.Content)).ToImmutableArray(),
+                                        r.Output.Content)).ToImmutableArray()
+                                : ImmutableArray<LlmRequest>.Empty,
+                        }))
                     .ToImmutableArray());
 
             sessions.Add(session);

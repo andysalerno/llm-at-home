@@ -6,7 +6,7 @@ import {
     Text,
     Spinner,
     Card,
-    CardHeader,
+    // CardHeader,
     makeStyles,
     tokens,
     mergeClasses,
@@ -65,7 +65,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelec
         <div className="my-0.5">
             <Button
                 appearance="subtle"
-                className="w-full flex items-center justify-start p-1 rounded text-left h-6 overflow-hidden"
+                className="w-full flex items-center justify-start p-1 text-left h-6 overflow-hidden"
                 onClick={() => {
                     setIsOpen(!isOpen);
                     if (onSelect) onSelect();
@@ -154,9 +154,9 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
             item = data.conversations.find(s => s.conversationId === parsedId.id);
             return (
                 <Card className="p-4">
-                    <CardHeader>
+                    {/* <CardHeader>
                         <Text size={500} weight="semibold">Session Details</Text>
-                    </CardHeader>
+                    </CardHeader> */}
                     <Text>Session ID: {item?.conversationId}</Text>
                 </Card>
             );
@@ -171,17 +171,17 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
             return (
                 <Card className="p-4">
-                    <CardHeader>
+                    {/* <CardHeader>
                         <Text size={500} weight="semibold">Message Details</Text>
-                    </CardHeader>
-                    <Text>Message: {item?.content}</Text>
+                    </CardHeader> */}
+                    <Text>Messagez: {item?.content}</Text>
                 </Card>
             );
         } else if (parsedId.type === 'request') {
             // First find the correct message using the parentId
             const message = data.conversations
                 .flatMap(s => s.messages)
-                .find(m => m.incomingRequestId === parsedId.parentId);
+                .find(m => m.incomingRequestId === parsedId.parentId && m.llmRequests.length > 0);
             // Then get the request from that message
             item = message?.llmRequests[parsedId.index] ||
                 data.conversations
@@ -191,9 +191,9 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
 
             return (
                 <Card className="p-4">
-                    <CardHeader>
+                    {/* <CardHeader>
                         <Text size={500} weight="semibold">Request Details</Text>
-                    </CardHeader>
+                    </CardHeader> */}
                     <div className="font-mono text-sm p-4 rounded-md shadow-inner overflow-auto whitespace-pre-wrap">
                         <Text weight="semibold">Request ID: {item?.parentIncomingRequestId}</Text>
                         <div className="mt-4">
@@ -251,7 +251,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                     return (
                         <TreeNode
                             key={sessionId}
-                            label={`Session: ${session.conversationId}`}
+                            label={`${session.conversationId}`}
                             forceOpen={false}
                             onSelect={() => setSelectedItem({ type: 'session', id: sessionId })}
                         >
@@ -261,7 +261,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                                 return (
                                     <TreeNode
                                         key={messageId}
-                                        label={`${message.content.substring(0, 20)}...`}
+                                        label={`${message.content.substring(0, 256)}...`}
                                         forceOpen={selectedItem?.type === 'message' && selectedItem.id === messageId}
                                         onSelect={() => setSelectedItem({ type: 'message', id: messageId })}
                                     >
@@ -271,7 +271,7 @@ const DebugSection: React.FC<DebugSectionProps> = ({ focusedMessageId }) => {
                                             return (
                                                 <TreeNode
                                                     key={requestId}
-                                                    label={`${request.parentIncomingRequestId}`}
+                                                    label={`${requestId}`}
                                                     forceOpen={false}
                                                     onSelect={() => setSelectedItem({ type: 'request', id: requestId })}
                                                 />

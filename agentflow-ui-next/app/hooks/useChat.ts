@@ -99,6 +99,7 @@ export function useChat() {
                 headers: { 'Content-Type': 'application/json' },
                 signal: abortControllerRef.current.signal,
                 body: JSON.stringify({
+                    conversationId: conversationId,
                     messages: [...messages, userMessage].map(({ role, content }) => ({
                         role,
                         content,
