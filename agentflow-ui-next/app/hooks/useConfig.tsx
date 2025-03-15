@@ -12,7 +12,6 @@ const DEFAULT_CONFIG: ChatConfig = {
   // Set defaults for other options
 };
 
-
 const CONFIG_STORAGE_KEY = 'chatConfig';
 
 // Create a context for the configuration
@@ -21,13 +20,8 @@ type ConfigContextType = {
   updateConfig: (newConfig: Partial<ChatConfig>) => void;
 };
 
-const DEFAULT_CONFIG_CONTEXT_TYPE: ConfigContextType = {
-  config: DEFAULT_CONFIG,
-  updateConfig: () => { },
-};
-
 // Create the context with undefined as default value
-export const ConfigContext = createContext<ConfigContextType>(DEFAULT_CONFIG_CONTEXT_TYPE);
+const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
 // Provider component for the configuration context
 // export function ConfigProvider({ children }: { children: ReactNode }) {
@@ -52,6 +46,7 @@ export function ConfigProvider({ children }: { children: ReactNode }): JSX.Eleme
   }, [config]);
 
   const updateConfig = (newConfig: Partial<ChatConfig>) => {
+    console.log('Updating config:', newConfig);
     setConfig(prev => ({ ...prev, ...newConfig }));
   };
 

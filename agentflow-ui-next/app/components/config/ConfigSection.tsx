@@ -8,9 +8,12 @@ import {
     Textarea,
     Combobox,
     Option,
+    Label,
 } from '@fluentui/react-components';
+import { useConfig } from '@/app/hooks/useConfig';
 
 const ConfigSection: React.FC = () => {
+    const { config, updateConfig } = useConfig();
     const [temperature, setTemperature] = useState<number>(0.7);
     const [maxTokens, setMaxTokens] = useState<number>(2048);
     const [stopTokens, setStopTokens] = useState<string[]>([]);
@@ -18,6 +21,7 @@ const ConfigSection: React.FC = () => {
     const handleStopTokensChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const tokens = e.target.value.split(',').map(token => token.trim());
         setStopTokens(tokens.filter(token => token !== ''));
+        updateConfig({ apiEndpoint: tokens[0] })
     };
 
     return (
@@ -53,9 +57,9 @@ const ConfigSection: React.FC = () => {
                 </div>
 
                 <div>
-                    <Text weight="medium" className="block mb-2">
+                    <Label className="block mb-2">
                         Max Tokens: {maxTokens}
-                    </Text>
+                    </Label>
                     <Input
                         type="number"
                         value={maxTokens.toString()}
@@ -67,9 +71,9 @@ const ConfigSection: React.FC = () => {
                 </div>
 
                 <div>
-                    <Text weight="medium" className="block mb-2">
+                    <Label className="block mb-2">
                         Stop Sequences
-                    </Text>
+                    </Label>
                     <Textarea
                         value={stopTokens.join(', ')}
                         onChange={handleStopTokensChange}
@@ -80,6 +84,18 @@ const ConfigSection: React.FC = () => {
                     <Text size={200} className="mt-1 text-gray-500">
                         Comma-separated list of sequences where the API will stop generating further tokens
                     </Text>
+                </div>
+
+                <div>
+                    <Label className="block mb-2">
+                        Chat Completions Endpoint
+                    </Label>
+                    <Input
+                        value={config.apiEndpoint}
+                        onChange={(e) => updateConfig({ apiEndpoint: e.target.value })}
+                        placeholder="Enter api endpoint"
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div >
