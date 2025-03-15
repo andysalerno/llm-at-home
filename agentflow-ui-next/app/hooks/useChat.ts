@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Message } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import { useConfig } from './useConfig';
 
 const STORAGE_KEY = 'chatMessages';
 
@@ -19,6 +20,7 @@ function createMessage(
 }
 
 export function useChat() {
+    const { config } = useConfig();
     const [messages, setMessages] = useState<Message[]>([]);
     const [streamingMessage, setStreamingMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +96,8 @@ export function useChat() {
         abortControllerRef.current = new AbortController();
 
         try {
-            const response = await fetch('http://nzxt.local:8003/v1/chat/completions', {
+            // Use the configured API endpoint instead of hardcoded value
+            const response = await fetch(config.apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 signal: abortControllerRef.current.signal,
@@ -137,7 +140,7 @@ export function useChat() {
             setStreamingMessage('');
             abortControllerRef.current = null;
         }
-    }, [isLoading, messages, conversationId]);
+    }, [isLoading, messages, conversationId, config.apiEndpoint]);
 
     const cancelStream = useCallback(() => {
         if (abortControllerRef.current) {

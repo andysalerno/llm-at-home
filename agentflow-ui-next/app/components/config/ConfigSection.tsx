@@ -10,15 +10,11 @@ import {
     Option,
 } from '@fluentui/react-components';
 
-// interface ConfigPanelProps {
-// }
-
 const ConfigSection: React.FC = () => {
     const [temperature, setTemperature] = useState<number>(0.7);
     const [maxTokens, setMaxTokens] = useState<number>(2048);
     const [stopTokens, setStopTokens] = useState<string[]>([]);
 
-    // const promptStrategies = ["Cat", "Dog", "Ferret", "Fish", "Hamster", "Snake"];
     const handleStopTokensChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const tokens = e.target.value.split(',').map(token => token.trim());
         setStopTokens(tokens.filter(token => token !== ''));
