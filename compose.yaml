@@ -18,6 +18,8 @@ services:
       # - AgentFlow__CompletionsEndpoint=http://llmhost:8000
       - AgentFlow__PromptDirectory=./PromptFiles/
       - AgentFlow__DiskLoggingPath=/App/LlmRequestLogs/
+      - AgentFlow__InstructionStrategy=TopLevelSystemMessage
+      - AgentFlow__ModelName=google/gemma-3-12b-it:free
       - MODEL_NAME=
       - ASPNETCORE_URLS=http://+:8003
     tty: true

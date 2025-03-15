@@ -7,3 +7,38 @@
         text-wrap: wrap;
     }
 }
+
+.markdown {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    ul,
+    ol,
+    li {
+        all: revert;
+    }
+
+    pre {
+        @apply whitespace-pre-wrap rounded-lg p-2;
+        border: 1px solid currentColor;
+    }
+
+    p {
+        @apply mb-2;
+    }
+
+    /* TODO: fix markdown table */
+}
+
+.hljs {
+    background: transparent !important;
+    padding: 0.5em !important;
+}
+
+.katex-display {
+    margin: 0 0 !important;
+}

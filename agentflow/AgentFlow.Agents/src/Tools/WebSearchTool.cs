@@ -134,7 +134,7 @@ public sealed class WebSearchTool : ITool
             .CreateBuilder()
             .WithName(new AgentName("QueryRewriter"))
             .WithRole(Role.Assistant)
-            .WithInstructionsStrategy(InstructionStrategy.InlineSystemMessage)
+            .WithInstructionsStrategy(InstructionStrategy.AppendedToUserMessage)
             .WithInstructionsFromPrompt(this.promptFactory.Create())
             .SetVariableValue("ORIGINAL_QUERY", originalQuery)
             .Build();

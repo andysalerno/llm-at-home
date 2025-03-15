@@ -15,6 +15,13 @@
     "next": "^15.2.2",
     "react": "18.x",
     "react-dom": "18.x",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-highlight": "^0.1.1",
+    "remark-math": "^6.0.0",
     "uuid": "^11.0.5"
   },
   "devDependencies": {
