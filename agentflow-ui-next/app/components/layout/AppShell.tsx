@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import { Navigation } from './Navigation';
-import { makeStyles, mergeClasses } from '@fluentui/react-components';
+import { makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
-    // root: { backgroundColor: 'red' },
-    root: {},
+    root: { backgroundColor: tokens.colorNeutralBackground2 },
 });
 
 interface AppShellProps {

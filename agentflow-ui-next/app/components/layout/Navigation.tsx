@@ -17,8 +17,8 @@ interface NavigationProps {
 }
 
 const useStyles = makeStyles({
-    navigationBackground: { backgroundColor: tokens.colorNeutralBackground2 },
-    navigationButton: { ':hover': { backgroundColor: tokens.colorNeutralBackground2Hover } },
+    navigationBackground: { backgroundColor: tokens.colorNeutralBackground1 },
+    navigationButton: { ':hover': { backgroundColor: tokens.colorNeutralBackground1Hover } },
 });
 
 const navigationItems = [

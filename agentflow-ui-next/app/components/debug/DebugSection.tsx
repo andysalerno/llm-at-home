@@ -55,7 +55,7 @@ interface TreeNodeProps {
 }
 
 const useStyles = makeStyles({
-    debugBackground: { backgroundColor: tokens.colorNeutralBackground2 },
+    debugBackground: { backgroundColor: tokens.colorNeutralBackground1 },
 });
 
 const TreeNode: React.FC<TreeNodeProps> = ({ label, children, forceOpen, onSelect }) => {
