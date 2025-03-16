@@ -19,13 +19,9 @@ export default function AppShell({ children }: AppShellProps) {
 
     return (
         <div className={mergeClasses('ui-component', 'flex', 'h-screen', classes.root)}>
-            <Navigation
-                isOpen={isNavigationOpen}
-                onOpenChange={setIsNavigationOpen}
-            />
+            <Navigation />
             <div
-                className="ui-component flex flex-col flex-grow overflow-hidden transition-[margin-left]"
-                style={{ marginLeft: isNavigationOpen ? '256px' : '48px' }}
+                className="ui-component flex flex-col flex-grow overflow-hidden"
             >
                 <main className="ui-component flex-grow overflow-x-hidden overflow-y-auto h-full">
                     {children}
