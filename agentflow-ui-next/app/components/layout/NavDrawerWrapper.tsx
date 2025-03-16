@@ -1,13 +1,13 @@
 import * as React from "react";
 import { NavDrawer as FluentNavDrawer } from "@fluentui/react-nav-preview";
 
-// Define a simplified interface for NavDrawer
 interface NavDrawerProps {
     children?: React.ReactNode;
     open?: boolean;
     type?: 'inline' | 'overlay';
     multiple?: boolean;
     selectedValue?: string;
+    className?: string | undefined;
 }
 
 // Create a wrapper component with basic typing.

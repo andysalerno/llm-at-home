@@ -1,4 +1,4 @@
-import { mergeClasses } from "@fluentui/react-components";
+import { makeStyles, mergeClasses, tokens } from "@fluentui/react-components";
 import * as React from "react";
 import {
     AppItem,
@@ -9,7 +9,6 @@ import {
 } from "@fluentui/react-nav-preview";
 import { NavDrawer } from "./NavDrawerWrapper";
 import { usePathname } from 'next/navigation'
-
 import {
     Tooltip,
 } from "@fluentui/react-components";
@@ -24,9 +23,14 @@ import {
 const Dashboard = bundleIcon(Board20Filled, Board20Regular);
 const Announcements = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
 
+const useStyles = makeStyles({
+    nav: { backgroundColor: tokens.colorNeutralBackground1 },
+});
+
 export const Navigation = () => {
     const [isOpen, setIsOpen] = React.useState(true);
     const pathname = usePathname();
+    const styles = useStyles();
 
     // Map paths to their corresponding NavItem values
     const getSelectedValue = () => {
@@ -58,25 +62,35 @@ export const Navigation = () => {
                 type={'inline'}
                 multiple={true}
                 selectedValue={selectedValue}
+                className={styles.nav}
             >
-                <NavDrawerHeader>{renderHamburgerWithToolTip()}</NavDrawerHeader>
-                <NavDrawerBody>
+                <NavDrawerHeader className={styles.nav}>{renderHamburgerWithToolTip()}</NavDrawerHeader>
+                <NavDrawerBody className={styles.nav}>
                     <AppItem
                         as="a"
                         href={'/'}
+                        className={styles.nav}
                     >
                         {isOpen ? 'AgentFlow UI!!' : 'AF'}
                     </AppItem>
-                    <NavItem href={'/chat'} icon={<Dashboard />} value="1">
+                    <NavItem href={'/chat'} icon={<Dashboard />} value="1"
+                        className={styles.nav}
+                    >
                         {isOpen && 'Chat'}
                     </NavItem>
-                    <NavItem href={'/completion'} icon={<Announcements />} value="2">
+                    <NavItem href={'/completion'} icon={<Announcements />} value="2"
+                        className={styles.nav}
+                    >
                         {isOpen && 'Completion'}
                     </NavItem>
-                    <NavItem href={'/debug'} icon={<Announcements />} value="3">
+                    <NavItem href={'/debug'} icon={<Announcements />} value="3"
+                        className={styles.nav}
+                    >
                         {isOpen && 'Debug'}
                     </NavItem>
-                    <NavItem href={'/config'} icon={<Announcements />} value="4">
+                    <NavItem href={'/config'} icon={<Announcements />} value="4"
+                        className={styles.nav}
+                    >
                         {isOpen && 'Config'}
                     </NavItem>
                 </NavDrawerBody>
