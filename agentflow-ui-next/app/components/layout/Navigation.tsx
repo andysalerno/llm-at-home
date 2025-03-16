@@ -1,13 +1,14 @@
-import { DrawerProps, mergeClasses } from "@fluentui/react-components";
+import { mergeClasses } from "@fluentui/react-components";
 import * as React from "react";
 import {
     AppItem,
     Hamburger,
-    NavDrawer,
     NavDrawerBody,
     NavDrawerHeader,
     NavItem,
 } from "@fluentui/react-nav-preview";
+import { NavDrawer } from "./NavDrawerWrapper";
+import { usePathname } from 'next/navigation'
 
 import {
     Tooltip,
@@ -23,16 +24,15 @@ import {
 const Dashboard = bundleIcon(Board20Filled, Board20Regular);
 const Announcements = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
 
-type DrawerType = Required<DrawerProps>["type"];
-
 export const Navigation = () => {
     const [isOpen, setIsOpen] = React.useState(true);
-    const [type] = React.useState<DrawerType>("inline");
-    const [isMultiple] = React.useState(true);
 
     // Map paths to their corresponding NavItem values
     const getSelectedValue = () => {
-        const pathname = window.location.pathname;
+        //const pathname = window.location.pathname;
+        // Cannot use window in Next.js, because it prerenders.
+        // Instead, use the following to get the current path:
+        const pathname = usePathname();
 
         const pathToValueMap: Record<string, string> = {
             '/chat': '1',
@@ -60,8 +60,8 @@ export const Navigation = () => {
         <div className={mergeClasses('ui-component flex h-screen', isOpen ? 'w-64' : 'w-14')}>
             <NavDrawer
                 open={true}
-                type={type}
-                multiple={isMultiple}
+                type={'inline'}
+                multiple={true}
                 selectedValue={selectedValue}
             >
                 <NavDrawerHeader>{renderHamburgerWithToolTip()}</NavDrawerHeader>
