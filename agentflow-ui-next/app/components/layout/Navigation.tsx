@@ -26,14 +26,10 @@ const Announcements = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
 
 export const Navigation = () => {
     const [isOpen, setIsOpen] = React.useState(true);
+    const pathname = usePathname();
 
     // Map paths to their corresponding NavItem values
     const getSelectedValue = () => {
-        //const pathname = window.location.pathname;
-        // Cannot use window in Next.js, because it prerenders.
-        // Instead, use the following to get the current path:
-        const pathname = usePathname();
-
         const pathToValueMap: Record<string, string> = {
             '/chat': '1',
             '/completion': '2',
@@ -56,7 +52,6 @@ export const Navigation = () => {
     };
 
     return (
-        // <div className={styles.root}>
         <div className={mergeClasses('ui-component flex h-screen', isOpen ? 'w-64' : 'w-14')}>
             <NavDrawer
                 open={true}
@@ -86,9 +81,6 @@ export const Navigation = () => {
                     </NavItem>
                 </NavDrawerBody>
             </NavDrawer>
-            {/* <div className={styles.content}>
-                {!isOpen && renderHamburgerWithToolTip()}
-            </div> */}
         </div>
     );
 };
