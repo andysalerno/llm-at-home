@@ -4,12 +4,15 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 
 interface ChatConfig {
   apiEndpoint: string;
+  bearerToken: string;
+  modelName: string;
   // Add other configuration options here as needed
 }
 
 const DEFAULT_CONFIG: ChatConfig = {
   apiEndpoint: 'http://nzxt.local:8003/v1/chat/completions',
-  // Set defaults for other options
+  bearerToken: '',
+  modelName: 'model',
 };
 
 const CONFIG_STORAGE_KEY = 'chatConfig';
