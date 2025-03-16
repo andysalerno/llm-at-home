@@ -6,14 +6,11 @@ import {
     NavDrawer,
     NavDrawerBody,
     NavDrawerHeader,
-    NavDrawerProps,
     NavItem,
 } from "@fluentui/react-nav-preview";
 
 import {
     Tooltip,
-    makeStyles,
-    tokens,
 } from "@fluentui/react-components";
 import {
     Board20Filled,
@@ -21,44 +18,17 @@ import {
     MegaphoneLoud20Filled,
     MegaphoneLoud20Regular,
     bundleIcon,
-    PersonCircle32Regular,
 } from "@fluentui/react-icons";
-import { useRouter } from "next/navigation";
-
-const useStyles = makeStyles({
-    root: {
-        overflow: "hidden",
-        display: "flex",
-        height: "600px",
-    },
-    content: {
-        flex: "1",
-        padding: "16px",
-        display: "grid",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-    },
-    field: {
-        display: "flex",
-        marginTop: "4px",
-        marginLeft: "8px",
-        flexDirection: "column",
-        gridRowGap: tokens.spacingVerticalS,
-    },
-});
 
 const Dashboard = bundleIcon(Board20Filled, Board20Regular);
 const Announcements = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
 
 type DrawerType = Required<DrawerProps>["type"];
 
-export const Navigation = (props: Partial<NavDrawerProps>) => {
-    const styles = useStyles();
-
+export const Navigation = () => {
     const [isOpen, setIsOpen] = React.useState(true);
-    const [enabledLinks, setEnabledLinks] = React.useState(true);
-    const [type, setType] = React.useState<DrawerType>("inline");
-    const [isMultiple, setIsMultiple] = React.useState(true);
+    const [type] = React.useState<DrawerType>("inline");
+    const [isMultiple] = React.useState(true);
 
     // Map paths to their corresponding NavItem values
     const getSelectedValue = () => {

@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react';
 import { Navigation } from './Navigation';
 import { makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
 
@@ -13,8 +12,6 @@ interface AppShellProps {
 }
 
 export default function AppShell({ children }: AppShellProps) {
-    const [isNavigationOpen, setIsNavigationOpen] = useState(true);
-
     const classes = useStyles();
 
     return (
