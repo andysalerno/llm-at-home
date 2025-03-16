@@ -13,15 +13,21 @@ import {
     Tooltip,
 } from "@fluentui/react-components";
 import {
-    Board20Filled,
-    Board20Regular,
-    MegaphoneLoud20Filled,
-    MegaphoneLoud20Regular,
+    Chat20Filled,
+    Chat20Regular,
+    ChatSettings20Filled,
+    ChatSettings20Regular,
+    DocumentText20Filled,
+    DocumentText20Regular,
+    ListBarTreeOffset20Filled,
+    ListBarTreeOffset20Regular,
     bundleIcon,
 } from "@fluentui/react-icons";
 
-const Dashboard = bundleIcon(Board20Filled, Board20Regular);
-const Announcements = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
+const ChatIcon = bundleIcon(Chat20Filled, Chat20Regular);
+const ConfigIcon = bundleIcon(ChatSettings20Filled, ChatSettings20Regular);
+const DebugIcon = bundleIcon(ListBarTreeOffset20Filled, ListBarTreeOffset20Regular);
+const CompletionsIcon = bundleIcon(DocumentText20Filled, DocumentText20Regular)
 
 const useStyles = makeStyles({
     nav: { backgroundColor: tokens.colorNeutralBackground1 },
@@ -73,22 +79,22 @@ export const Navigation = () => {
                     >
                         {isOpen ? 'AgentFlow UI!!' : 'AF'}
                     </AppItem>
-                    <NavItem href={'/chat'} icon={<Dashboard />} value="1"
+                    <NavItem href={'/chat'} icon={<ChatIcon />} value="1"
                         className={styles.nav}
                     >
                         {isOpen && 'Chat'}
                     </NavItem>
-                    <NavItem href={'/completion'} icon={<Announcements />} value="2"
+                    <NavItem href={'/completion'} icon={<CompletionsIcon />} value="2"
                         className={styles.nav}
                     >
                         {isOpen && 'Completion'}
                     </NavItem>
-                    <NavItem href={'/debug'} icon={<Announcements />} value="3"
+                    <NavItem href={'/debug'} icon={<DebugIcon />} value="3"
                         className={styles.nav}
                     >
                         {isOpen && 'Debug'}
                     </NavItem>
-                    <NavItem href={'/config'} icon={<Announcements />} value="4"
+                    <NavItem href={'/config'} icon={<ConfigIcon />} value="4"
                         className={styles.nav}
                     >
                         {isOpen && 'Config'}
