@@ -148,10 +148,11 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
             configDictionary["model"] = agentFlowConfig.Model;
         }
 
-        string instructionStrategy = string.IsNullOrEmpty(agentFlowConfig?.InstructionStrategy) switch
+        InstructionStrategy instructionStrategy = string.IsNullOrEmpty(agentFlowConfig?.InstructionStrategy) switch
         {
-            false => agentFlowConfig.InstructionStrategy,
             true => this.configuration.InstructionStrategy,
+            false => InstructionStrategyParser.TryParse(agentFlowConfig.InstructionStrategy, out var strategy)
+                ? strategy : throw new InvalidOperationException("Invalid instruction strategy"),
         };
 
         return new CellSequence<ConversationThread>(
@@ -163,7 +164,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                         Role.Assistant,
                         this.promptFactoryProvider,
                         this.agentBuilderFactory,
-                        this.configuration.InstructionStrategy,
+                        instructionStrategy,
                         tools)),
             ]);
 
