@@ -43,6 +43,18 @@ public sealed record ConversationThread
         this.ConversationId = conversationId;
     }
 
+    private ConversationThread(
+        ConversationId conversationId,
+        ImmutableArray<Message> messages,
+        IDictionary<string, string> keyValuePairs,
+        IReadOnlyDictionary<string, string> configurations)
+    {
+        this.messageList = messages;
+        this.templateKeyValuePairs = keyValuePairs.ToDictionary();
+        this.ConversationId = conversationId;
+        this.ConfigurationKeyValues = configurations;
+    }
+
     public IReadOnlyDictionary<string, string> ConfigurationKeyValues { get; private init; }
         = new Dictionary<string, string>();
 
@@ -172,6 +184,8 @@ public sealed record ConversationThread
         private readonly Dictionary<string, string> templateKeyValuePairs;
         private readonly ConversationId conversationId;
 
+        private IReadOnlyDictionary<string, string>? configurationKeyValues;
+
         internal Builder(ConversationId conversationId)
         {
             this.templateKeyValuePairs = new Dictionary<string, string>();
@@ -192,6 +206,8 @@ public sealed record ConversationThread
             }
 
             this.messages.AddRange(other.messageList.Where(predicate));
+
+            this.configurationKeyValues = other.ConfigurationKeyValues;
 
             return this;
         }
@@ -243,7 +259,8 @@ public sealed record ConversationThread
             return new ConversationThread(
                 this.conversationId,
                 this.messages.DrainToImmutable(),
-                this.templateKeyValuePairs);
+                this.templateKeyValuePairs,
+                this.configurationKeyValues ?? new Dictionary<string, string>());
         }
     }
 }
