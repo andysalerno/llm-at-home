@@ -55,6 +55,8 @@ public sealed class CustomAgent : IAgent
 
     public InstructionStrategy InstructionStrategy { get; }
 
+    public ToolOutputStrategy ToolOutputStrategy { get; }
+
     public Task<Cell<ConversationThread>> GetNextConversationStateAsync()
     {
         var cells = ImmutableArray.CreateBuilder<Cell<ConversationThread>>();
@@ -75,6 +77,7 @@ public sealed class CustomAgent : IAgent
                 this.responseSchema,
                 this.toolChoice,
                 this.InstructionStrategy,
+                this.ToolOutputStrategy,
                 this.completionsClient));
         }
 
@@ -92,6 +95,7 @@ public sealed class CustomAgent : IAgent
         private Prompt? prompt;
         private AgentName? name;
         private InstructionStrategy instructionsStrategy = InstructionStrategy.TopLevelSystemMessage;
+        private ToolOutputStrategy toolOutputStrategy = ToolOutputStrategy.InlineToolOutputMessage;
         private ILlmCompletionsClient completionsClient;
         private JsonObject? responseSchema;
         private MessageVisibility visibility;
@@ -160,6 +164,12 @@ public sealed class CustomAgent : IAgent
         public Builder WithInstructionsStrategy(InstructionStrategy strategy)
         {
             this.instructionsStrategy = strategy;
+            return this;
+        }
+
+        public Builder WithToolOutputStrategy(ToolOutputStrategy strategy)
+        {
+            this.toolOutputStrategy = strategy;
             return this;
         }
 

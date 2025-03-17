@@ -155,6 +155,13 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                 ? strategy : throw new InvalidOperationException("Invalid instruction strategy"),
         };
 
+        ToolOutputStrategy toolOutputStrategy = string.IsNullOrEmpty(agentFlowConfig?.ToolOutputStrategy) switch
+        {
+            true => this.configuration.ToolOutputStrategy,
+            false => ToolOutputStrategyParser.TryParse(agentFlowConfig.ToolOutputStrategy, out var strategy)
+                ? strategy : throw new InvalidOperationException("Invalid instruction strategy"),
+        };
+
         return new CellSequence<ConversationThread>(
             [
                 new ApplyConfigurationCell(configDictionary),
@@ -165,6 +172,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                         this.promptFactoryProvider,
                         this.agentBuilderFactory,
                         instructionStrategy,
+                        toolOutputStrategy,
                         tools)),
             ]);
 
@@ -187,6 +195,7 @@ internal sealed record ChatCompletionRequest(
 
 internal sealed record AgentFlowRequestConfig(
     [property: JsonPropertyName("instructionStrategy")] string? InstructionStrategy,
+    [property: JsonPropertyName("toolOutputStrategy")] string? ToolOutputStrategy,
     [property: JsonPropertyName("model")] string? Model);
 
 internal sealed record Message(

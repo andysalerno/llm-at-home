@@ -32,6 +32,7 @@ public sealed class ToolAgent : IAgent
           promptFactoryProvider,
           customAgentBuilderFactory,
           InstructionStrategy.TopLevelSystemMessage,
+          ToolOutputStrategy.AppendedToUserMessage,
           tools)
   {
   }
@@ -42,6 +43,7 @@ public sealed class ToolAgent : IAgent
       IFactoryProvider<Prompt, PromptName> promptFactoryProvider,
       CustomAgentBuilderFactory customAgentBuilderFactory,
       InstructionStrategy instructionStrategy,
+      ToolOutputStrategy toolOutputStrategy,
       ImmutableArray<ITool> tools)
   {
     this.Name = name;
@@ -70,6 +72,7 @@ public sealed class ToolAgent : IAgent
        .CreateBuilder()
        .WithName(new AgentName("ResponseAgent"))
        .WithRole(this.Role)
+       .WithToolOutputStrategy(toolOutputStrategy)
        .WithInstructionsFromPrompt(
           this.promptFactoryProvider.GetFactory(DefaultPrompts.WebsearchExampleResponding).Create())
        .SetVariableValue(key: "CUR_DATE", DateTime.Today.ToString("MMM dd, yyyy", DateTimeFormatInfo.InvariantInfo))
