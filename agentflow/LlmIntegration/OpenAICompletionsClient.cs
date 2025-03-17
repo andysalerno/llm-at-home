@@ -177,8 +177,6 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         this.chatCompletionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/chat/completions");
         this.completionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/completions");
 
-        logger.LogInformation("chat completions endpoint: {Endpoint}", this.chatCompletionsEndpoint);
-
         string? bearerToken = this.environmentVariableProvider.GetVariableValue("TOKEN");
 
         if (bearerToken != null)

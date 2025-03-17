@@ -67,13 +67,18 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
             payload.ConversationId,
             requestId);
 
+        this.logger.LogInformation(
+            "Caller-supplied configuration: {Config}", JsonSerializer.Serialize(payload.AgentFlowConfig));
+
         var conversationId = new ConversationId(payload.ConversationId ?? Guid.NewGuid().ToString());
 
         using var activity = ActivityUtilities.StartConversationActivity(conversationId, requestId);
 
         ConversationThread conversationThread = ToConversationThread(payload, conversationId);
 
-        ConversationThread output = await this.runner.RunAsync(this.CreateProgram(), rootInput: conversationThread);
+        ConversationThread output = await this.runner.RunAsync(
+            this.CreateProgram(payload.AgentFlowConfig),
+            rootInput: conversationThread);
 
         await publisher.PublishAsync(
             JsonSerializer.Serialize(new ChatCompletionStreamingResponse(
@@ -104,7 +109,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
         return ConversationThread.CreateBuilder(conversationId).AddMessages(messages).Build();
     }
 
-    private Cell<ConversationThread> CreateProgram()
+    private Cell<ConversationThread> CreateProgram(AgentFlowRequestConfig? agentFlowConfig = null)
     {
         ImmutableArray<ITool> tools = [
             new WebSearchTool(
@@ -131,21 +136,45 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                 exampleQueries: ("2024 election polls", "seattle heat wave", "stock market performance")),
         ];
 
-        return new AgentCell(
-            new ToolAgent(
-                new AgentName("WebSearchAgent"),
-                Role.Assistant,
-                this.promptFactoryProvider,
-                this.agentBuilderFactory,
-                this.configuration.InstructionStrategy,
-                tools));
+        var configDictionary = new Dictionary<string, string>();
+
+        if (agentFlowConfig?.InstructionStrategy != null)
+        {
+            configDictionary["instructionStrategy"] = agentFlowConfig.InstructionStrategy;
+        }
+
+        return new CellSequence<ConversationThread>(
+            [
+                new ApplyConfigurationCell(configDictionary),
+                new AgentCell(
+                    new ToolAgent(
+                        new AgentName("WebSearchAgent"),
+                        Role.Assistant,
+                        this.promptFactoryProvider,
+                        this.agentBuilderFactory,
+                        this.configuration.InstructionStrategy,
+                        tools)),
+            ]);
+
+        // return new AgentCell(
+        //     new ToolAgent(
+        //         new AgentName("WebSearchAgent"),
+        //         Role.Assistant,
+        //         this.promptFactoryProvider,
+        //         this.agentBuilderFactory,
+        //         this.configuration.InstructionStrategy,
+        //         tools));
     }
 }
 
 internal sealed record ChatCompletionRequest(
+    [property: JsonPropertyName("agentFlowConfig")] AgentFlowRequestConfig? AgentFlowConfig,
     [property: JsonPropertyName("model")] string Model,
     [property: JsonPropertyName("conversationId")] string? ConversationId,
     [property: JsonPropertyName("messages")] ImmutableArray<Message> Messages);
+
+internal sealed record AgentFlowRequestConfig(
+    [property: JsonPropertyName("instructionStrategy")] string? InstructionStrategy);
 
 internal sealed record Message(
     [property: JsonPropertyName("role")] string Role,

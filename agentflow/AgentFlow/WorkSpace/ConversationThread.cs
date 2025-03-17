@@ -12,7 +12,7 @@ namespace AgentFlow.WorkSpace;
 /// - Agents A, B, and C can have an ongoing thread
 /// Either agent in a thread can decide to terminate it.
 /// </summary>
-public sealed class ConversationThread
+public sealed record ConversationThread
 {
     private readonly ImmutableArray<Message> messageList;
 
@@ -43,6 +43,9 @@ public sealed class ConversationThread
         this.ConversationId = conversationId;
     }
 
+    public IReadOnlyDictionary<string, string> ConfigurationKeyValues { get; private init; }
+        = new Dictionary<string, string>();
+
     public ConversationId ConversationId { get; }
 
     public IReadOnlyList<Message> Messages => this.messageList;
@@ -55,6 +58,31 @@ public sealed class ConversationThread
     public static Builder CreateBuilder(ConversationId conversationId)
     {
         return new Builder(conversationId);
+    }
+
+    public ConversationThread WithConfiguration(string key, string value)
+    {
+        var output = new Builder(this.ConversationId).CopyFrom(this).Build();
+
+        return output with
+        {
+            ConfigurationKeyValues =
+                new Dictionary<string, string>(output.ConfigurationKeyValues)
+                {
+                    [key] = value,
+                },
+        };
+    }
+
+    public ConversationThread WithConfigurations(IReadOnlyDictionary<string, string> configurations)
+    {
+        var output = new Builder(this.ConversationId).CopyFrom(this).Build();
+
+        return output with
+        {
+            ConfigurationKeyValues =
+                new Dictionary<string, string>(output.ConfigurationKeyValues.Concat(configurations)),
+        };
     }
 
     /// <summary>
