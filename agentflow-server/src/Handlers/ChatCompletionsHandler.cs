@@ -138,9 +138,14 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
 
         var configDictionary = new Dictionary<string, string>();
 
-        if (agentFlowConfig?.InstructionStrategy != null)
+        if (!string.IsNullOrEmpty(agentFlowConfig?.InstructionStrategy))
         {
             configDictionary["instructionStrategy"] = agentFlowConfig.InstructionStrategy;
+        }
+
+        if (!string.IsNullOrEmpty(agentFlowConfig?.Model))
+        {
+            configDictionary["model"] = agentFlowConfig.Model;
         }
 
         return new CellSequence<ConversationThread>(
@@ -174,7 +179,8 @@ internal sealed record ChatCompletionRequest(
     [property: JsonPropertyName("messages")] ImmutableArray<Message> Messages);
 
 internal sealed record AgentFlowRequestConfig(
-    [property: JsonPropertyName("instructionStrategy")] string? InstructionStrategy);
+    [property: JsonPropertyName("instructionStrategy")] string? InstructionStrategy,
+    [property: JsonPropertyName("model")] string? Model);
 
 internal sealed record Message(
     [property: JsonPropertyName("role")] string Role,

@@ -104,6 +104,7 @@ export function useChat() {
                 body: JSON.stringify({
                     agentFlowConfig: {
                         instructionStrategy: "blah",
+                        model: config.modelName,
                     },
                     conversationId: conversationId,
                     messages: [...messages, userMessage].map(({ role, content }) => ({

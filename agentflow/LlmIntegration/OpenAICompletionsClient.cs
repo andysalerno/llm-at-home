@@ -233,8 +233,19 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             schemaWithHeader = CreateJsonSchemaObject(input.JsonSchema);
         }
 
+        string model;
+        if (input.Model != null)
+        {
+            model = input.Model;
+            this.logger.LogInformation("Client provided model: {Model}", model);
+        }
+        else
+        {
+            model = this.modelName;
+        }
+
         var request = new OpenAIChatCompletionRequest(
-            Model: this.modelName,
+            Model: model,
             Temperature: 0.00f,
             MaxTokens: MaxTokensToGenerate,
             ResponseFormat: schemaWithHeader,

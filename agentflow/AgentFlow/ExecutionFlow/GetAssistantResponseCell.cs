@@ -68,9 +68,18 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
             ToolOutputStrategy.AppendedToUserMessage,
             withInstructionStrategyApplied);
 
+        string? model = null;
+
+        if (input.ConfigurationKeyValues.TryGetValue("model", out var modelValue))
+        {
+            model = modelValue;
+            this.logger.LogInformation("Using overriden model from context: {Model}", model);
+        }
+
         var response = await this.completionsClient.GetChatCompletionsAsync(
             new ChatCompletionsRequest(
                 withToolOutputStrategyApplied.Messages,
+                Model: model,
                 JsonSchema: this.responseSchema,
                 ToolChoice: this.toolChoice));
 
