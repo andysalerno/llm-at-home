@@ -148,6 +148,12 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
             configDictionary["model"] = agentFlowConfig.Model;
         }
 
+        string instructionStrategy = string.IsNullOrEmpty(agentFlowConfig?.InstructionStrategy) switch
+        {
+            false => agentFlowConfig.InstructionStrategy,
+            true => this.configuration.InstructionStrategy,
+        };
+
         return new CellSequence<ConversationThread>(
             [
                 new ApplyConfigurationCell(configDictionary),

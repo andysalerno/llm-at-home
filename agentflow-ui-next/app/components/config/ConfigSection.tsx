@@ -23,6 +23,9 @@ const ConfigSection: React.FC = () => {
                     </Label>
                     <Combobox
                         placeholder='Select a prompt strategy plz'
+                        defaultValue={config.instructionStrategy}
+                        value={config.instructionStrategy}
+                        onOptionSelect={(_, option) => updateConfig({ instructionStrategy: option.optionText })}
                     >
                         {INSTRUCTION_STRATEGIES.map((option) => (
                             <Option key={option}>

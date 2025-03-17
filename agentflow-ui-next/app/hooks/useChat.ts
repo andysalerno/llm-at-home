@@ -144,7 +144,7 @@ export function useChat() {
             setStreamingMessage('');
             abortControllerRef.current = null;
         }
-    }, [isLoading, messages, conversationId, config.apiEndpoint]);
+    }, [isLoading, messages, conversationId, config.apiEndpoint, config.instructionStrategy, config.modelName]);
 
     const cancelStream = useCallback(() => {
         if (abortControllerRef.current) {
