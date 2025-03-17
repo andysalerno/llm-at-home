@@ -22,6 +22,7 @@ public sealed class CustomAgent : IAgent
         Role role,
         Prompt? prompt,
         InstructionStrategy instructionStrategy,
+        ToolOutputStrategy toolOutputStrategy,
         AgentName name,
         MessageVisibility messageVisibility,
         ImmutableDictionary<string, string> variables,
@@ -33,6 +34,7 @@ public sealed class CustomAgent : IAgent
         this.Role = role;
         this.Prompt = prompt;
         this.InstructionStrategy = instructionStrategy;
+        this.ToolOutputStrategy = toolOutputStrategy;
         this.completionsClient = completionsClient;
         this.responseSchema = responseSchema;
         this.toolChoice = toolChoice;
@@ -95,7 +97,7 @@ public sealed class CustomAgent : IAgent
         private Prompt? prompt;
         private AgentName? name;
         private InstructionStrategy instructionsStrategy = InstructionStrategy.TopLevelSystemMessage;
-        private ToolOutputStrategy toolOutputStrategy = ToolOutputStrategy.InlineToolOutputMessage;
+        private ToolOutputStrategy toolOutputStrategy = ToolOutputStrategy.AppendedToUserMessage;
         private ILlmCompletionsClient completionsClient;
         private JsonObject? responseSchema;
         private MessageVisibility visibility;
@@ -202,6 +204,7 @@ public sealed class CustomAgent : IAgent
                 role: this.role ?? throw new InvalidDataException("Role is required but was null"),
                 prompt: this.prompt,
                 instructionStrategy: this.instructionsStrategy,
+                toolOutputStrategy: this.toolOutputStrategy,
                 name: this.name ?? throw new InvalidDataException("Name is required but was null"),
                 messageVisibility: this.visibility,
                 variables: this.keyValuePairs.ToImmutable(),

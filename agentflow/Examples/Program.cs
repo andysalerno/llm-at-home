@@ -53,12 +53,19 @@ public static class Program
             description: "instruction strategy to use");
         instructionStrategy.AddAlias("--instruction-strategy");
 
+        var toolStrategy = new Option<ToolOutputStrategy>(
+            name: "-t",
+            getDefaultValue: () => ToolOutputStrategy.AppendedToUserMessage,
+            description: "tool strategy to use");
+        toolStrategy.AddAlias("--tool-strategy");
+
         command.AddArgument(uriArg);
         command.AddArgument(modelName);
         command.AddOption(verbose);
         command.AddOption(promptDir);
         command.AddOption(diskLoggingDir);
         command.AddOption(instructionStrategy);
+        command.AddOption(toolStrategy);
 
         command.SetHandler(
             RunBenchmarkAsync,
@@ -67,7 +74,8 @@ public static class Program
             verbose,
             promptDir,
             diskLoggingDir,
-            instructionStrategy);
+            instructionStrategy,
+            toolStrategy);
 
         return command;
     }
@@ -118,6 +126,12 @@ public static class Program
             description: "instruction strategy to use");
         instructionStrategy.AddAlias("--instruction-strategy");
 
+        var toolStrategy = new Option<ToolOutputStrategy>(
+            name: "-t",
+            getDefaultValue: () => ToolOutputStrategy.AppendedToUserMessage,
+            description: "tool strategy to use");
+        toolStrategy.AddAlias("--tool-strategy");
+
         command.AddArgument(uriArg);
         command.AddArgument(embeddingsUriArg);
         command.AddArgument(scraperUriArg);
@@ -126,18 +140,20 @@ public static class Program
         command.AddOption(promptDir);
         command.AddOption(diskLoggingDir);
         command.AddOption(instructionStrategy);
+        command.AddOption(toolStrategy);
 
-        command.SetHandler(
-            RunServerAsync,
-            uriArg,
-            embeddingsUriArg,
-            scraperUriArg,
-            modelName,
-            verbose,
-            promptDir,
-            diskLoggingDir,
-            instructionStrategy);
-
+        // TODO: remove this entire file
+        // command.SetHandler(
+        //     RunServerAsync,
+        //     uriArg,
+        //     embeddingsUriArg,
+        //     scraperUriArg,
+        //     modelName,
+        //     verbose,
+        //     promptDir,
+        //     diskLoggingDir,
+        //     instructionStrategy,
+        //     toolStrategy);
         return command;
     }
 
@@ -157,7 +173,8 @@ public static class Program
         bool verbose,
         string promptDir,
         string diskLoggingDir,
-        InstructionStrategy instructionsStrategy)
+        InstructionStrategy instructionsStrategy,
+        ToolOutputStrategy toolOutputStrategy)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
@@ -169,7 +186,8 @@ public static class Program
             verbose,
             promptDir,
             diskLoggingDir,
-            instructionsStrategy);
+            instructionsStrategy,
+            toolOutputStrategy);
 
         Configuration configuration = BuildConfiguration(commandLineArgs);
 
@@ -192,7 +210,8 @@ public static class Program
         bool verbose,
         string promptDir,
         string diskLoggingDir,
-        InstructionStrategy instructionsStrategy)
+        InstructionStrategy instructionsStrategy,
+        ToolOutputStrategy toolOutputStrategy)
     {
         promptDir = promptDir ?? throw new ArgumentNullException(nameof(promptDir));
 
@@ -204,7 +223,8 @@ public static class Program
             verbose,
             promptDir,
             diskLoggingDir,
-            instructionsStrategy);
+            instructionsStrategy,
+            toolOutputStrategy);
 
         Configuration configuration = BuildConfiguration(commandLineArgs);
 
@@ -254,7 +274,8 @@ public static class Program
             args.PromptDir,
             args.ModelName,
             args.DiskLoggingDir,
-            args.InstructionStrategy);
+            args.InstructionStrategy,
+            args.ToolOutputStrategy);
 
     private sealed record CommandLineArgs(
         string Uri,
@@ -264,5 +285,6 @@ public static class Program
         bool Verbose,
         string PromptDir,
         string DiskLoggingDir,
-        InstructionStrategy InstructionStrategy);
+        InstructionStrategy InstructionStrategy,
+        ToolOutputStrategy ToolOutputStrategy);
 }
