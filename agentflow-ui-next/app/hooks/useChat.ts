@@ -103,7 +103,7 @@ export function useChat() {
                 signal: abortControllerRef.current.signal,
                 body: JSON.stringify({
                     agentFlowConfig: {
-                        instructionStrategy: "blah",
+                        instructionStrategy: config.instructionStrategy,
                         model: config.modelName,
                     },
                     conversationId: conversationId,

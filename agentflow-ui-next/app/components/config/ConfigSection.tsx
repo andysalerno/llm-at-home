@@ -8,6 +8,7 @@ import {
     Label,
 } from '@fluentui/react-components';
 import { useConfig } from '@/app/hooks/useConfig';
+import { INSTRUCTION_STRATEGIES } from '@/app/types';
 
 const ConfigSection: React.FC = () => {
     const { config, updateConfig } = useConfig();
@@ -23,7 +24,7 @@ const ConfigSection: React.FC = () => {
                     <Combobox
                         placeholder='Select a prompt strategy plz'
                     >
-                        {["a", "b", "c"].map((option) => (
+                        {INSTRUCTION_STRATEGIES.map((option) => (
                             <Option key={option}>
                                 {option}
                             </Option>

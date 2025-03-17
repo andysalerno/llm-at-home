@@ -47,7 +47,7 @@ public sealed record ConversationThread
         ConversationId conversationId,
         ImmutableArray<Message> messages,
         IDictionary<string, string> keyValuePairs,
-        IReadOnlyDictionary<string, string> configurations)
+        ImmutableDictionary<string, string> configurations)
     {
         this.messageList = messages;
         this.templateKeyValuePairs = keyValuePairs.ToDictionary();
@@ -55,8 +55,8 @@ public sealed record ConversationThread
         this.ConfigurationKeyValues = configurations;
     }
 
-    public IReadOnlyDictionary<string, string> ConfigurationKeyValues { get; private init; }
-        = new Dictionary<string, string>();
+    public ImmutableDictionary<string, string> ConfigurationKeyValues { get; private init; }
+        = ImmutableDictionary<string, string>.Empty;
 
     public ConversationId ConversationId { get; }
 
@@ -82,7 +82,7 @@ public sealed record ConversationThread
                 new Dictionary<string, string>(output.ConfigurationKeyValues)
                 {
                     [key] = value,
-                },
+                }.ToImmutableDictionary(),
         };
     }
 
@@ -93,7 +93,8 @@ public sealed record ConversationThread
         return output with
         {
             ConfigurationKeyValues =
-                new Dictionary<string, string>(output.ConfigurationKeyValues.Concat(configurations)),
+                new Dictionary<string, string>(output.ConfigurationKeyValues.Concat(configurations))
+                    .ToImmutableDictionary(),
         };
     }
 
@@ -260,7 +261,8 @@ public sealed record ConversationThread
                 this.conversationId,
                 this.messages.DrainToImmutable(),
                 this.templateKeyValuePairs,
-                this.configurationKeyValues ?? new Dictionary<string, string>());
+                this.configurationKeyValues?.ToImmutableDictionary()
+                    ?? ImmutableDictionary<string, string>.Empty);
         }
     }
 }

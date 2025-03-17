@@ -5,3 +5,17 @@ export interface Message {
     timestamp: string;
     conversationId: string;
 }
+
+// Read-only static list of strings
+export const INSTRUCTION_STRATEGIES =
+    [
+        'TopLevelSystemMessage',
+
+        'InlineUserMessage',
+
+        'InlineSystemMessage',
+
+        'AppendedToUserMessage',
+
+        'PrecedingLastUserMessage',
+    ] as const;

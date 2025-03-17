@@ -6,6 +6,7 @@ interface ChatConfig {
   apiEndpoint: string;
   bearerToken: string;
   modelName: string;
+  instructionStrategy: string;
   // Add other configuration options here as needed
 }
 
@@ -13,6 +14,7 @@ const DEFAULT_CONFIG: ChatConfig = {
   apiEndpoint: 'http://nzxt.local:8003/v1/chat/completions',
   bearerToken: '',
   modelName: 'model',
+  instructionStrategy: 'TopLevelSystemMessage',
 };
 
 const CONFIG_STORAGE_KEY = 'chatConfig';
