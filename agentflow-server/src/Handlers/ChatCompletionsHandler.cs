@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Agentflow.Server.Serialization;
 using AgentFlow;
 using AgentFlow.Agents;
 using AgentFlow.Agents.ExecutionFlow;
@@ -162,7 +163,7 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                 ? strategy : throw new InvalidOperationException("Invalid instruction strategy"),
         };
 
-        return new CellSequence<ConversationThread>(
+        var program = new CellSequence<ConversationThread>(
             [
                 new ApplyConfigurationCell(configDictionary),
                 new AgentCell(
@@ -175,6 +176,22 @@ internal sealed class ChatCompletionsHandler : IStreamingHandler<ChatCompletionR
                         toolOutputStrategy,
                         tools)),
             ]);
+
+        {
+            this.logger.LogInformation("Running program (next log)");
+            var options = new JsonSerializerOptions
+            {
+                Converters =
+                {
+                    new PolymorphicJsonConverter<Cell<ConversationThread>>(),
+                },
+            };
+
+            string serialized = JsonSerializer.Serialize(program, options);
+            this.logger.LogInformation("{Program}", serialized);
+        }
+
+        return program;
 
         // return new AgentCell(
         //     new ToolAgent(

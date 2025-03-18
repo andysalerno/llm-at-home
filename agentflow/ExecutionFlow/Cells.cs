@@ -121,7 +121,7 @@ public sealed record StartCell<T> : Cell<T>
 
 public sealed record CellSequence<T> : Cell<T>
 {
-    private readonly ImmutableArray<Cell<T>> _sequence;
+    public ImmutableArray<Cell<T>> Sequence { get; }
 
     /// <summary>
     /// TODO: three ways this can work...
@@ -133,7 +133,7 @@ public sealed record CellSequence<T> : Cell<T>
     /// </summary>
     public CellSequence(ImmutableArray<Cell<T>> sequence)
     {
-        _sequence = sequence;
+        this.Sequence = sequence;
     }
 
     public override async Task<T> RunAsync(T input)
@@ -142,7 +142,7 @@ public sealed record CellSequence<T> : Cell<T>
 
         var runner = new CellRunner<T>();
 
-        foreach (var cell in _sequence)
+        foreach (var cell in this.Sequence)
         {
             nextInput = await runner.RunAsync(cell, nextInput);
         }

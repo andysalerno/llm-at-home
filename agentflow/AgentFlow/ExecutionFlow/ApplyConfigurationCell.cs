@@ -6,12 +6,12 @@ namespace AgentFlow.Agents.ExecutionFlow;
 
 public sealed record ApplyConfigurationCell : Cell<ConversationThread>
 {
-    private readonly IReadOnlyDictionary<string, string> configurationKeyValues;
-
     public ApplyConfigurationCell(IReadOnlyDictionary<string, string> configurationKeyValues)
     {
-        this.configurationKeyValues = configurationKeyValues;
+        this.ConfigurationKeyValues = configurationKeyValues;
     }
+
+    public IReadOnlyDictionary<string, string> ConfigurationKeyValues { get; }
 
     public override Task<ConversationThread> RunAsync(ConversationThread input)
     {
@@ -19,8 +19,8 @@ public sealed record ApplyConfigurationCell : Cell<ConversationThread>
 
         logger.LogInformation(
             "Applying configuration to conversation thread: {}",
-            JsonSerializer.Serialize(this.configurationKeyValues));
+            JsonSerializer.Serialize(this.ConfigurationKeyValues));
 
-        return Task.FromResult(input.WithConfigurations(this.configurationKeyValues));
+        return Task.FromResult(input.WithConfigurations(this.ConfigurationKeyValues));
     }
 }
