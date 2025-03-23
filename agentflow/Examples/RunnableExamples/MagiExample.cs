@@ -31,7 +31,7 @@ internal sealed class MagiExample : IRunnableExample
 
         await this.runner.RunAsync(
             definition,
-            new ConversationThread());
+            new ConversationThread(new ConversationId("MagiExample")));
     }
 
     private static Prompt BuildPromptForRole(string roleName)

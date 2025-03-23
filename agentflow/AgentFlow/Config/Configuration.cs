@@ -1,5 +1,4 @@
-﻿using AgentFlow.Agents;
-using AgentFlow.Prompts;
+﻿using AgentFlow.Prompts;
 
 namespace AgentFlow.Config;
 
@@ -37,7 +36,8 @@ public record Configuration(
     string PromptDirectory,
     string ModelName,
     string DiskLoggingPath,
-    InstructionStrategy InstructionStrategy) :
+    InstructionStrategy InstructionStrategy,
+    ToolOutputStrategy ToolOutputStrategy) :
     ICompletionsEndpointConfig,
     ILoggingConfig,
     IFileSystemPromptProviderConfig,

@@ -4,28 +4,37 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build --debug",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@fluentui/react-components": "^9.57.0",
-    "@fluentui/react-icons": "^2.0.270",
-    "marked": "^15.0.6",
-    "next": "15.x",
-    "react": "18.x",
-    "react-dom": "18.x",
-    "uuid": "^11.0.5"
+    "@fluentui/react-components": "^9.60.1",
+    "@fluentui/react-icons": "^2.0.279",
+    "@fluentui/react-nav-preview": "^0.13.0",
+    "marked": "^15.0.7",
+    "next": "^15.2.2",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-highlight": "^0.1.1",
+    "remark-math": "^6.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/react": "18.x",
-    "@types/react-dom": "18.x",
-    "eslint": "^9",
-    "eslint-config-next": "15.x",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "@eslint/eslintrc": "^3.3.0",
+    "@tailwindcss/postcss": "^4.0.14",
+    "@types/node": "^22.13.10",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^9.22.0",
+    "eslint-config-next": "^15.2.2",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.14",
+    "typescript": "^5.8.2"
   }
 }

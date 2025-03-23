@@ -5,7 +5,13 @@ import { Button, Card, CardHeader } from '@fluentui/react-components';
 import { Delete24Regular } from '@fluentui/react-icons';
 import { Message } from '../../types';
 import { mergeClasses, makeStyles, tokens } from '@fluentui/react-components';
-import { marked } from 'marked';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import remarkBreaks from 'remark-breaks';
+import rehypeHightlight from 'rehype-highlight';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface ChatMessageProps {
     message: Message;
@@ -41,7 +47,7 @@ export const ChatMessage = memo(function ChatMessage({
                         ? mergeClasses('hover:shadow-lg', classes.userMessage)
                         : mergeClasses('hover:shadow-md', classes.botMessageColor)
                 )}
-                onClick={() => message.correlationId && onClick?.(message.correlationId)}
+                onClick={() => message.id && onClick?.(message.id)}
             >
                 <CardHeader
                     className='max-w-full'
@@ -53,7 +59,14 @@ export const ChatMessage = memo(function ChatMessage({
                         //     className='max-w-full'>
                         //     {/* <div className="p-2 max-w-full">{message.content}</div> */}
                         // </Body1>
-                        <div className="p-2 max-w-full TextMessage" style={{ maxWidth: '100%' }} dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
+                        // <div className="p-2 max-w-full TextMessage" style={{ maxWidth: '100%' }} dangerouslySetInnerHTML={{ __html: marked.parse(message.content, { gfm: true }) }}></div>
+                        // createRoot(document.body).render(<Markdown>{message.content}</Markdown>)
+                        <div className="p-2 max-w-full TextMessage markdown" style={{ maxWidth: '100%' }}>
+                            <Markdown
+                                remarkPlugins={[remarkGfm, remarkMath, remarkBreaks]}
+                                rehypePlugins={[rehypeHightlight, rehypeKatex]}
+                            >{message.content}</Markdown>
+                        </div>
                     } />
             </Card>
             {onDelete && (

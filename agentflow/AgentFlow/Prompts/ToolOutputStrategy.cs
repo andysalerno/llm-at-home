@@ -1,4 +1,3 @@
-using AgentFlow.Agents;
 using AgentFlow.LlmClient;
 using AgentFlow.WorkSpace;
 
@@ -18,6 +17,20 @@ public enum ToolOutputStrategy
     /// The tool output message will appear appended to the last user message.
     /// </summary>
     AppendedToUserMessage,
+}
+
+public static class ToolOutputStrategyParser
+{
+    /// <summary>
+    /// Attempts to parse a string into a ToolOutputStrategy value.
+    /// </summary>
+    /// <param name="input">The string to parse.</param>
+    /// <param name="strategy">When this method returns, contains the InstructionStrategy value equivalent to the string contained in input, if the conversion succeeded, or the default value if the conversion failed.</param>
+    /// <returns>true if input was converted successfully; otherwise, false.</returns>
+    public static bool TryParse(string input, out ToolOutputStrategy strategy)
+    {
+        return Enum.TryParse(input, true, out strategy);
+    }
 }
 
 public static class ToolStrategyApplicator
@@ -64,7 +77,7 @@ public static class ToolStrategyApplicator
 
         Message updatedUserMessage = lastUserMessage with { Content = updatedContent };
 
-        var messagesWithoutLastUser = withoutToolInvocation
+        var messagesWithoutLastUser = conversationWithoutToolOutputs
             .WithMatchingMessages(m => !object.Equals(m, lastUserMessage));
 
         return messagesWithoutLastUser.WithAddedMessage(updatedUserMessage);

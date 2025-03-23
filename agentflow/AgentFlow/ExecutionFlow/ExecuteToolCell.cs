@@ -33,10 +33,17 @@ public sealed record ExecuteToolCell : Cell<ConversationThread>
                 "Expected the last message to be a tool message from the assistant");
         }
 
+        // trim until the first occurrence of {:
+        int indexOfFirstCurlyBracket = lastMessage.Content.IndexOf('{');
+        string content = lastMessage.Content[indexOfFirstCurlyBracket..];
+        int indexOfLastCurlyBracket = content.LastIndexOf('}');
+        content = content[..(indexOfLastCurlyBracket + 1)];
+
         ToolSelectionOutput toolSelection = JsonSerializer.Deserialize<ToolSelectionOutput>(
-            lastMessage.Content,
+            content,
             JsonSerializerOptions)
-            ?? throw new InvalidOperationException("Could not parse the last message as a ToolSelectionOutput");
+            ?? throw new InvalidOperationException(
+                $"Could not parse the last message as a ToolSelectionOutput: {content}");
 
         this.logger.LogInformation("Saw tool selection: {Selection}", toolSelection);
 

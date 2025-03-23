@@ -8,6 +8,8 @@ using AgentFlow.Agents.Extensions;
 using AgentFlow.Config;
 using AgentFlow.Generic;
 using AgentFlow.LlmClient;
+using AgentFlow.Utilities;
+using AgentFlow.WorkSpace;
 using Microsoft.Extensions.Logging;
 
 namespace AgentFlow.LlmClients;
@@ -149,6 +151,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
     private readonly ILoggingConfig loggingConfig;
     private readonly ILogger<OpenAICompletionsClient> logger;
     private readonly ChatRequestDiskLogger? chatRequestDiskLogger;
+    private readonly IConversationPersistenceWriter? conversationPersistenceWriter;
 
     public OpenAICompletionsClient(
         ICompletionsEndpointConfig completionsEndpointProviderConfig,
@@ -156,7 +159,8 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         IHttpClientFactory httpClientFactory,
         ILoggingConfig loggingConfig,
         ILogger<OpenAICompletionsClient> logger,
-        ChatRequestDiskLogger? chatRequestDiskLogger = null)
+        ChatRequestDiskLogger? chatRequestDiskLogger = null,
+        IConversationPersistenceWriter? conversationPersistenceWriter = null)
     {
         this.baseEndpoint = completionsEndpointProviderConfig.CompletionsEndpoint;
         this.httpClient = new Lazy<HttpClient>(() => httpClientFactory.CreateClient<OpenAICompletionsClient>());
@@ -164,6 +168,7 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         this.loggingConfig = loggingConfig;
         this.logger = logger;
         this.chatRequestDiskLogger = chatRequestDiskLogger;
+        this.conversationPersistenceWriter = conversationPersistenceWriter;
         this.embeddingsEndpoint = completionsEndpointProviderConfig.EmbeddingsEndpoint;
         this.scraperEndpoint = completionsEndpointProviderConfig.ScraperEndpoint;
 
@@ -171,8 +176,6 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         this.chatCompletionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/chat/completions");
         this.completionsEndpoint = CombineUriFragments(this.baseEndpoint.AbsoluteUri, "/v1/completions");
-
-        logger.LogInformation("chat completions endpoint: {Endpoint}", this.chatCompletionsEndpoint);
 
         string? bearerToken = this.environmentVariableProvider.GetVariableValue("TOKEN");
 
@@ -230,8 +233,19 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
             schemaWithHeader = CreateJsonSchemaObject(input.JsonSchema);
         }
 
+        string model;
+        if (input.Model != null)
+        {
+            model = input.Model;
+            this.logger.LogInformation("Client provided model: {Model}", model);
+        }
+        else
+        {
+            model = this.modelName;
+        }
+
         var request = new OpenAIChatCompletionRequest(
-            Model: this.modelName,
+            Model: model,
             Temperature: 0.00f,
             MaxTokens: MaxTokensToGenerate,
             ResponseFormat: schemaWithHeader,
@@ -254,6 +268,8 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
         }
 
         var result = await this.HttpClient.PostAsync(this.chatCompletionsEndpoint, requestContent);
+
+        result.EnsureSuccessStatusCode();
 
         var resultJson = await result.Content.ReadAsStringAsync();
 
@@ -285,11 +301,44 @@ public sealed class OpenAICompletionsClient : ILlmCompletionsClient, IEmbeddings
 
         if (this.chatRequestDiskLogger is ChatRequestDiskLogger chatRequestDiskLogger)
         {
-            await chatRequestDiskLogger.LogRequestToDiskAsync(input.Messages.Concat(
-                new[]
+            // await chatRequestDiskLogger.LogRequestToDiskAsync(input.Messages.Concat(
+            //     new[]
+            //     {
+            //         new Message(new Agents.AgentName("unused"), Role.Assistant, trimmed),
+            //     }));
+            this.logger.LogWarning("Skipping logging to disk.");
+        }
+
+        if (this.conversationPersistenceWriter is IConversationPersistenceWriter conversationPersistenceWriter)
+        {
+            if (ActivityUtilities.TryGetConversationIdFromCurrentActivity(out ConversationId? conversationId))
+            {
+                if (ActivityUtilities.TryGetIncomingRequestIdFromCurrentActivity(out IncomingRequestId? incomingRequestId))
                 {
-                    new Message(new Agents.AgentName("unused"), Role.Assistant, trimmed),
-                }));
+                    this.logger.LogInformation("Persisting request during ConversationId: {ConversationId} and IncomingRequestId: {IncomingRequestId}", conversationId, incomingRequestId);
+                    var requestToStore = new StoredLlmRequest(
+                        Input: input.Messages.Select(m => new StoredMessage(m.Role.Name, m.Content, incomingRequestId)).ToImmutableArray(),
+                        Output: new StoredMessage(Role.Assistant.Name, trimmed, incomingRequestId),
+                        incomingRequestId);
+
+                    await conversationPersistenceWriter.StoreLlmRequestAsync(
+                        conversationId,
+                        incomingRequestId,
+                        requestToStore);
+                }
+                else
+                {
+                    this.logger.LogWarning("Failed to get IncomingRequestId from current activity.");
+                }
+            }
+            else
+            {
+                this.logger.LogWarning("Failed to get ConversationId from current activity.");
+            }
+        }
+        else
+        {
+            this.logger.LogWarning("Skipping persistence of request.");
         }
 
         return new ChatCompletionsResult(trimmed);

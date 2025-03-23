@@ -1,0 +1,46 @@
+@agentflow_server_HostAddress = http://localhost:8003
+
+GET {{agentflow_server_HostAddress}}/transcripts/
+Accept: application/json
+
+###
+
+POST {{agentflow_server_HostAddress}}/v1/chat/completions/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "conversationId": "4567",
+    "messages": [
+        {
+            "role": "user",
+            "content": "hi"
+        }
+    ]
+}
+
+###
+
+POST {{agentflow_server_HostAddress}}/v1/chat/completions/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "conversationId": "4567",
+    "messages": [
+        {
+            "role": "user",
+            "content": "hi"
+        },
+        {
+            "role": "assistant",
+            "content": "Hello! It\u0027s nice to meet you. Is there something I can help you with or would you like to chat?"
+        },
+        {
+            "role": "user",
+            "content": "tell me a joke"
+        }
+    ]
+}
+
+###

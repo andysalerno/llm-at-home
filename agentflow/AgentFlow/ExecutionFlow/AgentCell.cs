@@ -7,28 +7,29 @@ namespace AgentFlow.Agents.ExecutionFlow;
 
 public sealed record AgentCell : Cell<ConversationThread>
 {
-    private readonly IAgent agent;
+    public IAgent Agent { get; }
+
     private readonly ILogger<AgentCell> logger;
 
     public AgentCell(IAgent agent)
     {
-        this.agent = agent;
+        this.Agent = agent;
         this.logger = this.GetLogger();
     }
 
-    public AgentName AgentName => this.agent.Name;
+    public AgentName AgentName => this.Agent.Name;
 
-    public Role AgentRole => this.agent.Role;
+    public Role AgentRole => this.Agent.Role;
 
     public override async Task<ConversationThread> RunAsync(ConversationThread input)
     {
-        var sequence = await this.agent.GetNextConversationStateAsync();
+        var sequence = await this.Agent.GetNextConversationStateAsync();
 
         return await sequence.RunAsync(input);
     }
 
     public Message CreateMessage(string text)
     {
-        return this.agent.CreateMessage(text);
+        return this.Agent.CreateMessage(text);
     }
 }

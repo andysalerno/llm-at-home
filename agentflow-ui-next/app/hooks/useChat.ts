@@ -1,27 +1,30 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Message } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import { useConfig } from './useConfig';
 
 const STORAGE_KEY = 'chatMessages';
 
 function createMessage(
     role: Message['role'],
     content: string,
-    correlationId: string
+    conversationId: string
 ): Message {
     return {
         id: uuidv4(),
         role,
         content,
         timestamp: new Date().toISOString(),
-        correlationId: correlationId,
+        conversationId: conversationId,
     };
 }
 
 export function useChat() {
+    const { config } = useConfig();
     const [messages, setMessages] = useState<Message[]>([]);
     const [streamingMessage, setStreamingMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [conversationId, setConversationId] = useState<string>(uuidv4());
     const abortControllerRef = useRef<AbortController | null>(null);
 
     // Load messages from localStorage on mount
@@ -85,8 +88,7 @@ export function useChat() {
     const sendMessage = useCallback(async (content: string) => {
         if (!content.trim() || isLoading) return;
 
-        const userMessage = createMessage('user', content.trim(), uuidv4());
-        const correlationId = userMessage.correlationId;
+        const userMessage = createMessage('user', content.trim(), conversationId);
 
         setMessages((prev) => [...prev, userMessage]);
         setIsLoading(true);
@@ -94,11 +96,17 @@ export function useChat() {
         abortControllerRef.current = new AbortController();
 
         try {
-            const response = await fetch('http://nzxt.local:8003/v1/chat/completions', {
+            // Use the configured API endpoint instead of hardcoded value
+            const response = await fetch(config.apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 signal: abortControllerRef.current.signal,
                 body: JSON.stringify({
+                    agentFlowConfig: {
+                        instructionStrategy: config.instructionStrategy,
+                        model: config.modelName,
+                    },
+                    conversationId: conversationId,
                     messages: [...messages, userMessage].map(({ role, content }) => ({
                         role,
                         content,
@@ -119,7 +127,7 @@ export function useChat() {
 
             setMessages((prev) => [
                 ...prev,
-                createMessage('assistant', streamContent, correlationId),
+                createMessage('assistant', streamContent, conversationId),
             ]);
         } catch (error) {
             if ((error as Error).name === 'AbortError') {
@@ -136,7 +144,7 @@ export function useChat() {
             setStreamingMessage('');
             abortControllerRef.current = null;
         }
-    }, [isLoading, messages]);
+    }, [isLoading, messages, conversationId, config.apiEndpoint, config.instructionStrategy, config.modelName]);
 
     const cancelStream = useCallback(() => {
         if (abortControllerRef.current) {
@@ -152,6 +160,7 @@ export function useChat() {
 
     const clearMessages = useCallback(() => {
         setMessages([]);
+        setConversationId(uuidv4());
     }, []);
 
     return {
@@ -162,5 +171,6 @@ export function useChat() {
         deleteMessage,
         clearMessages,
         cancelStream,
+        conversationId,
     };
 }

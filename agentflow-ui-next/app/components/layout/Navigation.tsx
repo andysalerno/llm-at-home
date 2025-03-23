@@ -1,64 +1,106 @@
-'use client'
-
-import Link from 'next/link';
-import { Button, makeStyles, tokens, mergeClasses } from '@fluentui/react-components';
+import { makeStyles, mergeClasses, tokens } from "@fluentui/react-components";
+import * as React from "react";
 import {
-    Navigation24Regular,
-    DismissRegular,
-    Chat24Regular,
-    TextExpand24Regular,
-    Bug24Regular,
-    Settings24Regular
-} from '@fluentui/react-icons';
+    AppItem,
+    Hamburger,
+    NavDrawerBody,
+    NavDrawerHeader,
+    NavItem,
+} from "@fluentui/react-nav-preview";
+import { NavDrawer } from "./NavDrawerWrapper";
+import { usePathname } from 'next/navigation'
+import {
+    Tooltip,
+} from "@fluentui/react-components";
+import {
+    Chat20Filled,
+    Chat20Regular,
+    ChatSettings20Filled,
+    ChatSettings20Regular,
+    DocumentText20Filled,
+    DocumentText20Regular,
+    ListBarTreeOffset20Filled,
+    ListBarTreeOffset20Regular,
+    bundleIcon,
+} from "@fluentui/react-icons";
 
-interface NavigationProps {
-    isOpen: boolean;
-    onOpenChange: (isOpen: boolean) => void;
-}
+const ChatIcon = bundleIcon(Chat20Filled, Chat20Regular);
+const ConfigIcon = bundleIcon(ChatSettings20Filled, ChatSettings20Regular);
+const DebugIcon = bundleIcon(ListBarTreeOffset20Filled, ListBarTreeOffset20Regular);
+const CompletionsIcon = bundleIcon(DocumentText20Filled, DocumentText20Regular)
 
 const useStyles = makeStyles({
-    navigationBackground: { backgroundColor: tokens.colorNeutralBackground2 },
-    navigationButton: { ':hover': { backgroundColor: tokens.colorNeutralBackground2Hover } },
+    nav: { backgroundColor: tokens.colorNeutralBackground1 },
 });
 
-const navigationItems = [
-    { href: '/chat', icon: Chat24Regular, label: 'Chat' },
-    { href: '/completion', icon: TextExpand24Regular, label: 'Text Completion' },
-    { href: '/debug', icon: Bug24Regular, label: 'Debug' },
-    { href: '/config', icon: Settings24Regular, label: 'Config' },
-];
+export const Navigation = () => {
+    const [isOpen, setIsOpen] = React.useState(true);
+    const pathname = usePathname();
+    const styles = useStyles();
 
-export function Navigation({ isOpen, onOpenChange }: NavigationProps) {
-    const classes = useStyles();
+    // Map paths to their corresponding NavItem values
+    const getSelectedValue = () => {
+        const pathToValueMap: Record<string, string> = {
+            '/chat': '1',
+            '/completion': '2',
+            '/debug': '3',
+            '/config': '4',
+            '/': '1'
+        };
+
+        return pathToValueMap[pathname] || 'home';
+    };
+
+    const selectedValue = getSelectedValue();
+
+    const renderHamburgerWithToolTip = () => {
+        return (
+            <Tooltip content="Navigation" relationship="label">
+                <Hamburger onClick={() => setIsOpen(!isOpen)} />
+            </Tooltip>
+        );
+    };
 
     return (
-        <nav
-            className={mergeClasses(`fixed inset-y-0 left-0 shadow-lg z-30
-                ${isOpen ? 'w-64' : 'w-12'}`, classes.navigationBackground)}
-        >
-            <div className="flex justify-between p-2">
-                <div />
-                <Button
-                    icon={isOpen ? <DismissRegular /> : <Navigation24Regular />}
-                    appearance="subtle"
-                    onClick={() => onOpenChange(!isOpen)}
-                    aria-label={isOpen ? 'Collapse navigation' : 'Expand navigation'}
-                />
-            </div>
-            <div className="py-6">
-                {navigationItems.map(({ href, icon: Icon, label }) => {
-                    return (
-                        <Link
-                            key={href}
-                            href={href}
-                            className={mergeClasses(`flex w-full px-3 py-2 mb-1 text-sm`, classes.navigationButton)}
-                        >
-                            <Icon className="shrink-0" />
-                            {isOpen && <span className="ml-3">{label}</span>}
-                        </Link>
-                    );
-                })}
-            </div>
-        </nav>
+        <div className={mergeClasses('ui-component flex h-screen', isOpen ? 'w-64' : 'w-14')}>
+            <NavDrawer
+                open={true}
+                type={'inline'}
+                multiple={true}
+                selectedValue={selectedValue}
+                className={styles.nav}
+            >
+                <NavDrawerHeader className={styles.nav}>{renderHamburgerWithToolTip()}</NavDrawerHeader>
+                <NavDrawerBody className={styles.nav}>
+                    <AppItem
+                        as="a"
+                        href={'/'}
+                        className={styles.nav}
+                    >
+                        {isOpen ? 'AgentFlow UI!!' : 'AF'}
+                    </AppItem>
+                    <NavItem href={'/chat'} icon={<ChatIcon />} value="1"
+                        className={styles.nav}
+                    >
+                        {isOpen && 'Chat'}
+                    </NavItem>
+                    <NavItem href={'/completion'} icon={<CompletionsIcon />} value="2"
+                        className={styles.nav}
+                    >
+                        {isOpen && 'Completion'}
+                    </NavItem>
+                    <NavItem href={'/debug'} icon={<DebugIcon />} value="3"
+                        className={styles.nav}
+                    >
+                        {isOpen && 'Debug'}
+                    </NavItem>
+                    <NavItem href={'/config'} icon={<ConfigIcon />} value="4"
+                        className={styles.nav}
+                    >
+                        {isOpen && 'Config'}
+                    </NavItem>
+                </NavDrawerBody>
+            </NavDrawer>
+        </div>
     );
-}
+};

@@ -16,13 +16,15 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
     private readonly string? toolChoice;
     private readonly ILlmCompletionsClient completionsClient;
     private readonly InstructionStrategy strategy;
+    private readonly ToolOutputStrategy toolOutputStrategy;
 
     public GetAssistantResponseCell(
         AgentName agentName,
         Role agentRole,
-        InstructionStrategy strategy,
+        InstructionStrategy instructionStrategy,
+        ToolOutputStrategy toolOutputStrategy,
         ILlmCompletionsClient completionsClient)
-        : this(agentName, agentRole, null, null, strategy, completionsClient)
+        : this(agentName, agentRole, null, null, instructionStrategy, toolOutputStrategy, completionsClient)
     {
     }
 
@@ -32,6 +34,7 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
         JsonObject? responseSchema,
         string? toolChoice,
         InstructionStrategy strategy,
+        ToolOutputStrategy toolOutputStrategy,
         ILlmCompletionsClient completionsClient)
     {
         this.agentName = agentName;
@@ -40,6 +43,7 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
         this.toolChoice = toolChoice;
         this.completionsClient = completionsClient;
         this.strategy = strategy;
+        this.toolOutputStrategy = toolOutputStrategy;
         this.logger = this.GetLogger();
     }
 
@@ -64,13 +68,23 @@ public sealed record GetAssistantResponseCell : Cell<ConversationThread>
             this.agentName,
             templateFilled);
 
+        // ToolOutputStrategy.AppendedToUserMessage
         ConversationThread withToolOutputStrategyApplied = ToolStrategyApplicator.ApplyStrategy(
-            ToolOutputStrategy.AppendedToUserMessage,
+            this.toolOutputStrategy,
             withInstructionStrategyApplied);
+
+        string? model = null;
+
+        if (input.ConfigurationKeyValues.TryGetValue("model", out var modelValue))
+        {
+            model = modelValue;
+            this.logger.LogInformation("Using overriden model from context: {Model}", model);
+        }
 
         var response = await this.completionsClient.GetChatCompletionsAsync(
             new ChatCompletionsRequest(
                 withToolOutputStrategyApplied.Messages,
+                Model: model,
                 JsonSchema: this.responseSchema,
                 ToolChoice: this.toolChoice));
 

@@ -22,7 +22,7 @@ public class ExecuteCodeCellTests
 
         const string MessageWithCode = "Hi there! Try running this: ```python\n# test test\n```";
 
-        var input = new ConversationThread()
+        var input = new ConversationThread(new ConversationId("test"))
             .WithAddedMessage(new Message(new AgentName("SomeAgent"), Role.Assistant, MessageWithCode));
 
         ConversationThread output = await executeCell.RunAsync(input);
