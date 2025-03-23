@@ -1,3 +1,7 @@
+set export
+
+PHOENIX_PORT := "8007"
+
 default:
   just --list
 
