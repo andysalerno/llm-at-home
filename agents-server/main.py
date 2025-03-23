@@ -13,12 +13,16 @@ register()
 SmolagentsInstrumentor().instrument()
 
 OPENROUTER_KEY = os.environ.get("LLM_API_KEY")
+MODEL_NAME = os.environ.get("MODEL_NAME")
 
 if OPENROUTER_KEY is None:
     raise ValueError("Please set the environment variable 'LLM_API_KEY'")
 
+if MODEL_NAME is None:
+    raise ValueError("Please set the environment variable 'MODEL_NAME'")
+
 model = OpenAIServerModel(
-    model_id="google/gemini-2.0-flash-lite-preview-02-05:free",
+    model_id=MODEL_NAME,
     api_key=OPENROUTER_KEY,
     api_base="https://openrouter.ai/api/v1",
 )
