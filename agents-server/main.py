@@ -33,6 +33,18 @@ search_tool = SearchAndScrape.SearchAndScrape(
     max_chunks_to_return=4,
 )
 
+
+def create_research_agent():
+    name = "research_agent"
+    description = "An agent that can perform Google searches"
+
+    research_agent = CodeAgent(
+        tools=[search_tool], model=model, name=name, description=description
+    )
+
+    return research_agent
+
+
 main_agent = CodeAgent(tools=[search_tool], model=model)
 
-main_agent.run(task="What is Elton Johhn's birthday?")
+main_agent.run(task="hi")
