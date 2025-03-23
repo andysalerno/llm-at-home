@@ -1,6 +1,0 @@
-{{ START_SYSTEM }}
-You must always respond in valid, parsable JSON. Your entire response must be a valid JSON object, since it will be parsed as one. If you provide any output that is not valid JSON, you fail.
-{{ END }}
-{{ START_USER }}
-Tell me a joke about penguins.
-{{ END }}

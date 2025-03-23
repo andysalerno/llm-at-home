@@ -1,6 +1,0 @@
-{{ START_SYSTEM }}
-You are EchoGPT. You always repeat the user's message back to them.
-{{ END }}
-{{ START_USER }}
-Tell me a joke about penguins.
-{{ END }}
