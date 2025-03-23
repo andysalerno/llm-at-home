@@ -14,17 +14,27 @@ class SearchAndScrape(Tool):
     }
     output_type = "string"
 
-    def __init__(self, scraper_endpoint: str, scores_endpoint: str):
+    def __init__(
+        self,
+        scraper_endpoint: str,
+        scores_endpoint: str,
+        max_sites_to_scrape: int = 5,
+        max_chunks_to_return: int = 3,
+    ):
         self.scraper_endpoint = scraper_endpoint
         self.scores_endpoint = scores_endpoint
+        self.max_sites_to_scrape = max_sites_to_scrape
+        self.max_chunks_to_return = max_chunks_to_return
         self.ddgs = DDGS()
         super().__init__(self.name, self.description, self.inputs, self.output_type)
 
     def forward(self, search_query: str) -> str:
         # 1. Perform the search
-        results = self.ddgs.text(search_query, max_results=5)
+        results = self.ddgs.text(search_query, max_results=self.max_sites_to_scrape)
         if len(results) == 0:
-            raise Exception("No results found! Try a less restrictive/shorter query.")
+            raise Exception(
+                "No results found! Try a different, or less restrictive or shorter query."
+            )
 
         # 2. scrape the top N websites using the scraper endpoint
         uris = [result["href"] for result in results]
@@ -67,10 +77,10 @@ class SearchAndScrape(Tool):
             return f"Error while scoring chunks: {str(e)}"
 
         # finally, return the top N chunks by score:
-        top_n = 3
         sorted_chunks = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
         top_chunks = [
-            {"chunk": chunk, "score": score} for chunk, score in sorted_chunks[:top_n]
+            {"chunk": chunk, "score": score}
+            for chunk, score in sorted_chunks[: self.max_chunks_to_return]
         ]
 
         # format the output as a string

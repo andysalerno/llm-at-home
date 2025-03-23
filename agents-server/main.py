@@ -29,6 +29,8 @@ model = OpenAIServerModel(
 search_tool = SearchAndScrape.SearchAndScrape(
     scraper_endpoint="http://localhost:8002/scrape",
     scores_endpoint="http://localhost:8001/scores",
+    max_sites_to_scrape=7,
+    max_chunks_to_return=4,
 )
 
 main_agent = CodeAgent(tools=[search_tool], model=model)
