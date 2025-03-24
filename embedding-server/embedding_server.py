@@ -1,15 +1,25 @@
 import json
+import os
+from log import log
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import List, Optional
 from sentence_transformers import util
 from intfloat_reranker import IntFloatReranker
+from mixedbread_reranker import MixedBreadReranker
 
 
-def log(message: str):
-    print(message, flush=True)
+reranker = None
 
-
-reranker = IntFloatReranker()
+if os.environ.get("RERANKER_NAME") == "mixedbread":
+    log("using mixedbread reranker")
+    reranker = MixedBreadReranker()
+elif os.environ.get("RERANKER_NAME") == "intfloat":
+    log("using intfloat reranker")
+    reranker = IntFloatReranker()
+else:
+    raise ValueError(
+        "Please set the environment variable 'RERANKER_NAME' to either 'mixedbread' or 'intfloat'"
+    )
 
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -39,6 +49,8 @@ class MyHandler(BaseHTTPRequestHandler):
     def handle_scoring(self):
         log("scoring requested")
         (corpus, query) = self.extract_from_request()
+
+        log("corpus length: " + str(len(corpus)))
 
         if query is None:
             raise ValueError("query is required for scoring")
@@ -105,11 +117,8 @@ def run(server_class=HTTPServer, handler_class=MyHandler):
         "The Beatles were comprised of Paul, John, George, and Ringo.",
     ]
     query = "Who were the members of The Beatles?"
-    (passage_embeds, query_embed) = reranker.get_embeddings(query, passages)
-    scores = util.dot_score(query_embed, passage_embeds)[0].cpu().tolist()
-    log(f"score: {scores}")
     scores = reranker.get_scores(query, passages)
-    log(f"score2: {scores}")
+    log(f"score: {scores}")
     log("done.")
 
     port = 8000

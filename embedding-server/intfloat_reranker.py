@@ -1,4 +1,4 @@
-from embedding_server import log
+from log import log
 from sentence_transformers import SentenceTransformer, util
 
 EMBEDDING_MODEL_NAME = "intfloat/e5-small-v2"
@@ -22,7 +22,7 @@ class IntFloatReranker:
         return EMBEDDING_MODEL_NAME
 
     def get_scores(self, query: str, corpus: list[str]) -> list[float]:
-        (passage_embeddings, query_embedding) = self.get_embeddings(query, query)
+        (passage_embeddings, query_embedding) = self.get_embeddings(query, corpus)
 
         # scores = (embeddings[:2] @ embeddings[2:].T) * 100
         scores = util.dot_score(query_embedding, passage_embeddings)[0].cpu().tolist()

@@ -48,13 +48,13 @@ class SearchAndScrape(Tool):
         try:
             response = requests.post(self.scraper_endpoint, json=payload)
 
-            print(f"Scraper response: {response.text}")
+            print(f"Scraper response: {response.text[:1000]}...")
 
             response.raise_for_status()
 
-            chunks = response.json().get("chunks", [])
+            # get a list of the content from the list of chunks:
+            chunks = [chunk["content"] for chunk in response.json()["chunks"]]
 
-            print(f"Scraper chunks: {chunks}")
         except requests.exceptions.RequestException as e:
             return f"Error while scraping websites: {str(e)}"
 

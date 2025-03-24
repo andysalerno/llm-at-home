@@ -70,6 +70,9 @@ services:
   embedding-server:
     image: localhost/embedding-server
     build: ./embedding-server
+    environment:
+      # - RERANKER_NAME=mixedbread
+      - RERANKER_NAME=intfloat
     ports:
       - "8001:8000"
     devices:

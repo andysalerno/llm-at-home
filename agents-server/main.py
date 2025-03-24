@@ -47,4 +47,4 @@ def create_research_agent():
 
 main_agent = CodeAgent(tools=[search_tool], model=model)
 
-main_agent.run(task="how do I open a new firewall port in opensuse tumbleweed")
+main_agent.run(task="list every elton john album")
