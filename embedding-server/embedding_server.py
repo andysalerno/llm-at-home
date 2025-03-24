@@ -1,29 +1,15 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import List, Optional
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import util
+from intfloat_reranker import IntFloatReranker
 
 
 def log(message: str):
     print(message, flush=True)
 
 
-# EMBEDDING_MODEL_NAME = "all-mpnet-base-v2"
-# EMBEDDING_MODEL_NAME = "multi-qa-MiniLM-L6-cos-v1"
-# EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
-EMBEDDING_MODEL_NAME = "intfloat/e5-small-v2"
-
-log("initializing embedding transformer...")
-embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-log("done.")
-
-
-def transform_passage(passage: str) -> str:
-    return f"passage: {passage}"
-
-
-def transform_query(query: str) -> str:
-    return f"query: {query}"
+reranker = IntFloatReranker()
 
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -52,9 +38,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def handle_scoring(self):
         log("scoring requested")
-        (text, query) = self.extract_from_request()
+        (corpus, query) = self.extract_from_request()
 
-        scores = get_scores(text, query)
+        if query is None:
+            raise ValueError("query is required for scoring")
+
+        scores = reranker.get_scores(query, corpus)
 
         response = json.dumps({"scores": scores})
 
@@ -66,9 +55,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
     def handle_embeddings(self):
         log("embeddings requested")
-        (text, query) = self.extract_from_request()
+        (corpus, query) = self.extract_from_request()
 
-        (passage_embeddings, query_embedding) = get_embeddings(text, query)
+        if query is None:
+            raise ValueError("query is required for scoring")
+
+        (passage_embeddings, query_embedding) = reranker.get_embeddings(query, corpus)
 
         data = [
             {"object": "embedding", "embedding": emb, "index": n}
@@ -78,7 +70,7 @@ class MyHandler(BaseHTTPRequestHandler):
         result = {
             "object": "list",
             "data": data,
-            "model": EMBEDDING_MODEL_NAME,
+            "model": reranker.model_name(),
             "usage": {
                 "prompt_tokens": 0,
                 "total_tokens": 0,
@@ -101,40 +93,6 @@ class MyHandler(BaseHTTPRequestHandler):
         log("embeddings request completed")
 
 
-def get_scores(text: list[str], query: Optional[str]) -> List[float]:
-    (passage_embeddings, query_embedding) = get_embeddings(text, query)
-
-    # scores = (embeddings[:2] @ embeddings[2:].T) * 100
-    scores = util.dot_score(query_embedding, passage_embeddings)[0].cpu().tolist()
-
-    return scores
-
-
-def get_embeddings(text: list[str], query: Optional[str]):
-    if type(text) is str:
-        text = [text]
-
-    text = [transform_passage(t) for t in text]
-
-    text_to_embed = text
-
-    if query:
-        text_to_embed = text[:]
-        text_to_embed.append(transform_query(query))
-        log(f"query in body: {query}")
-
-    embeddings = embedding_model.encode(
-        text_to_embed, normalize_embeddings=True
-    ).tolist()
-
-    query_embedding = None
-    if len(embeddings) == len(text) + 1:
-        # we added the query; need to pop it
-        query_embedding = embeddings.pop()
-
-    return (embeddings, query_embedding)
-
-
 def run(server_class=HTTPServer, handler_class=MyHandler):
     log("warming up embedding model...")
     passages = [
@@ -147,10 +105,10 @@ def run(server_class=HTTPServer, handler_class=MyHandler):
         "The Beatles were comprised of Paul, John, George, and Ringo.",
     ]
     query = "Who were the members of The Beatles?"
-    (passage_embeds, query_embed) = get_embeddings(passages, query)
+    (passage_embeds, query_embed) = reranker.get_embeddings(query, passages)
     scores = util.dot_score(query_embed, passage_embeds)[0].cpu().tolist()
     log(f"score: {scores}")
-    scores = get_scores(passages, query)
+    scores = reranker.get_scores(query, passages)
     log(f"score2: {scores}")
     log("done.")
 
