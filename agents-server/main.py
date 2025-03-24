@@ -36,7 +36,7 @@ search_tool = SearchAndScrape.SearchAndScrape(
 
 def create_research_agent():
     name = "research_agent"
-    description = "An agent that can perform Google searches"
+    description = "An agent that can perform Google searches."
 
     research_agent = CodeAgent(
         tools=[search_tool], model=model, name=name, description=description

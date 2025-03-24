@@ -9,7 +9,7 @@ class SearchAndScrape(Tool):
     inputs = {
         "search_query": {
             "type": "string",
-            "description": "The Google search query",
+            "description": "The Google search query. Supports advanced search features like 'site:' to restrict the search to a specific domain.",
         }
     }
     output_type = "string"
@@ -53,7 +53,9 @@ class SearchAndScrape(Tool):
             response.raise_for_status()
 
             # get a list of the content from the list of chunks:
-            chunks = [chunk["content"] for chunk in response.json()["chunks"]]
+            chunks_data = response.json()["chunks"]
+            chunks = [chunk["content"] for chunk in chunks_data]
+            uris = [chunk["uri"] for chunk in chunks_data]
 
         except requests.exceptions.RequestException as e:
             return f"Error while scraping websites: {str(e)}"
@@ -77,18 +79,23 @@ class SearchAndScrape(Tool):
             return f"Error while scoring chunks: {str(e)}"
 
         # finally, return the top N chunks by score:
-        sorted_chunks = sorted(zip(chunks, scores), key=lambda x: x[1], reverse=True)
+        sorted_chunks = sorted(
+            zip(chunks, uris, scores), key=lambda x: x[1], reverse=True
+        )
         top_chunks = [
-            {"chunk": chunk, "score": score}
-            for chunk, score in sorted_chunks[: self.max_chunks_to_return]
+            {"chunk": chunk, "uri": uri, "score": score}
+            for chunk, uri, score in sorted_chunks[: self.max_chunks_to_return]
         ]
 
         # format the output as a string
-        output = "\n=================\n\n".join(
-            [
-                f"[SCORE {round(chunk['score'], 3)}] {chunk['chunk']}"
-                for chunk in top_chunks
-            ]
+        output = (
+            "\n=================\n\n".join(
+                [
+                    f"[SCORE {round(chunk['score'], 3)}] {chunk['chunk']}\n\nSource: {chunk['uri']}"
+                    for chunk in top_chunks
+                ]
+            )
+            + "\n\nNOTE: the above excerpts were retrieved via web scraping and then filtering, so they may contain whitespace or formatting issues."
         )
 
         return output
