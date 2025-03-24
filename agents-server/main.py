@@ -47,4 +47,4 @@ def create_research_agent():
 
 main_agent = CodeAgent(tools=[search_tool], model=model)
 
-main_agent.run(task="list every elton john album")
+main_agent.run(task="what's new in the latest release of the rust language")
