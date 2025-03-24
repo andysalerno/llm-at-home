@@ -1,9 +1,6 @@
 import os
 from tools import SearchAndScrape
-from smolagents import (
-    OpenAIServerModel,
-    CodeAgent,
-)
+from smolagents import OpenAIServerModel, CodeAgent, ToolCallingAgent
 
 from phoenix.otel import register
 from openinference.instrumentation.smolagents import SmolagentsInstrumentor
@@ -36,7 +33,7 @@ search_tool = SearchAndScrape.SearchAndScrape(
 
 def create_research_agent():
     name = "research_agent"
-    description = "An agent that can perform Google searches."
+    description = "An agent that can perform Google searches and find up-to-date information on a given topic."
 
     research_agent = CodeAgent(
         tools=[search_tool], model=model, name=name, description=description
@@ -45,6 +42,11 @@ def create_research_agent():
     return research_agent
 
 
-main_agent = CodeAgent(tools=[search_tool], model=model)
+# main_agent = CodeAgent(tools=[search_tool], model=model)
+main_agent = CodeAgent(tools=[], managed_agents=[create_research_agent()], model=model)
+main_agent.prompt_templates["system_prompt"] += (
+    "\n\nA note on your persona: You are a friendly agent that provides final answers to the user. Your final answers should be polite, and maybe a bit fun or whimsical. For anything involving research or external information, delegate to the research agent."
+)
+
 
 main_agent.run(task="what's new in the latest release of the rust language")
