@@ -1,3 +1,8 @@
+# add smolagents/src/smolagents dir to the import path:
+import sys
+
+sys.path.append("./smolagents/src")
+
 import os
 from tools import SearchAndScrape
 from smolagents import OpenAIServerModel, CodeAgent, ToolCallingAgent

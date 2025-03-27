@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: agents-server
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.26.4
+Requires-Dist: pillow>=11.0.0
+Requires-Dist: requests>=2.32.3
+Requires-Dist: huggingface-hub>=0.28.0
+Requires-Dist: jinja2>=3.1.4
+Requires-Dist: rich>=13.9.4
+Requires-Dist: python-dotenv
+Requires-Dist: duckduckgo-search>=6.3.7
+Requires-Dist: arize-phoenix
+Requires-Dist: opentelemetry-sdk
+Requires-Dist: opentelemetry-exporter-otlp
+Requires-Dist: openinference-instrumentation-smolagents>=0.1.4
+Requires-Dist: openai>=1.58.1
+Requires-Dist: smolagents@ ./smolagents
