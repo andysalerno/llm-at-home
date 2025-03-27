@@ -16,7 +16,7 @@ def _create_researcher_tool() -> Tool:
 
     return Tool(
         description=textwrap.dedent("""\
-        Asks a researcher agent for help. The researcher
+        Asks a researcher for information, and returns its response. The researcher accepts tasks and responds with answers, data, code, or information. 
         """),
         function=ask_researcher,
     )
