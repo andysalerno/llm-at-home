@@ -17,3 +17,9 @@ run-agents-local:
 
 run-pydantic:
   uv --directory ./pydantic-server run --env-file .env main.py
+
+run-langgraph:
+  uv --directory ./langgraph-server run --env-file .env main.py
+
+run-vibebot:
+  uv --directory ./vibebot run --env-file .env main.py

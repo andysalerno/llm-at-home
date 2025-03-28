@@ -1,0 +1,15 @@
+[project]
+name = "vibebot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic-ai>=0.0.46",
+    "pydantic-ai-slim[duckduckgo]>=0.0.46",
+    "arize-phoenix",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+    "openinference-instrumentation-openai>=0.1.22",
+    "jinja2>=3.1.6",
+]
