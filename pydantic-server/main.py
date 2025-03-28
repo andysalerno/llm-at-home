@@ -1,5 +1,6 @@
 import os
 from pydantic_ai import Agent
+from pydantic_ai.models import Model
 from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.providers.openai import OpenAIProvider
@@ -46,27 +47,37 @@ def create_model():
     return InstrumentedModel(model, instrumentation_settings)
 
 
-model = create_model()
+def run():
+    model = create_model()
 
-agent = create_user_facing_assistant(model, [duckduckgo_search_tool()])
+    agent = create_user_facing_assistant(model, [duckduckgo_search_tool()])
 
-agent.instrument_all(instrumentation_settings)
+    agent.instrument_all(instrumentation_settings)
 
-# run until the user says "exit":
-message_history = None
-usage = None
-while True:
-    user_input = input("You: ")
-    if user_input.lower() == "exit":
-        break
+    # run until the user says "exit":
+    message_history = None
+    usage = None
+    while True:
+        try:
+            user_input = input("You: ")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
 
-    settings = ModelSettings(temperature=0.15)
-    result = agent.run_sync(
-        user_input, message_history=message_history, model_settings=settings
-    )
-    message_history = result.all_messages()
-    usage = usage + result.usage() if usage else result.usage()
-    print(result.data)
-    print(result.usage())
+        if user_input.lower() == "exit":
+            break
 
-print(usage)
+        settings = ModelSettings(temperature=0.1)
+        result = agent.run_sync(
+            user_input, message_history=message_history, model_settings=settings
+        )
+        message_history = result.all_messages()
+        usage = usage + result.usage() if usage else result.usage()
+        print(result.data)
+        print(result.usage())
+
+    print(usage)
+
+
+# run_example(create_model())
+run()

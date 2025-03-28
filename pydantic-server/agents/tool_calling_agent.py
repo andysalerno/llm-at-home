@@ -1,7 +1,10 @@
 from typing import TypedDict
+from datetime import datetime
+from pydantic import BaseModel
 from pydantic_ai import Agent, Tool
 from pydantic_ai.models import Model
 from jinja2 import Template
+import textwrap
 
 
 class TemplatedTool(TypedDict):
@@ -9,14 +12,18 @@ class TemplatedTool(TypedDict):
     description: str
 
 
+class FinalAnswer(BaseModel):
+    answer: str
+
+
 def _create_final_answer_tool() -> Tool:
-    def no_op():
-        pass
+    def final_answer(answer: str):
+        return answer
 
     return Tool(
         name="final_answer",
-        description="To provide the final answer to the task. You MUST use this tool to return your final answer.",
-        function=no_op,
+        description="To provide the final answer to the task. You MUST use this tool when your research is complete and you are ready to present your final answer.",
+        function=final_answer,
     )
 
 
@@ -29,11 +36,18 @@ def create_tool_calling_agent(model: Model, tools: list[Tool]):
     templated_tools = [_tool_to_templated_tool(tool) for tool in tools]
     templated_tools.append(final_answer_tool)
 
+    # all_tools = tools + [_create_final_answer_tool()]
+    all_tools = tools
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
+
     agent = Agent(
         model,
-        system_prompt=_create_prompt(templated_tools),
-        tools=tools + [_create_final_answer_tool()],
+        system_prompt=_create_prompt(all_tools, current_date),
+        tools=all_tools,
         result_tool_name="final_answer",
+        result_tool_description="Invoke this when you are ready to provide the final answer to the task. You MUST use this tool to return your final answer.",
+        result_type=FinalAnswer,
     )
 
     return agent
@@ -46,109 +60,25 @@ def _tool_to_templated_tool(tool: Tool) -> TemplatedTool:
     )
 
 
-def _create_prompt(tools: list[TemplatedTool]) -> str:
-    return Template("""
-  You are an expert assistant who can solve any task using tool calls. You will be given a task to solve as best you can.
-  To do so, you have been given access to some tools.
+def _create_prompt(tools: list[Tool], current_date: str) -> str:
+    return Template(
+        textwrap.dedent("""\
+                        You are an expert research assistant.
+                        You will be given a task by the user. Use your available tools to complete the task to the best of your abilities.
 
-  The tool call you write is an "action": after the tool is executed, you will get the result of the tool call as an "observation".
-  This Action/Observation can repeat N times, you should take several steps when needed.
+                        In particular, you have access to a search tool (think Google). Use it to find up-to-date information on the web and perform research.
+                        The tool allows searching by domain name, so you might query e.x. "site:wikipedia.org dog breeds" 
 
-  You can use the result of the previous action as input for the next action.
-  The observation will always be a string: it can represent a file, like "image_1.jpg".
-  Then you can use it as input for the next action. You can do it for instance as follows:
+                        ## Available Tools
+                        {%- for tool in tools %}
+                        - {{ tool.name }}: {{ tool.description }}
+                        {%- endfor %}
 
-  Observation: "image_1.jpg"
+                        ## Additional context
+                        The current date is: {{ current_date }}
 
-  Action:
-  {
-    "name": "image_transformer",
-    "arguments": {"image": "image_1.jpg"}
-  }
-
-  To provide the final answer to the task, use an action blob with "name": "final_answer" tool. It is the only way to complete the task, else you will be stuck on a loop. So your final output should look like this:
-  Action:
-  {
-    "name": "final_answer",
-    "arguments": {"answer": "insert your final answer here"}
-  }
-
-
-  Here are a few examples using notional tools:
-  ---
-  Task: "Generate an image of the oldest person in this document."
-
-  Action:
-  {
-    "name": "document_qa",
-    "arguments": {"document": "document.pdf", "question": "Who is the oldest person mentioned?"}
-  }
-  Observation: "The oldest person in the document is John Doe, a 55 year old lumberjack living in Newfoundland."
-
-  Action:
-  {
-    "name": "image_generator",
-    "arguments": {"prompt": "A portrait of John Doe, a 55-year-old man living in Canada."}
-  }
-  Observation: "image.png"
-
-  Action:
-  {
-    "name": "final_answer",
-    "arguments": "image.png"
-  }
-
-  ---
-  Task: "What is the result of the following operation: 5 + 3 + 1294.678?"
-
-  Action:
-  {
-      "name": "python_interpreter",
-      "arguments": {"code": "5 + 3 + 1294.678"}
-  }
-  Observation: 1302.678
-
-  Action:
-  {
-    "name": "final_answer",
-    "arguments": "1302.678"
-  }
-
-  ---
-  Task: "Which city has the highest population, Guangzhou or Shanghai?"
-
-  Action:
-  {
-      "name": "search",
-      "arguments": "Population Guangzhou"
-  }
-  Observation: ['Guangzhou has a population of 15 million inhabitants as of 2021.']
-
-
-  Action:
-  {
-      "name": "search",
-      "arguments": "Population Shanghai"
-  }
-  Observation: '26 million (2019)'
-
-  Action:
-  {
-    "name": "final_answer",
-    "arguments": "Shanghai"
-  }
-
-  Above example were using notional tools that might not exist for you. You only have access to these tools:
-  {%- for tool in tools %}
-  - {{ tool.name }}: {{ tool.description }}
-  {%- endfor %}
-
-  Here are the rules you should always follow to solve your task:
-  1. ALWAYS provide a tool call, else you will fail.
-  2. Always use the right arguments for the tools. Never use variable names as the action arguments, use the value instead.
-  3. Call a tool only when needed: do not call the search agent if you do not need information, try to solve the task yourself.
-  If no tool call is needed, use final_answer tool to return your answer.
-  4. Never re-do a tool call that you previously did with the exact same parameters.
-
-  Now Begin! If you solve the task correctly, you will receive a reward of $1,000,000.
-""").render(tools=tools)
+                        ## Additional instructions
+                        - You may invoke tools multiple times. For instance, if you invoke the search tool, but the results are not sufficient, you may invoke it again.
+                        - Invoke whatever tools you want as many times as you need, just be sure to invoke the final_answer tool when you are ready to provide the final answer.
+                        """).strip()
+    ).render(tools=tools, current_date=current_date)

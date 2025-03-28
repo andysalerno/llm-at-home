@@ -1,29 +1,30 @@
-from pydantic_ai import Agent, RunContext
+from typing import Union
+from pydantic import BaseModel
+from pydantic_ai import Agent
 from pydantic_ai.models import Model
-from pydantic_ai.usage import UsageLimits
+
+
+class Box(BaseModel):
+    width: int
+    height: int
+    depth: int
+    units: str
 
 
 def run_example(model: Model):
-    joke_selection_agent = Agent(
-        model,
+    agent: Agent[None, Union[Box, str]] = Agent(
+        model=model,
+        result_type=Union[Box, str],  # type: ignore
         system_prompt=(
-            "Use the `joke_factory` to generate some jokes, then choose the best. "
-            "You must return just a single joke."
+            "Extract me the dimensions of a box, "
+            "if you can't extract all data, ask the user to try again."
         ),
     )
-    joke_generation_agent = Agent(model, result_type=list[str])
 
-    @joke_selection_agent.tool
-    async def joke_factory(ctx: RunContext[None], count: int) -> list[str]:
-        r = await joke_generation_agent.run(
-            f"Please generate {count} jokes.",
-            usage=ctx.usage,
-        )
-        return r.data
-
-    result = joke_selection_agent.run_sync(
-        "Tell me a joke.",
-        usage_limits=UsageLimits(request_limit=5, total_tokens_limit=300),
-    )
+    result = agent.run_sync("The box is 10x20x30")
     print(result.data)
-    print(result.usage())
+    # > Please provide the units for the dimensions (e.g., cm, in, m).
+
+    result = agent.run_sync("The box is 10x20x30 cm")
+    print(result.data)
+    # > width=10 height=20 depth=30 units='cm'
