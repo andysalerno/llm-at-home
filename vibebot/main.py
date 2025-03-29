@@ -59,8 +59,8 @@ def main():
     model = create_model()
 
     prompt_provider = CachingPromptProvider(
-        system_prompt_path="system_prompt.txt",
-        vibe_path="vibe.txt",
+        system_prompt_path="config/system_prompt.txt",
+        vibe_path="config/vibe.txt",
         expiration_seconds=5,
     )
 

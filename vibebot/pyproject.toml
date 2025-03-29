@@ -12,4 +12,5 @@ dependencies = [
     "opentelemetry-exporter-otlp",
     "openinference-instrumentation-openai>=0.1.22",
     "jinja2>=3.1.6",
+    "flask>=3.1.0",
 ]
