@@ -8,20 +8,26 @@ from pydantic_ai.agent import InstrumentationSettings
 from pydantic_ai.models.instrumented import InstrumentedModel
 
 from prompt import CachingPromptProvider
-
-instrumentation_settings = InstrumentationSettings(event_mode="logs")
-
-
-def configure_phoenix():
-    if os.environ.get("ENABLE_LOCAL_TELEMETRY") is not None:
-        from phoenix.otel import register
-        from openinference.instrumentation.openai import OpenAIInstrumentor
-
-        register()
-        OpenAIInstrumentor().instrument()
+from vibebot.server import run_server
 
 
-def create_model():
+def _configure_phoenix():
+    from phoenix.otel import register
+    from openinference.instrumentation.openai import OpenAIInstrumentor
+
+    register()
+    OpenAIInstrumentor().instrument()
+
+
+def is_telemetry_enabled():
+    value = os.environ.get("ENABLE_LOCAL_TELEMETRY")
+    if value is None:
+        return False
+
+    return value == "1" or value.lower() == "true"
+
+
+def _create_model():
     api_key = os.environ.get("LLM_API_KEY")
 
     model_name = os.environ.get("MODEL_NAME")
@@ -40,23 +46,30 @@ def create_model():
         ),
     )
 
-    return InstrumentedModel(model, instrumentation_settings)
+    if is_telemetry_enabled():
+        instrumentation_settings = InstrumentationSettings(event_mode="logs")
+        return InstrumentedModel(model, instrumentation_settings)
+    else:
+        return model
 
 
-def create_vibebot(model: Model, system_prompt: str):
-    settings = ModelSettings(temperature=0.0)
+class StateManager:
+    def __init__(self, model: Model, prompt_provider: CachingPromptProvider):
+        self.model = model
+        self.prompt_provider = prompt_provider
 
-    bot = Agent(model, system_prompt=system_prompt, model_settings=settings)
+    def get_model(self):
+        return self.model
 
-    return bot
-
-
-def construct_user_message(chat_message: str, vibe_rule: str):
-    return f"MESSAGE: {chat_message}\nVIBE_RULE: {vibe_rule}"
+    def get_prompt_provider(self):
+        return self.prompt_provider
 
 
 def main():
-    model = create_model()
+    if is_telemetry_enabled():
+        _configure_phoenix()
+
+    model = _create_model()
 
     prompt_provider = CachingPromptProvider(
         system_prompt_path="config/system_prompt.txt",
@@ -64,28 +77,28 @@ def main():
         expiration_seconds=5,
     )
 
-    agent = create_vibebot(model, prompt_provider.get_system_prompt())
+    state_manager = StateManager(model, prompt_provider)
 
-    agent.instrument_all(instrumentation_settings)
+    def _construct_user_message(chat_message: str) -> str:
+        vibe_rule = state_manager.get_prompt_provider().get_vibe_rule()
+        return f"MESSAGE: {chat_message}\nVIBE_RULE: {vibe_rule}"
 
-    try:
-        user_input = input("You: ")
-    except KeyboardInterrupt:
-        print("\nExiting...")
-        return
+    def _create_vibebot_agent() -> Agent:
+        settings = ModelSettings(temperature=0.0)
 
-    if user_input.lower() == "exit":
-        return
+        agent = Agent(
+            state_manager.get_model(),
+            system_prompt=state_manager.get_prompt_provider().get_system_prompt(),
+            model_settings=settings,
+        )
 
-    user_message = construct_user_message(
-        chat_message=user_input,
-        vibe_rule=prompt_provider.get_vibe_rule(),
-    )
+        if is_telemetry_enabled():
+            agent.instrument_all()
 
-    result = agent.run_sync(user_message)
-    print(result)
+        return agent
+
+    run_server(_create_vibebot_agent, _construct_user_message)
 
 
 if __name__ == "__main__":
-    configure_phoenix()
     main()
