@@ -8,7 +8,7 @@ from pydantic_ai.agent import InstrumentationSettings
 from pydantic_ai.models.instrumented import InstrumentedModel
 
 from prompt import CachingPromptProvider
-from vibebot.server import run_server
+from server import run_server
 
 
 def _configure_phoenix():
