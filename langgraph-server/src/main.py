@@ -6,15 +6,11 @@ from pydantic import SecretStr
 
 def configure_phoenix():
     from phoenix.otel import register
-    from openinference.instrumentation.openai import OpenAIInstrumentor
 
     # configure the Phoenix tracer
     tracer_provider = register(
         auto_instrument=True,  # Auto-instrument your app based on installed OI dependencies
     )
-
-    # register()
-    # OpenAIInstrumentor().instrument()
 
 
 configure_phoenix()
@@ -40,15 +36,22 @@ def create_model():
     return model
 
 
-def search(query: str):
+def search(query: str) -> str:
     """Call to surf the web."""
     if "sf" in query.lower() or "san francisco" in query.lower():
         return "It's 60 degrees and foggy."
     return "It's 90 degrees and sunny."
 
 
-agent = create_react_agent(create_model(), tools=[search])
-output = agent.invoke(
-    {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
-)
-print(output)
+agent_graph = create_react_agent(create_model(), tools=[search])
+
+print(agent_graph.get_graph().draw_mermaid())
+
+# inputs = {"messages": [{"role": "user", "content": "what is the weather in sf"}]}
+
+# for s in agent_graph.stream(inputs, stream_mode="values"):
+#     message = s["messages"][-1]
+#     if isinstance(message, tuple):
+#         print(message)
+#     else:
+#         message.pretty_print()
