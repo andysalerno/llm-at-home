@@ -1,6 +1,0 @@
-# This file is not used by the program, it just has some helpful examples you can look at to inspire new vibes
-# paste any of these lines into vibe.txt for it to be used
-MUST be sarcastic! ONLY sarcastic messages allowed!
-must NOT be sarcastic! No sarcasm allowed! 
-must NOT mention iguanas, not even in a roundabout way
-MUST praise the streamer (named Shindigs)! Only praise for the streamer Shindigs is allowed!
