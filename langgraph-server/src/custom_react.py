@@ -6,10 +6,11 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.graph.state import CompiledStateGraph
+from langchain_core.messages import BaseMessage
 
 
 class ChatState(TypedDict):
-    messages: Annotated[list, add_messages]
+    messages: Annotated[list[BaseMessage], add_messages]
 
 
 def create_simple_chat_agent(model: BaseChatModel) -> CompiledStateGraph:
@@ -54,6 +55,6 @@ def maybe_route_tool(state: ChatState):
         ai_message = messages[-1]
     else:
         raise ValueError(f"No messages found in input state to tool_edge: {state}")
-    if hasattr(ai_message, "tool_calls") and len(ai_message.tool_calls) > 0:
+    if hasattr(ai_message, "tool_calls") and len(ai_message.tool_calls) > 0:  # type: ignore
         return "handle_tools"
     return END

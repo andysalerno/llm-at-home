@@ -1,8 +1,15 @@
 import os
+import json
+import asyncio
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from langgraph.graph.state import CompiledStateGraph
+from langchain_core.messages import BaseMessage, ChatMessage
+from duckduckgo_search import DDGS
+
+# from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
+from pydantic_ai.common_tools.duckduckgo import DuckDuckGoSearchTool
 
 from custom_react import ChatState, create_custom_react_agent, create_simple_chat_agent
 
@@ -60,15 +67,33 @@ def _run_chat_loop(graph: CompiledStateGraph):
             print("Goodbye!")
             break
 
-        user_message = {"role": "user", "content": user_input}
+        # user_message = {"role": "user", "content": user_input}
 
-        conversation_history["messages"].append(user_message)
+        conversation_history["messages"].append(
+            # BaseMessage(content=user_input, role="user")
+            ChatMessage(content=user_input, role="user")
+        )
 
         for event in graph.stream(conversation_history):
             for value in event.values():
                 assistant_message = value["messages"][-1]
+                assert isinstance(assistant_message, BaseMessage), (
+                    f"Expected BaseMessage but got {type(assistant_message)}"
+                )
                 conversation_history["messages"].append(assistant_message)
-                print("Assistant:", value["messages"][-1])
+                print("Message:", assistant_message.content)
+
+
+def search_web(query: str) -> str:
+    """
+    Searches the web using Google and returns the results.
+
+    Args:
+        query: The google query.
+    """
+    tool = DuckDuckGoSearchTool(DDGS())
+    results = asyncio.run(tool(query))
+    return json.dumps(results)
 
 
 def main():
@@ -76,7 +101,7 @@ def main():
 
     # agent_graph = create_react_agent(create_model(), tools=[get_weather])
     agent_graph = create_custom_react_agent(
-        create_model(), tools=[get_weather, tallest_building_faq]
+        create_model(), tools=[get_weather, tallest_building_faq, search_web]
     )
     # agent_graph = create_simple_chat_agent(create_model())
 
