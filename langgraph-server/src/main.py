@@ -1,7 +1,6 @@
 import os
 import json
 import asyncio
-from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from langgraph.graph.state import CompiledStateGraph
@@ -10,6 +9,8 @@ from duckduckgo_search import DDGS
 
 # from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
 from pydantic_ai.common_tools.duckduckgo import DuckDuckGoSearchTool
+from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
+from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 
 from custom_react import ChatState, create_custom_react_agent, create_simple_chat_agent
 
@@ -81,12 +82,13 @@ def _run_chat_loop(graph: CompiledStateGraph):
                     f"Expected BaseMessage but got {type(assistant_message)}"
                 )
                 conversation_history["messages"].append(assistant_message)
-                print("Message:", assistant_message.content)
+                assistant_message.pretty_print()
+                # print("Message:", assistant_message.content)
 
 
-def search_web(query: str) -> str:
+def get_google_search_results(query: str) -> str:
     """
-    Searches the web using Google and returns the results.
+    Searches the web using Google and returns the top results. Results include a brief summary and the link.
 
     Args:
         query: The google query.
@@ -101,9 +103,12 @@ def main():
 
     # agent_graph = create_react_agent(create_model(), tools=[get_weather])
     agent_graph = create_custom_react_agent(
-        create_model(), tools=[get_weather, tallest_building_faq, search_web]
+        create_model(),
+        tools=[
+            get_google_search_results,
+            WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper()),  # type: ignore
+        ],
     )
-    # agent_graph = create_simple_chat_agent(create_model())
 
     print(agent_graph.get_graph().draw_mermaid())
 

@@ -16,7 +16,7 @@ run-agents-local:
   uv --directory ./agents-server-local run main.py
 
 run-pydantic:
-  uv --directory ./pydantic-server run --env-file .env main.py
+  uv --directory ./pydantic-server run --env-file .env src/main.py
 
 run-langgraph:
   uv --directory ./langgraph-server run --env-file .env src/main.py
