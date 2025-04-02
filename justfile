@@ -20,3 +20,7 @@ run-pydantic:
 
 run-langgraph:
   uv --directory ./langgraph-server run --env-file .env src/main.py
+
+[working-directory: 'sandboxed-code-execution']
+run-code-sandbox:
+  docker run -p 8003:8003 -e PORT=8003 python-sandbox 
