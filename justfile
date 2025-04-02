@@ -23,4 +23,4 @@ run-langgraph:
 
 [working-directory: 'sandboxed-code-execution']
 run-code-sandbox:
-  docker run -p 8003:8003 -e PORT=8003 python-sandbox 
+  docker run --rm -p 8003:8003 -e PORT=8003 python-sandbox 
