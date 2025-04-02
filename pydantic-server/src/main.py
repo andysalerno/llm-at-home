@@ -8,6 +8,7 @@ import datetime
 from code_execution_tool import create_code_execution_tool
 from model import create_model, get_instrumentation_settings
 from wiki_tool import create_wiki_tool
+import asyncio
 
 
 def _configure_phoenix():
@@ -18,7 +19,7 @@ def _configure_phoenix():
     OpenAIInstrumentor().instrument()
 
 
-def main():
+async def main():
     _configure_phoenix()
 
     instrumentation_settings = get_instrumentation_settings()
@@ -52,12 +53,17 @@ def main():
     aggregate_usage = None
 
     while True:
-        user_input = input("You: ")
+        try:
+            user_input = input("You: ")
+        except KeyboardInterrupt:
+            print("\nExiting...")
+            break
+
         if user_input.lower() in ["/exit", "/quit"]:
             break
 
         # Run the agent with the user input
-        response = agent.run_sync(user_input, message_history=message_history)
+        response = await agent.run(user_input, message_history=message_history)
         message_history = response.all_messages()
         print(response.data)
 
@@ -72,6 +78,8 @@ def main():
         print(
             f"============Full Trace============\n{response.new_messages()}\n=================================="
         )
+
+    print(f"Final count: {aggregate_usage}")
 
 
 def _create_prompt(tools: list[Tool], date_str: str) -> str:
@@ -98,4 +106,4 @@ def _create_prompt(tools: list[Tool], date_str: str) -> str:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
