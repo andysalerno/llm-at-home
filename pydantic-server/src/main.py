@@ -5,6 +5,7 @@ from pydantic_ai.common_tools.duckduckgo import duckduckgo_search_tool
 from jinja2 import Template
 import textwrap
 import datetime
+from code_execution_tool import create_code_execution_tool
 from model import create_model, get_instrumentation_settings
 from wiki_tool import create_wiki_tool
 
@@ -26,12 +27,21 @@ def main():
 
     agent = Agent(
         model=create_model(),
-        tools=[duckduckgo_search_tool(), create_wiki_tool()],
+        tools=[
+            duckduckgo_search_tool(),
+            create_wiki_tool(),
+            create_code_execution_tool(),
+        ],
         model_settings=ModelSettings(
             temperature=0.0,
         ),
         system_prompt=_create_prompt(
-            [duckduckgo_search_tool(), create_wiki_tool()], cur_date
+            [
+                duckduckgo_search_tool(),
+                create_wiki_tool(),
+                create_code_execution_tool(),
+            ],
+            cur_date,
         ),
     )
 
