@@ -5,8 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "pydantic-ai>=0.0.46",
-    "pydantic-ai-slim[duckduckgo]>=0.0.46",
+    "pydantic-ai>=0.0.49",
     "arize-phoenix",
     "langchain-community>=0.3.20",
     "opentelemetry-sdk",
@@ -14,4 +13,5 @@ dependencies = [
     "openinference-instrumentation-openai>=0.1.22",
     "jinja2>=3.1.6",
     "wikipedia>=1.4.0",
+    "pydantic-ai-slim[duckduckgo]>=0.0.49",
 ]
