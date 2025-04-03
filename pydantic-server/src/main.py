@@ -107,10 +107,9 @@ def _create_prompt(tools: list[Tool], date_str: str) -> str:
         The current date is: {{ date_str }}.
 
         ## Additional rules
-        - Always prefer to use tools over your own knowledge. Even when you think you know the answer, it is better to use a tool to get the most accurate and up-to-date information, and to discover sources to provide to the user.
-        - If you perform a search, and the search results are not relevant, you should try an entirely different search query, or try a different tool.
+        - Always prefer to use the researcher over your own knowledge. Even when you think you know the answer, it is better to use the researcher tool to get the most accurate and up-to-date information, and to discover sources to provide to the user.
         - If you still cannot find a relevant result, tell the user you do not know.
-        - If you need to do any kind of calculation, prefer the Python code execution tool; Python is better at math than you are! 
+        - If you need to do any kind of calculation, delegate to the researcher; it is better at math than you are! 
         """).strip()
     ).render(tools=tools, date_str=date_str)
 

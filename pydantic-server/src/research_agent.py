@@ -1,16 +1,24 @@
 import textwrap
+import json
 from jinja2 import Template
+from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.tools import Tool
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.common_tools.duckduckgo import duckduckgo_search_tool
 import datetime
+from code_execution_tool import create_code_execution_tool
 from model import create_model
 from state import State
 from wiki_tool import create_wiki_tool
+from pydantic_ai.messages import (
+    ModelMessage,
+    ModelRequest,
+    ToolReturnPart,
+)
 
 
-async def _run_research_agent(task: str, ctx: RunContext[State]) -> str:
+async def run_research_agent(ctx: RunContext[State], task: str) -> str:
     """
     Gives a task to a research agent and returns the final result of the research.
     Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."
@@ -22,36 +30,78 @@ async def _run_research_agent(task: str, ctx: RunContext[State]) -> str:
     """
     agent = create_agent()
 
-    result = await agent.run(task, deps=ctx.deps)
+    system_prompt = _create_prompt_with_default_tools(get_now_str())
+    state: State = ctx.deps.with_system_prompt_replaced(system_prompt)
 
-    return result.data
+    result = await agent.run(task, message_history=state.message_history)
+
+    print(f"new messages:\n{result.new_messages()}\n")
+
+    tool_outputs = _extract_tool_return_parts(result.new_messages())
+
+    return json.dumps(tool_outputs, indent=2)
+
+
+def _extract_tool_return_parts(
+    message_history: list[ModelMessage],
+) -> list[ToolReturnPart]:
+    """
+    Extracts the ToolReturnParts from the message history.
+    """
+    return [
+        part
+        for msg in message_history
+        if isinstance(msg, ModelRequest)
+        for part in msg.parts
+        if isinstance(part, ToolReturnPart)
+    ]
 
 
 def research_agent_tool() -> Tool:
     return Tool(
-        function=_run_research_agent,
+        function=run_research_agent,
         name="perform_research",
+        takes_ctx=True,
     )
 
 
+class ResearchComplete(BaseModel):
+    pass
+
+
 def create_agent():
-    cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    cur_date = get_now_str()
+
+    tools = [
+        duckduckgo_search_tool(),
+        create_wiki_tool(),
+        create_code_execution_tool(),
+    ]
 
     agent = Agent(
         model=create_model(),
-        deps_type=State,
-        tools=[
-            duckduckgo_search_tool(),  # type: ignore
-        ],
+        tools=tools,
+        result_type=ResearchComplete,
+        result_tool_description="Invoke this once you are completed with your research.",
+        result_tool_name="research_complete",
         model_settings=ModelSettings(
             temperature=0.0,
         ),
         system_prompt=_create_prompt(
-            [duckduckgo_search_tool(), create_wiki_tool()], cur_date
+            tools,
+            cur_date,
         ),
     )
 
     return agent
+
+
+def get_now_str() -> str:
+    return datetime.datetime.now().strftime("%Y-%m-%d")
+
+
+def _create_prompt_with_default_tools(date_str: str) -> str:
+    return _create_prompt([duckduckgo_search_tool(), create_wiki_tool()], date_str)
 
 
 def _create_prompt(tools: list[Tool], date_str: str) -> str:
@@ -67,5 +117,16 @@ def _create_prompt(tools: list[Tool], date_str: str) -> str:
                         
         ## Additional context
         The current date is: {{ date_str }}.
+
+        ## Limitations
+        You may invoke multiple tools to gather information for your task.
+        However, you are limited to **3** total tool invocations.
+        After invoking the **3**rd tool, you must then invoke the 'research_complete' tool to indicate that you are done.
+
+        ## Definition of done
+        Your research is complete when you have gathered sufficient information to respond to the task.
+        At that point, invoke the tool 'research_complete' to indicate that you are done. 
+        It is not your responsibility to write a summary or report.
+        Simply invoke 'research_complete' to share your findings.
         """).strip()
     ).render(tools=tools, date_str=date_str)
