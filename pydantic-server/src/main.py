@@ -7,6 +7,8 @@ import textwrap
 import datetime
 from code_execution_tool import create_code_execution_tool
 from model import create_model, get_instrumentation_settings
+from research_agent import research_agent_tool
+from state import State
 from wiki_tool import create_wiki_tool
 import asyncio
 
@@ -28,19 +30,22 @@ async def main():
 
     agent = Agent(
         model=create_model(),
-        tools=[
-            duckduckgo_search_tool(),
-            create_wiki_tool(),
-            create_code_execution_tool(),
+        deps_type=State,
+        tools=[  # type: ignore
+            # duckduckgo_search_tool(),
+            # create_wiki_tool(),
+            # create_code_execution_tool(),
+            research_agent_tool(),  # type: ignore
         ],
         model_settings=ModelSettings(
             temperature=0.0,
         ),
         system_prompt=_create_prompt(
             [
-                duckduckgo_search_tool(),
-                create_wiki_tool(),
-                create_code_execution_tool(),
+                research_agent_tool(),
+                # duckduckgo_search_tool(),
+                # create_wiki_tool(),
+                # create_code_execution_tool(),
             ],
             cur_date,
         ),
@@ -51,6 +56,8 @@ async def main():
     message_history = None
 
     aggregate_usage = None
+
+    state = State()
 
     while True:
         try:
@@ -63,8 +70,11 @@ async def main():
             break
 
         # Run the agent with the user input
-        response = await agent.run(user_input, message_history=message_history)
+        response = await agent.run(
+            user_input, message_history=message_history, deps=state
+        )
         message_history = response.all_messages()
+        state.message_history = message_history
         print(response.data)
 
         if aggregate_usage is None:
