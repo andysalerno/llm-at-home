@@ -9,6 +9,7 @@ def create_code_execution_tool(
         name="execute_python_code",
         description="Executes Python code and returns the result from stdout. Multiple lines are allowed, including complex scripting. IMPORTANT: you ONLY see the results from stdout, so you MUST print() the result you want to see.",
         function=CodeExecutionTool(host, port).__call__,
+        takes_ctx=False,
     )
 
 

@@ -1,5 +1,6 @@
 import textwrap
 import json
+from typing import Any
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
@@ -8,6 +9,7 @@ from pydantic_ai.settings import ModelSettings
 from pydantic_ai.common_tools.duckduckgo import duckduckgo_search_tool
 import datetime
 from code_execution_tool import create_code_execution_tool
+from google_search_tool import create_google_search_tool
 from model import create_model
 from state import State
 from wiki_tool import create_wiki_tool
@@ -44,12 +46,12 @@ async def run_research_agent(ctx: RunContext[State], task: str) -> str:
 
 def _extract_tool_return_parts(
     message_history: list[ModelMessage],
-) -> list[ToolReturnPart]:
+) -> list[dict[str, str]]:
     """
     Extracts the ToolReturnParts from the message history.
     """
     return [
-        part
+        {"tool_name": part.tool_name, "result": part.content}
         for msg in message_history
         if isinstance(msg, ModelRequest)
         for part in msg.parts
@@ -73,7 +75,7 @@ def create_agent():
     cur_date = get_now_str()
 
     tools = [
-        duckduckgo_search_tool(),
+        get_search_tool(),
         create_wiki_tool(),
         create_code_execution_tool(),
     ]
@@ -100,11 +102,16 @@ def get_now_str() -> str:
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
 
+def get_search_tool() -> Tool[None]:
+    # return duckduckgo_search_tool()  # type: ignore
+    return create_google_search_tool()
+
+
 def _create_prompt_with_default_tools(date_str: str) -> str:
-    return _create_prompt([duckduckgo_search_tool(), create_wiki_tool()], date_str)
+    return _create_prompt([get_search_tool(), create_wiki_tool()], date_str)
 
 
-def _create_prompt(tools: list[Tool], date_str: str) -> str:
+def _create_prompt(tools: list[Tool[Any]], date_str: str) -> str:
     return Template(
         textwrap.dedent("""\
         You are a helpful assistant. Help the user as best you can.
