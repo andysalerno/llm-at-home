@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.tools import Tool
 from pydantic_ai.settings import ModelSettings
-from pydantic_ai.common_tools.duckduckgo import duckduckgo_search_tool
 import datetime
 from code_execution_tool import create_code_execution_tool
 from google_search_tool import create_google_search_tool
@@ -20,20 +19,16 @@ from pydantic_ai.messages import (
     ToolReturnPart,
 )
 
-# web loaders to try:
-# https://github.com/Unstructured-IO/unstructured
-from langchain_community.document_loaders.html_bs import BSHTMLLoader
-from langchain_community.document_loaders import (
-    AsyncChromiumLoader,
-    AsyncHtmlLoader,
-)
-from langchain_community.document_transformers import (
-    BeautifulSoupTransformer,
-    MarkdownifyTransformer,
-)
+
+def research_agent_tool() -> Tool:
+    return Tool(
+        function=_run_research_agent,
+        name="perform_research",
+        takes_ctx=True,
+    )
 
 
-async def run_research_agent(ctx: RunContext[State], task: str) -> str:
+async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
     """
     Gives a task to a research agent and returns the final result of the research.
     Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."
@@ -43,9 +38,9 @@ async def run_research_agent(ctx: RunContext[State], task: str) -> str:
     Args:
         task: The task to be performed by the research agent.
     """
-    agent = create_agent()
+    agent = _create_agent()
 
-    system_prompt = _create_prompt_with_default_tools(get_now_str())
+    system_prompt = _create_prompt_with_default_tools(_get_now_str())
     state: State = ctx.deps.with_system_prompt_replaced(system_prompt)
 
     result = await agent.run(task, message_history=state.message_history)
@@ -72,20 +67,12 @@ def _extract_tool_return_parts(
     ]
 
 
-def research_agent_tool() -> Tool:
-    return Tool(
-        function=run_research_agent,
-        name="perform_research",
-        takes_ctx=True,
-    )
-
-
 class ResearchComplete(BaseModel):
     pass
 
 
-def create_agent():
-    cur_date = get_now_str()
+def _create_agent():
+    cur_date = _get_now_str()
 
     tools = _create_base_tools()
 
@@ -107,11 +94,11 @@ def create_agent():
     return agent
 
 
-def get_now_str() -> str:
+def _get_now_str() -> str:
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
 
-def get_search_tool() -> Tool[None]:
+def _get_search_tool() -> Tool[None]:
     # return duckduckgo_search_tool()  # type: ignore
     return create_google_search_tool()
 
@@ -119,7 +106,7 @@ def get_search_tool() -> Tool[None]:
 def _create_base_tools() -> list[Tool[Any]]:
     scraper_tool = create_visit_site_tool("http://localhost:3000")
     return [
-        get_search_tool(),
+        _get_search_tool(),
         create_wiki_tool(),
         create_code_execution_tool(),
         scraper_tool,
