@@ -12,11 +12,24 @@ from code_execution_tool import create_code_execution_tool
 from google_search_tool import create_google_search_tool
 from model import create_model
 from state import State
+from visit_url_tool import create_visit_site_tool
 from wiki_tool import create_wiki_tool
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
     ToolReturnPart,
+)
+
+# web loaders to try:
+# https://github.com/Unstructured-IO/unstructured
+from langchain_community.document_loaders.html_bs import BSHTMLLoader
+from langchain_community.document_loaders import (
+    AsyncChromiumLoader,
+    AsyncHtmlLoader,
+)
+from langchain_community.document_transformers import (
+    BeautifulSoupTransformer,
+    MarkdownifyTransformer,
 )
 
 
@@ -74,11 +87,7 @@ class ResearchComplete(BaseModel):
 def create_agent():
     cur_date = get_now_str()
 
-    tools = [
-        get_search_tool(),
-        create_wiki_tool(),
-        create_code_execution_tool(),
-    ]
+    tools = _create_base_tools()
 
     agent = Agent(
         model=create_model(),
@@ -107,8 +116,18 @@ def get_search_tool() -> Tool[None]:
     return create_google_search_tool()
 
 
+def _create_base_tools() -> list[Tool[Any]]:
+    scraper_tool = create_visit_site_tool("http://localhost:3000")
+    return [
+        get_search_tool(),
+        create_wiki_tool(),
+        create_code_execution_tool(),
+        scraper_tool,
+    ]
+
+
 def _create_prompt_with_default_tools(date_str: str) -> str:
-    return _create_prompt([get_search_tool(), create_wiki_tool()], date_str)
+    return _create_prompt(_create_base_tools(), date_str)
 
 
 def _create_prompt(tools: list[Tool[Any]], date_str: str) -> str:
