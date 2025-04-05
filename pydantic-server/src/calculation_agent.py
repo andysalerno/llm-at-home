@@ -27,10 +27,10 @@ def calculation_agent_tool() -> Tool:
 
 async def _run_calculation_agent(ctx: RunContext[State], task: str) -> str:
     """
-    Gives a task to a research agent and returns the final result of the research.
-    Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."
+    Gives a task to a calculation agent and returns the final result of its calculations.
+    Tasks are in natural language and can be anything from "What is the square root of 209428" to "what is the 100th Fibonacci number?"
     Tasks can be simple or complex.
-    The research agent will return a report with the results of the research.
+    The calculation agent will return a report with the results of the calculations, including its work.
 
     Args:
         task: The task to be performed by the calculation agent.
