@@ -1,0 +1,14 @@
+services:
+  chromadb:
+    image: chromadb/chroma
+    volumes:
+      - chroma_data:/data
+    ports:
+      - "8000:8000"
+  scrapper:
+    image: amerkurev/scrapper:latest
+    ports:
+      - "3000:3000"
+
+volumes:
+    chroma_data:
