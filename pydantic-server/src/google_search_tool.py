@@ -1,10 +1,21 @@
 import json
+from typing import Optional
 from langchain_google_community import GoogleSearchAPIWrapper
 from pydantic_ai import Tool
 
 
-def create_google_search_tool(top_n: int = 8) -> Tool[None]:
+def create_google_search_tool(
+    top_n: int = 8,
+    description: Optional[str] = None,
+    name: Optional[str] = None,
+) -> Tool[None]:
     search_wrapper = GoogleSearchAPIWrapper()
+
+    name = name or "google_search"
+    description = description or (
+        "Search Google for the given query. Returns the search results (including snippet and url) in JSON format. "
+        "Useful for looking up current events."
+    )
 
     def search(query: str) -> str:
         """
@@ -15,8 +26,8 @@ def create_google_search_tool(top_n: int = 8) -> Tool[None]:
         return json.dumps(results)
 
     tool = Tool(
-        name="google_search",
-        description="Search Google for the given query. Returns the search results (including snippet and url) in JSON format. Useful for looking up current events.",
+        name=name,
+        description=description,
         function=search,
         takes_ctx=False,
     )

@@ -1,13 +1,24 @@
 from dataclasses import dataclass
+from typing import Optional
 from pydantic_ai import ModelRetry, Tool
 
 
 def create_code_execution_tool(
-    host: str = "http://localhost", port: int = 8003
+    host: str = "http://localhost",
+    port: int = 8003,
+    description: Optional[str] = None,
+    name: Optional[str] = None,
 ) -> Tool:
+
+    name = name or "execute_python_code"
+    description = description or (
+        "Executes Python code and returns the result from stdout. "
+        "Multiple lines are allowed, including complex scripting. "
+        "IMPORTANT: you ONLY see the results from stdout, so you MUST print() the result you want to see."
+    )
     return Tool(
-        name="execute_python_code",
-        description="Executes Python code and returns the result from stdout. Multiple lines are allowed, including complex scripting. IMPORTANT: you ONLY see the results from stdout, so you MUST print() the result you want to see.",
+        name=name,
+        description=description,
         function=CodeExecutionTool(host, port).__call__,
         takes_ctx=False,
     )

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import ModelRetry, Tool
 import urllib.parse
@@ -6,9 +7,18 @@ import httpx
 
 
 def create_visit_site_tool(
-    scrapper_endpoint: str, max_response_len: int = 8000
+    scrapper_endpoint: str,
+    max_response_len: int = 8000,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
 ) -> Tool[None]:
     client = ScrapperClient(scrapper_endpoint)
+
+    name = name or "visit_site"
+    description = description or (
+        "Visits (scrapes) the given URL and returns the text content of the page. "
+        "Useful for looking up current events, or visiting urls you found in your research."
+    )
 
     async def scrape(url: str) -> str:
         """
@@ -19,8 +29,8 @@ def create_visit_site_tool(
         return response.text_content[:max_response_len]
 
     tool = Tool(
-        name="visit_site",
-        description="Visits (scrapes) the given URL and returns the text content of the page.",
+        name=name,
+        description=description,
         function=scrape,
         takes_ctx=False,
     )
@@ -55,8 +65,6 @@ class ScrapperClient:
                     "scrapper returned an error, try fixing your request and retrying"
                 )
 
-            # parse as ScrapperResponse and return:
-            print(f"saw json: {response.text}")
             scrapper_response = ScrapperResponse.model_validate_json(response.text)
             return scrapper_response
 
