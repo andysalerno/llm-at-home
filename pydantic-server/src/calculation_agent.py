@@ -1,4 +1,5 @@
 import textwrap
+import datetime
 import json
 from typing import Any
 from jinja2 import Template
@@ -6,13 +7,9 @@ from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.tools import Tool
 from pydantic_ai.settings import ModelSettings
-import datetime
 from code_execution_tool import create_code_execution_tool
-from google_search_tool import create_google_search_tool
 from model import create_model
 from state import State
-from visit_url_tool import create_visit_site_tool
-from wiki_tool import create_wiki_tool
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -20,15 +17,15 @@ from pydantic_ai.messages import (
 )
 
 
-def research_agent_tool() -> Tool:
+def calculation_agent_tool() -> Tool:
     return Tool(
-        function=_run_research_agent,
-        name="perform_research",
+        function=_run_calculation_agent,
+        name="perform_calculations",
         takes_ctx=True,
     )
 
 
-async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
+async def _run_calculation_agent(ctx: RunContext[State], task: str) -> str:
     """
     Gives a task to a research agent and returns the final result of the research.
     Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."
@@ -36,7 +33,7 @@ async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
     The research agent will return a report with the results of the research.
 
     Args:
-        task: The task to be performed by the research agent.
+        task: The task to be performed by the calculation agent.
     """
     agent = _create_agent()
 
@@ -65,7 +62,7 @@ def _extract_tool_return_parts(
     ]
 
 
-class ResearchComplete(BaseModel):
+class CalculationsComplete(BaseModel):
     pass
 
 
@@ -77,9 +74,9 @@ def _create_agent():
     agent = Agent(
         model=create_model(),
         tools=tools,
-        result_type=ResearchComplete,
-        result_tool_description="Invoke this once you are completed with your research.",
-        result_tool_name="research_complete",
+        result_type=CalculationsComplete,
+        result_tool_description="Invoke this once you are completed with your calculations.",
+        result_tool_name="calculations_complete",
         model_settings=ModelSettings(
             temperature=0.0,
         ),
@@ -96,18 +93,9 @@ def _get_now_str() -> str:
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
 
-def _get_search_tool() -> Tool[None]:
-    # return duckduckgo_search_tool()  # type: ignore
-    return create_google_search_tool()
-
-
 def _create_base_tools() -> list[Tool[Any]]:
-    scraper_tool = create_visit_site_tool("http://localhost:3000")
     return [
-        _get_search_tool(),
-        create_wiki_tool(),
         create_code_execution_tool(),
-        scraper_tool,
     ]
 
 
