@@ -24,3 +24,6 @@ run-langgraph:
 [working-directory: 'sandboxed-code-execution']
 run-code-sandbox:
   docker run --rm -p 8003:8003 -e PORT=8003 python-sandbox 
+
+run-web-scraper:
+  docker run --rm -p 3000:3000 amerkurev/scrapper:latest

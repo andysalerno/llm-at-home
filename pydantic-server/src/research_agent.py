@@ -117,10 +117,12 @@ def _create_prompt_with_default_tools(date_str: str) -> str:
     return _create_prompt(_create_base_tools(), date_str)
 
 
-def _create_prompt(tools: list[Tool[Any]], date_str: str) -> str:
+def _create_prompt(
+    tools: list[Tool[Any]], date_str: str, max_tool_calls: int = 4
+) -> str:
     return Template(
         textwrap.dedent("""\
-        You are a helpful assistant. Help the user as best you can.
+        You are a research assistant. Perform research to accomplish the given task.
 
         Since your internal knowledge is limited, you may invoke the following tools to get more information (including up-to-date information):
         {%- for tool in tools %}
@@ -133,8 +135,8 @@ def _create_prompt(tools: list[Tool[Any]], date_str: str) -> str:
 
         ## Limitations
         You may invoke multiple tools to gather information for your task.
-        However, you are limited to **3** total tool invocations.
-        After invoking the **3**rd tool, you must then invoke the 'research_complete' tool to indicate that you are done.
+        However, you are limited to at most **{{ max_tool_calls }}** total tool invocations.
+        After invoking **{{ max_tool_calls }}** tools, you must then invoke the 'research_complete' tool to indicate that you are done.
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
@@ -142,4 +144,4 @@ def _create_prompt(tools: list[Tool[Any]], date_str: str) -> str:
         It is not your responsibility to write a summary or report.
         Simply invoke 'research_complete' to share your findings.
         """).strip()
-    ).render(tools=tools, date_str=date_str)
+    ).render(tools=tools, date_str=date_str, max_tool_calls=max_tool_calls)
