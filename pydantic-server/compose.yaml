@@ -9,6 +9,13 @@ services:
     image: amerkurev/scrapper:latest
     ports:
       - "3000:3000"
+  sandboxed-code-execution:
+    image: localhost/sandboxed-code-execution:latest
+    build: ../sandboxed-code-execution
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
 
 volumes:
     chroma_data:
