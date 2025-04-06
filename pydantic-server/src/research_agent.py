@@ -16,7 +16,9 @@ from wiki_tool import create_wiki_tool
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
+    ModelResponse,
     ToolReturnPart,
+    ToolCallPart,
 )
 
 
@@ -45,6 +47,8 @@ async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
 
     result = await agent.run(task, message_history=state.message_history)
 
+    print(result.new_messages())
+
     tool_outputs = _extract_tool_return_parts(result.new_messages())
 
     return json.dumps(tool_outputs, indent=2)
@@ -56,7 +60,7 @@ def _extract_tool_return_parts(
     """
     Extracts the ToolReturnParts from the message history.
     """
-    return [
+    outputs = [
         {"tool_name": part.tool_name, "result": part.content}
         for msg in message_history
         if isinstance(msg, ModelRequest)
@@ -64,9 +68,28 @@ def _extract_tool_return_parts(
         if isinstance(part, ToolReturnPart)
     ]
 
+    # find the handoff_message, which is actually an arg on ToolCallPart, not a ToolReturnPart
+    handoff_message = [
+        {
+            "tool_name": part.tool_name,
+            "result": part.args_as_dict().get("handoff_message"),
+        }
+        for msg in message_history
+        if isinstance(msg, ModelResponse)
+        for part in msg.parts
+        if isinstance(part, ToolCallPart)
+    ]
+
+    # get last instance of handoff_message, if it exists:
+    if handoff_message:
+        handoff_message = handoff_message[-1]
+        outputs.append(handoff_message)
+
+    return outputs
+
 
 class ResearchComplete(BaseModel):
-    pass
+    handoff_message: str
 
 
 def _create_agent():
@@ -78,7 +101,7 @@ def _create_agent():
         model=create_model(),
         tools=tools,
         result_type=ResearchComplete,
-        result_tool_description="Invoke this once you are completed with your research.",
+        result_tool_description="Invoke this once you are completed with your research. Include a brief handoff message (~1 sentence) that explains what you found and how confident you are that your research uncovered a complete answer.",
         result_tool_name="research_complete",
         model_settings=ModelSettings(
             temperature=0.0,

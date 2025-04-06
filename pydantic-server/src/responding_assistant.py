@@ -1,4 +1,5 @@
 import textwrap
+from typing import Any
 from jinja2 import Template
 from pydantic_ai import Agent, Tool
 from pydantic_ai.settings import ModelSettings
@@ -8,23 +9,23 @@ from research_agent import research_agent_tool
 from state import State
 
 
-def create_responding_assistant():
+def create_responding_assistant(
+    temperature: float = 0.2, extra_tools: list[Tool[Any]] = []
+) -> Agent:
     instrumentation_settings = get_instrumentation_settings()
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    tools = [research_agent_tool(), *extra_tools]
 
     agent = Agent(
         model=create_model(),
         deps_type=State,
-        tools=[  # type: ignore
-            research_agent_tool(),  # type: ignore
-        ],
+        tools=tools,
         model_settings=ModelSettings(
-            temperature=0.2,
+            temperature=temperature,
         ),
         system_prompt=_create_prompt(
-            [
-                research_agent_tool(),
-            ],
+            tools,
             cur_date,
         ),
     )
