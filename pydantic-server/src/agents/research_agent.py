@@ -101,7 +101,7 @@ def _create_agent():
         model=create_model(),
         tools=tools,
         result_type=ResearchComplete,
-        result_tool_description="Invoke this once you are completed with your research. Include a brief handoff message (~1 sentence) that explains what you found and how confident you are that your research uncovered a complete answer.",
+        result_tool_description="Invoke this once you are completed with your research. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer. (You do not need to provide the answer itself; all the documents you found will be returned to the user for you.)",
         result_tool_name="research_complete",
         model_settings=ModelSettings(
             temperature=0.0,
