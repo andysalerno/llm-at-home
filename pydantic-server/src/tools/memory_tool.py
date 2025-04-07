@@ -1,24 +1,8 @@
 from dataclasses import dataclass
-import textwrap
-import datetime
-import json
-from typing import Any, Optional
+from typing import Optional
 import chromadb
 from chromadb import Collection
-from jinja2 import Template
-from pydantic import BaseModel
-from pydantic_ai import Agent, RunContext
 from pydantic_ai.tools import Tool
-from pydantic_ai.settings import ModelSettings
-from tools.code_execution_tool import create_code_execution_tool
-from model import create_model
-from state import State
-from pydantic_ai.messages import (
-    ModelMessage,
-    ModelRequest,
-    ToolReturnPart,
-)
-from chromadbx import UUIDGenerator
 import logging
 import uuid
 
