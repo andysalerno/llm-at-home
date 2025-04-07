@@ -3,6 +3,7 @@ import textwrap
 import datetime
 import json
 from typing import Any, Optional
+import chromadb
 from chromadb import Collection
 from jinja2 import Template
 from pydantic import BaseModel
@@ -19,6 +20,7 @@ from pydantic_ai.messages import (
 )
 from chromadbx import UUIDGenerator
 import logging
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,9 @@ class MemoryClient:
             memory_fragment: The memory fragment to store.
         """
         logger.info(f"Storing memory fragment: {memory_fragment}")
-        self.collection.add(documents=[memory_fragment], ids=UUIDGenerator(ids_len=1))
+        self.collection.add(documents=memory_fragment, ids=str(uuid.uuid4()))
+
+        return "(memory stored)"
 
     async def search_memory(self, keywords: str) -> list[str]:
         """
@@ -54,6 +58,7 @@ def store_memory_tool(description: Optional[str] = None) -> Tool:
     description = description or (
         "Stores a simple (1-2 sentence) memory about the user."
         " For instance, 'user likes pineapple on pizza' or 'user is a software engineer', 'user's name is John Doe'."
+        " Invoke this tool when you want to remember something about the user; memories can be used in future conversations."
     )
 
     client = chromadb.HttpClient(host="localhost", port=8000)

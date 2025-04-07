@@ -22,6 +22,7 @@ from pydantic_ai.messages import (
 )
 
 
+# TODO: add a flag to force the agent to remove existing tool calls and outputs before running
 def research_agent_tool() -> Tool:
     return Tool(
         function=_run_research_agent,
