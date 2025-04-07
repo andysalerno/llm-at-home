@@ -1,10 +1,10 @@
+import logging
+import uuid
 from dataclasses import dataclass
-from typing import Optional
+
 import chromadb
 from chromadb import Collection
 from pydantic_ai.tools import Tool
-import logging
-import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class MemoryClient:
         Args:
             memory_fragment: The memory fragment to store.
         """
-        logger.info(f"Storing memory fragment: {memory_fragment}")
+        logger.info("Storing memory fragment: %s", {memory_fragment})
         self.collection.add(documents=memory_fragment, ids=str(uuid.uuid4()))
 
         return "(memory stored)"
@@ -38,7 +38,7 @@ class MemoryClient:
         pass
 
 
-def store_memory_tool(description: Optional[str] = None) -> Tool:
+def store_memory_tool(description: str | None = None) -> Tool:
     description = description or (
         "Stores a simple (1-2 sentence) memory about the user."
         " For instance, 'user likes pineapple on pizza' or 'user is a software engineer', 'user's name is John Doe'."
@@ -83,4 +83,4 @@ if __name__ == "__main__":
     )
 
     result = collection.query(query_texts="citrus")
-    print(result)
+    logger.info(result)

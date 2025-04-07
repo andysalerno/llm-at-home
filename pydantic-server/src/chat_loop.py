@@ -1,12 +1,14 @@
-from typing import Any
-from pydantic_ai import Agent
-from state import State
 import logging
+from typing import Any
+
+from pydantic_ai import Agent
+
+from state import State
 
 logger = logging.getLogger(__name__)
 
 
-async def run_loop(agent: Agent[Any], starting_state: State):
+async def run_loop(agent: Agent[Any], starting_state: State) -> None:
     state = starting_state
     message_history = None
     aggregate_usage = None
@@ -15,7 +17,7 @@ async def run_loop(agent: Agent[Any], starting_state: State):
         try:
             user_input = input("You: ")
         except KeyboardInterrupt:
-            print("\nExiting...")
+            logger.info("\nExiting...")
             break
 
         if user_input.lower() in ["/exit", "/quit"]:
@@ -23,7 +25,9 @@ async def run_loop(agent: Agent[Any], starting_state: State):
 
         # Run the agent with the user input
         response = await agent.run(
-            user_input, message_history=message_history, deps=state
+            user_input,
+            message_history=message_history,
+            deps=state,
         )
         message_history = response.all_messages()
         state.message_history = message_history
@@ -35,6 +39,6 @@ async def run_loop(agent: Agent[Any], starting_state: State):
             aggregate_usage.incr(response.usage())
 
         logger.info(response.usage())
-        logger.info(f"Combined: {aggregate_usage}")
+        logger.info("Combined: %s", {aggregate_usage})
 
-    logger.info(f"Final count: {aggregate_usage}")
+    logger.info("Final count: %s", {aggregate_usage})

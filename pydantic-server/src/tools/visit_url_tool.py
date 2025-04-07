@@ -1,10 +1,10 @@
+import logging
+import urllib.parse
 from dataclasses import dataclass
-from typing import Optional
+
+import httpx
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import ModelRetry, Tool
-import urllib.parse
-import httpx
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 def create_visit_site_tool(
     scrapper_endpoint: str,
     max_response_len: int = 8000,
-    name: Optional[str] = None,
-    description: Optional[str] = None,
+    name: str | None = None,
+    description: str | None = None,
 ) -> Tool[None]:
     client = ScrapperClient(scrapper_endpoint)
 
@@ -31,14 +31,12 @@ def create_visit_site_tool(
         response = await client.scrape(url)
         return response.text_content[:max_response_len]
 
-    tool = Tool(
+    return Tool(
         name=name,
         description=description,
         function=scrape,
         takes_ctx=False,
     )
-
-    return tool
 
 
 class ScrapperResponse(BaseModel):
@@ -54,26 +52,24 @@ class ScrapperResponse(BaseModel):
 class ScrapperClient:
     """
     A client for Scrapper:
-    https://github.com/amerkurev/scrapper
+    https://github.com/amerkurev/scrapper.
     """
 
     scrapper_endpoint: str
 
     async def scrape(self, url: str) -> ScrapperResponse:
-        logger.info(f"Visiting url: {url}")
+        logger.info("Visiting url: %s", {url})
         api_uri = self._create_api_uri(url)
         async with httpx.AsyncClient() as client:
             response = await client.get(api_uri)
             if response.is_error:
                 raise ModelRetry(
-                    "scrapper returned an error, try fixing your request and retrying"
+                    "scrapper returned an error, try fixing your request and retrying",
                 )
 
-            scrapper_response = ScrapperResponse.model_validate_json(response.text)
-            return scrapper_response
+            return ScrapperResponse.model_validate_json(response.text)
 
     def _create_api_uri(self, url: str) -> str:
         scrapper_endpoint = self.scrapper_endpoint.rstrip("/")
         encoded_url = urllib.parse.quote(url, safe="")
-        uri = f"{scrapper_endpoint}/api/article?url={encoded_url}"
-        return uri
+        return f"{scrapper_endpoint}/api/article?url={encoded_url}"

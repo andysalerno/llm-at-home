@@ -1,28 +1,34 @@
-import textwrap
+import datetime
 import json
+import logging
+import textwrap
 from typing import Any
+
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.tools import Tool
-from pydantic_ai.settings import ModelSettings
-import datetime
-from tools.code_execution_tool import create_code_execution_tool
-from tools.google_search_tool import create_google_search_tool
-from model import create_model
-from state import State
-from tools.visit_url_tool import create_visit_site_tool
-from tools.wiki_tool import create_wiki_tool
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
     ModelResponse,
-    ToolReturnPart,
     ToolCallPart,
+    ToolReturnPart,
 )
+from pydantic_ai.settings import ModelSettings
+from pydantic_ai.tools import Tool
+
+from model import create_model
+from state import State
+from tools.code_execution_tool import create_code_execution_tool
+from tools.google_search_tool import create_google_search_tool
+from tools.visit_url_tool import create_visit_site_tool
+from tools.wiki_tool import create_wiki_tool
+
+logger = logging.getLogger(__name__)
 
 
-# TODO: add a flag to force the agent to remove existing tool calls and outputs before running
+# TODO: add a flag to force the agent to remove
+# existing tool calls and outputs before running
 def research_agent_tool() -> Tool:
     return Tool(
         function=_run_research_agent,
@@ -48,7 +54,7 @@ async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
 
     result = await agent.run(task, message_history=state.message_history)
 
-    print(result.new_messages())
+    logger.info(result.new_messages())
 
     tool_outputs = _extract_tool_return_parts(result.new_messages())
 
@@ -58,9 +64,7 @@ async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
 def _extract_tool_return_parts(
     message_history: list[ModelMessage],
 ) -> list[dict[str, str]]:
-    """
-    Extracts the ToolReturnParts from the message history.
-    """
+    """Extracts the ToolReturnParts from the message history."""
     outputs = [
         {"tool_name": part.tool_name, "result": part.content}
         for msg in message_history
@@ -93,12 +97,12 @@ class ResearchComplete(BaseModel):
     handoff_message: str
 
 
-def _create_agent():
+def _create_agent() -> Agent[None, str]:
     cur_date = _get_now_str()
 
     tools = _create_base_tools()
 
-    agent = Agent(
+    return Agent(
         model=create_model(),
         tools=tools,
         result_type=ResearchComplete,
@@ -113,15 +117,12 @@ def _create_agent():
         ),
     )
 
-    return agent
-
 
 def _get_now_str() -> str:
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
 
 def _get_search_tool() -> Tool[None]:
-    # return duckduckgo_search_tool()  # type: ignore
     return create_google_search_tool()
 
 
@@ -140,7 +141,9 @@ def _create_prompt_with_default_tools(date_str: str) -> str:
 
 
 def _create_prompt(
-    tools: list[Tool[Any]], date_str: str, max_tool_calls: int = 4
+    tools: list[Tool[Any]],
+    date_str: str,
+    max_tool_calls: int = 4,
 ) -> str:
     return Template(
         textwrap.dedent("""\
@@ -151,7 +154,7 @@ def _create_prompt(
         - {{ tool.name }}
           - {{ tool.description }}
         {%- endfor %}
-                        
+
         ## Additional context
         The current date is: {{ date_str }}.
 
@@ -162,8 +165,8 @@ def _create_prompt(
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
-        At that point, invoke the tool 'research_complete' to indicate that you are done. 
+        At that point, invoke the tool 'research_complete' to indicate that you are done.
         It is not your responsibility to write a summary or report.
         Simply invoke 'research_complete' to share your findings.
-        """).strip()
+        """).strip(),
     ).render(tools=tools, date_str=date_str, max_tool_calls=max_tool_calls)

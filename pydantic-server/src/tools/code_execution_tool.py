@@ -1,15 +1,14 @@
 from dataclasses import dataclass
-from typing import Optional
+
 from pydantic_ai import ModelRetry, Tool
 
 
 def create_code_execution_tool(
     host: str = "http://localhost",
     port: int = 8003,
-    description: Optional[str] = None,
-    name: Optional[str] = None,
+    description: str | None = None,
+    name: str | None = None,
 ) -> Tool:
-
     name = name or "execute_python_code"
     description = description or (
         "Executes Python code and returns the result from stdout. "
@@ -30,7 +29,8 @@ class CodeExecutionTool:
     port: int
 
     async def __call__(self, code: str) -> str:
-        """Executes the given python code and returns the result.
+        """
+        Executes the given python code and returns the result.
 
         Args:
             code: The code to execute. May contain multiple lines, including complex scripting.
@@ -59,5 +59,5 @@ class CodeExecutionTool:
         ) as client:
             response = await client.post("/execute", json={"code": code})
             if response.status_code != 200:
-                raise ModelRetry(f"Code execution failed: {response.text}")
+                raise ModelRetry("Code execution failed: %s", {response.text})
             return response.text
