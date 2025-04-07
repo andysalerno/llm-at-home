@@ -1,5 +1,5 @@
 from chat_loop import run_loop
-from responding_assistant import create_responding_assistant
+from agents.responding_assistant import create_responding_assistant
 from state import State
 import asyncio
 

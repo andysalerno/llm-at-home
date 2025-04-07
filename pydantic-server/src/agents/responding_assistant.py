@@ -5,7 +5,7 @@ from pydantic_ai import Agent, Tool
 from pydantic_ai.settings import ModelSettings
 import datetime
 from model import create_model, get_instrumentation_settings
-from research_agent import research_agent_tool
+from agents.research_agent import research_agent_tool
 from state import State
 
 
