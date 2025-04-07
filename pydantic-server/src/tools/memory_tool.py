@@ -17,6 +17,10 @@ from pydantic_ai.messages import (
     ModelRequest,
     ToolReturnPart,
 )
+from chromadbx import UUIDGenerator
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -30,7 +34,8 @@ class MemoryClient:
         Args:
             memory_fragment: The memory fragment to store.
         """
-        pass
+        logger.info(f"Storing memory fragment: {memory_fragment}")
+        self.collection.add(documents=[memory_fragment], ids=UUIDGenerator(ids_len=1))
 
     async def search_memory(self, keywords: str) -> list[str]:
         """
@@ -48,7 +53,7 @@ class MemoryClient:
 def store_memory_tool(description: Optional[str] = None) -> Tool:
     description = description or (
         "Stores a simple (1-2 sentence) memory about the user."
-        " For instance, 'user likes pineapple on pizza' or 'user is a software engineer'."
+        " For instance, 'user likes pineapple on pizza' or 'user is a software engineer', 'user's name is John Doe'."
     )
 
     client = chromadb.HttpClient(host="localhost", port=8000)

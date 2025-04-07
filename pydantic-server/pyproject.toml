@@ -17,4 +17,5 @@ dependencies = [
     "langchain-google-community>=2.0.7",
     "chromadb-client>=1.0.0",
     "onnxruntime>=1.21.0",
+    "chromadbx>=0.1.0",
 ]

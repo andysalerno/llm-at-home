@@ -1,6 +1,9 @@
 from typing import Any
 from pydantic_ai import Agent
 from state import State
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 async def run_loop(agent: Agent[Any], starting_state: State):
@@ -24,14 +27,14 @@ async def run_loop(agent: Agent[Any], starting_state: State):
         )
         message_history = response.all_messages()
         state.message_history = message_history
-        print(response.data)
+        logger.info(response.data)
 
         if aggregate_usage is None:
             aggregate_usage = response.usage()
         else:
             aggregate_usage.incr(response.usage())
 
-        print(response.usage())
-        print(f"Combined: {aggregate_usage}")
+        logger.info(response.usage())
+        logger.info(f"Combined: {aggregate_usage}")
 
-    print(f"Final count: {aggregate_usage}")
+    logger.info(f"Final count: {aggregate_usage}")

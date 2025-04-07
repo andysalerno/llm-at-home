@@ -4,6 +4,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic_ai import ModelRetry, Tool
 import urllib.parse
 import httpx
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_visit_site_tool(
@@ -57,6 +60,7 @@ class ScrapperClient:
     scrapper_endpoint: str
 
     async def scrape(self, url: str) -> ScrapperResponse:
+        logger.info(f"Visiting url: {url}")
         api_uri = self._create_api_uri(url)
         async with httpx.AsyncClient() as client:
             response = await client.get(api_uri)

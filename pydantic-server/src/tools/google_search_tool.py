@@ -2,6 +2,9 @@ import json
 from typing import Optional
 from langchain_google_community import GoogleSearchAPIWrapper
 from pydantic_ai import Tool
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_google_search_tool(
@@ -22,6 +25,7 @@ def create_google_search_tool(
         Args:
             query: The query to search for. Remember, this is a google query, so write your query as you would in Google.
         """
+        logger.info("Searching for query: %s", query)
         results = search_wrapper.results(query, num_results=top_n)
         return json.dumps(results)
 

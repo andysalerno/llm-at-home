@@ -3,6 +3,9 @@ from pydantic_ai.models.openai import OpenAIModel
 from pydantic_ai.providers.openai import OpenAIProvider
 from pydantic_ai.agent import InstrumentationSettings
 from pydantic_ai.models.instrumented import InstrumentedModel
+import logging
+
+logger = logging.getLogger(__name__)
 
 instrumentation_settings = InstrumentationSettings(event_mode="logs")
 
@@ -15,7 +18,7 @@ def create_model():
     api_key = os.environ.get("LLM_API_KEY")
 
     model_name = os.environ.get("MODEL_NAME")
-    print(f"using model: {model_name}")
+    logger.info(f"using model: {model_name}")
 
     if not api_key:
         raise ValueError("LLM_API_KEY environment variable not set")
