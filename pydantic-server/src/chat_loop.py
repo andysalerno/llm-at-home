@@ -39,6 +39,6 @@ async def run_loop(agent: Agent[Any], starting_state: State) -> None:
             aggregate_usage.incr(response.usage())
 
         logger.info(response.usage())
-        logger.info("Combined: %s", {aggregate_usage})
+        logger.info("Combined: %s", aggregate_usage)
 
-    logger.info("Final count: %s", {aggregate_usage})
+    logger.info("Final count: %s", aggregate_usage)
