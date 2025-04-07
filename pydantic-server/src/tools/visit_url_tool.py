@@ -70,7 +70,6 @@ class ScrapperClient:
 
     def _create_api_uri(self, url: str) -> str:
         scrapper_endpoint = self.scrapper_endpoint.rstrip("/")
-        # http encode the url:
         encoded_url = urllib.parse.quote(url, safe="")
-        uri = f"{self.scrapper_endpoint}/api/article?url={encoded_url}"
+        uri = f"{scrapper_endpoint}/api/article?url={encoded_url}"
         return uri

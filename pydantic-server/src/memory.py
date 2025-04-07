@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 import textwrap
 import datetime
 import json
-from typing import Any
+from typing import Any, Optional
+from chromadb import Collection
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
@@ -17,28 +19,60 @@ from pydantic_ai.messages import (
 )
 
 
-def store_memory_tool() -> Tool:
-    return Tool(
-        function=_store_memory,
-        name="store_memory",
-        takes_ctx=True,
+@dataclass
+class MemoryClient:
+    collection: Collection
+
+    async def store_memory(self, memory_fragment: str) -> None:
+        """
+        Stores a memory fragment in the database.
+
+        Args:
+            memory_fragment: The memory fragment to store.
+        """
+        pass
+
+    async def search_memory(self, keywords: str) -> list[str]:
+        """
+        Searches the memory database for relevant memory fragments based on the keyword(s).
+
+        Args:
+            keywords: The keyword(s) to search for.
+
+        Returns:
+            A list of relevant memory fragments.
+        """
+        pass
+
+
+def store_memory_tool(description: Optional[str] = None) -> Tool:
+    description = description or (
+        "Stores a simple (1-2 sentence) memory about the user."
+        " For instance, 'user likes pineapple on pizza' or 'user is a software engineer'."
     )
 
+    client = chromadb.HttpClient(host="localhost", port=8000)
+    collection = client.create_collection(name="my_collection", get_or_create=True)
+    memory_client = MemoryClient(collection=collection)
 
-async def _store_memory(ctx: RunContext[State], memory_fragment: str) -> str:
-    pass
+    return Tool(
+        function=memory_client.store_memory,
+        description=description,
+        name="store_memory",
+        takes_ctx=False,
+    )
 
 
 def search_memory_tool() -> Tool:
+    client = chromadb.HttpClient(host="localhost", port=8000)
+    collection = client.create_collection(name="my_collection", get_or_create=True)
+    memory_client = MemoryClient(collection=collection)
+
     return Tool(
-        function=_search_memory,
+        function=memory_client.search_memory,
         name="search_memory",
-        takes_ctx=True,
+        takes_ctx=False,
     )
-
-
-async def _search_memory(ctx: RunContext[State], keywords: str) -> str:
-    pass
 
 
 if __name__ == "__main__":
@@ -53,8 +87,6 @@ if __name__ == "__main__":
         ],
         ids=["id1", "id2"],
     )
-
-    # print(collection.peek())
 
     result = collection.query(query_texts="citrus")
     print(result)

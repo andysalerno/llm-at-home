@@ -6,9 +6,9 @@ from duckduckgo_search import DDGS
 
 
 def create_wiki_tool(
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        provider: Literal["google", "duckduckgo"] = "google",
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    provider: Literal["google", "duckduckgo"] = "google",
 ) -> Tool:
     name = name or "search_wikipedia"
     description = description or (
@@ -28,14 +28,13 @@ def create_wiki_tool(
         search_wrapper = GoogleSearchAPIWrapper()
         results = search_wrapper.results("site:wikipedia.org " + query, num_results=8)
         return json.dumps(results)
-    
+
     search_fn = search_via_ddg if provider == "duckduckgo" else search_via_google
 
     # Return the summary of the first result
     return Tool(
         name=name,
         description=description,
-        # function=search_via_ddg,
         function=search_fn,
         takes_ctx=False,
     )
