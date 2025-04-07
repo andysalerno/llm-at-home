@@ -11,8 +11,8 @@ from tools.code_execution_tool import create_code_execution_tool
 from tools.google_search_tool import create_google_search_tool
 from model import create_model
 from state import State
-from visit_url_tool import create_visit_site_tool
-from wiki_tool import create_wiki_tool
+from tools.visit_url_tool import create_visit_site_tool
+from tools.wiki_tool import create_wiki_tool
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
