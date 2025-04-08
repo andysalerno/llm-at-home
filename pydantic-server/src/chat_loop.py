@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 async def run_loop(agent: Agent[Any], starting_state: State) -> None:
+    # message_history = None
     state = starting_state
-    message_history = None
     aggregate_usage = None
 
     while True:
@@ -26,11 +26,14 @@ async def run_loop(agent: Agent[Any], starting_state: State) -> None:
         # Run the agent with the user input
         response = await agent.run(
             user_input,
-            message_history=message_history,
+            message_history=state.message_history
+            if len(state.message_history) > 0
+            else None,
             deps=state,
         )
-        message_history = response.all_messages()
-        state.message_history = message_history
+        # message_history = response.all_messages()
+        # state.message_history = message_history
+        state.message_history = response.all_messages()
         logger.info(response.data)
 
         if aggregate_usage is None:
