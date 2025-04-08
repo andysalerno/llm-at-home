@@ -4,7 +4,7 @@ import logging
 from agents.responding_assistant import create_responding_assistant
 from chat_loop import run_loop
 from state import State
-from tools.memory_tool import store_memory_tool
+from tools.memory_tool import search_memory_tool, store_memory_tool
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,9 @@ def _configure_phoenix() -> None:
 async def main() -> None:
     _configure_phoenix()
 
-    agent = create_responding_assistant(extra_tools=[store_memory_tool()])
+    agent = create_responding_assistant(
+        extra_tools=[store_memory_tool(), search_memory_tool()],
+    )
     state = State()
 
     logger.info("Starting chat loop...")
