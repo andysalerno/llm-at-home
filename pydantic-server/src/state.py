@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+
 from pydantic_ai.messages import ModelMessage, ModelRequest, SystemPromptPart
 
 
@@ -11,7 +12,7 @@ class State:
             message_history=[
                 self._model_request_without_system_prompt(msg)
                 for msg in self.message_history
-            ]
+            ],
         )
 
     def with_system_prompt_prepended(self, system_prompt: str) -> "State":
@@ -25,14 +26,12 @@ class State:
         return without_system_prompt.with_system_prompt_prepended(system_prompt)
 
     def _model_request_without_system_prompt(self, msg: ModelMessage) -> ModelMessage:
-        """
-        Returns a new ModelRequest without the system prompt part.
-        """
+        """Returns a new ModelRequest without the system prompt part."""
         if isinstance(msg, ModelRequest):
             return ModelRequest(
                 parts=[
                     part for part in msg.parts if not isinstance(part, SystemPromptPart)
-                ]
+                ],
             )
 
         return msg

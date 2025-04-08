@@ -97,7 +97,7 @@ class ResearchComplete(BaseModel):
     handoff_message: str
 
 
-def _create_agent() -> Agent[None, str]:
+def _create_agent() -> Agent[None, ResearchComplete]:
     cur_date = _get_now_str()
 
     tools = _create_base_tools()

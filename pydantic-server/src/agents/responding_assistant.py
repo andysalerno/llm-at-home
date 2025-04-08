@@ -14,7 +14,7 @@ from state import State
 def create_responding_assistant(
     temperature: float = 0.2,
     extra_tools: list[Tool[Any]] | None = None,
-) -> Agent:
+) -> Agent[State, str]:
     if extra_tools is None:
         extra_tools = []
     instrumentation_settings = get_instrumentation_settings()
