@@ -21,15 +21,19 @@ def create_model() -> InstrumentedModel:
     model_name = os.environ.get("MODEL_NAME")
     logger.info("using model: %s", {model_name})
 
+    base_url = os.environ.get("LLM_BASE_URL")
+
     if not api_key:
         raise ValueError("LLM_API_KEY environment variable not set")
     if not model_name:
         raise ValueError("MODEL_NAME environment variable not set")
+    if not base_url:
+        raise ValueError("LLM_BASE_URL environment variable not set")
 
     model = OpenAIModel(
         model_name,
         provider=OpenAIProvider(
-            base_url="https://openrouter.ai/api/v1",
+            base_url=base_url,
             api_key=api_key,
         ),
     )
