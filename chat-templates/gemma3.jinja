@@ -32,7 +32,7 @@
         {%- if tools is not none -%}
             {{- "You have access to the following tools to help respond to the user. To call tools, please respond with a python list of the calls.\n" }}
             {{- 'Respond in the format [func_name1(params_name1=params_value1, params_name2=params_value2...), func_name2(params)] \n' }}
-            {{- "Do not use variables.\n\n" }}
+            {{- "Do not use variables. Do not wrap the python list in any markdown code blocks.\n\n" }}
             {%- for t in tools -%}
                 {{- t | tojson(indent=4) }}
                 {{- "\n\n" }}

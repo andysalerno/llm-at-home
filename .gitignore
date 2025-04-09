@@ -6,3 +6,4 @@ tabby/
 .agentflow.env
 request_logs/
 .vllm-cache/
+vllm-plugins/__pycache__/

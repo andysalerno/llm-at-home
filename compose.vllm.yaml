@@ -11,6 +11,7 @@ services:
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
       - ./.vllm-cache/:/root/.cache/vllm/
+      - ./vllm-plugins/:/root/vllm-plugins/
       - ./chat-templates/:/root/chat-templates/
       # - /home/tiny/mnt/drive/gguf/:/root/gguf
     restart: unless-stopped
@@ -39,9 +40,10 @@ services:
     command: >
       --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
       --chat-template /root/chat-templates/gemma3.jinja
+      --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
+      --tool-call-parser gemma
       --enable-auto-tool-choice
       --served-model-name model
-      --tool-call-parser pythonic
       -tp 2
     ports:
       - "8000:8000"
