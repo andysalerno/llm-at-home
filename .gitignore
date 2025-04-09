@@ -5,3 +5,4 @@ aphrodite/
 tabby/
 .agentflow.env
 request_logs/
+.vllm-cache/
