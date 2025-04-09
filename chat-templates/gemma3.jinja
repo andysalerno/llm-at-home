@@ -31,8 +31,8 @@
         {{ first_user_prefix }}
         {%- if tools is not none -%}
             {{- "You have access to the following tools to help respond to the user. To call tools, please respond with a python list of the calls.\n" }}
-            {{- 'Respond in the format [func_name1(params_name1=params_value1, params_name2=params_value2...), func_name2(params)] \n' }}
-            {{- "The Python must be valid - be sure any string values are properly quoted to avoid compilation errors.\n" }}
+            {{- 'Respond in the format: [func_name1(params_name1='params_value1', params_name2='params_value2'...), func_name2(params)]\n' }}
+            {{- "The Python MUST be valid - string arguments MUST be quoted." }}
             {{- "Do not use variables. Do not mention your tools to the user.\n\n" }}
             {%- for t in tools -%}
                 {{- t | tojson(indent=4) }}

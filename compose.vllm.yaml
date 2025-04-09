@@ -37,8 +37,9 @@ services:
     # --model cortecs/phi-4-FP8-Dynamic
     # --hf-config-path unsloth/gemma-3-27b-it-bnb-4bit
     # --model vinimuchulski/gemma-3-27b-it-qat-q4_0-gguf
+    # --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
     command: >
-      --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
+      --model gaunernst/gemma-3-27b-it-qat-compressed-tensors
       --chat-template /root/chat-templates/gemma3.jinja
       --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
       --tool-call-parser gemma
