@@ -21,6 +21,12 @@ from vllm.entrypoints.openai.tool_parsers.abstract_tool_parser import (
 )
 from vllm.logger import init_logger
 
+logger = init_logger(__name__)
+
+
+class _UnexpectedAstError(Exception):
+    pass
+
 
 @ToolParserManager.register_module("gemma")
 class GemmaToolParser(ToolParser):
