@@ -162,6 +162,7 @@ def _create_prompt(
         You may invoke multiple tools to gather information for your task.
         However, you are limited to at most **{{ max_tool_calls }}** total tool invocations.
         After invoking **{{ max_tool_calls }}** tools, you must then invoke the 'research_complete' tool to indicate that you are done.
+        Additionally, you must NOT invoke the 'research_complete' tool in the same response as other tools. It must be invoked alone.
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.

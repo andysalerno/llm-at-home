@@ -1,6 +1,6 @@
 set export
 
-PHOENIX_PORT := "8007"
+PHOENIX_PORT := "8008"
 
 default:
   just --list
