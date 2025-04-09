@@ -46,6 +46,7 @@ services:
       --served-model-name model
       --guided-decoding-backend outlines
       --max-model-len 16000
+      --enable-prefix-caching
       -tp 2
     ports:
       - "8000:8000"
