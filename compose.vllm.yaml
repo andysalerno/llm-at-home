@@ -36,13 +36,26 @@ services:
     # --enable-prefix-caching
     # --model cortecs/phi-4-FP8-Dynamic
     # --hf-config-path unsloth/gemma-3-27b-it-bnb-4bit
+    # --model Qwen/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4
     # --model vinimuchulski/gemma-3-27b-it-qat-q4_0-gguf
     # --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
+    # --model gaunernst/gemma-3-27b-it-qat-compressed-tensors
+    # --model nm-testing/Mistral-Small-3.1-24B-Instruct-2503-FP8-dynamic
+    # --model ISTA-DASLab/Mistral-Small-3.1-24B-Instruct-2503-GPTQ-4b-128g
+    # gemma3 below:
+    # --model unsloth/gemma-3-27b-it-unsloth-bnb-4bit
+    # --chat-template /root/chat-templates/gemma3.jinja
+    # --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
+    # --tool-call-parser gemma
+    # --enable-auto-tool-choice
+    # --served-model-name model
+    # --guided-decoding-backend outlines
+    # --max-model-len 16000
+    # --enable-prefix-caching
+    # -tp 2
     command: >
-      --model gaunernst/gemma-3-27b-it-qat-compressed-tensors
-      --chat-template /root/chat-templates/gemma3.jinja
-      --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
-      --tool-call-parser gemma
+      --model ISTA-DASLab/Mistral-Small-3.1-24B-Instruct-2503-GPTQ-4b-128g
+      --tool-call-parser mistral
       --enable-auto-tool-choice
       --served-model-name model
       --guided-decoding-backend outlines
