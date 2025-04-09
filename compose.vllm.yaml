@@ -44,6 +44,8 @@ services:
       --tool-call-parser gemma
       --enable-auto-tool-choice
       --served-model-name model
+      --guided-decoding-backend outlines
+      --max-model-len 16000
       -tp 2
     ports:
       - "8000:8000"
