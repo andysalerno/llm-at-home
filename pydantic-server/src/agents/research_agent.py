@@ -29,15 +29,30 @@ logger = logging.getLogger(__name__)
 
 # TODO: add a flag to force the agent to remove
 # existing tool calls and outputs before running
-def research_agent_tool() -> Tool:
+def research_agent_tool(include_tools_in_prompt: bool) -> Tool:
+    async def _run(ctx: RunContext[State], task: str) -> str:
+        return await _run_research_agent(ctx, task, include_tools_in_prompt)
+
+    description = (
+        "Gives a task to a research agent and returns the final result of the research."
+        ' Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."'
+        " Tasks can be simple or complex."
+        " The research agent will return a report with the results of the research."
+    )
+
     return Tool(
-        function=_run_research_agent,
+        function=_run,
         name="perform_research",
+        description=description,
         takes_ctx=True,
     )
 
 
-async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
+async def _run_research_agent(
+    ctx: RunContext[State],
+    task: str,
+    include_tools_in_prompt: bool,
+) -> str:
     """
     Gives a task to a research agent and returns the final result of the research.
     Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."
@@ -47,9 +62,11 @@ async def _run_research_agent(ctx: RunContext[State], task: str) -> str:
     Args:
         task: The task to be performed by the research agent.
     """
-    agent = _create_agent()
+    agent = _create_agent(include_tools_in_prompt)
 
-    system_prompt = _create_prompt_with_default_tools(_get_now_str())
+    system_prompt = _create_prompt_with_default_tools(
+        _get_now_str(), include_tools_in_prompt
+    )
     state: State = ctx.deps.with_system_prompt_replaced(system_prompt)
 
     result = await agent.run(task, message_history=state.message_history)
@@ -97,7 +114,7 @@ class ResearchComplete(BaseModel):
     handoff_message: str
 
 
-def _create_agent() -> Agent[None, ResearchComplete]:
+def _create_agent(include_tools_in_prompt: bool) -> Agent[None, ResearchComplete]:
     cur_date = _get_now_str()
 
     tools = _create_base_tools()
@@ -114,6 +131,7 @@ def _create_agent() -> Agent[None, ResearchComplete]:
         system_prompt=_create_prompt(
             tools,
             cur_date,
+            include_tools_in_prompt=include_tools_in_prompt,
         ),
     )
 
@@ -136,24 +154,36 @@ def _create_base_tools() -> list[Tool[Any]]:
     ]
 
 
-def _create_prompt_with_default_tools(date_str: str) -> str:
-    return _create_prompt(_create_base_tools(), date_str)
+def _create_prompt_with_default_tools(
+    date_str: str,
+    include_tools_in_prompt: bool,
+) -> str:
+    return _create_prompt(
+        _create_base_tools(),
+        date_str,
+        include_tools_in_prompt=include_tools_in_prompt,
+    )
 
 
 def _create_prompt(
     tools: list[Tool[Any]],
     date_str: str,
+    include_tools_in_prompt: bool,
     max_tool_calls: int = 4,
 ) -> str:
     return Template(
         textwrap.dedent("""\
         You are a research assistant. Perform research to accomplish the given task.
 
-        Since your internal knowledge is limited, you may invoke the following tools to get more information (including up-to-date information):
+        Since your internal knowledge is limited, you may invoke tools to get more information (including up-to-date information).
+
+        {%- if include_tools_in_prompt %}
+        The following tools are available to you:
         {%- for tool in tools %}
         - {{ tool.name }}
           - {{ tool.description }}
         {%- endfor %}
+        {%- endif %}
 
         ## Additional context
         The current date is: {{ date_str }}.
@@ -170,4 +200,9 @@ def _create_prompt(
         It is not your responsibility to write a summary or report.
         Simply invoke 'research_complete' to share your findings.
         """).strip(),
-    ).render(tools=tools, date_str=date_str, max_tool_calls=max_tool_calls)
+    ).render(
+        tools=tools,
+        date_str=date_str,
+        max_tool_calls=max_tool_calls,
+        include_tools_in_prompt=include_tools_in_prompt,
+    )

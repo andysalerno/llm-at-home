@@ -27,13 +27,10 @@ class MemoryClient:
 
     async def search_memory(self, keyword: str) -> list[str]:
         """
-        Searches the memory database for relevant memory fragments based on the keyword.
+        Searches the memory database for relevant memory fragments based on the keyword. Returns a list of relevant memory fragments, or an empty list if none are found.
 
         Args:
             keyword: The keyword to search for.
-
-        Returns:
-            A list of relevant memory fragments, or an empty list if none are found.
         """
         logger.info("Searching memory with keyword: %s", keyword)
         results = self.collection.query(query_texts=keyword, n_results=5)
@@ -87,6 +84,7 @@ def search_memory_tool(
     return Tool(
         function=memory_client.search_memory,
         name="search_memory",
+        description=description,
         takes_ctx=False,
     )
 

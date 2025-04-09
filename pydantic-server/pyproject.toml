@@ -23,4 +23,4 @@ dependencies = [
 [tool.ruff.lint]
 # On top of the defaults (`E4`, E7`, `E9`, and `F`), enable flake8-bugbear (`B`) and flake8-quotes (`Q`).
 select = ["ALL"]
-ignore = ["INP001", "D100", "D103", "TD003", "TD002", "FIX002", "D205", "D212", "D401", "D417", "E501", "D413", "D101", "DTZ005", "TRY003", "EM101", "PLR2004", "D102"]
+ignore = ["INP001", "D100", "D103", "TD003", "TD002", "FIX002", "FBT002", "FBT001", "D205", "D212", "D401", "D417", "E501", "D413", "D101", "DTZ005", "TRY003", "EM101", "PLR2004", "D102"]
