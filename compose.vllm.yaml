@@ -56,6 +56,8 @@ services:
     command: >
       --model ISTA-DASLab/Mistral-Small-3.1-24B-Instruct-2503-GPTQ-4b-128g
       --tool-call-parser mistral
+      --tokenizer_mode mistral
+      --chat-template examples/tool_chat_template_mistral_parallel.jinja
       --enable-auto-tool-choice
       --served-model-name model
       --guided-decoding-backend outlines
