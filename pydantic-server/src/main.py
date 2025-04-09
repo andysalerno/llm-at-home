@@ -22,6 +22,7 @@ async def main() -> None:
 
     agent = create_responding_assistant(
         extra_tools=[store_memory_tool(), search_memory_tool()],
+        include_tools_in_prompt=False,  # change based on the model used
     )
     state = State()
 
