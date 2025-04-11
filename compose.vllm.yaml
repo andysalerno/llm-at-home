@@ -1,7 +1,8 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.8.3
+    # image: vllm/vllm-openai:v0.8.3
+    image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
     environment:
@@ -13,7 +14,7 @@ services:
       - ./.vllm-cache/:/root/.cache/vllm/
       - ./vllm-plugins/:/root/vllm-plugins/
       - ./chat-templates/:/root/chat-templates/
-      # - /home/tiny/mnt/drive/gguf/:/root/gguf
+      - /home/tiny/mnt/drive/gguf/:/root/gguf
     restart: unless-stopped
     # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
     # --model unsloth/Llama-3.2-3B-Instruct
@@ -73,11 +74,22 @@ services:
     # --max-model-len 16000
     # --enable-prefix-caching
     # -tp 2
+    # Qwen2.5-32B
+    # --model Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4
+    # --tool-call-parser hermes
+    # --enable-auto-tool-choice
+    # --served-model-name model
+    # --guided-decoding-backend outlines
+    # --max-model-len 16000
+    # --enable-prefix-caching
+    # -tp 2
     command: >
-      --model Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4
-      --tool-call-parser hermes
-      --enable-auto-tool-choice
+      --model /root/gguf/Mistral-Small-3.1-24B-Instruct-2503-GGUF/Mistral-Small-3.1-24B-Instruct-2503-Q8_0.gguf
+      --tokenizer unsloth/Mistral-Small-3.1-24B-Instruct-2503-bnb-4bit
       --served-model-name model
+      --tool-call-parser llama3_json
+      --chat-template examples/tool_chat_template_mistral_parallel.jinja
+      --enable-auto-tool-choice
       --guided-decoding-backend outlines
       --max-model-len 16000
       --enable-prefix-caching
