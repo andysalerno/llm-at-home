@@ -52,12 +52,30 @@ services:
     # --guided-decoding-backend outlines
     # --max-model-len 16000
     # --enable-prefix-caching
+    # gemma3 with compressed tensors:
+    # --model gaunernst/gemma-3-27b-it-qat-compressed-tensors
+    # --chat-template /root/chat-templates/gemma3.jinja
+    # --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
+    # --tool-call-parser gemma
+    # --enable-auto-tool-choice
+    # --served-model-name model
+    # --guided-decoding-backend outlines
+    # --max-model-len 16000
+    # --enable-prefix-caching
+    # -tp 2
+    # mistral 3.1 small below:
+    # --model ISTA-DASLab/Mistral-Small-3.1-24B-Instruct-2503-GPTQ-4b-128g
+    # --tool-call-parser llama3_json
+    # --chat-template examples/tool_chat_template_mistral_parallel.jinja
+    # --enable-auto-tool-choice
+    # --served-model-name model
+    # --guided-decoding-backend outlines
+    # --max-model-len 16000
+    # --enable-prefix-caching
     # -tp 2
     command: >
-      --model ISTA-DASLab/Mistral-Small-3.1-24B-Instruct-2503-GPTQ-4b-128g
-      --tool-call-parser mistral
-      --tokenizer_mode mistral
-      --chat-template examples/tool_chat_template_mistral_parallel.jinja
+      --model Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4
+      --tool-call-parser hermes
       --enable-auto-tool-choice
       --served-model-name model
       --guided-decoding-backend outlines
