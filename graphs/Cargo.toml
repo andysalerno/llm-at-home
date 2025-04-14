@@ -1,0 +1,21 @@
+[workspace]
+resolver = "2"
+members = ["graphs", "graphs-examples"]
+
+
+[workspace.lints.rust]
+let-underscore = "warn"
+future-incompatible = "warn"
+refining-impl-trait = "warn"
+rust-2024-compatibility = "warn"
+rust-2018-idioms = "warn"
+
+[workspace.lints.clippy]
+complexity = { level = "warn", priority = -1 }
+correctness = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+perf = { level = "warn", priority = -1 }
+style = { level = "warn", priority = -1 }
+suspicious = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
