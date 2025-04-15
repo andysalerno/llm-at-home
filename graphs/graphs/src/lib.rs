@@ -14,11 +14,11 @@ impl<T> Action<T> {
     }
 }
 
-struct Condition<T> {
+pub struct Condition<T> {
     condition: Box<dyn Fn(&T) -> bool>,
 }
 
-enum Node<T> {
+pub enum Node<T> {
     Action(Action<T>),
     Branch(Condition<T>),
     Terminal,
@@ -59,36 +59,31 @@ pub struct Graph<T> {
     start_id: NodeId,
 }
 
+fn no_op_start_node<T>() -> Action<T> {
+    Action::new(Box::new(|x| x))
+}
+
 impl<T> Graph<T> {
-    pub fn start(start_node: impl Into<Node<T>>) -> Self {
-        let start_node = start_node.into();
-        let start_id = NodeId(0);
-
-        let start_node = IdentifiedNode {
-            id: start_id,
-            node: start_node,
-        };
-
-        let nodes = vec![start_node];
-
+    pub fn new() -> Self {
         Graph {
-            nodes,
+            nodes: Vec::new(),
             edges: Vec::new(),
             condition_edges: Vec::new(),
-            start_id,
+            start_id: NodeId(0),
+        }
+    }
+
+    pub fn start(&mut self) -> GraphAdding<'_, T> {
+        let start_id = self.register_node(no_op_start_node());
+
+        GraphAdding {
+            graph: self,
+            last_added: start_id,
         }
     }
 
     pub const fn start_id(&self) -> NodeId {
         self.start_id
-    }
-
-    fn register_node(&mut self, node: impl Into<Node<T>>) -> NodeId {
-        let node = node.into();
-        let next_id = NodeId(self.nodes.len());
-        self.nodes.push(IdentifiedNode { id: next_id, node });
-
-        next_id
     }
 
     pub fn add_node_from(&mut self, from: NodeId, node: impl Into<Node<T>>) -> GraphAdding<'_, T> {
@@ -102,6 +97,14 @@ impl<T> Graph<T> {
         }
     }
 
+    fn register_node(&mut self, node: impl Into<Node<T>>) -> NodeId {
+        let node = node.into();
+        let next_id = NodeId(self.nodes.len());
+        self.nodes.push(IdentifiedNode { id: next_id, node });
+
+        next_id
+    }
+
     fn add_node(&mut self, node: impl Into<Node<T>>) -> GraphAdding<'_, T> {
         let node_id = self.register_node(node);
 
@@ -109,53 +112,6 @@ impl<T> Graph<T> {
             graph: self,
             last_added: node_id,
         }
-    }
-
-    fn add_conditional(
-        &mut self,
-        from: NodeId,
-        to_when_true: impl Into<Node<T>>,
-        to_when_false: impl Into<Node<T>>,
-        condition: Condition<T>,
-    ) -> (NodeId, NodeId, NodeId) {
-        let conditional_node_id = self.register_node(Node::Branch(condition));
-
-        // Add the edge on the 'from' to the condition node:
-        self.edges.push(Edge {
-            from,
-            to: conditional_node_id,
-        });
-
-        // Add the true and false nodes:
-        let to_when_true = self.register_node(to_when_true);
-        let to_when_false = self.register_node(to_when_false);
-
-        // Add the edges from the condition node to the true and false nodes:
-        self.condition_edges.push(BranchEdge {
-            from: conditional_node_id,
-            to_when_true,
-            to_when_false,
-        });
-
-        (conditional_node_id, to_when_true, to_when_false)
-    }
-
-    fn add_conditional_to_ids(
-        &mut self,
-        from: NodeId,
-        to_when_true: NodeId,
-        to_when_false: NodeId,
-        condition: Condition<T>,
-    ) -> NodeId {
-        let next_id = self.register_node(Node::Branch(condition));
-
-        self.condition_edges.push(BranchEdge {
-            from,
-            to_when_true,
-            to_when_false,
-        });
-
-        next_id
     }
 
     fn add_edge(&mut self, edge: Edge) {
@@ -199,6 +155,7 @@ pub struct GraphAdding<'a, T> {
 }
 
 impl<'a, T> GraphAdding<'a, T> {
+    #[must_use]
     pub fn then(self, node: Action<T>) -> Self {
         let next_id = self.graph.register_node(node);
         self.graph.edges.push(Edge {
@@ -212,6 +169,33 @@ impl<'a, T> GraphAdding<'a, T> {
         }
     }
 
+    pub fn branch(
+        self,
+        condition: Condition<T>,
+        branch_when_true: impl FnOnce(GraphAdding<'_, T>),
+        branch_when_false: impl FnOnce(GraphAdding<'_, T>),
+    ) {
+        let condition_node_id = self.graph.register_node(condition);
+        self.graph.edges.push(Edge {
+            from: self.last_added,
+            to: condition_node_id,
+        });
+
+        let graph = self.graph;
+
+        // Reborrow graph for the true branch
+        branch_when_true(GraphAdding {
+            graph,
+            last_added: condition_node_id,
+        });
+
+        // Reborrow graph again for the false branch
+        branch_when_false(GraphAdding {
+            graph,
+            last_added: condition_node_id,
+        });
+    }
+
     pub fn terminate(self) {
         self.graph.make_terminal(self.last_added);
     }
@@ -222,7 +206,8 @@ pub struct GraphRunner<T> {
 }
 
 impl<T> GraphRunner<T> {
-    pub fn new(graph: Graph<T>) -> Self {
+    #[must_use]
+    pub const fn new(graph: Graph<T>) -> Self {
         Self { graph }
     }
 
@@ -233,6 +218,8 @@ impl<T> GraphRunner<T> {
 
         loop {
             let cur_node = self.graph.node(cur_node_id);
+
+            println!("Current node: {cur_node_id:?}");
 
             match cur_node {
                 Node::Action(action) => {
@@ -277,20 +264,26 @@ mod tests {
 
     #[test]
     fn one_plus_one() {
-        let mut graph = Graph::start(adder(1));
-        let start_id = graph.start_id();
+        let mut graph = Graph::new();
 
         graph
-            .add_node_from(start_id, adder(1))
+            .start()
+            .then(adder(1))
             .then(adder(2))
             .then(multiplier(3))
-            .terminate();
+            .branch(
+                Condition {
+                    condition: Box::new(|x| *x > 10),
+                },
+                |graph| graph.then(adder(2)).terminate(),
+                |graph| graph.then(subtractor(1)).terminate(),
+            );
 
         let runner = GraphRunner::new(graph);
 
         // 3 + 1 + 1 + 2 * 3 = 21
         let result = runner.run(3);
 
-        assert_eq!(result, 21);
+        assert_eq!(result, 18);
     }
 }
