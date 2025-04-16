@@ -21,13 +21,14 @@ async def main() -> None:
     _configure_phoenix()
 
     agent = create_responding_assistant(
+        temperature=0.1,
         extra_tools=[store_memory_tool(), search_memory_tool()],
         include_tools_in_prompt=False,  # change based on the model used
     )
     state = State()
 
     logger.info("Starting chat loop...")
-    await run_loop(agent, state)
+    await run_loop(agent, state, trim_old_tool_outputs=True)
 
 
 if __name__ == "__main__":

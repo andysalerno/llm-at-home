@@ -21,7 +21,7 @@ def create_responding_assistant(
     instrumentation_settings = get_instrumentation_settings()
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    tools = [research_agent_tool(include_tools_in_prompt), *extra_tools]
+    tools = [research_agent_tool(include_tools_in_prompt, agent_temp=0.1), *extra_tools]
 
     agent = Agent(
         model=create_model(),
