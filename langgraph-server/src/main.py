@@ -1,10 +1,6 @@
-import os
 import json
 import asyncio
-from langchain_openai import ChatOpenAI
-from pydantic import SecretStr
-from langgraph.graph.state import CompiledStateGraph
-from langchain_core.messages import BaseMessage, ChatMessage
+import logging
 from duckduckgo_search import DDGS
 
 # from langchain_community.tools.ddg_search import DuckDuckGoSearchRun
@@ -12,78 +8,24 @@ from pydantic_ai.common_tools.duckduckgo import DuckDuckGoSearchTool
 from langchain_community.tools.wikipedia.tool import WikipediaQueryRun
 from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 
-from custom_react import ChatState, create_custom_react_agent, create_simple_chat_agent
+from chat_loop import run_chat_loop
+from custom_react import create_custom_react_agent
+from model import create_model
+
+logger = logging.getLogger(__name__)
 
 
 def _configure_phoenix():
     from phoenix.otel import register
 
-    # configure the Phoenix tracer
-    register(
-        auto_instrument=True,  # Auto-instrument your app based on installed OI dependencies
+    # from arize.otel import register
+    from openinference.instrumentation.langchain import LangChainInstrumentor
+
+    tracer_provider = register(
+        auto_instrument=True,
     )
 
-
-def create_model():
-    api_key = os.environ.get("LLM_API_KEY")
-
-    model_name = os.environ.get("MODEL_NAME")
-    print(f"using model: {model_name}")
-
-    if not api_key:
-        raise ValueError("LLM_API_KEY environment variable not set")
-    if not model_name:
-        raise ValueError("MODEL_NAME environment variable not set")
-
-    api_key = SecretStr(api_key)
-
-    model = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        model=model_name,
-        api_key=api_key,
-        temperature=0.0,
-    )
-
-    return model
-
-
-def get_weather(location: str) -> str:
-    """Gets the weather for a given location."""
-    if "sf" in location.lower() or "san francisco" in location.lower():
-        return "It's 60 degrees and foggy."
-    return "It's 90 degrees and sunny."
-
-
-def tallest_building_faq(location: str) -> str:
-    """Gets info on the tallest building in a given location, including its height."""
-    return "The tallest building in Seattle is the Columbia Center, which is 967 feet tall."
-
-
-def _run_chat_loop(graph: CompiledStateGraph):
-    conversation_history: ChatState = {"messages": []}
-
-    while True:
-        user_input = input("User: ")
-        if user_input.lower() in ["quit", "exit", "q"]:
-            print("Goodbye!")
-            break
-
-        # user_message = {"role": "user", "content": user_input}
-
-        conversation_history["messages"].append(
-            # BaseMessage(content=user_input, role="user")
-            ChatMessage(content=user_input, role="user")
-        )
-
-        for event in graph.stream(conversation_history):
-            for value in event.values():
-                assistant_message = value["messages"][-1]
-                assert isinstance(assistant_message, BaseMessage), (
-                    f"Expected BaseMessage but got {type(assistant_message)}"
-                )
-                conversation_history["messages"].append(assistant_message)
-                assistant_message.pretty_print()
-                # print("Message:", assistant_message.content)
+    LangChainInstrumentor().instrument(tracer_provider=tracer_provider)
 
 
 def get_google_search_results(query: str) -> str:
@@ -110,9 +52,9 @@ def main():
         ],
     )
 
-    print(agent_graph.get_graph().draw_mermaid())
+    logger.info(agent_graph.get_graph().draw_mermaid())
 
-    _run_chat_loop(agent_graph)
+    run_chat_loop(agent_graph)
 
     pass
 

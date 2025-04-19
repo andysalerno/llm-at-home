@@ -3,6 +3,7 @@ services:
     image: arizephoenix/phoenix:latest
     ports:
       - "8008:8008"
+      - "4317:4317"
     environment:
       - PHOENIX_PORT=8008
   chromadb:
