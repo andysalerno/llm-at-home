@@ -1,4 +1,10 @@
 services:
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "8008:8008"
+    environment:
+      - PHOENIX_PORT=8008
   chromadb:
     image: chromadb/chroma
     volumes:
