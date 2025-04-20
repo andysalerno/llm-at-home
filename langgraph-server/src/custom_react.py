@@ -1,16 +1,10 @@
 from typing import Callable
 from langgraph.prebuilt.tool_node import ToolNode
 from langchain_core.language_models import BaseChatModel
-from typing import Annotated
-from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
-from langgraph.graph.message import add_messages
 from langgraph.graph.state import CompiledStateGraph
-from langchain_core.messages import BaseMessage
 
-
-class ChatState(TypedDict):
-    messages: Annotated[list[BaseMessage], add_messages]
+from state import ChatState
 
 
 def create_simple_chat_agent(model: BaseChatModel) -> CompiledStateGraph:
@@ -35,13 +29,12 @@ def create_custom_react_agent(model: BaseChatModel, tools: list[Callable]):
 
     graph_builder = StateGraph(ChatState)
 
-    graph_builder = StateGraph(ChatState)
     graph_builder.add_edge(START, "simple_chat")
     graph_builder.add_node("simple_chat", _simple_chat)
 
-    graph_builder.add_node("handle_tools", ToolNode(tools))
     graph_builder.add_conditional_edges("simple_chat", maybe_route_tool)
     graph_builder.add_edge("handle_tools", "simple_chat")
+    graph_builder.add_node("handle_tools", ToolNode(tools))
 
     # tool_node = ToolNode(tools)
     # tool_classes = list(tool_node.tools_by_name.values())

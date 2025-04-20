@@ -59,5 +59,5 @@ class CodeExecutionTool:
         ) as client:
             response = await client.post("/execute", json={"code": code})
             if response.status_code != 200:
-                raise ModelRetry("Code execution failed: %s", response.text)  # type: ignore
+                raise ModelRetry("Code execution failed: %s", response.text)
             return response.text
