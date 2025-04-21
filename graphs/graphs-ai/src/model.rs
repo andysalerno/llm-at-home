@@ -4,32 +4,37 @@ pub trait ModelClient {
     fn get_model_response(&self, request: &ChatCompletionRequest) -> ChatCompletionResponse;
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChatCompletionRequest {
-    model: String,
     messages: Vec<Message>,
-    temperature: f32,
+    temperature: Option<f32>,
     // top_p: f32,
     stream: bool,
     // stop: Option<String>,
     max_completion_tokens: Option<usize>,
+    tools: Option<Vec<Tool>>,
+
+    // TODO: create an enum to represent the options, none/auto/required
+    tool_choice: Option<String>,
     // presence_penalty: Option<f32>,
     // frequency_penalty: Option<f32>,
 }
 
 impl ChatCompletionRequest {
     pub fn new(
-        model: impl Into<String>,
         messages: Vec<Message>,
-        temperature: f32,
+        temperature: Option<f32>,
         max_completion_tokens: Option<usize>,
+        tools: Option<Vec<Tool>>,
+        tool_choice: Option<String>,
     ) -> Self {
         Self {
-            model: model.into(),
             messages,
             temperature,
             stream: false,
             max_completion_tokens,
+            tools,
+            tool_choice,
         }
     }
 
@@ -37,12 +42,24 @@ impl ChatCompletionRequest {
         &self.messages
     }
 
-    pub fn temperature(&self) -> f32 {
+    pub fn temperature(&self) -> Option<f32> {
         self.temperature
+    }
+
+    pub fn max_completion_tokens(&self) -> Option<usize> {
+        self.max_completion_tokens
+    }
+
+    pub fn tools(&self) -> Option<&Vec<Tool>> {
+        self.tools.as_ref()
+    }
+
+    pub fn tool_choice(&self) -> Option<&String> {
+        self.tool_choice.as_ref()
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChatCompletionResponse {
     id: String,
     object: String,
@@ -102,5 +119,47 @@ impl From<Message> for crate::state::Message {
 impl From<crate::state::Message> for Message {
     fn from(value: crate::state::Message) -> Self {
         Self::new(value.role(), value.content())
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Tool {
+    function: Function,
+    r#type: String,
+}
+
+impl Tool {
+    pub fn function(&self) -> &Function {
+        &self.function
+    }
+
+    pub fn r#type(&self) -> &str {
+        &self.r#type
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Function {
+    name: String,
+    description: String,
+    parameters: String,
+    strict: bool,
+}
+
+impl Function {
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
+    pub fn parameters(&self) -> &str {
+        &self.parameters
+    }
+
+    pub fn strict(&self) -> bool {
+        self.strict
     }
 }

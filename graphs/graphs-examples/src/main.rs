@@ -9,7 +9,7 @@ fn main() {
 
     let model = OpenAIModel::new(
         "<replace>",
-        "mistralai/mistral-small-3.1-24b-instruct:free",
+        "mistralai/mistral-small-3.1-24b-instruct",
         "https://openrouter.ai/api/v1",
     );
 

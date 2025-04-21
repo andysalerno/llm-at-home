@@ -22,10 +22,7 @@ pub fn agent_node(
             .collect::<Vec<_>>();
 
         let response = model.get_model_response(&ChatCompletionRequest::new(
-            "model",
-            messages,
-            0.7,
-            Some(100),
+            messages, None, None, None, None,
         ));
 
         let choices = response.take_choices();

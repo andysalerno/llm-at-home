@@ -7,7 +7,7 @@ services:
     shm_size: 1g
     environment:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
-      - VLLM_ATTENTION_BACKEND=FLASHINFER
+      # - VLLM_ATTENTION_BACKEND=FLASHINFER
       - VLLM_USE_V1=0
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
@@ -24,15 +24,17 @@ services:
     # --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
     # --model gaunernst/gemma-3-27b-it-qat-compressed-tensors
     # gemma3 below:
-    # --model unsloth/gemma-3-27b-it-unsloth-bnb-4bit
+    # disable flash infer:
+    # disable v1 or might get cuda oom:
+    # --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
     # --chat-template /root/chat-templates/gemma3.jinja
     # --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
     # --tool-call-parser gemma
     # --enable-auto-tool-choice
     # --served-model-name model
-    # --guided-decoding-backend outlines
-    # --max-model-len 16000
-    # --enable-prefix-caching
+    # --max-model-len 16384
+    # --limit_mm_per_prompt 'image=0'
+    # -tp 2
     # gemma3-qat not working:
     # --model /root/gguf/google-gemma-3-27b-it-qat-q4_0-gguf-small/gemma-3-27b-it-q4_0_s.gguf
     # --tokenizer unsloth/gemma-3-27b-it-unsloth-bnb-4bit
@@ -113,8 +115,7 @@ services:
       --enable-auto-tool-choice
       --served-model-name model
       --max-model-len 16384
-      --kv-cache-dtype fp8
-      --enable-prefix-caching
+      --limit_mm_per_prompt 'image=0'
       -tp 2
     ports:
       - "8000:8000"

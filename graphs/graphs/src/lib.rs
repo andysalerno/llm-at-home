@@ -22,6 +22,12 @@ pub struct Condition<T> {
     condition: Box<dyn Fn(&T) -> bool>,
 }
 
+impl<T> Condition<T> {
+    pub fn new(condition: Box<dyn Fn(&T) -> bool>) -> Self {
+        Self { condition }
+    }
+}
+
 pub enum Node<T> {
     Action(Action<T>),
     Branch(Condition<T>),

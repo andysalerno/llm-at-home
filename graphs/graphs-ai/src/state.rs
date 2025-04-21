@@ -33,11 +33,16 @@ impl Default for ConversationState {
 pub struct Message {
     role: String,
     content: String,
+    tool_calls: Vec<ToolCall>,
 }
 
 impl Message {
     pub fn new(role: String, content: String) -> Self {
-        Self { role, content }
+        Self {
+            role,
+            content,
+            tool_calls: Vec::new(),
+        }
     }
 
     pub fn role(&self) -> &str {
@@ -46,5 +51,41 @@ impl Message {
 
     pub fn content(&self) -> &str {
         &self.content
+    }
+
+    pub fn tool_calls(&self) -> &[ToolCall] {
+        &self.tool_calls
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ToolCall {
+    id: String,
+    function: Function,
+}
+
+impl ToolCall {
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+
+    pub fn function(&self) -> &Function {
+        &self.function
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Function {
+    arguments: String,
+    name: String,
+}
+
+impl Function {
+    pub fn arguments(&self) -> &str {
+        &self.arguments
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
     }
 }
