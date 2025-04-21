@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use log::info;
 
 // The NodeId can only be created internally by the graph structure,
@@ -11,6 +13,14 @@ pub struct Action<T> {
     // i.e. 'the last message of the state must have role user'
     action: Box<dyn Fn(T) -> T>,
     display_name: String,
+}
+
+impl<T> Debug for Action<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Action")
+            .field("display_name", &self.display_name)
+            .finish()
+    }
 }
 
 impl<T> Action<T> {
@@ -27,6 +37,14 @@ pub struct Condition<T> {
     display_name: String,
 }
 
+impl Debug for Condition<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Condition")
+            .field("display_name", &self.display_name)
+            .finish()
+    }
+}
+
 impl<T> Condition<T> {
     pub fn new(display_name: impl Into<String>, condition: Box<dyn Fn(&T) -> bool>) -> Self {
         Self {
@@ -36,6 +54,7 @@ impl<T> Condition<T> {
     }
 }
 
+#[derive(Debug)]
 pub enum Node<T> {
     Action(Action<T>),
     Branch(Condition<T>),
@@ -52,6 +71,7 @@ impl<T> Node<T> {
     }
 }
 
+#[derive(Debug)]
 struct IdentifiedNode<T> {
     id: NodeId,
     node: Node<T>,
@@ -69,17 +89,20 @@ impl<T> From<Condition<T>> for Node<T> {
     }
 }
 
+#[derive(Debug)]
 struct Edge {
     from: NodeId,
     to: NodeId,
 }
 
+#[derive(Clone, Debug)]
 struct BranchEdge {
     from: NodeId,
     to_when_true: NodeId,
     to_when_false: NodeId,
 }
 
+#[derive(Debug)]
 pub struct Graph<T> {
     nodes: Vec<IdentifiedNode<T>>,
     edges: Vec<Edge>,
@@ -93,7 +116,7 @@ fn no_op_start_node<T>() -> Action<T> {
 
 impl<T> Graph<T> {
     pub fn new() -> Self {
-        Graph {
+        Self {
             nodes: Vec::new(),
             edges: Vec::new(),
             condition_edges: Vec::new(),
@@ -106,7 +129,7 @@ impl<T> Graph<T> {
 
         GraphAdding {
             graph: self,
-            last_added: start_id,
+            last_added: LastAddedId::Node(start_id),
         }
     }
 
@@ -121,7 +144,7 @@ impl<T> Graph<T> {
 
         GraphAdding {
             graph: self,
-            last_added: next_id,
+            last_added: LastAddedId::Node(next_id),
         }
     }
 
@@ -138,7 +161,7 @@ impl<T> Graph<T> {
 
         GraphAdding {
             graph: self,
-            last_added: node_id,
+            last_added: LastAddedId::Node(node_id),
         }
     }
 
@@ -156,20 +179,18 @@ impl<T> Graph<T> {
         });
     }
 
-    fn next_nodes(&self, node_id: NodeId) -> Vec<NodeId> {
-        self.edges
-            .iter()
-            .filter(|edge| edge.from == node_id)
-            .map(|edge| edge.to)
-            .collect()
+    fn edges_from(&self, node_id: NodeId) -> impl Iterator<Item = &Edge> {
+        self.edges.iter().filter(move |edge| edge.from == node_id)
     }
 
-    fn next_nodes_for_condition(&self, condition_node: NodeId) -> Vec<(NodeId, NodeId)> {
+    fn next_nodes(&self, node_id: NodeId) -> impl Iterator<Item = NodeId> {
+        self.edges_from(node_id).map(|edge| edge.to)
+    }
+
+    fn branch_edgs_from(&self, condition_node: NodeId) -> impl Iterator<Item = &BranchEdge> {
         self.condition_edges
             .iter()
-            .filter(|edge| edge.from == condition_node)
-            .map(|edge| (edge.to_when_true, edge.to_when_false))
-            .collect()
+            .filter(move |edge| edge.from == condition_node)
     }
 
     fn node(&self, node_id: NodeId) -> &Node<T> {
@@ -177,23 +198,41 @@ impl<T> Graph<T> {
     }
 }
 
+impl<T> Default for Graph<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[derive(Debug)]
+enum LastAddedId {
+    Node(NodeId),
+    BranchConditionTrue(NodeId),
+    BranchConditionFalse(NodeId),
+}
+
+#[derive(Debug)]
 pub struct GraphAdding<'a, T> {
     graph: &'a mut Graph<T>,
-    last_added: NodeId,
+    last_added: LastAddedId,
 }
 
 impl<'a, T> GraphAdding<'a, T> {
     #[must_use]
     pub fn then(self, node: Action<T>) -> Self {
         let next_id = self.graph.register_node(node);
-        self.graph.edges.push(Edge {
-            from: self.last_added,
-            to: next_id,
-        });
+
+        let edge = match self.last_added {
+            LastAddedId::Node(from) => Edge { from, to: next_id },
+            LastAddedId::BranchConditionFalse(from) => Edge { from, to: next_id },
+            LastAddedId::BranchConditionTrue(from) => Edge { from, to: next_id },
+        };
+
+        self.graph.edges.push(edge);
 
         Self {
             graph: self.graph,
-            last_added: next_id,
+            last_added: LastAddedId::Node(next_id),
         }
     }
 
@@ -211,13 +250,11 @@ impl<'a, T> GraphAdding<'a, T> {
 
         let graph = self.graph;
 
-        // Reborrow graph for the true branch
         branch_when_true(GraphAdding {
             graph,
             last_added: condition_node_id,
         });
 
-        // Reborrow graph again for the false branch
         branch_when_false(GraphAdding {
             graph,
             last_added: condition_node_id,
@@ -255,14 +292,15 @@ impl<T> GraphRunner<T> {
             match cur_node {
                 Node::Action(action) => {
                     result = (action.action)(result);
-                    cur_node_id = *self.graph.next_nodes(cur_node_id).first().unwrap();
+                    cur_node_id = self.graph.next_nodes(cur_node_id).next().unwrap();
                 }
                 Node::Branch(condition) => {
-                    let next_nodes = self.graph.next_nodes_for_condition(cur_node_id);
+                    let next_nodes = self.graph.branch_edgs_from(cur_node_id);
+                    let next_node = next_nodes.first().expect("expected to find the next node");
                     if (condition.condition)(&result) {
-                        cur_node_id = next_nodes.first().unwrap().0;
+                        cur_node_id = next_node.to_when_true;
                     } else {
-                        cur_node_id = next_nodes.first().unwrap().1;
+                        cur_node_id = next_node.to_when_false;
                     }
                 }
                 Node::Terminal => return result,
@@ -288,7 +326,7 @@ mod tests {
     }
 
     #[test]
-    fn one_plus_one() {
+    fn one_plus_one_branching() {
         let mut graph = Graph::new();
 
         graph
@@ -298,7 +336,7 @@ mod tests {
             .then(multiplier(3))
             .branch(
                 Condition {
-                    condition: Box::new(|x| *x > 10),
+                    condition: Box::new(|&x| x > 10),
                     display_name: "is_greater_than_10".to_string(),
                 },
                 |graph| graph.then(adder(2)).terminate(),

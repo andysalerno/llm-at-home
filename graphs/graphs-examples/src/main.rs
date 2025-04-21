@@ -1,6 +1,10 @@
 use graphs::GraphRunner;
 use graphs_ai::{
-    agent::agent_node, model_openai::OpenAIModel, state::ConversationState, user::user_input_node,
+    agent::agent_node,
+    model_openai::OpenAIModel,
+    state::ConversationState,
+    system_prompt_node::{SystemPromptLocation, add_system_prompt, remove_system_prompt},
+    user::user_input_node,
 };
 use log::info;
 
@@ -8,7 +12,7 @@ fn main() {
     env_logger::init();
 
     let model = OpenAIModel::new(
-        "<replace>",
+        "<replaceme>",
         "mistralai/mistral-small-3.1-24b-instruct",
         "https://openrouter.ai/api/v1",
     );
@@ -20,6 +24,11 @@ fn main() {
 
     graph
         .start()
+        .then(remove_system_prompt())
+        .then(add_system_prompt(
+            "You are a helpful assistant. Do your best to help the user.",
+            SystemPromptLocation::FirstMessage,
+        ))
         .then(user_input_node)
         .then(agent_node)
         .terminate();
