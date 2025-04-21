@@ -80,7 +80,7 @@ impl Message {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Choice {
     index: i32,
     message: Message,
@@ -96,5 +96,11 @@ impl Choice {
 impl From<Message> for crate::state::Message {
     fn from(value: Message) -> Self {
         Self::new(value.role, value.content)
+    }
+}
+
+impl From<crate::state::Message> for Message {
+    fn from(value: crate::state::Message) -> Self {
+        Self::new(value.role(), value.content())
     }
 }

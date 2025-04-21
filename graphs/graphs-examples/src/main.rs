@@ -8,7 +8,7 @@ fn main() {
     env_logger::init();
 
     let model = OpenAIModel::new(
-        "replace",
+        "<replace>",
         "mistralai/mistral-small-3.1-24b-instruct:free",
         "https://openrouter.ai/api/v1",
     );
@@ -26,9 +26,12 @@ fn main() {
 
     let runner = GraphRunner::new(graph);
 
-    let result = runner.run(ConversationState::new());
+    let mut state = ConversationState::new();
 
-    info!("Result: {result:?}");
+    loop {
+        state = runner.run(state);
+        info!("next state: {state:?}");
+    }
 }
 
 #[cfg(test)]

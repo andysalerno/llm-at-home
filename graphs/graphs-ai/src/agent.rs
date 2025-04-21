@@ -1,7 +1,7 @@
 use graphs::Action;
 
 use crate::{
-    model::{ChatCompletionRequest, Message, ModelClient},
+    model::{ChatCompletionRequest, ModelClient},
     state::ConversationState,
     tool::Tool,
 };
@@ -14,10 +14,12 @@ pub fn agent_node(
         // Here you can implement the logic for your agent
         // For example, you can modify the state or perform some actions
 
-        let messages = vec![
-            Message::new("system", "You are a helpful assistant."),
-            Message::new("user", "hi"),
-        ];
+        let messages = state
+            .messages()
+            .iter()
+            .cloned()
+            .map(std::convert::Into::into)
+            .collect::<Vec<_>>();
 
         let response = model.get_model_response(&ChatCompletionRequest::new(
             "model",

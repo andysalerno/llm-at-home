@@ -1,5 +1,5 @@
 use crate::model::ModelClient;
-use log::info;
+use log::{debug, info};
 use serde_json::{Value, json};
 
 pub struct OpenAIModel {
@@ -43,19 +43,23 @@ impl ModelClient for OpenAIModel {
         let url = format!("{}/chat/completions", self.base_url);
 
         info!(
-            "Sending request to OpenAI API at {} with model {}",
+            "Sending request to llm api at {} with model {}",
             url, self.model
         );
+
+        let body = json!({
+            "model": self.model,
+            "messages": messages,
+            "temperature": request.temperature(),
+        });
+
+        debug!("Request body: {body}");
 
         let response = client
             .post(url)
             .header("Authorization", format!("Bearer {}", self.api_key))
             .header("Content-Type", "application/json")
-            .json(&json!({
-                "model": self.model,
-                "messages": messages,
-                "temperature": request.temperature(),
-            }))
+            .json(&body)
             .send()
             .expect("Failed to send request to OpenAI");
 

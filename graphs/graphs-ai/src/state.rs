@@ -17,6 +17,10 @@ impl ConversationState {
         new_state.messages.push(message);
         new_state
     }
+
+    pub fn messages(&self) -> &[Message] {
+        &self.messages
+    }
 }
 
 impl Default for ConversationState {
@@ -25,7 +29,7 @@ impl Default for ConversationState {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Message {
     role: String,
     content: String,
@@ -34,5 +38,13 @@ pub struct Message {
 impl Message {
     pub fn new(role: String, content: String) -> Self {
         Self { role, content }
+    }
+
+    pub fn role(&self) -> &str {
+        &self.role
+    }
+
+    pub fn content(&self) -> &str {
+        &self.content
     }
 }
