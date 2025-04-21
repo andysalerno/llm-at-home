@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 graphs = { path = "../graphs" }
+graphs-ai = { path = "../graphs-ai" }
 
 [lints]
 workspace = true

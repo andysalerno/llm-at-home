@@ -1,5 +1,25 @@
+use graphs::GraphRunner;
+use graphs_ai::{
+    agent::agent_node, model_openai::OpenAIModel, state::ConversationState, user::user_input_node,
+};
+
 fn main() {
-    println!("Hello, world!");
+    let model = OpenAIModel::new("key", "name");
+
+    let user_input_node = user_input_node();
+    let agent_node = agent_node(Box::new(model), &[]);
+
+    let mut graph = graphs::Graph::new();
+
+    graph
+        .start()
+        .then(user_input_node)
+        .then(agent_node)
+        .terminate();
+
+    let runner = GraphRunner::new(graph);
+
+    let result = runner.run(ConversationState::new());
 }
 
 #[cfg(test)]

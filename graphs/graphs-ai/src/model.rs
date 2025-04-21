@@ -32,6 +32,14 @@ impl ChatCompletionRequest {
             max_completion_tokens,
         }
     }
+
+    pub fn messages(&self) -> &[Message] {
+        &self.messages
+    }
+
+    pub fn temperature(&self) -> f32 {
+        self.temperature
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -61,6 +69,14 @@ impl Message {
             role: role.into(),
             content: content.into(),
         }
+    }
+
+    pub fn role(&self) -> &str {
+        &self.role
+    }
+
+    pub fn content(&self) -> &str {
+        &self.content
     }
 }
 
