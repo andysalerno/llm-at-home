@@ -10,21 +10,29 @@ pub struct Action<T> {
     // TODO: add concept of 'preconditions' which are verified before the action is invoked
     // i.e. 'the last message of the state must have role user'
     action: Box<dyn Fn(T) -> T>,
+    display_name: String,
 }
 
 impl<T> Action<T> {
-    pub fn new(action: Box<dyn Fn(T) -> T>) -> Self {
-        Self { action }
+    pub fn new(display_name: impl Into<String>, action: Box<dyn Fn(T) -> T>) -> Self {
+        Self {
+            action,
+            display_name: display_name.into(),
+        }
     }
 }
 
 pub struct Condition<T> {
     condition: Box<dyn Fn(&T) -> bool>,
+    display_name: String,
 }
 
 impl<T> Condition<T> {
-    pub fn new(condition: Box<dyn Fn(&T) -> bool>) -> Self {
-        Self { condition }
+    pub fn new(display_name: impl Into<String>, condition: Box<dyn Fn(&T) -> bool>) -> Self {
+        Self {
+            condition,
+            display_name: display_name.into(),
+        }
     }
 }
 
@@ -32,6 +40,16 @@ pub enum Node<T> {
     Action(Action<T>),
     Branch(Condition<T>),
     Terminal,
+}
+
+impl<T> Node<T> {
+    pub fn display_name(&self) -> &str {
+        match self {
+            Self::Action(action) => &action.display_name,
+            Self::Branch(condition) => &condition.display_name,
+            Self::Terminal => "Terminal",
+        }
+    }
 }
 
 struct IdentifiedNode<T> {
@@ -70,7 +88,7 @@ pub struct Graph<T> {
 }
 
 fn no_op_start_node<T>() -> Action<T> {
-    Action::new(Box::new(|x| x))
+    Action::new("START", Box::new(|x| x))
 }
 
 impl<T> Graph<T> {
@@ -229,7 +247,10 @@ impl<T> GraphRunner<T> {
         loop {
             let cur_node = self.graph.node(cur_node_id);
 
-            info!("Current node: {cur_node_id:?}");
+            info!(
+                "Current node: {cur_node_id:?} name: {}",
+                cur_node.display_name()
+            );
 
             match cur_node {
                 Node::Action(action) => {
@@ -255,21 +276,15 @@ mod tests {
     use super::*;
 
     fn adder(add: i32) -> Action<i32> {
-        Action {
-            action: Box::new(move |x| x + add),
-        }
+        Action::new("adder", Box::new(move |x| x + add))
     }
 
     fn subtractor(subtract: i32) -> Action<i32> {
-        Action {
-            action: Box::new(move |x| x - subtract),
-        }
+        Action::new("subtractor", Box::new(move |x| x - subtract))
     }
 
     fn multiplier(multiply: i32) -> Action<i32> {
-        Action {
-            action: Box::new(move |x| x * multiply),
-        }
+        Action::new("multiplier", Box::new(move |x| x * multiply))
     }
 
     #[test]
@@ -284,6 +299,7 @@ mod tests {
             .branch(
                 Condition {
                     condition: Box::new(|x| *x > 10),
+                    display_name: "is_greater_than_10".to_string(),
                 },
                 |graph| graph.then(adder(2)).terminate(),
                 |graph| graph.then(subtractor(1)).terminate(),

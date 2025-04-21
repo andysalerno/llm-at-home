@@ -7,5 +7,5 @@ use crate::{
 };
 
 pub fn response_has_tool_node() -> Condition<ConversationState> {
-    Condition::new(Box::new(move |state| true))
+    Condition::new("has_tool", Box::new(move |state| true))
 }

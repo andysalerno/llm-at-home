@@ -39,15 +39,15 @@ mod tests {
     use graphs::{Action, Graph, GraphRunner};
 
     fn adder(add: i32) -> Action<i32> {
-        Action::new(Box::new(move |x| x + add))
+        Action::new("adder", Box::new(move |x| x + add))
     }
 
     fn subtractor(subtract: i32) -> Action<i32> {
-        Action::new(Box::new(move |x| x - subtract))
+        Action::new("subtractor", Box::new(move |x| x - subtract))
     }
 
     fn multiplier(multiply: i32) -> Action<i32> {
-        Action::new(Box::new(move |x| x * multiply))
+        Action::new("multiplier", Box::new(move |x| x * multiply))
     }
 
     #[test]
