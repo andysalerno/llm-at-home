@@ -5,6 +5,8 @@
 pub struct NodeId(usize);
 
 pub struct Action<T> {
+    // TODO: add concept of 'preconditions' which are verified before the action is invoked
+    // i.e. 'the last message of the state must have role user'
     action: Box<dyn Fn(T) -> T>,
 }
 
