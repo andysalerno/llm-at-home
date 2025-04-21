@@ -1,3 +1,5 @@
+use log::info;
+
 // The NodeId can only be created internally by the graph structure,
 // so it should be impossible to ever have a NodeId handle that cannot be resolved to its Node,
 // as long as the graph structure does its job. (Nodes are never removed, only created)
@@ -221,7 +223,7 @@ impl<T> GraphRunner<T> {
         loop {
             let cur_node = self.graph.node(cur_node_id);
 
-            println!("Current node: {cur_node_id:?}");
+            info!("Current node: {cur_node_id:?}");
 
             match cur_node {
                 Node::Action(action) => {

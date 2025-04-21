@@ -2,9 +2,16 @@ use graphs::GraphRunner;
 use graphs_ai::{
     agent::agent_node, model_openai::OpenAIModel, state::ConversationState, user::user_input_node,
 };
+use log::info;
 
 fn main() {
-    let model = OpenAIModel::new("key", "name");
+    env_logger::init();
+
+    let model = OpenAIModel::new(
+        "replace",
+        "mistralai/mistral-small-3.1-24b-instruct:free",
+        "https://openrouter.ai/api/v1",
+    );
 
     let user_input_node = user_input_node();
     let agent_node = agent_node(Box::new(model), &[]);
@@ -20,6 +27,8 @@ fn main() {
     let runner = GraphRunner::new(graph);
 
     let result = runner.run(ConversationState::new());
+
+    info!("Result: {result:?}");
 }
 
 #[cfg(test)]

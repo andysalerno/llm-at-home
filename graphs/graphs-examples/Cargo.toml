@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+env_logger = "0.11"
 graphs = { path = "../graphs" }
 graphs-ai = { path = "../graphs-ai" }
+log = "0.4.27"
 
 [lints]
 workspace = true
