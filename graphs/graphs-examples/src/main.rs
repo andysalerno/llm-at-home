@@ -2,6 +2,7 @@ use graphs::GraphRunner;
 use graphs_ai::{
     agent::agent_node,
     model_openai::OpenAIModel,
+    response_has_tools_node::response_has_tool_node,
     state::ConversationState,
     system_prompt_node::{SystemPromptLocation, add_system_prompt, remove_system_prompt},
     user::user_input_node,
@@ -11,8 +12,11 @@ use log::info;
 fn main() {
     env_logger::init();
 
+    // read the env var with the api key
+    let api_key = std::env::var("LLM_API_KEY").unwrap();
+
     let model = OpenAIModel::new(
-        "<replaceme>",
+        api_key,
         "mistralai/mistral-small-3.1-24b-instruct",
         "https://openrouter.ai/api/v1",
     );
@@ -31,7 +35,11 @@ fn main() {
         ))
         .then(user_input_node)
         .then(agent_node)
-        .terminate();
+        .branch(
+            response_has_tool_node(),
+            |graph| graph.terminate(),
+            |graph| graph.terminate(),
+        );
 
     let runner = GraphRunner::new(graph);
 

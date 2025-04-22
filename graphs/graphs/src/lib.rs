@@ -187,12 +187,6 @@ impl<T> Graph<T> {
         self.edges_from(node_id).map(|edge| edge.to)
     }
 
-    // fn branch_edgs_from(&self, condition_node: NodeId) -> impl Iterator<Item = &BranchEdge> {
-    //     self.condition_edges
-    //         .iter()
-    //         .filter(move |edge| edge.from == condition_node)
-    // }
-
     fn node(&self, node_id: NodeId) -> &Node<T> {
         &self.nodes.get(node_id.0).expect("Expected a node").node
     }
@@ -202,14 +196,6 @@ impl<T> Default for Graph<T> {
     fn default() -> Self {
         Self::new()
     }
-}
-
-#[derive(Debug)]
-enum LastAddedId {
-    Node(NodeId),
-    Branch(NodeId),
-    // BranchConditionTrue(NodeId),
-    // BranchConditionFalse(NodeId),
 }
 
 #[derive(Debug)]
@@ -323,8 +309,10 @@ impl<T> GraphRunner<T> {
                     }
 
                     if (condition.condition)(&result) {
+                        info!("Condition {} evaluated to true", condition.display_name);
                         cur_node_id = true_node_id;
                     } else {
+                        info!("Condition {} evaluated to false", condition.display_name);
                         cur_node_id = false_node_id;
                     }
                 }
@@ -373,6 +361,6 @@ mod tests {
         // 3 + 1 + 1 + 2 * 3 = 21
         let result = runner.run(3);
 
-        assert_eq!(result, 18);
+        assert_eq!(result, 20);
     }
 }

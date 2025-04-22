@@ -1,7 +1,3 @@
-set export
-
-PHOENIX_PORT := "8008"
-
 default:
   just --list
 
@@ -27,3 +23,12 @@ run-code-sandbox:
 
 run-web-scraper:
   docker run --rm -p 3000:3000 amerkurev/scrapper:latest
+
+[working-directory: 'graphs']
+run-graphs:
+  #!/usr/bin/env bash
+  set -a
+  source ./.env
+  set +a
+  echo $LLM_API_KEY
+  cargo run
