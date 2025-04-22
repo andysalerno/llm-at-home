@@ -8,7 +8,7 @@ use crate::{
 
 pub fn agent_node(
     model: Box<dyn ModelClient>, // todo: expect some lazy model provider fn, not a model
-    tools: &[Box<dyn Tool>],
+    tools: Vec<Box<dyn Tool>>,
 ) -> Action<ConversationState> {
     Action::new(
         "responding_agent",
@@ -22,6 +22,8 @@ pub fn agent_node(
                 .cloned()
                 .map(std::convert::Into::into)
                 .collect::<Vec<_>>();
+
+            let tools = &tools;
 
             let response = model.get_model_response(&ChatCompletionRequest::new(
                 messages, None, None, None, None,

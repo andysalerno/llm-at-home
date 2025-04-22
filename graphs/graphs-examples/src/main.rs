@@ -1,3 +1,6 @@
+mod invoke_tool;
+mod sample_tool;
+
 use graphs::GraphRunner;
 use graphs_ai::{
     agent::agent_node,
@@ -5,9 +8,12 @@ use graphs_ai::{
     response_has_tools_node::response_has_tool_node,
     state::ConversationState,
     system_prompt_node::{SystemPromptLocation, add_system_prompt, remove_system_prompt},
+    tool::Tool,
     user::user_input_node,
 };
+use invoke_tool::invoke_tool;
 use log::info;
+use sample_tool::SampleTool;
 
 fn main() {
     env_logger::init();
@@ -21,8 +27,7 @@ fn main() {
         "https://openrouter.ai/api/v1",
     );
 
-    let user_input_node = user_input_node();
-    let agent_node = agent_node(Box::new(model), &[]);
+    let tools: Vec<Box<dyn Tool>> = vec![Box::new(SampleTool::new())];
 
     let mut graph = graphs::Graph::new();
 
@@ -33,11 +38,15 @@ fn main() {
             "You are a helpful assistant. Do your best to help the user.",
             SystemPromptLocation::FirstMessage,
         ))
-        .then(user_input_node)
-        .then(agent_node)
+        .then(user_input_node())
+        .then(agent_node(Box::new(model), tools))
         .branch(
             response_has_tool_node(),
-            |graph| graph.terminate(),
+            |graph| {
+                graph
+                    .then(invoke_tool(vec![Box::new(SampleTool::new())]))
+                    .terminate()
+            },
             |graph| graph.terminate(),
         );
 

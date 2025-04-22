@@ -29,10 +29,10 @@ pub fn add_system_prompt(
         "add_system_prompt",
         Box::new(move |state| match location {
             SystemPromptLocation::FirstMessage => {
-                state.with_added_message_to_front(Message::new("system".into(), content.clone()))
+                state.with_added_message_to_front(Message::new("system", content.clone()))
             }
             SystemPromptLocation::LastMessage => {
-                state.with_added_message(Message::new("system".into(), content.clone()))
+                state.with_added_message(Message::new("system", content.clone()))
             }
         }),
     )

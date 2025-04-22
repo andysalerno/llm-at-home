@@ -50,10 +50,10 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn new(role: String, content: String) -> Self {
+    pub fn new(role: impl Into<String>, content: impl Into<String>) -> Self {
         Self {
-            role,
-            content,
+            role: role.into(),
+            content: content.into(),
             tool_calls: Vec::new(),
         }
     }
