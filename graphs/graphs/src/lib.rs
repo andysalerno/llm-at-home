@@ -37,7 +37,7 @@ pub struct Condition<T> {
     display_name: String,
 }
 
-impl Debug for Condition<T> {
+impl<T> Debug for Condition<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Condition")
             .field("display_name", &self.display_name)
@@ -129,7 +129,7 @@ impl<T> Graph<T> {
 
         GraphAdding {
             graph: self,
-            last_added: LastAddedId::Node(start_id),
+            last_added: start_id,
         }
     }
 
@@ -144,7 +144,7 @@ impl<T> Graph<T> {
 
         GraphAdding {
             graph: self,
-            last_added: LastAddedId::Node(next_id),
+            last_added: next_id,
         }
     }
 
@@ -161,7 +161,7 @@ impl<T> Graph<T> {
 
         GraphAdding {
             graph: self,
-            last_added: LastAddedId::Node(node_id),
+            last_added: node_id,
         }
     }
 
@@ -187,11 +187,11 @@ impl<T> Graph<T> {
         self.edges_from(node_id).map(|edge| edge.to)
     }
 
-    fn branch_edgs_from(&self, condition_node: NodeId) -> impl Iterator<Item = &BranchEdge> {
-        self.condition_edges
-            .iter()
-            .filter(move |edge| edge.from == condition_node)
-    }
+    // fn branch_edgs_from(&self, condition_node: NodeId) -> impl Iterator<Item = &BranchEdge> {
+    //     self.condition_edges
+    //         .iter()
+    //         .filter(move |edge| edge.from == condition_node)
+    // }
 
     fn node(&self, node_id: NodeId) -> &Node<T> {
         &self.nodes.get(node_id.0).expect("Expected a node").node
@@ -207,14 +207,15 @@ impl<T> Default for Graph<T> {
 #[derive(Debug)]
 enum LastAddedId {
     Node(NodeId),
-    BranchConditionTrue(NodeId),
-    BranchConditionFalse(NodeId),
+    Branch(NodeId),
+    // BranchConditionTrue(NodeId),
+    // BranchConditionFalse(NodeId),
 }
 
 #[derive(Debug)]
 pub struct GraphAdding<'a, T> {
     graph: &'a mut Graph<T>,
-    last_added: LastAddedId,
+    last_added: NodeId,
 }
 
 impl<'a, T> GraphAdding<'a, T> {
@@ -222,17 +223,16 @@ impl<'a, T> GraphAdding<'a, T> {
     pub fn then(self, node: Action<T>) -> Self {
         let next_id = self.graph.register_node(node);
 
-        let edge = match self.last_added {
-            LastAddedId::Node(from) => Edge { from, to: next_id },
-            LastAddedId::BranchConditionFalse(from) => Edge { from, to: next_id },
-            LastAddedId::BranchConditionTrue(from) => Edge { from, to: next_id },
+        let edge = Edge {
+            from: self.last_added,
+            to: next_id,
         };
 
         self.graph.edges.push(edge);
 
         Self {
             graph: self.graph,
-            last_added: LastAddedId::Node(next_id),
+            last_added: next_id,
         }
     }
 
@@ -292,15 +292,40 @@ impl<T> GraphRunner<T> {
             match cur_node {
                 Node::Action(action) => {
                     result = (action.action)(result);
-                    cur_node_id = self.graph.next_nodes(cur_node_id).next().unwrap();
+
+                    let mut next_nodes = self.graph.next_nodes(cur_node_id);
+                    let next_node = next_nodes
+                        .next()
+                        .expect("Expected an action node to have one edge");
+
+                    cur_node_id = next_node;
+
+                    {
+                        let next = next_nodes.next();
+                        debug_assert!(next.is_none());
+                    }
                 }
                 Node::Branch(condition) => {
-                    let next_nodes = self.graph.branch_edgs_from(cur_node_id);
-                    let next_node = next_nodes.first().expect("expected to find the next node");
+                    let mut next_nodes = self.graph.next_nodes(cur_node_id);
+
+                    // by convention, a branch has two edges, and the first one is the true branch
+                    let true_node_id = next_nodes
+                        .next()
+                        .expect("Expected a branch to have at least one edge");
+
+                    let false_node_id = next_nodes
+                        .next()
+                        .expect("Expected a branch to have at least two edges");
+
+                    {
+                        let next = next_nodes.next();
+                        debug_assert!(next.is_none());
+                    }
+
                     if (condition.condition)(&result) {
-                        cur_node_id = next_node.to_when_true;
+                        cur_node_id = true_node_id;
                     } else {
-                        cur_node_id = next_node.to_when_false;
+                        cur_node_id = false_node_id;
                     }
                 }
                 Node::Terminal => return result,
