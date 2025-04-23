@@ -1,8 +1,4 @@
-use schemars::{
-    JsonSchema,
-    schema::{SchemaObject},
-    schema_for,
-};
+use schemars::{JsonSchema, schema::SchemaObject, schema_for};
 use serde::{Deserialize, Serialize};
 
 use crate::model;
