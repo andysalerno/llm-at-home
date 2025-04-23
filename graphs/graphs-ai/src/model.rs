@@ -205,7 +205,11 @@ impl Choice {
 
 impl From<Message> for crate::state::Message {
     fn from(value: Message) -> Self {
-        Self::new(value.role, value.content)
+        Self::new(value.role, value.content).with_tool_calls(
+            value
+                .tool_calls
+                .map(|calls| calls.into_iter().map(|call| call.into()).collect()),
+        )
     }
 }
 
@@ -290,5 +294,17 @@ impl From<&crate::state::ToolCall> for ToolCall {
                 name: value.function().name().to_string(),
             },
         }
+    }
+}
+
+impl From<ToolCall> for crate::state::ToolCall {
+    fn from(value: ToolCall) -> Self {
+        crate::state::ToolCall::new(value.id, value.index, value.r#type, value.function.into())
+    }
+}
+
+impl From<FunctionCall> for crate::state::FunctionCall {
+    fn from(value: FunctionCall) -> Self {
+        crate::state::FunctionCall::new(value.arguments, value.name)
     }
 }

@@ -58,6 +58,11 @@ impl Message {
         }
     }
 
+    pub fn with_tool_calls(mut self, tool_calls: Option<Vec<ToolCall>>) -> Self {
+        self.tool_calls = tool_calls;
+        self
+    }
+
     pub fn role(&self) -> &str {
         &self.role
     }
@@ -80,6 +85,15 @@ pub struct ToolCall {
 }
 
 impl ToolCall {
+    pub fn new(id: String, index: usize, r#type: String, function: FunctionCall) -> Self {
+        Self {
+            id,
+            index,
+            r#type,
+            function,
+        }
+    }
+
     pub fn id(&self) -> &str {
         &self.id
     }
@@ -103,6 +117,10 @@ pub struct FunctionCall {
 }
 
 impl FunctionCall {
+    pub fn new(arguments: String, name: String) -> Self {
+        Self { arguments, name }
+    }
+
     pub fn arguments(&self) -> &str {
         &self.arguments
     }

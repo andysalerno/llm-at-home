@@ -1,7 +1,7 @@
 use graphs::Action;
 use graphs_ai::{
     state::{ConversationState, Message},
-    tool::{self, Tool},
+    tool::Tool,
 };
 use log::info;
 

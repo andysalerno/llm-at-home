@@ -61,6 +61,8 @@ impl ModelClient for OpenAIModel {
         let openai_response = serde_json::from_value::<OpenAIChatCompletionResponse>(response_json)
             .expect("Failed to parse OpenAI response");
 
+        debug!("parsed openai response: {openai_response:?}");
+
         openai_response.into()
     }
 }
@@ -158,6 +160,8 @@ fn convert_request(
 struct Message {
     role: String,
     content: String,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     tool_calls: Option<Vec<ToolCall>>,
 }
 
@@ -272,7 +276,24 @@ impl From<OpenAIChatCompletionResponse> for crate::model::ChatCompletionResponse
 /// Convert an OpenAI message to a conversation state model message
 impl From<Message> for crate::state::Message {
     fn from(value: Message) -> Self {
-        Self::new(value.role, value.content)
+        Self::new(value.role, value.content).with_tool_calls(value.tool_calls.map(|tools| {
+            tools
+                .into_iter()
+                .map(std::convert::Into::into)
+                .collect::<Vec<_>>()
+        }))
+    }
+}
+
+impl From<ToolCall> for crate::state::ToolCall {
+    fn from(value: ToolCall) -> Self {
+        Self::new(value.id, value.index, value.r#type, value.function.into())
+    }
+}
+
+impl From<FunctionCall> for crate::state::FunctionCall {
+    fn from(value: FunctionCall) -> Self {
+        Self::new(value.arguments, value.name)
     }
 }
 
