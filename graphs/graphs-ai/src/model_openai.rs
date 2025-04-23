@@ -155,6 +155,26 @@ fn convert_request(
     )
 }
 
+/// Convert an `OpenAI` API response to a standard model response.
+impl From<OpenAIChatCompletionResponse> for crate::model::ChatCompletionResponse {
+    fn from(value: OpenAIChatCompletionResponse) -> Self {
+        let model = value.model;
+        let object = value.object;
+        let created = value.created;
+        let choices = value
+            .choices
+            .into_iter()
+            .map(std::convert::Into::into)
+            .collect();
+
+        Self::new(value.id, object, created, model, choices)
+    }
+}
+
+/////
+///// Message
+/////
+
 /// A message sent or received from the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Message {
@@ -183,93 +203,16 @@ impl Message {
     }
 }
 
-/// A choice received from the `OpenAI` API.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct Choice {
-    index: i32,
-    message: Message,
-    finish_reason: String,
-}
-
-impl Choice {
-    pub fn message(&self) -> &Message {
-        &self.message
-    }
-}
-
-/// A tool invocation received from the `OpenAI` API.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct ToolCall {
-    id: String,
-    index: usize,
-    r#type: String,
-    function: FunctionCall,
-}
-
-/// A function invocation received from the `OpenAI` API.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct FunctionCall {
-    /// A json object representing the arguments to the function
-    arguments: String,
-
-    /// The name of the function to call
-    name: String,
-}
-
-/// A tool description that can be sent to the `OpenAI` API.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct Tool {
-    function: Function,
-    r#type: String,
-}
-
-/// A function description that can be sent to the `OpenAI` API.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct Function {
-    name: String,
-    description: String,
-    parameters: ToolSchema,
-    strict: bool,
-}
-
-impl<T> From<T> for Tool
-where
-    T: Borrow<crate::model::Tool>,
-{
-    fn from(value: T) -> Self {
-        let value = value.borrow();
-        Self {
-            function: value.function().into(),
-            r#type: value.r#type().to_string(),
-        }
-    }
-}
-
-/// Convert a standard model function to an `OpenAI` function.
-impl From<&crate::model::Function> for Function {
-    fn from(value: &crate::model::Function) -> Self {
-        Self {
-            name: value.name().to_string(),
-            description: value.description().to_string(),
-            parameters: value.parameters().clone(),
-            strict: value.strict(),
-        }
-    }
-}
-
-/// Convert an `OpenAI` API response to a standard model response.
-impl From<OpenAIChatCompletionResponse> for crate::model::ChatCompletionResponse {
-    fn from(value: OpenAIChatCompletionResponse) -> Self {
-        let model = value.model;
-        let object = value.object;
-        let created = value.created;
-        let choices = value
-            .choices
-            .into_iter()
-            .map(std::convert::Into::into)
-            .collect();
-
-        Self::new(value.id, object, created, model, choices)
+/// Convert an `OpenAI` message to a standard model message
+impl From<Message> for crate::model::Message {
+    fn from(value: Message) -> Self {
+        Self::new(
+            value.role,
+            value.content,
+            value
+                .tool_calls
+                .map(|tools| tools.into_iter().map(std::convert::Into::into).collect()),
+        )
     }
 }
 
@@ -282,25 +225,6 @@ impl From<Message> for crate::state::Message {
                 .map(std::convert::Into::into)
                 .collect::<Vec<_>>()
         }))
-    }
-}
-
-impl From<ToolCall> for crate::state::ToolCall {
-    fn from(value: ToolCall) -> Self {
-        Self::new(value.id, value.index, value.r#type, value.function.into())
-    }
-}
-
-impl From<FunctionCall> for crate::state::FunctionCall {
-    fn from(value: FunctionCall) -> Self {
-        Self::new(value.arguments, value.name)
-    }
-}
-
-/// Convert a conversation state model message to an `OpenAI` message
-impl From<crate::state::Message> for Message {
-    fn from(value: crate::state::Message) -> Self {
-        Self::new(value.role(), value.content())
     }
 }
 
@@ -322,17 +246,107 @@ where
     }
 }
 
-/// Convert an `OpenAI` message to a standard model message
-impl From<Message> for crate::model::Message {
-    fn from(value: Message) -> Self {
-        Self::new(
-            value.role,
-            value.content,
-            value
-                .tool_calls
-                .map(|tools| tools.into_iter().map(std::convert::Into::into).collect()),
-        )
+/// Convert a conversation state model message to an `OpenAI` message
+impl From<crate::state::Message> for Message {
+    fn from(value: crate::state::Message) -> Self {
+        Self::new(value.role(), value.content())
     }
+}
+
+/////
+///// Choice
+/////
+
+/// A choice received from the `OpenAI` API.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Choice {
+    index: i32,
+    message: Message,
+    finish_reason: String,
+}
+
+impl Choice {
+    pub fn message(&self) -> &Message {
+        &self.message
+    }
+}
+/// Convert an `OpenAI` choice to a standard model choice
+impl From<Choice> for crate::model::Choice {
+    fn from(value: Choice) -> Self {
+        Self::new(value.index, value.message.into(), value.finish_reason)
+    }
+}
+
+/////
+///// Function
+/////
+
+/// A function description that can be sent to the `OpenAI` API.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Function {
+    name: String,
+    description: String,
+    parameters: ToolSchema,
+    strict: bool,
+}
+
+/// Convert a standard model function to an `OpenAI` function.
+impl From<&crate::model::Function> for Function {
+    fn from(value: &crate::model::Function) -> Self {
+        Self {
+            name: value.name().to_string(),
+            description: value.description().to_string(),
+            parameters: value.parameters().clone(),
+            strict: value.strict(),
+        }
+    }
+}
+
+/////
+///// FunctionCall
+/////
+
+/// A function invocation received from the `OpenAI` API.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct FunctionCall {
+    /// A json object representing the arguments to the function
+    arguments: String,
+
+    /// The name of the function to call
+    name: String,
+}
+impl From<FunctionCall> for crate::model::FunctionCall {
+    fn from(value: FunctionCall) -> Self {
+        Self::new(value.arguments, value.name)
+    }
+}
+
+impl From<crate::model::FunctionCall> for FunctionCall {
+    fn from(value: crate::model::FunctionCall) -> Self {
+        Self {
+            arguments: value.arguments().into(),
+            name: value.name().into(),
+        }
+    }
+}
+
+impl From<FunctionCall> for crate::state::FunctionCall {
+    fn from(value: FunctionCall) -> Self {
+        Self::new(value.arguments, value.name)
+    }
+}
+
+/////
+///// ToolCall
+/////
+
+/// A tool invocation received from the `OpenAI` API.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct ToolCall {
+    id: String,
+    index: usize,
+    r#type: String,
+    function: FunctionCall,
 }
 
 /// From an `OpenAI` `ToolCall` to a standard model `ToolCall`.
@@ -353,24 +367,32 @@ impl From<&crate::model::ToolCall> for ToolCall {
     }
 }
 
-impl From<FunctionCall> for crate::model::FunctionCall {
-    fn from(value: FunctionCall) -> Self {
-        Self::new(value.arguments, value.name)
+impl From<ToolCall> for crate::state::ToolCall {
+    fn from(value: ToolCall) -> Self {
+        Self::new(value.id, value.index, value.r#type, value.function.into())
     }
 }
 
-impl From<crate::model::FunctionCall> for FunctionCall {
-    fn from(value: crate::model::FunctionCall) -> Self {
+/////
+///// Tool
+/////
+
+/// A tool description that can be sent to the `OpenAI` API.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct Tool {
+    function: Function,
+    r#type: String,
+}
+
+impl<T> From<T> for Tool
+where
+    T: Borrow<crate::model::Tool>,
+{
+    fn from(value: T) -> Self {
+        let value = value.borrow();
         Self {
-            arguments: value.arguments().into(),
-            name: value.name().into(),
+            function: value.function().into(),
+            r#type: value.r#type().to_string(),
         }
-    }
-}
-
-/// Convert an `OpenAI` choice to a standard model choice
-impl From<Choice> for crate::model::Choice {
-    fn from(value: Choice) -> Self {
-        Self::new(value.index, value.message.into(), value.finish_reason)
     }
 }
