@@ -26,7 +26,11 @@ pub fn agent_node(
             let tools = &tools;
 
             let response = model.get_model_response(&ChatCompletionRequest::new(
-                messages, None, None, None, None,
+                messages,
+                None,
+                None,
+                Some(tools.iter().map(|t| t.as_ref().into()).collect()),
+                None,
             ));
 
             let choices = response.take_choices();

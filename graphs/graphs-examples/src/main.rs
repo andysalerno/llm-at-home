@@ -1,5 +1,5 @@
 mod invoke_tool;
-mod sample_tool;
+mod weather_tool;
 
 use graphs::GraphRunner;
 use graphs_ai::{
@@ -13,7 +13,7 @@ use graphs_ai::{
 };
 use invoke_tool::invoke_tool;
 use log::info;
-use sample_tool::SampleTool;
+use weather_tool::WeatherTool;
 
 fn main() {
     env_logger::init();
@@ -27,7 +27,7 @@ fn main() {
         "https://openrouter.ai/api/v1",
     );
 
-    let tools: Vec<Box<dyn Tool>> = vec![Box::new(SampleTool::new())];
+    let tools: Vec<Box<dyn Tool>> = vec![Box::new(WeatherTool::new())];
 
     let mut graph = graphs::Graph::new();
 
@@ -44,8 +44,8 @@ fn main() {
             response_has_tool_node(),
             |graph| {
                 graph
-                    .then(invoke_tool(vec![Box::new(SampleTool::new())]))
-                    .terminate()
+                    .then(invoke_tool(vec![Box::new(WeatherTool::new())]))
+                    .terminate();
             },
             |graph| graph.terminate(),
         );

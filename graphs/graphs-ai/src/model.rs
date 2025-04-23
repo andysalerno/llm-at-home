@@ -1,3 +1,4 @@
+use crate::tool::ToolSchema;
 use serde::{Deserialize, Serialize};
 
 pub trait ModelClient {
@@ -69,6 +70,22 @@ pub struct ChatCompletionResponse {
 }
 
 impl ChatCompletionResponse {
+    pub fn new(
+        id: String,
+        object: String,
+        created: i64,
+        model: String,
+        choices: Vec<Choice>,
+    ) -> Self {
+        Self {
+            id,
+            object,
+            created,
+            model,
+            choices,
+        }
+    }
+
     pub fn take_choices(self) -> Vec<Choice> {
         self.choices
     }
@@ -78,13 +95,19 @@ impl ChatCompletionResponse {
 pub struct Message {
     role: String,
     content: String,
+    tool_calls: Option<Vec<ToolCall>>,
 }
 
 impl Message {
-    pub fn new(role: impl Into<String>, content: impl Into<String>) -> Self {
+    pub fn new(
+        role: impl Into<String>,
+        content: impl Into<String>,
+        tool_calls: Option<Vec<ToolCall>>,
+    ) -> Self {
         Self {
             role: role.into(),
             content: content.into(),
+            tool_calls,
         }
     }
 
@@ -94,6 +117,68 @@ impl Message {
 
     pub fn content(&self) -> &str {
         &self.content
+    }
+
+    pub fn tool_calls(&self) -> Option<&Vec<ToolCall>> {
+        self.tool_calls.as_ref()
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ToolCall {
+    id: String,
+    index: usize,
+    r#type: String,
+    function: FunctionCall,
+}
+
+impl ToolCall {
+    pub fn new(id: String, index: usize, r#type: String, function: FunctionCall) -> Self {
+        Self {
+            id,
+            index,
+            r#type,
+            function,
+        }
+    }
+
+    pub fn id(&self) -> &str {
+        &self.id
+    }
+
+    pub fn index(&self) -> usize {
+        self.index
+    }
+
+    pub fn r#type(&self) -> &str {
+        &self.r#type
+    }
+
+    pub fn function(&self) -> &FunctionCall {
+        &self.function
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FunctionCall {
+    /// A json object representing the arguments to the function
+    arguments: String,
+
+    /// The name of the function to call
+    name: String,
+}
+
+impl FunctionCall {
+    pub fn new(arguments: String, name: String) -> Self {
+        Self { arguments, name }
+    }
+
+    pub fn name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn arguments(&self) -> &str {
+        &self.arguments
     }
 }
 
@@ -105,6 +190,14 @@ pub struct Choice {
 }
 
 impl Choice {
+    pub fn new(index: i32, message: Message, finish_reason: String) -> Self {
+        Self {
+            index,
+            message,
+            finish_reason,
+        }
+    }
+
     pub fn message(&self) -> &Message {
         &self.message
     }
@@ -118,14 +211,20 @@ impl From<Message> for crate::state::Message {
 
 impl From<crate::state::Message> for Message {
     fn from(value: crate::state::Message) -> Self {
-        Self::new(value.role(), value.content())
+        Self::new(
+            value.role(),
+            value.content(),
+            value
+                .tool_calls()
+                .as_ref()
+                .map(|calls| calls.iter().map(ToolCall::from).collect()),
+        )
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Tool {
     function: Function,
-    r#type: String,
 }
 
 impl Tool {
@@ -134,7 +233,23 @@ impl Tool {
     }
 
     pub fn r#type(&self) -> &str {
-        &self.r#type
+        "function"
+    }
+
+    pub fn new(
+        name: impl Into<String>,
+        description: impl Into<String>,
+        parameters: impl Into<ToolSchema>,
+        strict: bool,
+    ) -> Self {
+        Self {
+            function: Function {
+                name: name.into(),
+                description: description.into(),
+                parameters: parameters.into(),
+                strict,
+            },
+        }
     }
 }
 
@@ -142,7 +257,7 @@ impl Tool {
 pub struct Function {
     name: String,
     description: String,
-    parameters: String,
+    parameters: ToolSchema,
     strict: bool,
 }
 
@@ -155,11 +270,25 @@ impl Function {
         &self.description
     }
 
-    pub fn parameters(&self) -> &str {
+    pub fn parameters(&self) -> &ToolSchema {
         &self.parameters
     }
 
     pub fn strict(&self) -> bool {
         self.strict
+    }
+}
+
+impl From<&crate::state::ToolCall> for ToolCall {
+    fn from(value: &crate::state::ToolCall) -> Self {
+        ToolCall {
+            id: value.id().to_string(),
+            index: value.index(),
+            r#type: "function".to_string(),
+            function: FunctionCall {
+                arguments: value.function().arguments().to_string(),
+                name: value.function().name().to_string(),
+            },
+        }
     }
 }

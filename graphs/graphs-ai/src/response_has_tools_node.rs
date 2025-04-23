@@ -13,7 +13,10 @@ pub fn response_has_tool_node() -> Condition<ConversationState> {
 
             let tool_calls = last_message.tool_calls();
 
-            !tool_calls.is_empty()
+            match tool_calls {
+                Some(calls) => !calls.is_empty(),
+                None => false,
+            }
         }),
     )
 }

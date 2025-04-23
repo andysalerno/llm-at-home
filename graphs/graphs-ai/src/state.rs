@@ -46,7 +46,7 @@ impl Default for ConversationState {
 pub struct Message {
     role: String,
     content: String,
-    tool_calls: Vec<ToolCall>,
+    tool_calls: Option<Vec<ToolCall>>,
 }
 
 impl Message {
@@ -54,7 +54,7 @@ impl Message {
         Self {
             role: role.into(),
             content: content.into(),
-            tool_calls: Vec::new(),
+            tool_calls: None,
         }
     }
 
@@ -66,7 +66,7 @@ impl Message {
         &self.content
     }
 
-    pub fn tool_calls(&self) -> &[ToolCall] {
+    pub fn tool_calls(&self) -> &Option<Vec<ToolCall>> {
         &self.tool_calls
     }
 }
@@ -74,7 +74,9 @@ impl Message {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ToolCall {
     id: String,
-    function: Function,
+    index: usize,
+    r#type: String,
+    function: FunctionCall,
 }
 
 impl ToolCall {
@@ -82,18 +84,25 @@ impl ToolCall {
         &self.id
     }
 
-    pub fn function(&self) -> &Function {
+    pub fn function(&self) -> &FunctionCall {
         &self.function
+    }
+
+    pub fn index(&self) -> usize {
+        self.index
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Function {
+pub struct FunctionCall {
+    /// A json object representing the arguments to the function
     arguments: String,
+
+    /// The name of the function to call
     name: String,
 }
 
-impl Function {
+impl FunctionCall {
     pub fn arguments(&self) -> &str {
         &self.arguments
     }
