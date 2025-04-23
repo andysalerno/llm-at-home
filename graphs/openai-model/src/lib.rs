@@ -1,4 +1,4 @@
-use crate::{model::ModelClient, tool::ToolSchema};
+use graphs_ai::{model::ModelClient, tool::ToolSchema};
 use log::{debug, info};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -27,8 +27,8 @@ impl OpenAIModel {
 impl ModelClient for OpenAIModel {
     fn get_model_response(
         &self,
-        request: &crate::model::ChatCompletionRequest,
-    ) -> crate::model::ChatCompletionResponse {
+        request: &graphs_ai::model::ChatCompletionRequest,
+    ) -> graphs_ai::model::ChatCompletionResponse {
         let request: OpenAIChatCompletionRequest = convert_request(request, &self.model);
 
         let client = reqwest::blocking::Client::new();
@@ -140,7 +140,7 @@ impl OpenAIChatCompletionResponse {
 
 /// Convert from a standard model request to an `OpenAI` API request representation.
 fn convert_request(
-    other: &crate::model::ChatCompletionRequest,
+    other: &graphs_ai::model::ChatCompletionRequest,
     model: impl Into<String>,
 ) -> OpenAIChatCompletionRequest {
     OpenAIChatCompletionRequest::new(
@@ -156,7 +156,7 @@ fn convert_request(
 }
 
 /// Convert an `OpenAI` API response to a standard model response.
-impl From<OpenAIChatCompletionResponse> for crate::model::ChatCompletionResponse {
+impl From<OpenAIChatCompletionResponse> for graphs_ai::model::ChatCompletionResponse {
     fn from(value: OpenAIChatCompletionResponse) -> Self {
         let model = value.model;
         let object = value.object;
@@ -204,7 +204,7 @@ impl Message {
 }
 
 /// Convert an `OpenAI` message to a standard model message
-impl From<Message> for crate::model::Message {
+impl From<Message> for graphs_ai::model::Message {
     fn from(value: Message) -> Self {
         Self::new(
             value.role,
@@ -217,7 +217,7 @@ impl From<Message> for crate::model::Message {
 }
 
 /// Convert an `OpenAI` message to a conversation state model message
-impl From<Message> for crate::state::Message {
+impl From<Message> for graphs_ai::state::Message {
     fn from(value: Message) -> Self {
         Self::new(value.role, value.content).with_tool_calls(value.tool_calls.map(|tools| {
             tools
@@ -229,12 +229,22 @@ impl From<Message> for crate::state::Message {
 }
 
 /// Convert a standard model message to an `OpenAI` message
-impl<T> From<T> for Message
-where
-    T: Borrow<crate::model::Message>,
-{
-    fn from(value: T) -> Self {
-        let value = value.borrow();
+impl From<graphs_ai::model::Message> for Message {
+    fn from(value: graphs_ai::model::Message) -> Self {
+        // TODO: move, don't clone
+        Self {
+            role: value.role().to_string(),
+            content: value.content().to_string(),
+            tool_calls: value
+                .tool_calls()
+                .as_ref()
+                .map(|tools| tools.iter().map(std::convert::Into::into).collect()),
+        }
+    }
+}
+
+impl From<&graphs_ai::model::Message> for Message {
+    fn from(value: &graphs_ai::model::Message) -> Self {
         Self {
             role: value.role().to_string(),
             content: value.content().to_string(),
@@ -247,8 +257,8 @@ where
 }
 
 /// Convert a conversation state model message to an `OpenAI` message
-impl From<crate::state::Message> for Message {
-    fn from(value: crate::state::Message) -> Self {
+impl From<graphs_ai::state::Message> for Message {
+    fn from(value: graphs_ai::state::Message) -> Self {
         Self::new(value.role(), value.content())
     }
 }
@@ -271,7 +281,7 @@ impl Choice {
     }
 }
 /// Convert an `OpenAI` choice to a standard model choice
-impl From<Choice> for crate::model::Choice {
+impl From<Choice> for graphs_ai::model::Choice {
     fn from(value: Choice) -> Self {
         Self::new(value.index, value.message.into(), value.finish_reason)
     }
@@ -291,8 +301,8 @@ struct Function {
 }
 
 /// Convert a standard model function to an `OpenAI` function.
-impl From<&crate::model::Function> for Function {
-    fn from(value: &crate::model::Function) -> Self {
+impl From<&graphs_ai::model::Function> for Function {
+    fn from(value: &graphs_ai::model::Function) -> Self {
         Self {
             name: value.name().to_string(),
             description: value.description().to_string(),
@@ -315,14 +325,14 @@ struct FunctionCall {
     /// The name of the function to call
     name: String,
 }
-impl From<FunctionCall> for crate::model::FunctionCall {
+impl From<FunctionCall> for graphs_ai::model::FunctionCall {
     fn from(value: FunctionCall) -> Self {
         Self::new(value.arguments, value.name)
     }
 }
 
-impl From<crate::model::FunctionCall> for FunctionCall {
-    fn from(value: crate::model::FunctionCall) -> Self {
+impl From<graphs_ai::model::FunctionCall> for FunctionCall {
+    fn from(value: graphs_ai::model::FunctionCall) -> Self {
         Self {
             arguments: value.arguments().into(),
             name: value.name().into(),
@@ -330,7 +340,7 @@ impl From<crate::model::FunctionCall> for FunctionCall {
     }
 }
 
-impl From<FunctionCall> for crate::state::FunctionCall {
+impl From<FunctionCall> for graphs_ai::state::FunctionCall {
     fn from(value: FunctionCall) -> Self {
         Self::new(value.arguments, value.name)
     }
@@ -350,14 +360,14 @@ struct ToolCall {
 }
 
 /// From an `OpenAI` `ToolCall` to a standard model `ToolCall`.
-impl From<ToolCall> for crate::model::ToolCall {
+impl From<ToolCall> for graphs_ai::model::ToolCall {
     fn from(value: ToolCall) -> Self {
         Self::new(value.id, value.index, value.r#type, value.function.into())
     }
 }
 
-impl From<&crate::model::ToolCall> for ToolCall {
-    fn from(value: &crate::model::ToolCall) -> Self {
+impl From<&graphs_ai::model::ToolCall> for ToolCall {
+    fn from(value: &graphs_ai::model::ToolCall) -> Self {
         Self {
             id: value.id().into(),
             index: value.index(),
@@ -367,7 +377,7 @@ impl From<&crate::model::ToolCall> for ToolCall {
     }
 }
 
-impl From<ToolCall> for crate::state::ToolCall {
+impl From<ToolCall> for graphs_ai::state::ToolCall {
     fn from(value: ToolCall) -> Self {
         Self::new(value.id, value.index, value.r#type, value.function.into())
     }
@@ -386,7 +396,7 @@ struct Tool {
 
 impl<T> From<T> for Tool
 where
-    T: Borrow<crate::model::Tool>,
+    T: Borrow<graphs_ai::model::Tool>,
 {
     fn from(value: T) -> Self {
         let value = value.borrow();

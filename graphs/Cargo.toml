@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["graphs", "graphs-ai", "graphs-examples"]
+members = ["graphs", "graphs-ai", "graphs-examples", "openai-model"]
 
 
 [workspace.lints.rust]

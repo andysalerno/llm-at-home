@@ -4,7 +4,6 @@ mod weather_tool;
 use graphs::GraphRunner;
 use graphs_ai::{
     agent::agent_node,
-    model_openai::OpenAIModel,
     response_has_tools_node::response_has_tool_node,
     state::ConversationState,
     system_prompt_node::{SystemPromptLocation, add_system_prompt, remove_system_prompt},
@@ -13,6 +12,7 @@ use graphs_ai::{
 };
 use invoke_tool::invoke_tool;
 use log::info;
+use openai_model::OpenAIModel;
 use weather_tool::WeatherTool;
 
 fn main() {

@@ -1,16 +1,15 @@
 [package]
-name = "graphs-examples"
+name = "openai-model"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-env_logger = "0.11"
 graphs = { path = "../graphs" }
 graphs-ai = { path = "../graphs-ai" }
-openai-model = { path = "../openai-model" }
 log = "0.4"
-schemars = "0.8"
 serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+reqwest = { version = "0.12.15", features = ["blocking", "json"] }
 
 [lints]
 workspace = true
