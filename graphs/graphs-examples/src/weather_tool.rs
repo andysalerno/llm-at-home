@@ -40,6 +40,7 @@ impl Tool for WeatherTool {
     }
 
     fn get_output(&self, input_json: &str) -> String {
-        "sample tool output".into()
+        info!("WeatherTool input JSON: {input_json}");
+        "it's 20 celcius and raining".into()
     }
 }

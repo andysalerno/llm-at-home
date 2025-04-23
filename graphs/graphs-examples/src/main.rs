@@ -31,21 +31,24 @@ fn main() {
 
     let mut graph = graphs::Graph::new();
 
+    let remove_system_prompt_id = graph.register_node(remove_system_prompt());
+
     graph
         .start()
-        .then(remove_system_prompt())
+        .then(user_input_node())
+        // .then(remove_system_prompt())
+        .then(remove_system_prompt_id)
         .then(add_system_prompt(
             "You are a helpful assistant. Do your best to help the user.",
             SystemPromptLocation::FirstMessage,
         ))
-        .then(user_input_node())
         .then(agent_node(Box::new(model), tools))
         .branch(
             response_has_tool_node(),
             |graph| {
                 graph
                     .then(invoke_tool(vec![Box::new(WeatherTool::new())]))
-                    .terminate();
+                    .then(remove_system_prompt_id); // loop back
             },
             |graph| graph.terminate(),
         );

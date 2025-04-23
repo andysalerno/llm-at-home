@@ -103,10 +103,28 @@ struct BranchEdge {
 }
 
 #[derive(Debug)]
+struct IdGenerator {
+    next_id: usize,
+}
+
+impl IdGenerator {
+    fn new() -> Self {
+        Self { next_id: 0 }
+    }
+
+    fn next_id(&mut self) -> NodeId {
+        let id = self.next_id;
+        self.next_id += 1;
+        NodeId(id)
+    }
+}
+
+#[derive(Debug)]
 pub struct Graph<T> {
     nodes: Vec<IdentifiedNode<T>>,
     edges: Vec<Edge>,
     condition_edges: Vec<BranchEdge>,
+    id_generator: IdGenerator,
     start_id: NodeId,
 }
 
@@ -116,11 +134,15 @@ fn no_op_start_node<T>() -> Action<T> {
 
 impl<T> Graph<T> {
     pub fn new() -> Self {
+        let mut id_generator = IdGenerator::new();
+        let start_id = id_generator.next_id();
+
         Self {
             nodes: Vec::new(),
             edges: Vec::new(),
             condition_edges: Vec::new(),
-            start_id: NodeId(0),
+            id_generator,
+            start_id,
         }
     }
 
@@ -133,7 +155,7 @@ impl<T> Graph<T> {
         }
     }
 
-    pub const fn start_id(&self) -> NodeId {
+    pub fn start_id(&self) -> NodeId {
         self.start_id
     }
 
@@ -148,9 +170,11 @@ impl<T> Graph<T> {
         }
     }
 
-    fn register_node(&mut self, node: impl Into<Node<T>>) -> NodeId {
+    pub fn register_node(&mut self, node: impl Into<Node<T>>) -> NodeId {
         let node = node.into();
-        let next_id = NodeId(self.nodes.len());
+
+        // + 1 to avoid conflict with START node which is always 0
+        let next_id = self.id_generator.next_id();
         self.nodes.push(IdentifiedNode { id: next_id, node });
 
         next_id
@@ -204,21 +228,42 @@ pub struct GraphAdding<'a, T> {
     last_added: NodeId,
 }
 
+pub enum Addable<T> {
+    Action(Action<T>),
+    ExistingNodeId(NodeId),
+}
+
+impl<T> From<NodeId> for Addable<T> {
+    fn from(v: NodeId) -> Self {
+        Self::ExistingNodeId(v)
+    }
+}
+
+impl<T> From<Action<T>> for Addable<T> {
+    fn from(v: Action<T>) -> Self {
+        Self::Action(v)
+    }
+}
+
 impl<T> GraphAdding<'_, T> {
-    #[must_use]
-    pub fn then(self, node: Action<T>) -> Self {
-        let next_id = self.graph.register_node(node);
+    pub fn then(self, node: impl Into<Addable<T>>) -> Self {
+        let addable = node.into();
+
+        let next_node_id = match addable {
+            Addable::Action(action) => self.graph.register_node(action),
+            Addable::ExistingNodeId(node_id) => node_id,
+        };
 
         let edge = Edge {
             from: self.last_added,
-            to: next_id,
+            to: next_node_id,
         };
 
         self.graph.edges.push(edge);
 
         Self {
             graph: self.graph,
-            last_added: next_id,
+            last_added: next_node_id,
         }
     }
 
@@ -358,9 +403,24 @@ mod tests {
 
         let runner = GraphRunner::new(graph);
 
-        // 3 + 1 + 1 + 2 * 3 = 21
         let result = runner.run(3);
 
         assert_eq!(result, 20);
+    }
+
+    #[test]
+    fn start_node_is_id_0() {
+        let graph = Graph::<i32>::new();
+
+        assert_eq!(graph.start_id(), NodeId(0));
+    }
+
+    #[test]
+    fn first_node_is_not_id_0() {
+        let mut graph = Graph::<i32>::new();
+
+        let first_node = graph.register_node(adder(1));
+
+        assert_ne!(first_node, NodeId(0));
     }
 }

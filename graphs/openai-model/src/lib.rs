@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::borrow::Borrow;
 
+/// A model client for the `OpenAI` API.
 pub struct OpenAIModel {
     api_key: String,
     model: String,
