@@ -30,5 +30,4 @@ run-graphs:
   set -a
   source ./.env
   set +a
-  echo $LLM_API_KEY
   cargo run
