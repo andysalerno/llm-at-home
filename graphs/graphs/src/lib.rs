@@ -204,7 +204,7 @@ pub struct GraphAdding<'a, T> {
     last_added: NodeId,
 }
 
-impl<'a, T> GraphAdding<'a, T> {
+impl<T> GraphAdding<'_, T> {
     #[must_use]
     pub fn then(self, node: Action<T>) -> Self {
         let next_id = self.graph.register_node(node);

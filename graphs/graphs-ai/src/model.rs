@@ -208,7 +208,7 @@ impl From<Message> for crate::state::Message {
         Self::new(value.role, value.content).with_tool_calls(
             value
                 .tool_calls
-                .map(|calls| calls.into_iter().map(|call| call.into()).collect()),
+                .map(|calls| calls.into_iter().map(std::convert::Into::into).collect()),
         )
     }
 }
@@ -236,7 +236,7 @@ impl Tool {
         &self.function
     }
 
-    pub fn r#type(&self) -> &str {
+    pub fn r#type(&self) -> &'static str {
         "function"
     }
 
@@ -285,7 +285,7 @@ impl Function {
 
 impl From<&crate::state::ToolCall> for ToolCall {
     fn from(value: &crate::state::ToolCall) -> Self {
-        ToolCall {
+        Self {
             id: value.id().to_string(),
             index: value.index(),
             r#type: "function".to_string(),
@@ -299,12 +299,12 @@ impl From<&crate::state::ToolCall> for ToolCall {
 
 impl From<ToolCall> for crate::state::ToolCall {
     fn from(value: ToolCall) -> Self {
-        crate::state::ToolCall::new(value.id, value.index, value.r#type, value.function.into())
+        Self::new(value.id, value.index, value.r#type, value.function.into())
     }
 }
 
 impl From<FunctionCall> for crate::state::FunctionCall {
     fn from(value: FunctionCall) -> Self {
-        crate::state::FunctionCall::new(value.arguments, value.name)
+        Self::new(value.arguments, value.name)
     }
 }

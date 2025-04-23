@@ -1,10 +1,6 @@
 use graphs::Action;
 
-use crate::{
-    model::{ChatCompletionRequest, ModelClient},
-    state::{ConversationState, Message},
-    tool::Tool,
-};
+use crate::state::{ConversationState, Message};
 
 pub fn remove_system_prompt() -> Action<ConversationState> {
     Action::new(

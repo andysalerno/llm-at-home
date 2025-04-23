@@ -1,6 +1,6 @@
 use schemars::{
     JsonSchema,
-    schema::{self, RootSchema, SchemaObject},
+    schema::{SchemaObject},
     schema_for,
 };
 use serde::{Deserialize, Serialize};
@@ -25,7 +25,7 @@ impl ToolSchema {
 
 impl From<&dyn Tool> for model::Tool {
     fn from(tool: &dyn Tool) -> Self {
-        model::Tool::new(
+        Self::new(
             tool.name(),
             tool.description(),
             tool.json_schema().clone(),

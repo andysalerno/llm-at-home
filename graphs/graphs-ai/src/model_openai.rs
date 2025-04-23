@@ -138,7 +138,7 @@ impl OpenAIChatCompletionResponse {
     }
 }
 
-/// Convert from a standard model request to an OpenAI API request representation.
+/// Convert from a standard model request to an `OpenAI` API request representation.
 fn convert_request(
     other: &crate::model::ChatCompletionRequest,
     model: impl Into<String>,
@@ -155,7 +155,7 @@ fn convert_request(
     )
 }
 
-/// A message sent or received from the OpenAI API.
+/// A message sent or received from the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Message {
     role: String,
@@ -183,7 +183,7 @@ impl Message {
     }
 }
 
-/// A choice received from the OpenAI API.
+/// A choice received from the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Choice {
     index: i32,
@@ -197,7 +197,7 @@ impl Choice {
     }
 }
 
-/// A tool invocation received from the OpenAI API.
+/// A tool invocation received from the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct ToolCall {
     id: String,
@@ -206,7 +206,7 @@ struct ToolCall {
     function: FunctionCall,
 }
 
-/// A function invocation received from the OpenAI API.
+/// A function invocation received from the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct FunctionCall {
     /// A json object representing the arguments to the function
@@ -216,14 +216,14 @@ struct FunctionCall {
     name: String,
 }
 
-/// A tool description that can be sent to the OpenAI API.
+/// A tool description that can be sent to the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Tool {
     function: Function,
     r#type: String,
 }
 
-/// A function description that can be sent to the OpenAI API.
+/// A function description that can be sent to the `OpenAI` API.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Function {
     name: String,
@@ -245,7 +245,7 @@ where
     }
 }
 
-/// Convert a standard model function to an OpenAI function.
+/// Convert a standard model function to an `OpenAI` function.
 impl From<&crate::model::Function> for Function {
     fn from(value: &crate::model::Function) -> Self {
         Self {
@@ -257,7 +257,7 @@ impl From<&crate::model::Function> for Function {
     }
 }
 
-/// Convert an OpenAI API response to a standard model response.
+/// Convert an `OpenAI` API response to a standard model response.
 impl From<OpenAIChatCompletionResponse> for crate::model::ChatCompletionResponse {
     fn from(value: OpenAIChatCompletionResponse) -> Self {
         let model = value.model;
@@ -273,7 +273,7 @@ impl From<OpenAIChatCompletionResponse> for crate::model::ChatCompletionResponse
     }
 }
 
-/// Convert an OpenAI message to a conversation state model message
+/// Convert an `OpenAI` message to a conversation state model message
 impl From<Message> for crate::state::Message {
     fn from(value: Message) -> Self {
         Self::new(value.role, value.content).with_tool_calls(value.tool_calls.map(|tools| {
@@ -297,14 +297,14 @@ impl From<FunctionCall> for crate::state::FunctionCall {
     }
 }
 
-/// Convert a conversation state model message to an OpenAI message
+/// Convert a conversation state model message to an `OpenAI` message
 impl From<crate::state::Message> for Message {
     fn from(value: crate::state::Message) -> Self {
         Self::new(value.role(), value.content())
     }
 }
 
-/// Convert a standard model message to an OpenAI message
+/// Convert a standard model message to an `OpenAI` message
 impl<T> From<T> for Message
 where
     T: Borrow<crate::model::Message>,
@@ -317,12 +317,12 @@ where
             tool_calls: value
                 .tool_calls()
                 .as_ref()
-                .map(|tools| tools.iter().map(|t| t.into()).collect()),
+                .map(|tools| tools.iter().map(std::convert::Into::into).collect()),
         }
     }
 }
 
-/// Convert an OpenAI message to a standard model message
+/// Convert an `OpenAI` message to a standard model message
 impl From<Message> for crate::model::Message {
     fn from(value: Message) -> Self {
         Self::new(
@@ -330,12 +330,12 @@ impl From<Message> for crate::model::Message {
             value.content,
             value
                 .tool_calls
-                .map(|tools| tools.into_iter().map(|t| t.into()).collect()),
+                .map(|tools| tools.into_iter().map(std::convert::Into::into).collect()),
         )
     }
 }
 
-/// From an OpenAI ToolCall to a standard model ToolCall.
+/// From an `OpenAI` `ToolCall` to a standard model `ToolCall`.
 impl From<ToolCall> for crate::model::ToolCall {
     fn from(value: ToolCall) -> Self {
         Self::new(value.id, value.index, value.r#type, value.function.into())
@@ -368,7 +368,7 @@ impl From<crate::model::FunctionCall> for FunctionCall {
     }
 }
 
-/// Convert an OpenAI choice to a standard model choice
+/// Convert an `OpenAI` choice to a standard model choice
 impl From<Choice> for crate::model::Choice {
     fn from(value: Choice) -> Self {
         Self::new(value.index, value.message.into(), value.finish_reason)
