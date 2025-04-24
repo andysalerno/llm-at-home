@@ -147,7 +147,12 @@ impl<T> Graph<T> {
     }
 
     pub fn start(&mut self) -> GraphAdding<'_, T> {
-        let start_id = self.register_node(no_op_start_node());
+        let start_id = self.start_id;
+
+        self.nodes.push(IdentifiedNode {
+            id: start_id,
+            node: no_op_start_node().into(),
+        });
 
         GraphAdding {
             graph: self,
@@ -325,9 +330,9 @@ impl<T> GraphRunner<T> {
                     result = (action.action)(result);
 
                     let mut next_nodes = self.graph.next_nodes(cur_node_id);
-                    let next_node = next_nodes
-                        .next()
-                        .expect("Expected an action node to have one edge");
+                    let next_node = next_nodes.next().unwrap_or_else(|| {
+                        panic!("Expected an action node {cur_node_id:?} to have at least one edge")
+                    });
 
                     cur_node_id = next_node;
 
