@@ -1,6 +1,6 @@
 use graphs::Action;
 
-use crate::state::{ConversationState, Message};
+use crate::{model::Message, state::ConversationState};
 
 pub fn user_input_node() -> Action<ConversationState> {
     Action::new(

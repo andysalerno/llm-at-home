@@ -100,15 +100,11 @@ pub struct Message {
 }
 
 impl Message {
-    pub fn new(
-        role: impl Into<String>,
-        content: impl Into<String>,
-        tool_calls: Option<Vec<ToolCall>>,
-    ) -> Self {
+    pub fn new(role: impl Into<String>, content: impl Into<String>) -> Self {
         Self {
             role: role.into(),
             content: content.into(),
-            tool_calls,
+            tool_calls: None,
             tool_call_id: None,
         }
     }
@@ -214,33 +210,6 @@ impl Choice {
     }
 }
 
-impl From<Message> for crate::state::Message {
-    fn from(value: Message) -> Self {
-        let tool_call_id = value.tool_call_id().cloned();
-        Self::new(value.role, value.content)
-            .with_tool_calls(
-                value
-                    .tool_calls
-                    .map(|calls| calls.into_iter().map(std::convert::Into::into).collect()),
-            )
-            .with_tool_call_id(tool_call_id)
-    }
-}
-
-impl From<crate::state::Message> for Message {
-    fn from(value: crate::state::Message) -> Self {
-        Self::new(
-            value.role(),
-            value.content(),
-            value
-                .tool_calls()
-                .as_ref()
-                .map(|calls| calls.iter().map(ToolCall::from).collect()),
-        )
-        .with_tool_call_id(value.tool_call_id().cloned())
-    }
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Tool {
     function: Function,
@@ -295,31 +264,5 @@ impl Function {
 
     pub fn strict(&self) -> bool {
         self.strict
-    }
-}
-
-impl From<&crate::state::ToolCall> for ToolCall {
-    fn from(value: &crate::state::ToolCall) -> Self {
-        Self {
-            id: value.id().to_string(),
-            index: value.index(),
-            r#type: "function".to_string(),
-            function: FunctionCall {
-                arguments: value.function().arguments().to_string(),
-                name: value.function().name().to_string(),
-            },
-        }
-    }
-}
-
-impl From<ToolCall> for crate::state::ToolCall {
-    fn from(value: ToolCall) -> Self {
-        Self::new(value.id, value.index, value.r#type, value.function.into())
-    }
-}
-
-impl From<FunctionCall> for crate::state::FunctionCall {
-    fn from(value: FunctionCall) -> Self {
-        Self::new(value.arguments, value.name)
     }
 }

@@ -1,6 +1,6 @@
 use graphs::Action;
 
-use crate::state::{ConversationState, Message};
+use crate::{model::Message, state::ConversationState};
 
 pub fn remove_system_prompt() -> Action<ConversationState> {
     Action::new(

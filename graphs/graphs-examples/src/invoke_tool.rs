@@ -1,8 +1,5 @@
 use graphs::Action;
-use graphs_ai::{
-    state::{ConversationState, Message},
-    tool::Tool,
-};
+use graphs_ai::{model::Message, state::ConversationState, tool::Tool};
 use log::info;
 
 pub fn invoke_tool(available_tools: Vec<Box<dyn Tool>>) -> Action<ConversationState> {
