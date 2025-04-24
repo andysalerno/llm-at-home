@@ -29,7 +29,7 @@ impl ConversationState {
     pub fn without_messages_having_role(self, role: impl Into<String>) -> Self {
         let mut new_state = self;
         let role = role.into();
-        new_state.messages.retain(|message| message.role() != role);
+        new_state.messages.retain(|message| message.role != role);
         new_state
     }
 

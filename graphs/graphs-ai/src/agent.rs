@@ -36,11 +36,11 @@ pub fn agent_node(
 
             debug!("Model response: {response:?}");
 
-            let choices = response.take_choices();
-            let response_message = choices
+            let choices = response.choices;
+            let response_message = &choices
                 .first()
                 .expect("expected at least one choice")
-                .message();
+                .message;
 
             state.with_added_message(response_message.clone().into())
         }),
