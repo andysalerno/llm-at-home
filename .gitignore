@@ -7,3 +7,4 @@ tabby/
 request_logs/
 .vllm-cache/
 vllm-plugins/__pycache__/
+model_quantizer/
