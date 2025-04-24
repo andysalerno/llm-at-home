@@ -47,6 +47,12 @@ pub struct Message {
     role: String,
     content: String,
     tool_calls: Option<Vec<ToolCall>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tool_call_id: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
 }
 
 impl Message {
@@ -55,7 +61,13 @@ impl Message {
             role: role.into(),
             content: content.into(),
             tool_calls: None,
+            tool_call_id: None,
         }
+    }
+
+    pub fn with_tool_call_id(mut self, tool_call_id: Option<String>) -> Self {
+        self.tool_call_id = tool_call_id;
+        self
     }
 
     pub fn with_tool_calls(mut self, tool_calls: Option<Vec<ToolCall>>) -> Self {
@@ -73,6 +85,10 @@ impl Message {
 
     pub fn tool_calls(&self) -> &Option<Vec<ToolCall>> {
         &self.tool_calls
+    }
+
+    pub fn tool_call_id(&self) -> Option<&String> {
+        self.tool_call_id.as_ref()
     }
 }
 

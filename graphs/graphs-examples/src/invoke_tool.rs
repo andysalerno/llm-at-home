@@ -19,6 +19,7 @@ pub fn invoke_tool(available_tools: Vec<Box<dyn Tool>>) -> Action<ConversationSt
             debug_assert!(tool_calls.as_ref().is_some_and(|calls| !calls.is_empty()));
 
             let first_tool_call = tool_calls.as_ref().unwrap().first().unwrap();
+            let tool_call_id = first_tool_call.id().to_owned();
 
             let tool = available_tools
                 .iter()
@@ -30,7 +31,9 @@ pub fn invoke_tool(available_tools: Vec<Box<dyn Tool>>) -> Action<ConversationSt
 
             let output = tool.get_output(first_tool_call.function().arguments());
 
-            state.with_added_message(Message::new("user", output))
+            state.with_added_message(
+                Message::new("tool", output).with_tool_call_id(Some(tool_call_id)),
+            )
         }),
     )
 }

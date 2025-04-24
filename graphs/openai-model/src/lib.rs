@@ -184,6 +184,9 @@ struct Message {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     tool_calls: Option<Vec<ToolCall>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    tool_call_id: Option<String>,
 }
 
 impl Message {
@@ -192,7 +195,13 @@ impl Message {
             role: role.into(),
             content: content.into(),
             tool_calls: None,
+            tool_call_id: None,
         }
+    }
+
+    pub fn with_tool_call_id(mut self, tool_call_id: Option<String>) -> Self {
+        self.tool_call_id = tool_call_id;
+        self
     }
 
     pub fn role(&self) -> &str {
@@ -240,6 +249,7 @@ impl From<graphs_ai::model::Message> for Message {
                 .tool_calls()
                 .as_ref()
                 .map(|tools| tools.iter().map(std::convert::Into::into).collect()),
+            tool_call_id: value.tool_call_id().cloned(),
         }
     }
 }
@@ -253,6 +263,7 @@ impl From<&graphs_ai::model::Message> for Message {
                 .tool_calls()
                 .as_ref()
                 .map(|tools| tools.iter().map(std::convert::Into::into).collect()),
+            tool_call_id: value.tool_call_id().cloned(),
         }
     }
 }
@@ -260,7 +271,7 @@ impl From<&graphs_ai::model::Message> for Message {
 /// Convert a conversation state model message to an `OpenAI` message
 impl From<graphs_ai::state::Message> for Message {
     fn from(value: graphs_ai::state::Message) -> Self {
-        Self::new(value.role(), value.content())
+        Self::new(value.role(), value.content()).with_tool_call_id(value.tool_call_id().cloned())
     }
 }
 

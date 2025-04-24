@@ -96,6 +96,7 @@ pub struct Message {
     role: String,
     content: String,
     tool_calls: Option<Vec<ToolCall>>,
+    tool_call_id: Option<String>,
 }
 
 impl Message {
@@ -108,7 +109,13 @@ impl Message {
             role: role.into(),
             content: content.into(),
             tool_calls,
+            tool_call_id: None,
         }
+    }
+
+    pub fn with_tool_call_id(mut self, tool_call_id: Option<String>) -> Self {
+        self.tool_call_id = tool_call_id;
+        self
     }
 
     pub fn role(&self) -> &str {
@@ -121,6 +128,10 @@ impl Message {
 
     pub fn tool_calls(&self) -> Option<&Vec<ToolCall>> {
         self.tool_calls.as_ref()
+    }
+
+    pub fn tool_call_id(&self) -> Option<&String> {
+        self.tool_call_id.as_ref()
     }
 }
 
@@ -205,11 +216,14 @@ impl Choice {
 
 impl From<Message> for crate::state::Message {
     fn from(value: Message) -> Self {
-        Self::new(value.role, value.content).with_tool_calls(
-            value
-                .tool_calls
-                .map(|calls| calls.into_iter().map(std::convert::Into::into).collect()),
-        )
+        let tool_call_id = value.tool_call_id().cloned();
+        Self::new(value.role, value.content)
+            .with_tool_calls(
+                value
+                    .tool_calls
+                    .map(|calls| calls.into_iter().map(std::convert::Into::into).collect()),
+            )
+            .with_tool_call_id(tool_call_id)
     }
 }
 
@@ -223,6 +237,7 @@ impl From<crate::state::Message> for Message {
                 .as_ref()
                 .map(|calls| calls.iter().map(ToolCall::from).collect()),
         )
+        .with_tool_call_id(value.tool_call_id().cloned())
     }
 }
 
