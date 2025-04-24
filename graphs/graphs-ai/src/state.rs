@@ -62,6 +62,7 @@ impl Message {
             content: content.into(),
             tool_calls: None,
             tool_call_id: None,
+            name: None,
         }
     }
 
@@ -72,6 +73,11 @@ impl Message {
 
     pub fn with_tool_calls(mut self, tool_calls: Option<Vec<ToolCall>>) -> Self {
         self.tool_calls = tool_calls;
+        self
+    }
+
+    pub fn with_name(mut self, name: Option<&str>) -> Self {
+        self.name = name.map(std::string::ToString::to_string);
         self
     }
 

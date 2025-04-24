@@ -187,6 +187,9 @@ struct Message {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     tool_call_id: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: Option<String>,
 }
 
 impl Message {
@@ -196,6 +199,7 @@ impl Message {
             content: content.into(),
             tool_calls: None,
             tool_call_id: None,
+            name: None,
         }
     }
 
