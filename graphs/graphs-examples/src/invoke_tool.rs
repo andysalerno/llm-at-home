@@ -16,7 +16,7 @@ pub fn invoke_tool(available_tools: Vec<Box<dyn Tool>>) -> Action<ConversationSt
             debug_assert!(tool_calls.as_ref().is_some_and(|calls| !calls.is_empty()));
 
             let first_tool_call = tool_calls.as_ref().unwrap().first().unwrap();
-            let tool_call_id = first_tool_call.id.to_owned();
+            let tool_call_id = first_tool_call.id.clone();
 
             let tool = available_tools
                 .iter()
