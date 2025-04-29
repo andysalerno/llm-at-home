@@ -7,6 +7,7 @@ pub trait ModelClient {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ChatCompletionRequest {
+    pub model: String,
     pub messages: Vec<Message>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub temperature: Option<f32>,
@@ -27,6 +28,7 @@ pub struct ChatCompletionRequest {
 
 impl ChatCompletionRequest {
     pub fn new(
+        model: String,
         messages: Vec<Message>,
         temperature: Option<f32>,
         max_completion_tokens: Option<usize>,
@@ -34,6 +36,7 @@ impl ChatCompletionRequest {
         tool_choice: Option<String>,
     ) -> Self {
         Self {
+            model,
             messages,
             temperature,
             stream: false,
