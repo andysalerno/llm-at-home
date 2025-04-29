@@ -1,11 +1,11 @@
-use std::fmt::Debug;
+use std::{collections::HashMap, fmt::Debug};
 
-use log::info;
+use log::{debug, info};
 
 // The NodeId can only be created internally by the graph structure,
 // so it should be impossible to ever have a NodeId handle that cannot be resolved to its Node,
 // as long as the graph structure does its job. (Nodes are never removed, only created)
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct NodeId(usize);
 
 pub struct Action<T> {
@@ -115,13 +115,14 @@ impl IdGenerator {
     fn next_id(&mut self) -> NodeId {
         let id = self.next_id;
         self.next_id += 1;
+        debug!("Generated new node id: {id}");
         NodeId(id)
     }
 }
 
 #[derive(Debug)]
 pub struct Graph<T> {
-    nodes: Vec<IdentifiedNode<T>>,
+    nodes: HashMap<NodeId, IdentifiedNode<T>>,
     edges: Vec<Edge>,
     condition_edges: Vec<BranchEdge>,
     id_generator: IdGenerator,
@@ -138,7 +139,7 @@ impl<T> Graph<T> {
         let start_id = id_generator.next_id();
 
         Self {
-            nodes: Vec::new(),
+            nodes: HashMap::new(),
             edges: Vec::new(),
             condition_edges: Vec::new(),
             id_generator,
@@ -149,10 +150,15 @@ impl<T> Graph<T> {
     pub fn start(&mut self) -> GraphAdding<'_, T> {
         let start_id = self.start_id;
 
-        self.nodes.push(IdentifiedNode {
-            id: start_id,
-            node: no_op_start_node().into(),
-        });
+        let previous = self.nodes.insert(
+            start_id,
+            IdentifiedNode {
+                id: start_id,
+                node: no_op_start_node().into(),
+            },
+        );
+
+        debug_assert!(previous.is_none());
 
         GraphAdding {
             graph: self,
@@ -178,9 +184,18 @@ impl<T> Graph<T> {
     pub fn register_node(&mut self, node: impl Into<Node<T>>) -> NodeId {
         let node = node.into();
 
-        // + 1 to avoid conflict with START node which is always 0
         let next_id = self.id_generator.next_id();
-        self.nodes.push(IdentifiedNode { id: next_id, node });
+
+        debug!(
+            "Registering node {next_id:?} with name {}",
+            node.display_name()
+        );
+
+        let existing = self
+            .nodes
+            .insert(next_id, IdentifiedNode { id: next_id, node });
+
+        debug_assert!(existing.is_none(), "Node {next_id:?} already exists");
 
         next_id
     }
@@ -216,8 +231,8 @@ impl<T> Graph<T> {
         self.edges_from(node_id).map(|edge| edge.to)
     }
 
-    fn node(&self, node_id: NodeId) -> &Node<T> {
-        &self.nodes.get(node_id.0).expect("Expected a node").node
+    fn node(&self, node_id: &NodeId) -> &Node<T> {
+        &self.nodes.get(&node_id).expect("Expected a node").node
     }
 }
 
@@ -318,7 +333,7 @@ impl<T> GraphRunner<T> {
         let mut cur_node_id = self.graph.start_id;
 
         loop {
-            let cur_node = self.graph.node(cur_node_id);
+            let cur_node = self.graph.node(&cur_node_id);
 
             info!(
                 "Current node: {cur_node_id:?} name: {}",
