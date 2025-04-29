@@ -53,7 +53,7 @@ def store_memory_tool(
     )
     collection_name = collection_name or "my_collection"
 
-    client = chromadb.HttpClient(host="localhost", port=8000)
+    client = chromadb.HttpClient(host="localhost", port=8001)
     collection = client.create_collection(name=collection_name, get_or_create=True)
     memory_client = MemoryClient(collection=collection)
 
@@ -77,7 +77,7 @@ def search_memory_tool(
         " Invoke this tool when you want to recall something about the user."
     )
 
-    client = chromadb.HttpClient(host="localhost", port=8000)
+    client = chromadb.HttpClient(host="localhost", port=8001)
     collection = client.create_collection(name=collection_name, get_or_create=True)
     memory_client = MemoryClient(collection=collection)
 
@@ -92,7 +92,7 @@ def search_memory_tool(
 if __name__ == "__main__":
     import chromadb
 
-    client = chromadb.HttpClient(host="localhost", port=8000)
+    client = chromadb.HttpClient(host="localhost", port=8001)
     collection = client.create_collection(name="my_collection", get_or_create=True)
     collection.add(
         documents=[

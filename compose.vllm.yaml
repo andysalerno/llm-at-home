@@ -1,14 +1,14 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.8.4
+    image: vllm/vllm-openai:v0.8.5
     # image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
     environment:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
       # - VLLM_ATTENTION_BACKEND=FLASHINFER
-      - VLLM_USE_V1=0
+      # - VLLM_USE_V1=0
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
       - ./.vllm-cache/:/root/.cache/vllm/
@@ -108,14 +108,12 @@ services:
     # --max-model-len 16000
     # -tp 2
     command: >
-      --model ISTA-DASLab/gemma-3-27b-it-GPTQ-4b-128g
-      --chat-template /root/chat-templates/gemma3.jinja
-      --tool-parser-plugin /root/vllm-plugins/gemma3_parser.py
-      --tool-call-parser gemma
+      --model /root/gguf/Qwen3-14B-Q8_0.gguf
+      --tokenizer Qwen/Qwen3-14B
+      --tool-call-parser hermes
       --enable-auto-tool-choice
       --served-model-name model
       --max-model-len 16384
-      --limit_mm_per_prompt 'image=0'
       -tp 2
     ports:
       - "8000:8000"

@@ -61,10 +61,15 @@ class ScrapperClient:
         logger.info("Visiting url: %s", {url})
         api_uri = self._create_api_uri(url)
         async with httpx.AsyncClient() as client:
-            response = await client.get(api_uri)
-            if response.is_error:
+            try:
+                response = await client.get(api_uri)
+                if response.is_error:
+                    raise ModelRetry(
+                        "scrapper returned an error, the site is probably down. Don't waste time retrying.",
+                    )
+            except:
                 raise ModelRetry(
-                    "scrapper returned an error, try fixing your request and retrying",
+                    "scrapper returned an error, the site is probably down. Don't waste time retrying.",
                 )
 
             return ScrapperResponse.model_validate_json(response.text)
