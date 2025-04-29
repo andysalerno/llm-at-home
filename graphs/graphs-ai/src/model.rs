@@ -28,13 +28,14 @@ pub struct ChatCompletionRequest {
 
 impl ChatCompletionRequest {
     pub fn new(
-        model: String,
+        model: impl Into<String>,
         messages: Vec<Message>,
         temperature: Option<f32>,
         max_completion_tokens: Option<usize>,
         tools: Option<Vec<Tool>>,
         tool_choice: Option<String>,
     ) -> Self {
+        let model = model.into();
         Self {
             model,
             messages,

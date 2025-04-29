@@ -21,11 +21,9 @@ fn main() {
     // read the env var with the api key
     let api_key = std::env::var("LLM_API_KEY").unwrap();
 
-    let model = OpenAIModel::new(
-        api_key,
-        "mistralai/mistral-small-3.1-24b-instruct",
-        "https://openrouter.ai/api/v1",
-    );
+    let model_name = "mistralai/mistral-small-3.1-24b-instruct";
+
+    let model = OpenAIModel::new(api_key, model_name, "https://openrouter.ai/api/v1");
 
     let tools: Vec<Box<dyn Tool>> = vec![Box::new(WeatherTool::new())];
 
@@ -42,7 +40,7 @@ fn main() {
             "You are a helpful assistant. Do your best to help the user.",
             SystemPromptLocation::FirstMessage,
         ))
-        .then(agent_node(Box::new(model), tools))
+        .then(agent_node(model_name, Box::new(model), tools))
         .branch(
             response_has_tool_node(),
             |graph| {
