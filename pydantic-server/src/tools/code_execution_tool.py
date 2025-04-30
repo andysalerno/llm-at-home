@@ -13,7 +13,8 @@ def create_code_execution_tool(
     description = description or (
         "Executes Python code and returns the result from stdout. "
         "Multiple lines are allowed, including complex scripting. "
-        "IMPORTANT: you ONLY see the results from stdout, so you MUST print() the result you want to see."
+        "IMPORTANT: you ONLY see the results from stdout, so you MUST print() the result you want to see. "
+        "The code is run as a *script file*, not as REPL."
     )
     return Tool(
         name=name,

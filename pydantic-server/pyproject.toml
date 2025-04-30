@@ -6,18 +6,18 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "arize-phoenix",
-    "langchain-community>=0.3.21",
+    "langchain-community",
     "opentelemetry-sdk",
     "opentelemetry-exporter-otlp",
-    "openinference-instrumentation-openai>=0.1.23",
-    "jinja2>=3.1.6",
-    "wikipedia>=1.4.0",
-    "langchain-google-community>=2.0.7",
-    "chromadb-client>=1.0.0",
-    "onnxruntime>=1.21.0",
-    "chromadbx>=0.1.0",
-    "duckduckgo-search>=8.0.0",
-    "pydantic-ai>=0.1.3",
+    "openinference-instrumentation-openai",
+    "jinja2",
+    "wikipedia",
+    "langchain-google-community",
+    "chromadb-client",
+    "onnxruntime",
+    "chromadbx",
+    "duckduckgo-search",
+    "pydantic-ai",
 ]
 
 [tool.ruff.lint]
