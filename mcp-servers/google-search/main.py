@@ -2,6 +2,7 @@ from mcp.server.fastmcp import FastMCP
 from langchain_google_community import GoogleSearchAPIWrapper
 import logging
 import json
+import asyncio
 
 logger = logging.getLogger(__name__)
 mcp = FastMCP("google-search")
@@ -24,9 +25,9 @@ async def search(query: str) -> str:
     return json.dumps(results)
 
 
-def main():
-    mcp.run(transport="sse")
+async def main():
+    await mcp.run_sse_async()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

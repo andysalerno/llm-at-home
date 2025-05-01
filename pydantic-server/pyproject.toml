@@ -18,6 +18,7 @@ dependencies = [
     "chromadbx",
     "duckduckgo-search",
     "pydantic-ai",
+    "mcp[cli]>=1.6.0",
 ]
 
 [tool.ruff.lint]

@@ -10,6 +10,7 @@ use graphs_ai::{
     tool::Tool,
     user::user_input_node,
 };
+use graphs_mcp::McpContext;
 use invoke_tool::invoke_tool;
 use log::info;
 use openai_model::OpenAIModel;
@@ -17,6 +18,12 @@ use weather_tool::WeatherTool;
 
 fn main() {
     env_logger::init();
+
+    {
+        let mcp_client = McpContext::connect("http://localhost:8000/sse").unwrap();
+        let tools = mcp_client.list_tools().unwrap();
+        info!("tools: {tools:#?}");
+    }
 
     // read the env var with the api key
     let api_key = std::env::var("LLM_API_KEY").unwrap();
