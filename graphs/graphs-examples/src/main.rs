@@ -34,6 +34,14 @@ fn main() {
 
     let tools: Vec<Box<dyn Tool>> = vec![Box::new(WeatherTool::new())];
 
+    {
+        let tool = WeatherTool::new();
+        let tool: &dyn Tool = &tool;
+        let tool: graphs_ai::model::Tool = tool.into();
+        let tool = serde_json::to_string(&tool).unwrap();
+        info!("tool: {tool}");
+    }
+
     let mut graph = graphs::Graph::new();
 
     let remove_system_prompt_id = graph.register_node(remove_system_prompt());

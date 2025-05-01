@@ -1,0 +1,25 @@
+{
+    "function": {
+        "name": "weather_tool",
+        "description": "gets the weather for a given city",
+        "parameters": {
+            "title": "WeatherToolParameters",
+            "type": "object",
+            "required": [
+                "city",
+                "unit"
+            ],
+            "properties": {
+                "city": {
+                    "description": "The city for which to get the weather",
+                    "type": "string"
+                },
+                "unit": {
+                    "description": "The unit of measurement (e.g., Celsius, Fahrenheit)",
+                    "type": "string"
+                }
+            }
+        },
+        "strict": false
+    }
+}

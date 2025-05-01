@@ -1,9 +1,11 @@
+pub mod mcp_tool;
+
 use anyhow::Result;
 use rmcp::{
     RoleClient, ServiceExt,
     model::{
-        ClientCapabilities, ClientInfo, Implementation, InitializeRequestParam, ProtocolVersion,
-        Tool,
+        CallToolRequestParam, ClientCapabilities, ClientInfo, Implementation,
+        InitializeRequestParam, ProtocolVersion, Tool,
     },
     service::RunningService,
     transport::SseTransport,
@@ -33,6 +35,24 @@ impl McpContext {
             let tools = self.client.list_all_tools().await?;
             Ok(tools)
         })
+    }
+
+    pub fn call_tool(&self, input_json: &str) -> Result<String> {
+        let result = TOKIO_RT.block_on(async {
+            self.client
+                .call_tool(CallToolRequestParam {
+                    name: "name".into(),
+                    arguments: None,
+                })
+                .await
+        })?;
+
+        let text = match result.content.first().unwrap().raw {
+            rmcp::model::RawContent::Text(ref t) => t,
+            _ => panic!("unexpected content"),
+        };
+
+        Ok(text.text.clone())
     }
 
     async fn connect_async(

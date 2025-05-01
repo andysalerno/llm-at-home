@@ -472,6 +472,7 @@ name = "graphs-mcp"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "graphs-ai",
  "reqwest",
  "rmcp",
  "serde_json",

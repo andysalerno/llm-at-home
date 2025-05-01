@@ -3,6 +3,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::model;
 
+pub struct ToolDescription {
+    pub name: String,
+    pub description: String,
+    pub input_schema: ToolSchema,
+}
+
 pub trait Tool {
     fn json_schema(&self) -> &ToolSchema;
     fn name(&self) -> &str;
