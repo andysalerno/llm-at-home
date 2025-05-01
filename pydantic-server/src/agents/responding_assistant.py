@@ -65,7 +65,6 @@ def _create_prompt(
         - If you still cannot find a relevant result, even after invoking the researcher, tell the user you do not know, or invoke the researcher again with a reformulated task.
         - If you need to do any kind of calculation, delegate to the researcher; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
-        - You must NOT include tool calls alongside messages to the user. Your response must be EITHER tool invocations OR a message to the user, but not both.
         - Do not hallucinate! Any factual information you provide must be based on research results.
         """).strip(),
     ).render(
