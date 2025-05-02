@@ -475,6 +475,7 @@ dependencies = [
  "graphs-ai",
  "reqwest",
  "rmcp",
+ "schemars",
  "serde_json",
  "tokio",
  "tracing",

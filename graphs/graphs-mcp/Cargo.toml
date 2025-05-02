@@ -10,6 +10,7 @@ tracing = "0.1"
 rmcp = { version = "0.1", features = ["client",  "transport-sse"] }
 tokio = { version = "1", features = ["full"] }
 serde_json = "1.0"
+schemars = "0.8"
 reqwest = { version = "0.12"  }
 
 [lints]

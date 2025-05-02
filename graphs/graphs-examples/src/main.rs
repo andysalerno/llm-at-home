@@ -20,9 +20,19 @@ fn main() {
     env_logger::init();
 
     {
-        let mcp_client = McpContext::connect("http://localhost:8000/sse").unwrap();
-        let tools = mcp_client.list_tools().unwrap();
-        info!("tools: {tools:#?}");
+        let mcp_client = McpContext::connect("http://localhost:8002/sse").unwrap();
+        let tools = mcp_client.get_tools().unwrap();
+        let model_tools = tools
+            .iter()
+            .map(|t| t.as_ref().into())
+            .collect::<Vec<graphs_ai::model::Tool>>();
+        let model_tools_json = serde_json::to_string(&model_tools).unwrap();
+        info!("tools: {model_tools_json}");
+
+        let weather_tool: Box<dyn Tool> = Box::new(WeatherTool::new());
+        let tool: graphs_ai::model::Tool = weather_tool.as_ref().into();
+        let tool_json = serde_json::to_string(&tool).unwrap();
+        info!("weather tool: {tool_json}");
     }
 
     // read the env var with the api key

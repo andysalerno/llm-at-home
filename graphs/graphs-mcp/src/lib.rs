@@ -1,6 +1,7 @@
 pub mod mcp_tool;
 
 use anyhow::Result;
+use mcp_tool::McpTool;
 use rmcp::{
     RoleClient, ServiceExt,
     model::{
@@ -10,7 +11,7 @@ use rmcp::{
     service::RunningService,
     transport::SseTransport,
 };
-use std::sync::LazyLock;
+use std::sync::{Arc, LazyLock};
 
 static TOKIO_RT: LazyLock<tokio::runtime::Runtime> = LazyLock::new(|| {
     tokio::runtime::Builder::new_multi_thread() // or new_current_thread()
@@ -20,29 +21,52 @@ static TOKIO_RT: LazyLock<tokio::runtime::Runtime> = LazyLock::new(|| {
 });
 
 pub struct McpContext {
-    client: RunningService<RoleClient, InitializeRequestParam>,
+    client: Arc<RunningService<RoleClient, InitializeRequestParam>>,
 }
 
 impl McpContext {
     pub fn connect(url: impl reqwest::IntoUrl) -> Result<Self> {
         let client = TOKIO_RT.block_on(async { Self::connect_async(url).await })?;
 
-        Ok(Self { client })
-    }
-
-    pub fn list_tools(&self) -> Result<Vec<Tool>> {
-        TOKIO_RT.block_on(async {
-            let tools = self.client.list_all_tools().await?;
-            Ok(tools)
+        Ok(Self {
+            client: Arc::new(client),
         })
     }
 
-    pub fn call_tool(&self, input_json: &str) -> Result<String> {
+    pub fn get_tools(&self) -> Result<Vec<Box<dyn graphs_ai::tool::Tool>>> {
+        let tools = self.list_tools()?;
+
+        let mut converted_tools: Vec<Box<dyn graphs_ai::tool::Tool>> = Vec::new();
+
+        for tool in tools {
+            let name = tool.name;
+            let description = tool.description;
+            let schema = tool.input_schema;
+
+            let converted = McpTool::new(
+                name.into(),
+                description.into(),
+                serde_json::to_string(schema.as_ref())?,
+                McpContext {
+                    client: Arc::clone(&self.client),
+                },
+            );
+
+            converted_tools.push(Box::new(converted));
+        }
+
+        Ok(converted_tools)
+    }
+
+    pub fn call_tool(&self, tool_name: &str, input_json: &str) -> Result<String> {
+        let json: serde_json::Value = serde_json::from_str(input_json)?;
+        let json = json.as_object().unwrap().to_owned();
+
         let result = TOKIO_RT.block_on(async {
             self.client
                 .call_tool(CallToolRequestParam {
-                    name: "name".into(),
-                    arguments: None,
+                    name: tool_name.to_owned().into(),
+                    arguments: Some(json),
                 })
                 .await
         })?;
@@ -53,6 +77,13 @@ impl McpContext {
         };
 
         Ok(text.text.clone())
+    }
+
+    fn list_tools(&self) -> Result<Vec<Tool>> {
+        TOKIO_RT.block_on(async {
+            let tools = self.client.list_all_tools().await?;
+            Ok(tools)
+        })
     }
 
     async fn connect_async(
