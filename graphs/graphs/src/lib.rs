@@ -232,7 +232,7 @@ impl<T> Graph<T> {
     }
 
     fn node(&self, node_id: &NodeId) -> &Node<T> {
-        &self.nodes.get(&node_id).expect("Expected a node").node
+        &self.nodes.get(node_id).expect("Expected a node").node
     }
 }
 

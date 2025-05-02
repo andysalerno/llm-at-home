@@ -2,7 +2,7 @@ use graphs::Action;
 use log::debug;
 
 use crate::{
-    model::{self, ChatCompletionRequest, ModelClient},
+    model::{ChatCompletionRequest, ModelClient},
     state::ConversationState,
     tool::Tool,
 };
@@ -40,7 +40,7 @@ pub fn agent_node(
                 .expect("expected at least one choice")
                 .message;
 
-            state.with_added_message(response_message.clone().into())
+            state.with_added_message(response_message.clone())
         }),
     )
 }

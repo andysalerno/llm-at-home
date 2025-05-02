@@ -1,11 +1,6 @@
-use graphs_ai::{
-    model::{ChatCompletionResponse, ModelClient},
-    tool::ToolSchema,
-};
+use graphs_ai::model::{ChatCompletionResponse, ModelClient};
 use log::{debug, info};
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::borrow::Borrow;
 
 /// A model client for the `OpenAI` API.
 pub struct OpenAIModel {
