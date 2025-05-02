@@ -4,13 +4,13 @@ use log::debug;
 use crate::{
     model::{ChatCompletionRequest, ModelClient},
     state::ConversationState,
-    tool::Tool,
+    tool::{Tool, ToolDescription},
 };
 
 pub fn agent_node(
     model_name: impl Into<String>,
     model: Box<dyn ModelClient>, // todo: expect some lazy model provider fn, not a model
-    tools: Vec<Box<dyn Tool>>,
+    tools: Vec<ToolDescription>,
 ) -> Action<ConversationState> {
     let model_name = model_name.into();
     Action::new(
@@ -21,14 +21,14 @@ pub fn agent_node(
 
             let messages = state.messages().to_vec();
 
-            let tools = &tools;
+            let tools = tools.clone();
 
             let response = model.get_model_response(&ChatCompletionRequest::new(
                 &model_name,
                 messages,
                 None,
                 None,
-                Some(tools.iter().map(|t| t.as_ref().into()).collect()),
+                Some(tools.into_iter().map(|t| t.into()).collect()),
                 None,
             ));
 

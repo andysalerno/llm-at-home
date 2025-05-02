@@ -106,6 +106,7 @@ pub struct Choice {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Tool {
+    pub r#type: String,
     pub function: Function,
 }
 
@@ -117,6 +118,7 @@ impl Tool {
         strict: bool,
     ) -> Self {
         Self {
+            r#type: "function".into(),
             function: Function {
                 name: name.into(),
                 description: description.into(),

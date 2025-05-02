@@ -7,7 +7,7 @@ use graphs_ai::{
     response_has_tools_node::response_has_tool_node,
     state::ConversationState,
     system_prompt_node::{SystemPromptLocation, add_system_prompt, remove_system_prompt},
-    tool::Tool,
+    tool::{Tool, ToolDescription},
     user::user_input_node,
 };
 use graphs_mcp::McpContext;
@@ -19,38 +19,45 @@ use weather_tool::WeatherTool;
 fn main() {
     env_logger::init();
 
-    {
+    let mcp_tools = {
         let mcp_client = McpContext::connect("http://localhost:8002/sse").unwrap();
         let tools = mcp_client.get_tools().unwrap();
-        let model_tools = tools
-            .iter()
-            .map(|t| t.as_ref().into())
-            .collect::<Vec<graphs_ai::model::Tool>>();
-        let model_tools_json = serde_json::to_string(&model_tools).unwrap();
-        info!("tools: {model_tools_json}");
+        // let model_tools = tools
+        //     .iter()
+        //     .map(|t| t.as_ref().into())
+        //     .collect::<Vec<graphs_ai::model::Tool>>();
+        // let model_tools_json = serde_json::to_string(&model_tools).unwrap();
+        // info!("tools: {model_tools_json}");
+        tools
+    };
 
-        let weather_tool: Box<dyn Tool> = Box::new(WeatherTool::new());
-        let tool: graphs_ai::model::Tool = weather_tool.as_ref().into();
-        let tool_json = serde_json::to_string(&tool).unwrap();
-        info!("weather tool: {tool_json}");
-    }
+    // {
+    //     let weather_tool: Box<dyn Tool> = Box::new(WeatherTool::new());
+    //     let tool: graphs_ai::model::Tool = weather_tool.as_ref().into();
+    //     let tool_json = serde_json::to_string(&tool).unwrap();
+    //     info!("weather tool: {tool_json}");
+    // }
 
     // read the env var with the api key
     let api_key = std::env::var("LLM_API_KEY").unwrap();
+    let base_url = std::env::var("LLM_BASE_URL").unwrap();
+    let model_name = std::env::var("MODEL_NAME").unwrap();
 
-    let model_name = "mistralai/mistral-small-3.1-24b-instruct";
+    let model = OpenAIModel::new(api_key, &model_name, base_url);
 
-    let model = OpenAIModel::new(api_key, model_name, "https://openrouter.ai/api/v1");
+    let tools = {
+        let local_tools: Vec<Box<dyn Tool>> = vec![Box::new(WeatherTool::new())];
 
-    let tools: Vec<Box<dyn Tool>> = vec![Box::new(WeatherTool::new())];
+        mcp_tools
+            .into_iter()
+            .chain(local_tools)
+            .collect::<Vec<Box<dyn Tool>>>()
+    };
 
-    {
-        let tool = WeatherTool::new();
-        let tool: &dyn Tool = &tool;
-        let tool: graphs_ai::model::Tool = tool.into();
-        let tool = serde_json::to_string(&tool).unwrap();
-        info!("tool: {tool}");
-    }
+    let tool_descriptions = tools
+        .iter()
+        .map(|tool| tool.get_full_description())
+        .collect::<Vec<ToolDescription>>();
 
     let mut graph = graphs::Graph::new();
 
@@ -65,13 +72,11 @@ fn main() {
             "You are a helpful assistant. Do your best to help the user.",
             SystemPromptLocation::FirstMessage,
         ))
-        .then(agent_node(model_name, Box::new(model), tools))
+        .then(agent_node(model_name, Box::new(model), tool_descriptions))
         .branch(
             response_has_tool_node(),
             |graph| {
-                graph
-                    .then(invoke_tool(vec![Box::new(WeatherTool::new())]))
-                    .then(remove_system_prompt_id); // loop back
+                graph.then(invoke_tool(tools)).then(remove_system_prompt_id); // loop back
             },
             |graph| graph.terminate(),
         );
@@ -82,7 +87,16 @@ fn main() {
 
     loop {
         state = runner.run(state);
-        info!("next state: {state:?}");
+        let json_state = serde_json::to_string_pretty(&state).unwrap();
+        info!("next state: {json_state}");
+
+        let last_output = &state
+            .messages()
+            .last()
+            .expect("expected at least one message")
+            .content;
+
+        info!("output: {last_output}");
     }
 }
 

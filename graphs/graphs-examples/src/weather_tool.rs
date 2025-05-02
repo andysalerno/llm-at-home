@@ -15,6 +15,7 @@ impl WeatherTool {
 }
 
 #[derive(JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct WeatherToolParameters {
     /// The city for which to get the weather
     pub city: String,
@@ -25,10 +26,7 @@ pub struct WeatherToolParameters {
 
 impl Tool for WeatherTool {
     fn json_schema(&self) -> &ToolSchema {
-        let schema = &self.input_schema;
-        info!("WeatherTool JSON schema: {schema:?}");
-
-        schema
+        &self.input_schema
     }
 
     fn name(&self) -> &str {

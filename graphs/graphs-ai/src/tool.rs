@@ -1,20 +1,30 @@
 use std::fmt::Debug;
 
+use log::info;
 use schemars::{JsonSchema, schema::SchemaObject, schema_for};
 use serde::{Deserialize, Serialize};
 
 use crate::model;
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct ToolDescription {
+    pub name: String,
+    pub description: String,
+    pub parameters: ToolSchema,
+}
 
 pub trait Tool {
     fn json_schema(&self) -> &ToolSchema;
     fn name(&self) -> &str;
     fn description(&self) -> &str;
     fn get_output(&self, input_json: &str) -> String;
-}
 
-impl dyn Tool {
-    pub fn to_model_tool(&self) -> model::Tool {
-        self.into()
+    fn get_full_description(&self) -> ToolDescription {
+        ToolDescription {
+            name: self.name().to_string(),
+            description: self.description().to_string(),
+            parameters: self.json_schema().clone(),
+        }
     }
 }
 
@@ -27,6 +37,7 @@ impl ToolSchema {
     }
 
     pub fn from_schema_str(schema: &str) -> Self {
+        info!("parsing schema: {schema}");
         let schema: Self = serde_json::from_str(schema).unwrap();
         schema
     }
@@ -42,13 +53,19 @@ impl Debug for dyn Tool {
     }
 }
 
-impl From<&dyn Tool> for model::Tool {
-    fn from(tool: &dyn Tool) -> Self {
-        Self::new(
-            tool.name(),
-            tool.description(),
-            tool.json_schema().clone(),
-            true,
-        )
+// impl From<&dyn Tool> for model::Tool {
+//     fn from(tool: &dyn Tool) -> Self {
+//         Self::new(
+//             tool.name(),
+//             tool.description(),
+//             tool.json_schema().clone(),
+//             true,
+//         )
+//     }
+// }
+
+impl From<ToolDescription> for model::Tool {
+    fn from(tool: ToolDescription) -> Self {
+        Self::new(tool.name, tool.description, tool.parameters, true)
     }
 }
