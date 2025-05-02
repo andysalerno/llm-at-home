@@ -4,11 +4,12 @@ from dataclasses import dataclass
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 from mcp.server.fastmcp import FastMCP
+import os
 
 logger = logging.getLogger(__name__)
 
-SCRAPPER_ENDPOINT = "http://localhost:8000"
-MAX_RESPONSE_LEN = 8000
+SCRAPPER_ENDPOINT = os.getenv("SCRAPPER_ENDPOINT", "http://localhost:3000")
+MAX_RESPONSE_LEN = int(os.getenv("MAX_RESPONSE_LEN", "8000"))
 
 
 class ScrapperResponse(BaseModel):

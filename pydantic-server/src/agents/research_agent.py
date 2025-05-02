@@ -7,6 +7,7 @@ from typing import Any
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.mcp import MCPServerHTTP
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -14,6 +15,7 @@ from pydantic_ai.messages import (
     ToolCallPart,
     ToolReturnPart,
 )
+from pydantic_ai.result import ToolOutput
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.tools import Tool
 
@@ -71,7 +73,8 @@ async def _run_research_agent(
     )
     state: State = ctx.deps.with_system_prompt_replaced(system_prompt)
 
-    result = await agent.run(task, message_history=state.message_history)
+    async with agent.run_mcp_servers():
+        result = await agent.run(task, message_history=state.message_history)
 
     logger.info(result.new_messages())
 
@@ -116,6 +119,14 @@ class ResearchComplete(BaseModel):
     handoff_message: str
 
 
+tool_output_definition = ToolOutput(
+    type_=ResearchComplete,
+    name="research_complete",
+    description="Invoke this once you are completed with your research. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer. (You do not need to provide the answer itself; all the documents you found will be returned to the user for you.)",
+    strict=True,
+)
+
+
 def _create_agent(
     include_tools_in_prompt: bool,
     temp: float = 0.0,
@@ -124,12 +135,13 @@ def _create_agent(
 
     tools = _create_base_tools()
 
+    mcp_server = MCPServerHTTP(url="http://localhost:8002/sse")
+
     return Agent(
         model=create_model(),
         tools=tools,
-        result_type=ResearchComplete,
-        result_tool_description="Invoke this once you are completed with your research. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer. (You do not need to provide the answer itself; all the documents you found will be returned to the user for you.)",
-        result_tool_name="research_complete",
+        mcp_servers=[mcp_server],
+        output_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=temp,
         ),
@@ -152,10 +164,10 @@ def _get_search_tool() -> Tool[None]:
 def _create_base_tools() -> list[Tool[Any]]:
     scraper_tool = create_visit_site_tool("http://localhost:3000")
     return [
-        _get_search_tool(),
+        # _get_search_tool(),
         create_wiki_tool(),
         create_code_execution_tool(),
-        scraper_tool,
+        # scraper_tool,
     ]
 
 

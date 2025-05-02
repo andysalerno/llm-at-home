@@ -2,6 +2,10 @@ from mcp.server.fastmcp import FastMCP
 import asyncio
 from google_search import google_search
 from visit_url_tool import visit_url_tool
+import os
+
+PORT = int(os.getenv("MCP_SERVER_PORT", "8000"))
+os.environ["FASTMCP_PORT"] = str(PORT)
 
 
 def setup_mcp(mcp: FastMCP):

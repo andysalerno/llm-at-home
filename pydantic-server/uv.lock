@@ -1271,7 +1271,7 @@ wheels = [
 
 [[package]]
 name = "mcp"
-version = "1.7.0"
+version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -1279,14 +1279,13 @@ dependencies = [
     { name = "httpx-sse" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
-    { name = "python-multipart" },
     { name = "sse-starlette" },
     { name = "starlette" },
-    { name = "uvicorn", marker = "sys_platform != 'emscripten'" },
+    { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/b7/0bf3c75ddedbc744f872c34801b9c6c8930fe1134212c45e25029f0b83df/mcp-1.7.0.tar.gz", hash = "sha256:8b955eddf5fbb09613c4d517956745d932db9f757673200112b336bd8092509f", size = 229504 }
+sdist = { url = "https://files.pythonhosted.org/packages/95/d2/f587cb965a56e992634bebc8611c5b579af912b74e04eb9164bd49527d21/mcp-1.6.0.tar.gz", hash = "sha256:d9324876de2c5637369f43161cd71eebfd803df5a95e46225cab8d280e366723", size = 200031 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f7/09/943fa9dc1e9751c2e7302205112801d0bb6a12050e21f0945486748f9ff3/mcp-1.7.0-py3-none-any.whl", hash = "sha256:0e874a587f542211f36f87b02c9acd6ad2534976fb2c36ff794d8b2bc0a91915", size = 100192 },
+    { url = "https://files.pythonhosted.org/packages/10/30/20a7f33b0b884a9d14dd3aa94ff1ac9da1479fe2ad66dd9e2736075d2506/mcp-1.6.0-py3-none-any.whl", hash = "sha256:7bd24c6ea042dbec44c754f100984d186620d8b841ec30f1b19eda9b93a634d0", size = 76077 },
 ]
 
 [package.optional-dependencies]
@@ -1886,20 +1885,16 @@ wheels = [
 
 [[package]]
 name = "pydantic-ai"
-version = "0.1.8"
-source = { registry = "https://pypi.org/simple" }
+version = "0.1.9.dev6+54fb56a"
+source = { git = "https://github.com/pydantic/pydantic-ai#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
 dependencies = [
     { name = "pydantic-ai-slim", extra = ["anthropic", "bedrock", "cli", "cohere", "evals", "groq", "mcp", "mistral", "openai", "vertexai"] },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0d/41/0afa2c921ed3067a892064e124ee2d216460342c7984fcb481a908ffb245/pydantic_ai-0.1.8.tar.gz", hash = "sha256:2eaeb7695cf4c21e4a4a439ac3007e3158dabd9bea6e6eec81b3de323127452a", size = 30396301 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bd/ed/aa10696645a0c66bca19c0dd863e6bbd578a4d9fbc4cf182d34b45bef67a/pydantic_ai-0.1.8-py3-none-any.whl", hash = "sha256:b9f190280122827750dda214a00bf479a9bb1e9d39de366b8b48b3f0b80462f4", size = 9999 },
 ]
 
 [[package]]
 name = "pydantic-ai-slim"
-version = "0.1.8"
-source = { registry = "https://pypi.org/simple" }
+version = "0.1.9.dev6+54fb56a"
+source = { git = "https://github.com/pydantic/pydantic-ai?subdirectory=pydantic_ai_slim#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
 dependencies = [
     { name = "eval-type-backport" },
     { name = "griffe" },
@@ -1908,10 +1903,6 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-graph" },
     { name = "typing-inspection" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0c/22/b029947e47f261bd7ff7d086028d18e4c84645fe9beea308fd698596dad5/pydantic_ai_slim-0.1.8.tar.gz", hash = "sha256:ffc2bd91ddd93e03fb7cf936d668a7091ae9fdeb1576f6dc3b8bc5b7b568630c", size = 119301 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d5/eb/6670550c8d9ee0c67b5630c1ed10f8c5b42d7ed7582552cf3d25055cbd12/pydantic_ai_slim-0.1.8-py3-none-any.whl", hash = "sha256:aac5b0da9125db6b2773b97c0653668470fcf52fd429558c021ae67a7f5ad0fa", size = 153311 },
 ]
 
 [package.optional-dependencies]
@@ -1979,8 +1970,8 @@ wheels = [
 
 [[package]]
 name = "pydantic-evals"
-version = "0.1.8"
-source = { registry = "https://pypi.org/simple" }
+version = "0.1.9.dev6+54fb56a"
+source = { git = "https://github.com/pydantic/pydantic-ai?subdirectory=pydantic_evals#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
 dependencies = [
     { name = "anyio" },
     { name = "logfire-api" },
@@ -1989,24 +1980,16 @@ dependencies = [
     { name = "pyyaml" },
     { name = "rich" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fe/6c/ad012b9226751a297d2d86d98d043c3a66f17bb27e87d4fba11b45d9312c/pydantic_evals-0.1.8.tar.gz", hash = "sha256:ea7fead14eafd7ab65bab27040a2095060b5825f3aded49a87047c29fb3a01fb", size = 40853 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/cd/03/dbe3363b77c28f75227681d1509fd2f88db102aa34f92e1ee0e8d9af2f63/pydantic_evals-0.1.8-py3-none-any.whl", hash = "sha256:3ac53f68567a2ae437aa5c904cfb379df32fd68580835d785f73f340435cc8e1", size = 49425 },
-]
 
 [[package]]
 name = "pydantic-graph"
-version = "0.1.8"
-source = { registry = "https://pypi.org/simple" }
+version = "0.1.9.dev6+54fb56a"
+source = { git = "https://github.com/pydantic/pydantic-ai?subdirectory=pydantic_graph#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
 dependencies = [
     { name = "httpx" },
     { name = "logfire-api" },
     { name = "pydantic" },
     { name = "typing-inspection" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ef/6c/78abb49f587e9c6ead5782245ea484641b4a35928e5243280974792e484e/pydantic_graph-0.1.8.tar.gz", hash = "sha256:c32ef6fd9653be6b498074e1fe6a402e6c4c003ccf0ce0a80086ca602ae4ff6f", size = 21126 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/59/d7/6b6842b53b441656c9607b1f2d41fb36467b033219a227730dbbcb761597/pydantic_graph-0.1.8-py3-none-any.whl", hash = "sha256:6afd79f2784dc77a9dc389247d75d82eaf4206063026e1e19eece1caf910f81d", size = 26532 },
 ]
 
 [[package]]
@@ -2039,12 +2022,12 @@ requires-dist = [
     { name = "jinja2" },
     { name = "langchain-community" },
     { name = "langchain-google-community" },
-    { name = "mcp", extras = ["cli"], specifier = ">=1.6.0" },
+    { name = "mcp", extras = ["cli"], specifier = "==1.6.0" },
     { name = "onnxruntime" },
     { name = "openinference-instrumentation-openai" },
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
-    { name = "pydantic-ai" },
+    { name = "pydantic-ai", git = "https://github.com/pydantic/pydantic-ai" },
     { name = "wikipedia" },
 ]
 
