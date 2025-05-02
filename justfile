@@ -24,6 +24,10 @@ run-code-sandbox:
 run-web-scraper:
   docker run --rm -p 3000:3000 amerkurev/scrapper:latest
 
+[working-directory: 'mcp-servers']
+run-mcp-server:
+  uv run --env-file ./google_search/.env server.py
+
 [working-directory: 'graphs']
 run-graphs:
   #!/usr/bin/env bash
