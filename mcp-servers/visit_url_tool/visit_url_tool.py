@@ -4,7 +4,6 @@ from dataclasses import dataclass
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 from mcp.server.fastmcp import FastMCP
-import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +79,8 @@ async def _serve(mcp: FastMCP):
 
 
 if __name__ == "__main__":
+    import asyncio
+
     mcp = FastMCP("visit_url")
     setup_mcp(mcp)
     asyncio.run(_serve(mcp))

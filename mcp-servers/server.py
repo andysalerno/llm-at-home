@@ -7,6 +7,7 @@ from visit_url_tool import visit_url_tool
 def setup_mcp(mcp: FastMCP):
     google_search.setup_mcp(mcp)
     visit_url_tool.setup_mcp(mcp)
+    pass
 
 
 async def serve(mcp: FastMCP):
@@ -14,6 +15,6 @@ async def serve(mcp: FastMCP):
 
 
 if __name__ == "__main__":
-    mcp = FastMCP("all-tools")
+    mcp = FastMCP("all_tools")
     setup_mcp(mcp)
     asyncio.run(serve(mcp))

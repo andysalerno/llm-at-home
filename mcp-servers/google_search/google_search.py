@@ -2,7 +2,6 @@ from mcp.server.fastmcp import FastMCP
 from langchain_google_community import GoogleSearchAPIWrapper
 import logging
 import json
-import asyncio
 
 
 def setup_mcp(mcp: FastMCP):
@@ -30,6 +29,8 @@ async def _serve(mcp: FastMCP):
 
 
 if __name__ == "__main__":
+    import asyncio
+
     mcp = FastMCP("google_search")
     setup_mcp(mcp)
     asyncio.run(_serve(mcp))
