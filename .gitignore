@@ -1,10 +1,12 @@
+.ropeproject
+.venv
 .locks/
+.vllm-cache/
+.agentflow.env
 models--*
 __pycache__/
 aphrodite/
 tabby/
-.agentflow.env
 request_logs/
-.vllm-cache/
-vllm-plugins/__pycache__/
 model_quantizer/
+
