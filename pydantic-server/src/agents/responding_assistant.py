@@ -6,6 +6,7 @@ from jinja2 import Template
 from pydantic_ai import Agent, Tool
 from pydantic_ai.settings import ModelSettings
 
+from agents.coding_agent import coding_agent_tool
 from agents.research_agent import research_agent_tool
 from model import create_model, get_instrumentation_settings
 from state import State
@@ -21,7 +22,11 @@ def create_responding_assistant(
     instrumentation_settings = get_instrumentation_settings()
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    tools = [research_agent_tool(include_tools_in_prompt, agent_temp=0.1), *extra_tools]
+    tools = [
+        research_agent_tool(include_tools_in_prompt, agent_temp=0.1),
+        coding_agent_tool(agent_temp=0.1),
+        *extra_tools,
+    ]
 
     agent = Agent(
         model=create_model(),

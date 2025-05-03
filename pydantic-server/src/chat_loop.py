@@ -47,7 +47,7 @@ async def run_loop(
             next_history = response.all_messages()
 
         state.message_history = next_history
-        logger.info(response.data)
+        logger.info(response.output)
 
         if aggregate_usage is None:
             aggregate_usage = response.usage()
