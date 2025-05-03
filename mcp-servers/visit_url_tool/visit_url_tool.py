@@ -62,7 +62,7 @@ class ScrapperClient:
 def setup_mcp(mcp: FastMCP):
     client = ScrapperClient(SCRAPPER_ENDPOINT)
 
-    @mcp.tool()
+    @mcp.tool(name="visit_url")
     async def scrape(url: str) -> str:
         """
         Visits (scrapes) the given URL and returns the text content of the page.

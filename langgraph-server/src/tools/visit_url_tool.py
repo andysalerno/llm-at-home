@@ -17,7 +17,7 @@ def create_visit_site_tool(
 ) -> Tool[None]:
     client = ScrapperClient(scrapper_endpoint)
 
-    name = name or "visit_site"
+    name = name or "visit_url"
     description = description or (
         "Visits (scrapes) the given URL and returns the text content of the page. "
         "Useful for looking up current events, or visiting urls you found in your research."
