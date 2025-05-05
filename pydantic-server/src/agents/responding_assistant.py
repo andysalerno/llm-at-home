@@ -26,7 +26,7 @@ def create_responding_assistant(
     tools = [
         research_agent_tool(include_tools_in_prompt, agent_temp=0.4),
         coding_agent_tool(agent_temp=0.1),
-        create_code_execution_tool(),
+        # create_code_execution_tool(),
         *extra_tools,
     ]
 

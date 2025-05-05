@@ -1,5 +1,5 @@
 [project]
-name = "google-search"
+name = "google_search"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"

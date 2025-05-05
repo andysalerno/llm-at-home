@@ -166,7 +166,7 @@ def _create_base_tools() -> list[Tool[Any]]:
     return [
         # _get_search_tool(),
         create_wiki_tool(),
-        create_code_execution_tool(),
+        # create_code_execution_tool(),
         # scraper_tool,
     ]
 
