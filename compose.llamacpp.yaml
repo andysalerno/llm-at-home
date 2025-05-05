@@ -16,6 +16,7 @@ services:
       -ngl 100
       -fa
       -c 16384
+      --no-webui
     ports:
       - "8000:8000"
     devices:

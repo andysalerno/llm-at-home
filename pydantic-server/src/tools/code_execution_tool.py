@@ -11,10 +11,10 @@ def create_code_execution_tool(
 ) -> Tool:
     name = name or "execute_python_code"
     description = description or (
-        "Executes Python code and returns the result from stdout. "
+        "Executes Python code and returns the output from stdout. "
         "Multiple lines are allowed, including complex scripting. "
         "IMPORTANT: you ONLY see the results from stdout, so you MUST print() the result you want to see. "
-        "The code is run as a *script file*, not as REPL."
+        "Simply placing the result on the last line will not work."
     )
     return Tool(
         name=name,
@@ -40,6 +40,11 @@ class CodeExecutionTool:
             The result of the code execution. If the code fails to build, the error message is returned.
         """
         import httpx
+
+        if "print(" not in code:
+            raise ModelRetry(
+                "Your code does not appear to print anything! Make sure to print the result you want to see."
+            )
 
         if self.host.startswith("http://"):
             base_url = self.host

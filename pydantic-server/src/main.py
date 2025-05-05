@@ -21,7 +21,7 @@ async def main() -> None:
     _configure_phoenix()
 
     agent = create_responding_assistant(
-        temperature=0.1,
+        temperature=0.4,
         extra_tools=[store_memory_tool(), search_memory_tool()],
         include_tools_in_prompt=False,  # change based on the model used
     )

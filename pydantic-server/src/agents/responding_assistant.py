@@ -10,6 +10,7 @@ from agents.coding_agent import coding_agent_tool
 from agents.research_agent import research_agent_tool
 from model import create_model, get_instrumentation_settings
 from state import State
+from tools.code_execution_tool import create_code_execution_tool
 
 
 def create_responding_assistant(
@@ -23,8 +24,9 @@ def create_responding_assistant(
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     tools = [
-        research_agent_tool(include_tools_in_prompt, agent_temp=0.1),
+        research_agent_tool(include_tools_in_prompt, agent_temp=0.4),
         coding_agent_tool(agent_temp=0.1),
+        create_code_execution_tool(),
         *extra_tools,
     ]
 

@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.8.5
+    image: vllm/vllm-openai:v0.8.5.post1
     # image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
@@ -107,9 +107,12 @@ services:
     # --served-model-name model
     # --max-model-len 16000
     # -tp 2
+    # Qwne3
+    # RedHatAI/Qwen3-14B-FP8_dynamic
+    # --model btbtyler09/Qwen3-30B-A3B-gptq-8bit
     command: >
-      --model /root/gguf/Qwen3-14B-Q8_0.gguf
-      --tokenizer Qwen/Qwen3-14B
+      --model khajaphysist/Qwen3-30B-A3B-FP8-Dynamic
+      --max-num-seqs 3
       --tool-call-parser hermes
       --enable-auto-tool-choice
       --served-model-name model
