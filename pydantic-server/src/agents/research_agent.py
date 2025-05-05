@@ -165,7 +165,7 @@ def _create_base_tools() -> list[Tool[Any]]:
     scraper_tool = create_visit_site_tool("http://localhost:3000")
     return [
         # _get_search_tool(),
-        create_wiki_tool(),
+        # create_wiki_tool(),
         # create_code_execution_tool(),
         # scraper_tool,
     ]
