@@ -8,7 +8,7 @@ from pydantic_ai.settings import ModelSettings
 
 from agents.coding_agent import coding_agent_tool
 from agents.research_agent import research_agent_tool
-from model import create_model, get_instrumentation_settings
+from model import create_model, get_extra_body, get_instrumentation_settings
 from state import State
 from tools.code_execution_tool import create_code_execution_tool
 
@@ -36,6 +36,7 @@ def create_responding_assistant(
         tools=tools,
         model_settings=ModelSettings(
             temperature=temperature,
+            extra_body=get_extra_body(),
         ),
         system_prompt=_create_prompt(tools, cur_date, include_tools_in_prompt),
     )

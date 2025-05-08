@@ -1885,16 +1885,20 @@ wheels = [
 
 [[package]]
 name = "pydantic-ai"
-version = "0.1.9.dev6+54fb56a"
-source = { git = "https://github.com/pydantic/pydantic-ai#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
+version = "0.1.10"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic-ai-slim", extra = ["anthropic", "bedrock", "cli", "cohere", "evals", "groq", "mcp", "mistral", "openai", "vertexai"] },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8c/79/067dea648f288780d155029a45e70f58dfa4f7ec343dcbf44c686ee74156/pydantic_ai-0.1.10.tar.gz", hash = "sha256:393c27cd3d86c6c505ac7d78ba740f4a27419d737938640775929deab1c8ccf8", size = 36626943 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/94/ee0729d119f0ac089372b7403888c834b30013653c6aa40182e535fddd37/pydantic_ai-0.1.10-py3-none-any.whl", hash = "sha256:5441cb5e2d80239737d1990f789626d55fa7da2e0d103c3d99bc9e1152209d9c", size = 10012 },
 ]
 
 [[package]]
 name = "pydantic-ai-slim"
-version = "0.1.9.dev6+54fb56a"
-source = { git = "https://github.com/pydantic/pydantic-ai?subdirectory=pydantic_ai_slim#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
+version = "0.1.10"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "eval-type-backport" },
     { name = "griffe" },
@@ -1903,6 +1907,10 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-graph" },
     { name = "typing-inspection" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/91/3c/ec95bd110addcfb0ef11b4918f354e00b46cfa8e2b8e99538eb581b3a4c5/pydantic_ai_slim-0.1.10.tar.gz", hash = "sha256:c8ce4e04d014a0061d1a4cf9a76006cfacf6ee7214c572458550b05e878f832d", size = 120873 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/a6/25cc00984a527eb18a29d8cb740afda872a54e09460232d4e15ef9ae4928/pydantic_ai_slim-0.1.10-py3-none-any.whl", hash = "sha256:d979492640bb43debefa842728c019eb8159302fe0e9fc423c9f4c1480906f4e", size = 154942 },
 ]
 
 [package.optional-dependencies]
@@ -1970,8 +1978,8 @@ wheels = [
 
 [[package]]
 name = "pydantic-evals"
-version = "0.1.9.dev6+54fb56a"
-source = { git = "https://github.com/pydantic/pydantic-ai?subdirectory=pydantic_evals#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
+version = "0.1.10"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "logfire-api" },
@@ -1980,16 +1988,24 @@ dependencies = [
     { name = "pyyaml" },
     { name = "rich" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/17/4d/5a2d67d9bfe474de72dc9fb09c5224aa622528d80db37bd1291ba8f5b383/pydantic_evals-0.1.10.tar.gz", hash = "sha256:8303242bce0f56b587126dcd60624333ca0ba18401f68935217466627fba1831", size = 40846 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a1/7c/293fd05b6455ce31f5c42602082d70f7e0915ca2b702038e01e2e0cb66e3/pydantic_evals-0.1.10-py3-none-any.whl", hash = "sha256:4a2739010120f44daa9c96117aa72ae4649584040764c34f3ecdb1065b50306e", size = 49432 },
+]
 
 [[package]]
 name = "pydantic-graph"
-version = "0.1.9.dev6+54fb56a"
-source = { git = "https://github.com/pydantic/pydantic-ai?subdirectory=pydantic_graph#54fb56a9cbb9e308dee55dc96faf9d6f3ea8e771" }
+version = "0.1.10"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
     { name = "logfire-api" },
     { name = "pydantic" },
     { name = "typing-inspection" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/20/30/c981aba73df9114b248cfc1ccc35266025e908251c46b25a6f953603f203/pydantic_graph-0.1.10.tar.gz", hash = "sha256:dd7725f6a7c967d0dda8da72baba187cf4d85f1fc59f262b422591db20d738bd", size = 21125 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/b4/8e6f89435fc05eccfbd682a3ce3c47169e905c9469f158a4610038943580/pydantic_graph-0.1.10-py3-none-any.whl", hash = "sha256:56ba6bebe86e7e61cdc0e0ab36e07fe0a43931d949b89ec16c81cc70e2e6473c", size = 26540 },
 ]
 
 [[package]]
@@ -2027,7 +2043,7 @@ requires-dist = [
     { name = "openinference-instrumentation-openai" },
     { name = "opentelemetry-exporter-otlp" },
     { name = "opentelemetry-sdk" },
-    { name = "pydantic-ai", git = "https://github.com/pydantic/pydantic-ai" },
+    { name = "pydantic-ai" },
     { name = "wikipedia" },
 ]
 

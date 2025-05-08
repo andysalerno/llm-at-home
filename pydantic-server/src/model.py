@@ -15,6 +15,16 @@ def get_instrumentation_settings() -> InstrumentationSettings:
     return instrumentation_settings
 
 
+def get_extra_body():
+    extra_body = {
+        "provider": {
+            "require_parameters": True,
+        },
+    }
+
+    return extra_body
+
+
 def create_model() -> InstrumentedModel:
     api_key = os.environ.get("LLM_API_KEY")
 

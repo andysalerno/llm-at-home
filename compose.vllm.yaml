@@ -111,7 +111,7 @@ services:
     # RedHatAI/Qwen3-14B-FP8_dynamic
     # --model btbtyler09/Qwen3-30B-A3B-gptq-8bit
     command: >
-      --model khajaphysist/Qwen3-30B-A3B-FP8-Dynamic
+      --model RedHatAI/Qwen3-30B-A3B-FP8-dynamic
       --max-num-seqs 3
       --tool-call-parser hermes
       --enable-auto-tool-choice

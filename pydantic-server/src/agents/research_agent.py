@@ -19,7 +19,7 @@ from pydantic_ai.result import ToolOutput
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.tools import Tool
 
-from model import create_model
+from model import create_model, get_extra_body
 from state import State
 from tools.code_execution_tool import create_code_execution_tool
 from tools.google_search_tool import create_google_search_tool
@@ -144,6 +144,7 @@ def _create_agent(
         output_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=temp,
+            extra_body=get_extra_body(),
         ),
         system_prompt=_create_prompt(
             tools,
