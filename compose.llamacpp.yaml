@@ -15,7 +15,7 @@ services:
       --host 0.0.0.0
       -ngl 100
       -fa
-      -c 16384
+      -c 32768
       --no-webui
     ports:
       - "8000:8000"

@@ -21,10 +21,6 @@ from pydantic_ai.tools import Tool
 
 from model import create_model, get_extra_body
 from state import State
-from tools.code_execution_tool import create_code_execution_tool
-from tools.google_search_tool import create_google_search_tool
-from tools.visit_url_tool import create_visit_site_tool
-from tools.wiki_tool import create_wiki_tool
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +32,15 @@ def research_agent_tool(include_tools_in_prompt: bool, agent_temp: float = 0.0) 
         return await _run_research_agent(ctx, task, include_tools_in_prompt, agent_temp)
 
     description = (
-        "Gives a task to a research agent and returns the final result of the research."
+        "Gives a task to a research agent and returns the final result of its research."
         ' Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."'
         " Tasks can be simple or complex."
-        " The research agent will return a report with the results of the research."
+        " The research agent will return a report with the results of the research, including relevant documents."
     )
 
     return Tool(
         function=_run,
-        name="perform_research",
+        name="ask_researcher",
         description=description,
         takes_ctx=True,
     )
@@ -133,13 +129,11 @@ def _create_agent(
 ) -> Agent[None, ResearchComplete]:
     cur_date = _get_now_str()
 
-    tools = _create_base_tools()
-
     mcp_server = MCPServerHTTP(url="http://localhost:8002/sse")
 
     return Agent(
         model=create_model(),
-        tools=tools,
+        tools=[],
         mcp_servers=[mcp_server],
         output_type=tool_output_definition,
         model_settings=ModelSettings(
@@ -147,7 +141,7 @@ def _create_agent(
             extra_body=get_extra_body(),
         ),
         system_prompt=_create_prompt(
-            tools,
+            [],
             cur_date,
             include_tools_in_prompt=include_tools_in_prompt,
         ),
@@ -158,26 +152,12 @@ def _get_now_str() -> str:
     return datetime.datetime.now().strftime("%Y-%m-%d")
 
 
-def _get_search_tool() -> Tool[None]:
-    return create_google_search_tool()
-
-
-def _create_base_tools() -> list[Tool[Any]]:
-    scraper_tool = create_visit_site_tool("http://localhost:3000")
-    return [
-        # _get_search_tool(),
-        # create_wiki_tool(),
-        # create_code_execution_tool(),
-        # scraper_tool,
-    ]
-
-
 def _create_prompt_with_default_tools(
     date_str: str,
     include_tools_in_prompt: bool,
 ) -> str:
     return _create_prompt(
-        _create_base_tools(),
+        [],
         date_str,
         include_tools_in_prompt=include_tools_in_prompt,
     )
@@ -208,7 +188,7 @@ def _create_prompt(
 
         ## Rules
         - You MAY invoke multiple tools to gather information related to your task.
-        - However, you are limited to at most **{{ max_tool_calls }}** total tool invocations.
+        - However, you are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
         - After invoking at most **{{ max_tool_calls }}** tools, you must then invoke the `research_complete` tool to indicate that you are done.
         - Additionally, you must NOT invoke the `research_complete` tool in the same response as other tools. It must be invoked alone.
         - If you see interesting urls in search results, use the `visit_url` tool to scrape them and acquire their information.

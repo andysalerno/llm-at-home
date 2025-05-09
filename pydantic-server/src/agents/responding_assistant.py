@@ -10,7 +10,6 @@ from agents.coding_agent import coding_agent_tool
 from agents.research_agent import research_agent_tool
 from model import create_model, get_extra_body, get_instrumentation_settings
 from state import State
-from tools.code_execution_tool import create_code_execution_tool
 
 
 def create_responding_assistant(
@@ -24,9 +23,8 @@ def create_responding_assistant(
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     tools = [
-        research_agent_tool(include_tools_in_prompt, agent_temp=0.4),
+        research_agent_tool(include_tools_in_prompt, agent_temp=0.2),
         coding_agent_tool(agent_temp=0.1),
-        # create_code_execution_tool(),
         *extra_tools,
     ]
 
@@ -73,7 +71,8 @@ def _create_prompt(
         - If you still cannot find a relevant result, even after invoking the researcher, tell the user you do not know, or invoke the researcher again with a reformulated task.
         - If you need to do any kind of calculation, delegate to the researcher; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
-        - Do not hallucinate! Any factual information you provide must be based on research results.
+        - Do not hallucinate! Any factual information you provide must be based on findings from the researcher tool.
+        - When possible, cite your sources via markdown links.
         """).strip(),
     ).render(
         tools=tools,

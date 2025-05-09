@@ -48,4 +48,18 @@ def create_model() -> InstrumentedModel:
         ),
     )
 
+    original_process_response = model._process_response
+
+    def _process_response(
+        self: OpenAIModel,
+        response,
+    ):
+        # Custom processing logic here
+        logger.info("Processing response: %s", response)
+        # Call the original process_response method
+        return original_process_response(response)
+
+    # override the behavior of process_response:
+    model._process_response = _process_response.__get__(model, OpenAIModel)
+
     return InstrumentedModel(model, instrumentation_settings)
