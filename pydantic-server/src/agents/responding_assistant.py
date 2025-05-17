@@ -76,6 +76,8 @@ def _create_prompt(
         - If you still cannot find a relevant result, even after invoking the research assistant, tell the user you do not know, or invoke the researcher again with a reformulated task.
         - If you need to do any kind of calculation, delegate to the coding assistant; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
+        - Do not mention your tools/assistants/researchers to the user; they are transparent to the user.
+        - You are free to invoke tools/assistants/researchers as many times as you need to construct a complete answer. In fact, you are encouraged to break the task into smaller sub-tasks and invoke the tools/assistants/researchers for each of them.
         - Do not hallucinate! Any factual information you provide must be based on findings from the research assistant.
         - When possible, cite your sources via markdown links.
         """).strip(),

@@ -56,18 +56,6 @@ async def _run_research_agent(
     include_tools_in_prompt: bool,
     agent_temp: float = 0.0,
 ) -> str:
-    """
-    Gives a task to a research agent and returns the final result of the research.
-    Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."
-    Tasks can be simple or complex.
-    The research agent will return a report with the results of the research.
-
-    Args:
-        task: The task to be performed by the research agent.
-
-    Returns:
-        The result of the research agent's task, in natural language.
-    """
     agent = _create_agent(include_tools_in_prompt, agent_temp)
 
     system_prompt = _create_prompt_with_default_tools(
