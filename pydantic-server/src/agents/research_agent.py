@@ -29,6 +29,10 @@ logger = logging.getLogger(__name__)
 # existing tool calls and outputs before running
 def research_agent_tool(include_tools_in_prompt: bool, agent_temp: float = 0.0) -> Tool:
     async def _run(ctx: RunContext[State], task: str) -> str:
+        """
+        Args:
+            task: The task to be performed, in natural language.
+        """
         return await _run_research_agent(ctx, task, include_tools_in_prompt, agent_temp)
 
     description = (
@@ -60,6 +64,9 @@ async def _run_research_agent(
 
     Args:
         task: The task to be performed by the research agent.
+
+    Returns:
+        The result of the research agent's task, in natural language.
     """
     agent = _create_agent(include_tools_in_prompt, agent_temp)
 
@@ -167,7 +174,7 @@ def _create_prompt(
     tools: list[Tool[Any]],
     date_str: str,
     include_tools_in_prompt: bool,
-    max_tool_calls: int = 4,
+    max_tool_calls: int = 5,
 ) -> str:
     return Template(
         textwrap.dedent("""\

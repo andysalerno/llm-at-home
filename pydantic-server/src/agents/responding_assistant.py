@@ -25,6 +25,11 @@ def create_responding_assistant(
     tools = [
         research_agent_tool(include_tools_in_prompt, agent_temp=0.2),
         coding_agent_tool(agent_temp=0.1),
+        coding_agent_tool(
+            tool_name="calculator",
+            tool_description="Performs a calculation, described in natural language, such as: '2 + 2', 'days between 2023-01-08 and 2024-02-12', '15 pounds times 23 kilograms', etc.",
+            agent_temp=0.1,
+        ),
         *extra_tools,
     ]
 
@@ -67,11 +72,11 @@ def _create_prompt(
         The current date is: {{ date_str }}.
 
         ## Additional rules
-        - Always prefer to use the researcher over your own knowledge. Even when you think you know the answer, it is better to use the researcher tool to get the most accurate and up-to-date information, and to discover sources to provide to the user.
-        - If you still cannot find a relevant result, even after invoking the researcher, tell the user you do not know, or invoke the researcher again with a reformulated task.
-        - If you need to do any kind of calculation, delegate to the researcher; it is better at math than you are!
+        - Always prefer to use the research assistant over your own knowledge. Even when you think you know the answer, it is better to use the research assistant to get the most accurate and up-to-date information, and to discover sources to provide to the user.
+        - If you still cannot find a relevant result, even after invoking the research assistant, tell the user you do not know, or invoke the researcher again with a reformulated task.
+        - If you need to do any kind of calculation, delegate to the coding assistant; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
-        - Do not hallucinate! Any factual information you provide must be based on findings from the researcher tool.
+        - Do not hallucinate! Any factual information you provide must be based on findings from the research assistant.
         - When possible, cite your sources via markdown links.
         """).strip(),
     ).render(
