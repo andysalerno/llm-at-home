@@ -14,6 +14,13 @@ from pydantic import BaseModel, Field, HttpUrl
 logger = logging.getLogger(__name__)
 
 
+class Person(BaseModel):
+    wiki_url: str
+    name: str
+    dob: datetime | None
+    dod: datetime | None
+
+
 class WikiItem(BaseModel):
     """Model representing a WikiData item."""
 
@@ -33,12 +40,20 @@ class WikiItem(BaseModel):
         "arbitrary_types_allowed": True,
     }
 
+    def to_person(self) -> Person:
+        return Person(
+            wiki_url=str(self.en_article),
+            name=self.item_label,
+            dob=self.dob,
+            dod=self.dod,
+        )
+
 
 class DataLoader:
     """Loads and processes data from JSON files."""
 
     @staticmethod
-    def load_items(file_path: str | Path) -> list[WikiItem]:
+    def load_items(file_path: str | Path) -> list[Person]:
         """
         Load items from a JSON file.
 
@@ -60,7 +75,9 @@ class DataLoader:
         with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
 
-        return [WikiItem.model_validate(item) for item in data]
+        validated = [WikiItem.model_validate(item) for item in data]
+
+        return [item.to_person() for item in validated]
 
 
 # Example usage
@@ -77,7 +94,7 @@ if __name__ == "__main__":
 
         # Log details of the first item if any were loaded
         if items:
-            item_json = items[0].model_dump_json(indent=2)
+            item_json = items[0].model_dump_json()
             logger.info("First item: %s", item_json)
     except (FileNotFoundError, json.JSONDecodeError):
         logger.exception("Error loading data")

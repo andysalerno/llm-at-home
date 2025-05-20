@@ -7,6 +7,9 @@ run-telemetry:
 run-agents:
   uv --directory ./agents-server run --env-file .env  main.py
 
+run-game:
+  uv --directory ./game run --env-file .env  main.py
+
 run-pydantic:
   uv --directory ./pydantic-server run --env-file .env src/main.py
 

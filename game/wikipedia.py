@@ -23,6 +23,7 @@ import re
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import unquote, urlparse
 
 import requests
 from tqdm import tqdm
@@ -134,6 +135,23 @@ def generate(seed: int) -> None:
         json.dump(roster, f, ensure_ascii=False, indent=2)
 
     logger.info("Wrote %s", OUTPUT_FILE)
+
+
+def get_wikipedia_summary(url: str) -> str:
+    # Extract the title from the URL
+    path = urlparse(url).path  # e.g., "/wiki/Albert_Einstein"
+    if not path.startswith("/wiki/"):
+        raise ValueError("URL does not look like a Wikipedia article")
+
+    title = unquote(path[len("/wiki/") :])  # e.g., "Albert_Einstein"
+
+    # Make API request to get the summary
+    api_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
+    response = requests.get(api_url)
+    response.raise_for_status()
+
+    data = response.json()
+    return data.get("extract", "")
 
 
 if __name__ == "__main__":

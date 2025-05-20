@@ -6,21 +6,23 @@ from pydantic_ai.models import Model
 
 _logger = logging.getLogger(__name__)
 
-# canned intro, then...
-
 
 class _Response(BaseModel):
     quote: str
 
 
-def generate_1(model: Model, person_name: str, wiki_excerpt: str):
+def generate_1(model: Model, person_name: str, wiki_excerpt: str) -> str:
     agent = Agent(model, output_type=_Response, instructions=_prompt_1)
 
     response = agent.run_sync(_create_user_message(person_name, wiki_excerpt))
 
+    return response.output.quote
 
-def _create_user_message(person_name: str, wiki_excerpt: str):
-    return f"- {person_name} might say:"
+
+def _create_user_message(person_name: str, wiki_excerpt: str) -> str:
+    wiki_excerpt = "<WIKIPEDIA_EXCERPT>" + wiki_excerpt + "</WIKIPEDIA_EXCERPT>"
+
+    return f"{wiki_excerpt}\n\n- {person_name} might say:"
 
 
 _prompt_1 = """
