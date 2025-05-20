@@ -9,4 +9,5 @@ aphrodite/
 tabby/
 request_logs/
 model_quantizer/
+.env
 
