@@ -1,7 +1,7 @@
 import logging
 
 from data_loader import DataLoader
-from generate_text.gen_1_exclamation import generate_1
+from generate_text.gen_1_exclamation import generate_1, generate_2, generate_4
 from model import create_model
 from wikipedia import get_wikipedia_summary
 
@@ -26,11 +26,27 @@ def main() -> None:
 
     model = create_model()
 
-    for item in loaded_items[:10]:
+    # deduplicate loaded_items by wiki_url:
+    seen_urls = set()
+    next_loaded_items = []
+    for item in loaded_items:
+        if item.wiki_url not in seen_urls:
+            seen_urls.add(item.wiki_url)
+            next_loaded_items.append(item)
+    loaded_items = next_loaded_items
+
+    for item in loaded_items[0:20]:
         wiki_summary = get_wikipedia_summary(item.wiki_url)
-        logger.info("Wiki summary: %s", wiki_summary)
-        output = generate_1(model, item.name, wiki_summary)
-        logger.info("%s says: %s", item.name, output)
+        # logger.info("Wiki summary: %s", wiki_summary)
+
+        # output = generate_1(model, item.name, wiki_summary)
+        # logger.info("    [1] %s says: %s", item.name, output)
+
+        # output = generate_2(model, item.name, wiki_summary)
+        # logger.info("    [2] %s says: %s", item.name, output)
+
+        output = generate_4(model, item.name, wiki_summary)
+        logger.info("    [4] %s says: %s", item.name, output)
 
 
 if __name__ == "__main__":

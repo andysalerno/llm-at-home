@@ -1,0 +1,67 @@
+You did it, you finally did it!
+
+The machine - the chrono-retrotemporal-resonance-drive - a time machine, basically - works!
+
+All you need to do is enter a code, and it will transport you to another time!
+
+Pick a code: <CODE>
+
+You enter the code, and the machine activates. The smell of ozone fills the room.
+
+And then, suddenly...
+
+...from the smoke filling the room, you hear a (familiar?) voice:
+
+<GEN_1_QUOTE>
+Where am I? What in the world is going on?
+</GEN_1_QUOTE>
+
+Hold on. You definitely know that voice. The smoke clears, and you see your suspicions were right - it really, truly is:
+
+<GEN_1_NAME>
+Einstein
+</GEN_1_NAME>
+
+<GEN_2_QUOTE>
+Quit staring!
+</GEN_2_QUOTE>
+
+You explain the situation:
+
+Against all odds, your time machine worked... kind of! It was supposed to send you back in time, but instead it seems to have brought them *forward* in time, to the present day!
+
+<GEN_3_QUOTE>
+Einstein: Intriguing! I must know how it works!
+Churchill: All well and good, now send me the hell back!
+Dostoyevsky: Most fascinating! You must send me back at once, so I may write about this!
+</GEN_3_QUOTE>
+
+<idea>
+2x: There are 3 options for a date, you pick 1
+or... instead of 2 dates, there is just 1 date (you pick from 3) and then during the date
+there's an event where you pick from 3 again
+so two total choices.
+2 perfect choices: best end
+1 perfect choice: good end
+0 perfect choices: bad end
+</idea>
+
+You agree, they must be sent back at once.
+
+You reach for the "ACTIVATE" button on the time machine, but as you do, your eyes lock with <NAME>...
+
+BADUMP!
+
+...What was that? That sudden feeling? That warm glow in your chest?
+
+You notice <NAME> blushing.
+
+And you're blushing, too!
+
+Did they feel it too, just now?
+
+...you both shift, uncomfortable in the silence, but also not wanting the moment to end.
+
+<GEN_4_QUOTE>
+Einstein: You know... Perhaps I should stay... this could be a great opportunity for me... for my research on relativity, of course...
+</GEN_4_QUOTE>
