@@ -111,6 +111,7 @@ fill in a template like the below
 > Albert Einstein appears in front of me
 > they look confused
 > I stare at them, they stare at me
+> they're kinda cute tho
 > awkward silence
 > you're about to send them back
 > they blush and say 'Perhaps I could stay for a bit... to learn more about this attraction... gravitational attraction, I mean...'
@@ -123,6 +124,7 @@ fill in a template like the below
 > Margaret Thatcher appears in front of me
 > they look confused
 > I stare at them, they stare at me
+> they're kinda cute tho
 > awkward silence
 > you're about to send them back
 > they blush and say 'Maybe I could stay for a bit... there are some things I'd like to... privatize...'
@@ -135,6 +137,7 @@ fill in a template like the below
 > Winston Churchill appears in front of me
 > they look confused
 > I stare at them, they stare at me
+> they're kinda cute tho
 > awkward silence
 > you're about to send them back
 > they blush and say 'Perhaps I could stay for a bit... I have a great fondness for history, and I find myself quite... interested in yours...'
@@ -147,6 +150,7 @@ fill in a template like the below
 > Karl Marx appears in front of me
 > they look confused
 > I stare at them, they stare at me
+> they're kinda cute tho
 > awkward silence
 > you're about to send them back
 > they blush and say 'Perhaps I could stay for a bit... There's something here I'd like to seize... the means of production, I mean...'
@@ -158,7 +162,7 @@ def _create_user_message_4(person_name: str, wiki_excerpt: str) -> str:
         "<WIKIPEDIA_EXCERPT>\n" + wiki_excerpt.strip() + "\n</WIKIPEDIA_EXCERPT>"
     )
 
-    context = "<CONTEXT>\nsetting: laboratory. present individuals: only you and the time traveler\n</CONTEXT>"
+    context = f"<CONTEXT>\nsetting: laboratory. present individuals: only you and {person_name}\n</CONTEXT>"
 
     prompt = f"""
 > be me
@@ -169,9 +173,10 @@ def _create_user_message_4(person_name: str, wiki_excerpt: str) -> str:
 > {person_name} appears in front of me
 > they look confused
 > I stare at them, they stare at me
+> they're kinda cute tho
 > awkward silence
 > you're about to send them back
-> they blush and say <fill it in>
+> they blush and say '<quote>'
     """.strip()
 
     return f"{wiki_excerpt}\n\n{context}\n\n{prompt}"
