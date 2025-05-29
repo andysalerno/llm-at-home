@@ -1,14 +1,14 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.8.5.post1
+    image: vllm/vllm-openai:v0.9.0
     # image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
     environment:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
       # - VLLM_ATTENTION_BACKEND=FLASHINFER
-      # - VLLM_USE_V1=0
+      # - VLLM_USE_V1=1
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
       - ./.vllm-cache/:/root/.cache/vllm/
@@ -110,13 +110,23 @@ services:
     # Qwne3
     # RedHatAI/Qwen3-14B-FP8_dynamic
     # --model btbtyler09/Qwen3-30B-A3B-gptq-8bit
+
+    # --model Qwen/Qwen3-30B-A3B-FP8
+    # --reasoning-parser qwen3
+    # --max-num-seqs 3
+    # --tool-call-parser hermes
+    # --enable-auto-tool-choice
+    # --served-model-name model
+    # --max-model-len 32648
+    # -tp 2
     command: >
-      --model RedHatAI/Qwen3-30B-A3B-FP8-dynamic
-      --max-num-seqs 3
+      --model Qwen/Qwen3-30B-A3B-FP8
+      --reasoning-parser qwen3
+      --max-num-seqs 4
       --tool-call-parser hermes
       --enable-auto-tool-choice
       --served-model-name model
-      --max-model-len 16384
+      --max-model-len 32648
       -tp 2
     ports:
       - "8000:8000"

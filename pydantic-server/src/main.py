@@ -10,11 +10,25 @@ logger = logging.getLogger(__name__)
 
 
 def _configure_phoenix() -> None:
-    from openinference.instrumentation.openai import OpenAIInstrumentor
-    from phoenix.otel import register
+    import os
 
-    register()
-    OpenAIInstrumentor().instrument()
+    from openinference.instrumentation.openai import OpenAIInstrumentor
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+    from opentelemetry.trace import set_tracer_provider
+    from pydantic_ai.agent import Agent
+
+    os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "http://localhost:8008"
+
+    exporter = OTLPSpanExporter()
+    span_processor = BatchSpanProcessor(exporter)
+    tracer_provider = TracerProvider()
+    tracer_provider.add_span_processor(span_processor)
+    set_tracer_provider(tracer_provider)
+    OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
+
+    Agent.instrument_all()
 
 
 async def main() -> None:

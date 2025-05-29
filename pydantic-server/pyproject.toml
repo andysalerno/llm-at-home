@@ -7,9 +7,6 @@ requires-python = ">=3.13"
 dependencies = [
     "arize-phoenix",
     "langchain-community",
-    "opentelemetry-sdk",
-    "opentelemetry-exporter-otlp",
-    "openinference-instrumentation-openai",
     "jinja2",
     "wikipedia",
     "langchain-google-community",
@@ -19,6 +16,9 @@ dependencies = [
     "duckduckgo-search",
     "mcp[cli]==1.6.0",
     "pydantic-ai",
+    "opentelemetry-sdk>=1.33.1",
+    "opentelemetry-exporter-otlp>=1.33.1",
+    "openinference-instrumentation-openai>=0.1.28",
 ]
 
 [tool.ruff.lint]
