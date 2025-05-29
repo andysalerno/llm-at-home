@@ -1,0 +1,11 @@
+[project]
+name = "visit_url_tool"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "pydantic>=2.11.4",
+    "mcp[cli]==1.6.0",
+]

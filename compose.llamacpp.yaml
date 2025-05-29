@@ -1,24 +1,27 @@
 version: '3.9'
 services:
   llmhost:
-    image: localhost/llama.cpp
+    image: localhost/llama.cpp:server-cuda
+    # image: ghcr.io/ggml-org/llama.cpp:server-cuda
     volumes:
       - ${MODEL_DIR}:/models
     # restart: unless-stopped
+    #   -ts 1,1
+    #   --main-gpu 1
     command: >
       -m /models/${MODEL_NAME}
       --metrics
+      --jinja
       --port 8000
       --host 0.0.0.0
       -ngl 100
       -fa
-      -c 8192
-      -ts 1,0
-      --main-gpu 1
+      -c 32768
+      --no-webui
+      -ts 1,1
     ports:
       - "8000:8000"
     devices:
       - nvidia.com/gpu=all
     env_file:
-      - ./.agentflow.default.env
-      - ./.agentflow.env
+      - ./.env

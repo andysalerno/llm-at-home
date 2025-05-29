@@ -1,0 +1,37 @@
+{
+    "choices": [
+        {
+            "finish_reason": "tool_calls",
+            "index": 0,
+            "logprobs": null,
+            "message": {
+                "content": "",
+                "reasoning": null,
+                "refusal": null,
+                "role": "assistant",
+                "tool_calls": [
+                    {
+                        "function": {
+                            "arguments": "{\"city\": \"seattle\", \"unit\": \"Fahrenheit\"}",
+                            "name": "weather_tool"
+                        },
+                        "id": "PgPbuAK3t",
+                        "index": 0,
+                        "type": "function"
+                    }
+                ]
+            },
+            "native_finish_reason": "tool_calls"
+        }
+    ],
+    "created": 1745375196,
+    "id": "gen-1745375196-tFR5Sz39r1PFUAwQFXo0",
+    "model": "mistralai/mistral-small-3.1-24b-instruct",
+    "object": "chat.completion",
+    "provider": "Mistral",
+    "usage": {
+        "completion_tokens": 30,
+        "prompt_tokens": 151,
+        "total_tokens": 181
+    }
+}

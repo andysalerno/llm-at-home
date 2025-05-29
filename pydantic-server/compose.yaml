@@ -1,0 +1,37 @@
+services:
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports:
+      - "8008:8008"
+      - "4317:4317"
+    environment:
+      - PHOENIX_PORT=8008
+  chromadb:
+    image: chromadb/chroma
+    volumes:
+      - chroma_data:/data
+    ports:
+      - "8001:8000"
+  scrapper:
+    image: amerkurev/scrapper:latest
+    ports:
+      - "3000:3000"
+  sandboxed-code-execution:
+    image: localhost/sandboxed-code-execution:latest
+    build: ../sandboxed-code-execution
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+  mcp-server:
+    image: localhost/mcp-server:latest
+    build: ../mcp-servers
+    ports:
+      - "8002:8002"
+    env_file: .env
+    environment:
+      - SCRAPPER_ENDPOINT=http://scrapper:3000
+      - CODE_EXECUTION_ENDPOINT=http://sandboxed-code-execution:8003/execute
+
+volumes:
+    chroma_data:

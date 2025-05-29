@@ -1,0 +1,14 @@
+[project]
+name = "agents-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "python-dotenv",
+    "arize-phoenix",
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+    "openinference-instrumentation-smolagents",
+    "smolagents[openai,telemetry,toolkit]>=1.16.1",
+]

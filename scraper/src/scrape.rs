@@ -117,9 +117,6 @@ async fn scrape(url: impl AsRef<str>) -> Result<String, Box<dyn Error + Send + S
 
         Ok(text_content.trim().into())
     } else {
-        // let full_content = node_ref.to_string();
-        let full_content = s.to_string();
-
         {
             let mut full_content = text_content.clone();
             safe_truncate(&mut full_content, 128);

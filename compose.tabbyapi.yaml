@@ -1,8 +1,7 @@
-version: '3.8'
 services:
   tabbyapi:
     image: ghcr.io/theroyallab/tabbyapi:latest
-    command: main.py --host 0.0.0.0 --port 8000 --model-name Phi-3-medium-128k-instruct-exl2-8_0 --max-seq-len 8192 --disable-auth TRUE
+    command: main.py --host 0.0.0.0 --port 8000 --model-name Qwen3-30B-A3B --max-seq-len 8192 --tensor-parallel true --disable-auth TRUE
     ports:
       - "8000:8000"
     healthcheck:

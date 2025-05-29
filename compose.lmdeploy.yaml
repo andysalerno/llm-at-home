@@ -1,0 +1,21 @@
+services:
+  llmhost:
+    image: openmmlab/lmdeploy:v0.8.0-cu12
+    shm_size: 1g
+    environment:
+      - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      # - VLLM_ATTENTION_BACKEND=FLASHINFER
+      # - VLLM_USE_V1=0
+    volumes:
+      - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
+      - ./.vllm-cache/:/root/.cache/vllm/
+      - ./vllm-plugins/:/root/vllm-plugins/
+      - ./chat-templates/:/root/chat-templates/
+      - /home/tiny/mnt/drive/gguf/:/root/gguf
+    restart: unless-stopped
+    command: >
+      lmdeploy serve api_server
+    ports:
+      - "8000:8000"
+    devices:
+      - nvidia.com/gpu=all
