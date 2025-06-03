@@ -15,12 +15,22 @@ def get_instrumentation_settings() -> InstrumentationSettings:
     return instrumentation_settings
 
 
-def get_extra_body():
-    extra_body = {
-        "provider": {
-            "require_parameters": True,
-        },
-    }
+def get_extra_body(enable_thinking: bool = True):
+    # return {}
+    # extra_body = {
+    #     "provider": {
+    #         "require_parameters": True,
+    #     },
+    # }
+
+    extra_body = {}
+
+    if not enable_thinking:
+        extra_body = {
+            "chat_template_kwargs": {
+                "enable_thinking": False,
+            },
+        }
 
     return extra_body
 
@@ -47,6 +57,20 @@ def create_model() -> InstrumentedModel:
             api_key=api_key,
         ),
     )
+
+    original_model_request = model.request
+
+    def _request(
+        self: OpenAIModel,
+        *args,
+        **kwargs,
+    ):
+        # Custom request logic here
+        logger.info("Making request with args: %s, kwargs: %s", args, kwargs)
+        # Call the original request method
+        return original_model_request(*args, **kwargs)
+
+    model.request = _request.__get__(model, OpenAIModel)
 
     original_process_response = model._process_response
 

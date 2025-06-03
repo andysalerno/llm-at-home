@@ -1,8 +1,8 @@
 version: '3.9'
 services:
   llmhost:
-    image: localhost/llama.cpp:server-cuda
-    # image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    # image: localhost/llama.cpp:server-cuda
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
     volumes:
       - ${MODEL_DIR}:/models
     # restart: unless-stopped
