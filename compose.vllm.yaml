@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.9.0
+    image: vllm/vllm-openai:v0.9.0.1
     # image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
@@ -125,7 +125,9 @@ services:
       --max-num-seqs 4
       --tool-call-parser hermes
       --enable-auto-tool-choice
+      --enable-reasoning
       --served-model-name model
+      --guided-decoding-backend xgrammar
       --max-model-len 32648
       -tp 2
     ports:
