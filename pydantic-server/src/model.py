@@ -16,14 +16,11 @@ def get_instrumentation_settings() -> InstrumentationSettings:
 
 
 def get_extra_body(enable_thinking: bool = True):
-    # return {}
-    # extra_body = {
-    #     "provider": {
-    #         "require_parameters": True,
-    #     },
-    # }
-
-    extra_body = {}
+    extra_body = {
+        "provider": {
+            "require_parameters": True,
+        },
+    }
 
     if not enable_thinking:
         extra_body = {
