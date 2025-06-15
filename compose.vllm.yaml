@@ -7,6 +7,8 @@ services:
     shm_size: 1g
     environment:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      # - VLLM_LOGGING_LEVEL=DEBUG
+      # - VLLM_TRACE_FUNCTION=1
       # - VLLM_ATTENTION_BACKEND=FLASHINFER
       # - VLLM_USE_V1=1
     volumes:
