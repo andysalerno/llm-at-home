@@ -22,6 +22,6 @@ async def serve(mcp: FastMCP):
 
 
 if __name__ == "__main__":
-    mcp = FastMCP("all_tools")
+    mcp = FastMCP("all_tools", host="0.0.0.0", port=PORT)
     setup_mcp(mcp)
     asyncio.run(serve(mcp))
