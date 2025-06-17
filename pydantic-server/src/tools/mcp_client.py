@@ -1,5 +1,9 @@
+import logging
+
 from mcp import ClientSession
 from mcp.client.sse import sse_client
+
+logger = logging.getLogger(__name__)
 
 
 async def run() -> None:
@@ -10,13 +14,7 @@ async def run() -> None:
         await session.initialize()
 
         tools = await session.list_tools()
-        print(f"Available tools: {tools}")
-
-        tool_result = await session.call_tool(
-            "search", arguments={"query": "hello world"}
-        )
-
-        print(f"Tool result: {tool_result}")
+        logger.info(f"Available tools: {tools}")
 
 
 if __name__ == "__main__":
