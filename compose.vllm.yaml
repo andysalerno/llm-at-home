@@ -130,7 +130,7 @@ services:
     # Qwen/Qwen3-30B-A3B-FP8
     # nytopop/Qwen3-30B-A3B.w8a8
     command: >
-      --model nytopop/Qwen3-30B-A3B.w8a8
+      --model Qwen/Qwen3-30B-A3B-FP8
       --tokenizer Qwen/Qwen3-30B-A3B-FP8
       --reasoning-parser qwen3
       --max-num-seqs 4

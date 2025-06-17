@@ -137,7 +137,7 @@ def _create_agent(
             temperature=temp,
             parallel_tool_calls=False,
             timeout=30.0,
-            extra_body=get_extra_body(),
+            extra_body=get_extra_body(enable_thinking=False),
         ),
         system_prompt=_create_prompt(
             [],
