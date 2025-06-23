@@ -22,12 +22,8 @@ def get_extra_body(enable_thinking: bool = True):
         },
     }
 
-    if not enable_thinking:
-        extra_body = {
-            "chat_template_kwargs": {
-                "enable_thinking": False,
-            },
-        }
+    # if not enable_thinking:
+    #     extra_body["chat_template_kwargs"] = {"enable_thinking": False}
 
     return extra_body
 
@@ -63,7 +59,7 @@ def create_model() -> InstrumentedModel:
         **kwargs,
     ):
         # Custom request logic here
-        # logger.info("Making request with args: %s, kwargs: %s", args, kwargs)
+        logger.info("Making request with args: %s, kwargs: %s", args, kwargs)
         # Call the original request method
         return original_model_request(*args, **kwargs)
 
@@ -76,7 +72,7 @@ def create_model() -> InstrumentedModel:
         response,
     ):
         # Custom processing logic here
-        # logger.info("Processing response: %s", response)
+        logger.info("Processing response: %s", response)
         # Call the original process_response method
         return original_process_response(response)
 

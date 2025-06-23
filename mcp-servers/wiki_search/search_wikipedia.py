@@ -28,7 +28,11 @@ async def _serve(mcp: FastMCP):
 
 if __name__ == "__main__":
     import asyncio
+    import os
 
-    mcp = FastMCP("search_wikipedia")
+    PORT = int(os.getenv("MCP_SERVER_PORT", "8000"))
+    os.environ["FASTMCP_PORT"] = str(PORT)
+
+    mcp = FastMCP("search_wikipedia", host="0.0.0.0", port=PORT)
     setup_mcp(mcp)
     asyncio.run(_serve(mcp))
