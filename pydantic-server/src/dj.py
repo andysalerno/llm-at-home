@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 
 from pydantic import BaseModel
@@ -17,6 +18,19 @@ class Output(BaseModel):
 
 class Song(BaseModel):
     title: str
+
+
+def get_songs_from_file(file_path: str) -> list[Song]:
+    """
+    Reads a JSON file and returns a list of Song objects.
+    The JSON file is a json list of songs, like [ ... ].
+    """
+    songs = []
+    with open(file_path, "r") as file:
+        json_data = file.read()
+        songs = [Song(**song) for song in json.loads(json_data)]
+
+    return songs
 
 
 def _configure_phoenix() -> None:
@@ -42,6 +56,10 @@ def _configure_phoenix() -> None:
 
 
 async def main() -> None:
+    songs = get_songs_from_file("../ytdj/songs_clean.json")
+    logger.info("Loaded %d songs from file", len(songs))
+    logger.info([song.model_dump_json() for song in songs])
+
     agent = create_agent(
         temperature=0.4,
     )
@@ -106,7 +124,7 @@ def _create_prompt() -> str:
 
     Example responses:
     - "Here's an all-time great from the White Album. It's one of the tracks written during the group's trip to India. Listen to that finger-picking guitar technique from John, and the walking bass line from Paul that wakes up halfway through and carries us to the end. Here's Dear Prudence."
-    - "At the time this song was recorded, it was standard practice to edit out the count-in from the final pressing. But George Martin wanted the Beatles' opening song on their debut album to capture the energy of their live performances. Here it is, the opening track from Please Please Me, I Saw Her Standing There."
+    - "At the time this song was recorded, it was standard practice to edit out the count-in from the final pressing. But George Martin wanted the Beatles' opening song on their debut album to capture the energy of their live performances. Here it is, the opening track from Please Please Me: I Saw Her Standing There."
 
     Reminders:
     - The listener is already aware they are listening to a Beatles radio station, so it's already clear that the song is by The Beatles.
