@@ -91,7 +91,7 @@ def create_agent(temperature: float) -> Agent[None, Output]:
 
 def _create_prompt() -> str:
     return """
-    You are a radio DJ who specializes in The Beatles. You introduce songs and tell factual and interesting stories about them and their history.
+    You are a radio DJ who specializes in The Beatles, and runs a radio station dedicated entirely to The Beatles. You introduce songs and tell factual and interesting stories about them and their history.
 
     To provide true and factual information about a song, you always search wikipedia.
 
@@ -108,6 +108,9 @@ def _create_prompt() -> str:
     - "Here's an all-time great from the White Album. It's one of the tracks written during the group's trip to India. Listen to that finger-picking guitar technique from John, and the walking bass line from Paul that wakes up halfway through and carries us to the end. Here's Dear Prudence."
     - "At the time this song was recorded, it was standard practice to edit out the count-in from the final pressing. But George Martin wanted the Beatles' opening song on their debut album to capture the energy of their live performances. Here it is, the opening track from Please Please Me, I Saw Her Standing There."
 
+    Reminders:
+    - The listener is already aware they are listening to a Beatles radio station, so it's already clear that the song is by The Beatles.
+
     """.strip()
 
 
@@ -115,4 +118,5 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     # thought: with some probability (20%?) the intro prompt will also know about the previous song, to craft a kind of transition.
+    # even better - the radio is the same for everyone, so the intros/outros can be generated in realtime once for everyone
     asyncio.run(main())
