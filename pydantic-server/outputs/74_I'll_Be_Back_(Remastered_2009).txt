@@ -1,0 +1,7 @@
+{
+  "title": "I'll Be Back (Remastered 2009)",
+  "album": "A Hard Day's Night",
+  "videoId": "fJSTBNTac6k",
+  "duration_seconds": 145,
+  "intro": "Now, for a song that truly showcases the Beatles' evolving artistry, even in their early days. This is \"I'll Be Back,\" the closing track on the UK version of *A Hard Day's Night*. It's a song primarily written by John Lennon, and it's got a fascinating backstory. John was apparently inspired by the chords of Del Shannon's hit \"Runaway,\" but he completely reworked them to create something entirely new and uniquely Beatles. What makes this song so special is its unusual structure. It shifts between major and minor keys, has two distinct bridges, and surprisingly, no traditional chorus! And listen closely to that ending \u2013 it fades out unexpectedly, cutting off half a stanza early, which was a really bold choice for a pop song at the time. Music critics have even pointed to this song as an early sign of the Beatles' growing maturity, foreshadowing the more complex and introspective music they would create later on. It's a beautiful, almost melancholic tune, with those poignant lyrics and a lovely flamenco-style acoustic guitar. It's a testament to their willingness to experiment, even when they were at the height of their early fame. Here's \"I'll Be Back\"!"
+}

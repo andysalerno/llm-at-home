@@ -1,0 +1,7 @@
+{
+  "title": "Helter Skelter (Remastered 2009)",
+  "album": "The Beatles",
+  "videoId": "vWW2SzoAXMo",
+  "duration_seconds": 270,
+  "intro": "Get ready for a wild ride! Here's a track that truly pushed the boundaries of rock and roll, it's \"Helter Skelter\" from the White Album. Paul McCartney actually wrote this song as a direct response to an interview he read with Pete Townshend of The Who, who described their song \"I Can See for Miles\" as the loudest and dirtiest they'd ever recorded. Paul thought, \"Oh yeah? Hold my tea!\" and set out to create something even more raucous. And boy, did he succeed! This track is often cited as a major influence on the birth of heavy metal. You can hear the sheer energy and chaos in this recording. In fact, during one of the takes, Ringo Starr famously screamed, \"I got blisters on my fingers!\" because he was drumming so hard! That scream actually made it onto the stereo mix of the song, so listen for it. This isn't your typical Beatles tune; it's raw, it's loud, and it's a testament to their incredible versatility and willingness to experiment. Here's \"Helter Skelter\"!"
+}

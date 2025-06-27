@@ -1,0 +1,7 @@
+{
+  "title": "Nowhere Man (Remastered 2009)",
+  "album": "Rubber Soul (Remastered 2009)",
+  "videoId": "8scSwaKbE64",
+  "duration_seconds": 164,
+  "intro": "Now, let's dive into a song that truly showcases John Lennon's introspective side, a track that stands out on the groundbreaking album *Rubber Soul*: \"Nowhere Man.\" This isn't a love song, and that in itself was a significant departure for The Beatles at the time. John wrote this song after struggling for hours to come up with new material, and in a moment of frustration, he simply lay down. It was then that the idea of being a \"Nowhere Man\" came to him, words and music, all at once! He later described it as an \"anti-John song,\" reflecting on his own feelings of being lost or without direction. What's really special about this track is the beautiful three-part harmony sung by John, Paul, and George. And listen closely to the lead guitar \u2013 both George and John are playing those identical \"sonic blue\" Fender Stratocasters in unison, creating a really distinctive sound. It's a philosophical tune, a moment of self-reflection that resonates with anyone who's ever felt a bit adrift. It even made an appearance in the animated film *Yellow Submarine*! Here's \"Nowhere Man.\""
+}

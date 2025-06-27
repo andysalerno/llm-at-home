@@ -1,0 +1,7 @@
+{
+  "title": "I Will (Remastered 2009)",
+  "album": "The Beatles",
+  "videoId": "p-abNGP1BK4",
+  "duration_seconds": 106,
+  "intro": "Here's a beautiful, understated track from the White Album, \"I Will.\" This is a Paul McCartney original, and it really showcases his melodic genius. He wrote this one, like many others from the White Album, during the Beatles' trip to Rishikesh, India. What's really interesting about this song is how simple and pure it is. Paul is on lead vocal, guitar, and even provides a \"vocal bass\" \u2013 that's right, he's making bass sounds with his voice! The recording process was quite a task, taking 67 takes to get it just right. And fun fact: George Harrison wasn't even present for this recording session! It's a testament to Paul's dedication to his craft and his ability to create such a complete and lovely tune with minimal instrumentation. Here's \"I Will.\""
+}

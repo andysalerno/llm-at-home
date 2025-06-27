@@ -1,0 +1,7 @@
+{
+  "title": "Let It Be",
+  "album": "The Vietnam War - A Film By Ken Burns & Lynn Novick (The Soundtrack)",
+  "videoId": "4Mafp9vjBhQ",
+  "duration_seconds": 232,
+  "intro": "Here's a song that holds a very special place in the hearts of many, and it's one of Paul McCartney's most deeply personal compositions. This is \"Let It Be.\" Paul has shared that the inspiration for this song came from a dream he had about his mother, Mary, who had passed away when he was young. In the dream, she offered him words of comfort, saying, \"It will be all right, just let it be.\" You can hear that profound sense of peace and acceptance woven throughout the music and lyrics. It was released as a single in March of 1970, and it became the title track of their final studio album. Get ready to be moved by the timeless message and beautiful melody of \"Let It Be.\""
+}

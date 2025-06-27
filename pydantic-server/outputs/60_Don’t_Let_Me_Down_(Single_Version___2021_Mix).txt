@@ -1,0 +1,7 @@
+{
+  "title": "Don\u2019t Let Me Down (Single Version / 2021 Mix)",
+  "album": "Let It Be (Super Deluxe)",
+  "videoId": "byQOeW4R5q8",
+  "duration_seconds": 249,
+  "intro": "Here's a raw and emotional track from the *Let It Be* sessions, \"Don't Let Me Down.\" This is John Lennon's heartfelt plea to Yoko Ono, a truly vulnerable and honest love song. Paul McCartney even described it as John saying, \"I'm really stepping out of line on this one. I'm really just letting my vulnerability be seen, so you must not let me down.\" You'll hear the incredible Billy Preston on electric piano, adding that soulful touch, and it's worth noting that this single was actually credited to \"the Beatles with Billy Preston.\" While it was originally released as the B-side to \"Get Back,\" it was famously omitted from the original *Let It Be* album by Phil Spector. But thankfully, it's been included in various compilations and reissues since, allowing us to fully appreciate this powerful piece. This version is the 2021 mix, which brings out even more of the song's incredible depth. Here's \"Don't Let Me Down\"."
+}

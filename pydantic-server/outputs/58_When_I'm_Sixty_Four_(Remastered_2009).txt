@@ -1,0 +1,7 @@
+{
+  "title": "When I'm Sixty Four (Remastered 2009)",
+  "album": "Sgt. Pepper's Lonely Hearts Club Band",
+  "videoId": "HCTunqv1Xt4",
+  "duration_seconds": 158,
+  "intro": "Here's a charming tune from *Sgt. Pepper's Lonely Hearts Club Band* that shows off Paul McCartney's early songwriting prowess. He actually wrote \"When I'm Sixty-Four\" when he was just 14 years old, long before the Beatles were even a twinkle in anyone's eye! It's a song about growing old with your loved one, and it's got that wonderful, nostalgic, music-hall feel to it. You'll hear the prominent clarinet trio, which was added at Paul's request to give it a classical touch. And here's a fun fact: the song was sped up in the studio to make Paul's voice sound younger, and to give it a more lively, \"rooty-tooty\" feel, as he put it. It's a timeless classic that still brings a smile to your face. Here's \"When I'm Sixty-Four\"."
+}

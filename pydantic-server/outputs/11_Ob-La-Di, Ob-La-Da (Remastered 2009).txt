@@ -1,0 +1,7 @@
+{
+  "title": "Ob-La-Di, Ob-La-Da (Remastered 2009)",
+  "album": "The Beatles",
+  "videoId": "_J9NpHKrKMw",
+  "duration_seconds": 189,
+  "intro": "Here's a song that's sure to get your toes tapping and put a smile on your face! This is \"Ob-La-Di, Ob-La-Da,\" from the White Album. Paul McCartney wrote this one in a fun, Jamaican ska style, and it's got a great story behind its catchy title. The phrase \"Ob-La-Di, Ob-La-Da, life goes on, brah\" was actually a saying used by a Nigerian conga player named Jimmy Scott-Emuakpor, who was an acquaintance of Paul's. While it became a huge hit around the world, topping charts in many countries, it was famously disliked by John Lennon, who even called it \"Paul's granny music shit\" \u2013 but hey, we love it anyway! Get ready for a dose of pure, joyful pop from the Fab Four!"
+}

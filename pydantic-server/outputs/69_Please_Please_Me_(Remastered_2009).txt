@@ -1,0 +1,7 @@
+{
+  "title": "Please Please Me (Remastered 2009)",
+  "album": "Please Please Me",
+  "videoId": "czw8eqepir8",
+  "duration_seconds": 121,
+  "intro": "Alright, let's dive into the song that gave their debut album its name! This is \"Please Please Me,\" and it's a true testament to the collaborative genius of the Beatles and their producer, George Martin. John Lennon originally conceived this as a slow, bluesy tune, even saying he was inspired by Roy Orbison and a Bing Crosby song. But George Martin heard something more, something faster and more energetic. He told them to \"pep it up,\" and boy, did they ever! You'll hear that iconic harmonica intro from John, and listen closely to the vocals \u2013 John and Paul share the lead, with Paul holding that high note while John's melody cascades down, a trick they picked up from the Everly Brothers. This song was their second single in the UK and their first in the US, and it really launched them into superstardom. It's got that raw, early Beatles energy that just makes you want to move. Here's \"Please Please Me\"!"
+}

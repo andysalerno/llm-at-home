@@ -1,0 +1,7 @@
+{
+  "title": "Hey Jude",
+  "album": "1",
+  "videoId": "mQER0A0ej0M",
+  "duration_seconds": 426,
+  "intro": "Here's a song that became an anthem of hope and comfort, and for good reason! This is \"Hey Jude,\" written by Paul McCartney. He originally penned it as \"Hey Jules\" to comfort John Lennon's son, Julian, during his parents' separation. But the lyrics, with their message of taking a sad situation and making it better, resonated with so many. It's an epic track, clocking in at over seven minutes, and it was the first Beatles song recorded on eight-track equipment. And who can forget that iconic, sing-along coda? It's pure magic. So, let's all come together and enjoy this timeless classic, \"Hey Jude\"!"
+}

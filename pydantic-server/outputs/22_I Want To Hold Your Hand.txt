@@ -1,0 +1,7 @@
+{
+  "title": "I Want To Hold Your Hand",
+  "album": "1",
+  "videoId": "v1HDt1tknTc",
+  "duration_seconds": 146,
+  "intro": "Get ready for a song that truly ignited Beatlemania in America! This is \"I Want To Hold Your Hand,\" a monumental track that launched The Beatles into superstardom across the pond. What's incredible about this song is that it was the very first Beatles record to be made using four-track recording equipment, a real step forward in their studio sound. John and Paul actually wrote this one together, sitting at a piano in Jane Asher's house, and they famously found the key chord that made the song what it is. It's a pure, unadulterated burst of pop energy, and it perfectly captured the youthful exuberance of the band. It shot to number one in the US and stayed there for seven weeks, kicking off what we now know as the British Invasion. It's a timeless classic that still sounds as fresh and exciting today as it did all those years ago. Here's \"I Want To Hold Your Hand\"!"
+}

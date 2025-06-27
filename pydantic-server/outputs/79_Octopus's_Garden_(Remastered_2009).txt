@@ -1,0 +1,7 @@
+{
+  "title": "Octopus's Garden (Remastered 2009)",
+  "album": "Abbey Road",
+  "videoId": "De1LCQvbqV4",
+  "duration_seconds": 171,
+  "intro": "Here's a delightful tune from the one and only Ringo Starr, nestled on the iconic *Abbey Road* album. This is \"Octopus's Garden.\" You know, Ringo got the idea for this song while he was on Peter Sellers's boat in Sardinia. He was served squid for the first time, and the boat's captain started telling him all about how octopuses collect shiny objects to build their gardens on the seabed. Ringo, feeling a bit of the tension that was building within the band at the time, thought, \"I just want to be under the sea, too!\" It's a charming, whimsical escape. And listen closely for those fun, gurgling bubble sounds \u2013 Ringo actually made those by blowing through a straw into a glass of milk! George Harrison even helped him out with some of the chord changes. It's a sweet, simple, and truly Ringo song. Here's \"Octopus's Garden\"!"
+}

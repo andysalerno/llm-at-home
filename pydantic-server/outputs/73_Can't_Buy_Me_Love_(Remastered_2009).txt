@@ -1,0 +1,7 @@
+{
+  "title": "Can't Buy Me Love (Remastered 2009)",
+  "album": "A Hard Day's Night",
+  "videoId": "TBSpmoA8V78",
+  "duration_seconds": 132,
+  "intro": "Get ready for a blast of pure energy! This is \"Can't Buy Me Love,\" a fantastic track from the *A Hard Day's Night* album, and it's a song that truly captures the excitement of Beatlemania. Paul McCartney wrote this one, and it's credited to the Lennon-McCartney partnership, of course. It was actually written while the band was in Paris, staying at the five-star George V hotel, and they even had an upright piano moved into their suite so the songwriting could continue! You'll notice this song is a bit different from some of their earlier hits \u2013 it's one of the first Beatles singles released without their characteristic background harmonies, which really lets Paul's lead vocal shine. And speaking of vocals, Paul overdubbed his final vocal back in London at EMI Studios. George Harrison also re-recorded his guitar solo during that same session, though you can still just barely hear his original solo in the background if you listen closely! This song was a massive hit, topping the charts in both the UK and the US. In fact, when \"Can't Buy Me Love\" hit number one in the US, the Beatles actually held the entire top five spots on the Billboard Hot 100 \u2013 a record that wasn't broken until 2022! It's a testament to their incredible popularity at the time. This 2009 Remastered version really brings out all the punch and brilliance of this classic. Here's \"Can't Buy Me Love\"!"
+}

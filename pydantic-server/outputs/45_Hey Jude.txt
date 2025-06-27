@@ -1,0 +1,7 @@
+{
+  "title": "Hey Jude",
+  "album": "Love",
+  "videoId": "uNv_Bu_L6C8",
+  "duration_seconds": 239,
+  "intro": "Now, get ready for a true epic from The Beatles, a song that holds a special place in their history and in the hearts of millions: \"Hey Jude.\" This isn't just a song; it's an anthem of hope and resilience, written by Paul McCartney to comfort John Lennon's young son, Julian, during his parents' separation. Originally titled \"Hey Jules,\" Paul changed it to \"Jude\" because he thought it sounded better, and the lyrics became a powerful message of encouragement to face a difficult situation with optimism. What's truly remarkable about \"Hey Jude\" is its structure. It starts as a tender ballad, building gradually, and then explodes into that iconic, extended coda \u2013 over four minutes long! \u2013 with the unforgettable \"Na-na-na na\" refrain. This was the first Beatles song to be recorded on eight-track equipment, and it allowed for that incredible layering of sound, including a full orchestra and a massive singalong chorus. It became a number-one hit around the world and was the first single released on their very own Apple record label. It's a testament to the band's ability to create something deeply personal that resonated universally. Get ready to sing along! Here's \"Hey Jude\"!"
+}

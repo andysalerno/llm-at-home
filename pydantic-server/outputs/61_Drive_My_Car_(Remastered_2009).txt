@@ -1,0 +1,7 @@
+{
+  "title": "Drive My Car (Remastered 2009)",
+  "album": "Rubber Soul (Remastered 2009)",
+  "videoId": "kfSQkZuIx84",
+  "duration_seconds": 149,
+  "intro": "Get ready to hit the road with this rocking opener from the *Rubber Soul* album, it's \"Drive My Car\"! This track is a fantastic example of the Beatles' evolving sound, blending rock and R&B with a bluesy edge. While it's primarily a Paul McCartney creation, John Lennon contributed to the lyrics, and they had quite the session getting them just right. You'll hear a strong influence from Otis Redding in the bass line, thanks to George Harrison's suggestion, giving it a real bottom-heavy groove. And listen for Paul's commanding lead vocal, riding over that simple, yet effective, two-chord funk riff in the verse. Plus, Paul overdubbed both the piano part and that cool slide guitar solo. It's a fun, playful song about a woman who wants to be a movie star and needs a chauffeur, and it's got a bit of a cheeky double meaning, too! Here's \"Drive My Car\"!"
+}

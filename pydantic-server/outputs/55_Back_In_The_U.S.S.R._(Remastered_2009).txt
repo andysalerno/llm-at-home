@@ -1,0 +1,7 @@
+{
+  "title": "Back In The U.S.S.R. (Remastered 2009)",
+  "album": "The Beatles",
+  "videoId": "0ArlUSVDQIw",
+  "duration_seconds": 164,
+  "intro": "Alright, let's kick off this next tune! This one's a real rocker from the White Album, and it's got a fantastic story behind it. Paul McCartney actually started writing \"Back in the U.S.S.R.\" as a bit of a parody, combining Chuck Berry's \"Back in the U.S.A.\" with the Beach Boys' \"California Girls.\" He wanted to imagine a Russian traveler returning home, just as proud of their country as an American would be. And here's a fun fact: during the recording, Ringo actually walked out of the studio for a bit because of tensions within the band! So, for this track, you're hearing Paul on drums, along with John and George. It's a powerful opening to the White Album, and it really showcases their rock and roll roots. Here's \"Back in the U.S.S.R.\""
+}

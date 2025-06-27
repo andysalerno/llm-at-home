@@ -1,0 +1,7 @@
+{
+  "title": "A Hard Day's Night (Remastered 2009)",
+  "album": "A Hard Day's Night",
+  "videoId": "zx2TFk0vh1I",
+  "duration_seconds": 155,
+  "intro": "Alright, let's kick things off with a bang! We're diving into the title track from their third studio album and first film, \"A Hard Day's Night.\" This song, like all the tracks on this album, is a pure Lennon-McCartney original, a real testament to their songwriting prowess at the time. You know, the title itself came from one of Ringo's famous \"Ringo-isms\" \u2013 a malapropism he just casually uttered after a long day of filming. John Lennon loved it so much he used it for the film and then, of course, for this iconic song. And speaking of iconic, get ready for that opening chord! It's one of the most famous in rock history, a true sonic signature that immediately grabs your attention. George Harrison's Rickenbacker 12-string electric guitar really shines on this track, and its distinctive sound went on to influence countless bands, especially in the burgeoning folk-rock scene. This song perfectly captures the energy and excitement of Beatlemania at its peak. Here it is, the one and only, \"A Hard Day's Night\"!"
+}

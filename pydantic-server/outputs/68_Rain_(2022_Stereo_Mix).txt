@@ -1,0 +1,7 @@
+{
+  "title": "Rain (2022 Stereo Mix)",
+  "album": "Revolver (Deluxe)",
+  "videoId": "nrEgtOeJGzQ",
+  "duration_seconds": 180,
+  "intro": "Get ready for a truly innovative track from the Fab Four! This is \"Rain,\" the B-side to their 1966 single \"Paperback Writer,\" and it's a song that pushed the boundaries of what was possible in the recording studio. While it wasn't on the *Revolver* album, it was recorded during those same groundbreaking sessions, and you can hear that experimental spirit shining through. John Lennon wrote this one, and he said it was about \"people moaning about the weather all the time.\" But it's so much more than that! This song is famous for being one of the first pop songs to feature backwards vocals, a technique that would become a hallmark of psychedelic music. You'll hear John's voice, along with other sounds, played in reverse, creating this really trippy and ethereal effect. And speaking of effects, the engineers actually sped up the backing track during recording, and then slowed it down on playback, giving the song a unique, almost droning quality. Ringo Starr himself considers this his best drum performance, and you'll hear why \u2013 his drumming is incredibly tight and inventive. This 2022 Stereo Mix really brings out all those incredible details. Here's \"Rain\"!"
+}

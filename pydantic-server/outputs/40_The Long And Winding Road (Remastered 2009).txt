@@ -1,0 +1,7 @@
+{
+  "title": "The Long And Winding Road (Remastered 2009)",
+  "album": "Let It Be",
+  "videoId": "fR4HjTH_fTM",
+  "duration_seconds": 219,
+  "intro": "Here's a song that truly embodies the end of an era for The Beatles, a poignant and beautiful ballad that became their final number-one hit in the United States: \"The Long and Winding Road.\" Written by Paul McCartney, this track from the *Let It Be* album has a fascinating and somewhat controversial history. Paul actually conceived the song at his farm in Scotland, inspired by the winding roads of the Highlands and the growing tensions within the band. He envisioned it as a song that someone like Ray Charles might perform, a soulful piano ballad. However, when the album was being prepared for release, producer Phil Spector added orchestral and choral overdubs, a decision that famously angered McCartney and became one of his stated reasons for the dissolution of the Beatles' legal partnership. Despite the controversy, the song's emotional depth and Paul's heartfelt vocals shine through. Listen closely to the lyrics, which many interpret as a reflection on the band's journey and the bittersweet nature of their impending split. It's a powerful and moving piece, a fitting farewell from the greatest band of all time. Here's \"The Long and Winding Road\"!"
+}

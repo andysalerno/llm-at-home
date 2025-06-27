@@ -1,0 +1,7 @@
+{
+  "title": "Happiness Is A Warm Gun (Remastered 2009)",
+  "album": "The Beatles",
+  "videoId": "vdvnOH060Qg",
+  "duration_seconds": 165,
+  "intro": "Here's a track that truly showcases John Lennon's genius for blending disparate ideas into a cohesive and compelling whole: \"Happiness Is a Warm Gun.\" This song, from the iconic *White Album*, is a masterpiece of songwriting and arrangement. John actually got the title from an article in *American Rifleman* magazine, but he transformed it into a double entendre, exploring themes of guns and his burgeoning sexual desire for Yoko Ono. What's truly remarkable about this song is its complex structure. John himself said he \"put together three sections of different songs,\" creating a miniature \"history of rock and roll\" within one track. You'll hear shifts in time signatures, from 4/4 to 6/4, and even 9/8, showcasing the band's incredible musicality and willingness to experiment. Despite the tensions that were often present during the *White Album* sessions, the Beatles really came together as a unit to tackle the challenging rhythmic complexities of this song. And listen closely for those backing vocals from Paul and George in the doo-wop style, singing \"Bang bang, shoot shoot\" \u2013 it's a fantastic touch! It's said that all four Beatles considered this their favorite song on the album, and it's easy to hear why. It's a bold, innovative, and deeply personal statement from John. Here's \"Happiness Is a Warm Gun\"!"
+}

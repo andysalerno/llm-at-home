@@ -1,0 +1,7 @@
+{
+  "title": "Lady Madonna (Remastered 2009)",
+  "album": "The Beatles 1967 - 1970",
+  "videoId": "C56lDvKV8tk",
+  "duration_seconds": 139,
+  "intro": "Get ready to boogie! This is \"Lady Madonna,\" a fantastic track that marked a bit of a return to the Beatles' rock and roll roots after their psychedelic explorations. Paul McCartney primarily wrote this one, and you can hear the influence of artists like Fats Domino and the boogie-woogie piano style. In fact, Paul said he was trying to do a \"bluesy boogie-woogie thing\" and it reminded him of Fats Domino, so he started singing in a Fats Domino impression! The lyrics, which John Lennon helped with, tell the story of an overworked mother, facing a new challenge each day of the week. Interestingly, Paul realized years later that he missed including Saturday in the lyrics! This song also features a fantastic horn section, including a tenor saxophone solo by the legendary British jazz musician Ronnie Scott. The Beatles recorded this song just before they headed off to India, and it was their last single released on Parlophone in the UK before they started their own label, Apple Records. It's a lively, upbeat tune that's sure to get your feet tapping. Here's \"Lady Madonna\"!"
+}
