@@ -1,10 +1,11 @@
 import asyncio
 import json
 import logging
+import sys
 
 from pydantic import BaseModel
 from pydantic_ai import Agent
-from pydantic_ai.mcp import MCPServerHTTP
+from pydantic_ai.mcp import MCPServerSSE
 from pydantic_ai.settings import ModelSettings
 
 from model import create_model, get_extra_body
@@ -18,6 +19,9 @@ class Output(BaseModel):
 
 class Song(BaseModel):
     title: str
+    album: str
+    videoId: str
+    duration_seconds: int
 
 
 def get_songs_from_file(file_path: str) -> list[Song]:
@@ -56,6 +60,8 @@ def _configure_phoenix() -> None:
 
 
 async def main() -> None:
+    offset = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+
     songs = get_songs_from_file("../ytdj/songs_clean.json")
     logger.info("Loaded %d songs from file", len(songs))
     logger.info([song.model_dump_json() for song in songs])
@@ -64,21 +70,46 @@ async def main() -> None:
         temperature=0.4,
     )
 
+    intros = []
+
     async with agent.run_mcp_servers():
         logger.info("Starting song loop...")
 
-        songs = [Song(title="song: Hey Bulldog by The Beatles")]
+        for i, song in enumerate(songs[offset:]):
+            i = i + offset
+            intro = await _get_intro_for_song(agent, song, intros)
 
-        for song in songs:
-            intro = await _get_intro_for_song(agent, song)
+            intros.append(intro)
 
-            logger.info("Intro for song '%s': %s", song.title, intro)
-            # outro = _get_intro_for_song(agent, song)
+            # turn the song into a dict:
+            song_dict = song.model_dump()
+            song_dict["intro"] = intro
+
+            safe_title = song.title.replace("/", "_").replace(" ", "_")
+            safe_path = f"outputs/{i}_{safe_title}.txt"
+
+            logger.info("Writing song %d (%s) to file: %s", i, song.title, safe_path)
+
+            write_to_file(safe_path, json.dumps(song_dict, indent=2))
 
 
-async def _get_intro_for_song(agent: Agent[None, Output], song: Song) -> str:
-    response = await agent.run(f"Song: {song.title}")
-    logger.info("Response: %s", response)
+def write_to_file(filename: str, content: str):
+    # write or create the file:
+    with open(filename, "w") as file:
+        file.write(content)
+
+
+async def _get_intro_for_song(
+    agent: Agent[None, Output],
+    song: Song,
+    previous_intros: list[str],
+) -> str:
+    history = "\n[song plays...]\n".join(previous_intros[-5:])
+    history = f"<previous_intros>\n{history}\n</previous_intros>\n\n"
+
+    response = await agent.run(
+        f"{history}Now give an intro for song: {song.title}, from {song.album} by The Beatles"
+    )
     logger.info("Response: %s", response.all_messages_json())
 
     output = response.output
@@ -91,7 +122,7 @@ def _get_outro_for_song(agent: Agent[None, Output]) -> str:
 
 def create_agent(temperature: float) -> Agent[None, Output]:
     _configure_phoenix()
-    mcp_server = MCPServerHTTP(url="http://localhost:8000/sse")
+    mcp_server = MCPServerSSE(url="http://localhost:8000/sse")
 
     return Agent(
         model=create_model(),
@@ -128,6 +159,10 @@ def _create_prompt() -> str:
 
     Reminders:
     - The listener is already aware they are listening to a Beatles radio station, so it's already clear that the song is by The Beatles.
+    - You will also be shown a history of the previous songs and intros. Try to keep a flow going throughout these intros, and avoid repeating sayings or phrases from previous intros. Remember, the listener already heard the previous intros.
+    - Avoid reusing phrases like "Alright, music lovers...", "You're tuned into the Beatles channel..." Each intro you give should have a unique opening, or at least it should not repeat the same opening constantly.
+
+    Now, provide the introduction for the song specified by the user.
 
     """.strip()
 

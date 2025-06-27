@@ -1,5 +1,7 @@
 from mcp.server.fastmcp import FastMCP
 from langchain_google_community import GoogleSearchAPIWrapper
+from langchain_community.tools import DuckDuckGoSearchResults
+from langchain_community.tools import BraveSearch
 import logging
 import json
 
@@ -19,6 +21,8 @@ def setup_mcp(mcp: FastMCP):
         query = f"site:wikipedia.org {query}"
         logger.info("Searching wikipedia for query: %s", query)
         results = search_wrapper.results(query, num_results=TOP_N)
+        # search = DuckDuckGoSearchResults(output_format="list")
+        # results = search.run(query)
         return json.dumps(results)
 
 

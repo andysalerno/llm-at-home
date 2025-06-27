@@ -14,7 +14,7 @@ dependencies = [
     "onnxruntime",
     "chromadbx",
     "duckduckgo-search",
-    "pydantic-ai",
+    "pydantic-ai==0.3.3",
     "mcp[cli]",
     "opentelemetry-sdk",
     "opentelemetry-exporter-otlp",
