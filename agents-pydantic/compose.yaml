@@ -18,7 +18,7 @@ services:
       - "3000:3000"
   sandboxed-code-execution:
     image: localhost/sandboxed-code-execution:latest
-    build: ../sandboxed-code-execution
+    build: ../mcp-server-backends/sandboxed-code-execution
     ports:
       - "8003:8003"
     environment:

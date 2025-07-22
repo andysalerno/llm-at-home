@@ -1,22 +1,16 @@
 default:
   just --list
 
-run-telemetry:
-  uv --directory ./telemetry run python -m phoenix.server.main serve
-
-run-agents:
-  uv --directory ./agents-server run --env-file .env  main.py
-
-run-game:
-  uv --directory ./game run --env-file .env  main.py
+run-smolagents:
+  uv --directory ./agents-smolagents run --env-file .env  main.py
 
 run-pydantic:
-  uv --directory ./pydantic-server run --env-file .env src/main.py
+  uv --directory ./agents-pydantic run --env-file .env src/main.py
 
 run-langgraph:
-  uv --directory ./langgraph-server run --env-file .env src/main.py
+  uv --directory ./agents-langgraph run --env-file .env src/main.py
 
-[working-directory: 'sandboxed-code-execution']
+[working-directory: 'mcp-server-backends/sandboxed-code-execution']
 run-code-sandbox:
   docker run --rm -p 8003:8003 -e PORT=8003 python-sandbox 
 
@@ -27,7 +21,7 @@ run-web-scraper:
 run-mcp-server:
   uv run --env-file ./google_search/.env server.py
 
-[working-directory: 'graphs']
+[working-directory: 'agents-graphs']
 run-graphs:
   #!/usr/bin/env bash
   set -a
