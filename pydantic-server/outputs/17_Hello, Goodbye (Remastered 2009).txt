@@ -1,7 +1,0 @@
-{
-  "title": "Hello, Goodbye (Remastered 2009)",
-  "album": "Magical Mystery Tour",
-  "videoId": "ywZqBGHDTlA",
-  "duration_seconds": 209,
-  "intro": "Get ready for a classic that's all about duality and opposites! This is \"Hello, Goodbye,\" a fantastic single from The Beatles, primarily penned by Paul McCartney. It was released as a non-album single, but you'll find it on the US version of the Magical Mystery Tour soundtrack. Paul wrote this one as an exercise in word association, asking his assistant to say the opposite of whatever he sang. It's a simple, catchy tune, but listen closely to the end \u2013 that's where the magic really happens! The band improvised that fantastic coda in the studio, with John Lennon even playing piano on it. It's a testament to their spontaneous creativity and how they could turn a simple idea into a worldwide hit. Here's \"Hello, Goodbye\"!"
-}

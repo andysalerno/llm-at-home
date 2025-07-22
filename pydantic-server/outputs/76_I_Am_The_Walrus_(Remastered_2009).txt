@@ -1,7 +1,0 @@
-{
-  "title": "I Am The Walrus (Remastered 2009)",
-  "album": "Magical Mystery Tour",
-  "videoId": "t1Jm5epJr10",
-  "duration_seconds": 276,
-  "intro": "Alright, let's dive into one of the most wonderfully bizarre and captivating songs from The Beatles' catalog: \"I Am The Walrus.\" This track, from the *Magical Mystery Tour* album, is pure John Lennon, through and through. He wrote it to intentionally confuse anyone trying to over-analyze the band's lyrics, and he definitely succeeded! You can hear elements of two LSD trips and even Lewis Carroll's poem \"The Walrus and the Carpenter\" woven into the fabric of this song. John even admitted later that he realized the walrus was the villain in the poem, and he should have said, \"I am the carpenter!\" But, as he said, \"That wouldn't have been the same, would it?\" This song was the first studio recording the Beatles made after the passing of their manager, Brian Epstein, and it really shows their willingness to push boundaries. George Martin's orchestral arrangement is absolutely incredible, with violins, cellos, horns, and clarinets, and you'll even hear a 16-voice choir adding some truly wild vocalizations. And listen closely for that famous line that got the song banned by the BBC for a while! It's a sonic adventure, full of strange imagery and brilliant musicality. Here's \"I Am The Walrus\"!"
-}

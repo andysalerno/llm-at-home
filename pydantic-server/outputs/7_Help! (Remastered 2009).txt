@@ -1,7 +1,0 @@
-{
-  "title": "Help! (Remastered 2009)",
-  "album": "Help!",
-  "videoId": "MKUex3fci5c",
-  "duration_seconds": 140,
-  "intro": "Here's a song that truly captures a moment in time for John Lennon and the Beatles. This is \"Help!\" the title track from their 1965 film and album. John later revealed that he was \"crying out for help\" during this period, feeling the immense pressure of the Beatles' rapid rise to global fame. It's a powerful and honest song, and you can hear that raw emotion in every note. Despite the underlying message, it's an incredibly catchy and energetic track that topped the charts on both sides of the Atlantic. Get ready to hear a classic that's both deeply personal and universally appealing."
-}

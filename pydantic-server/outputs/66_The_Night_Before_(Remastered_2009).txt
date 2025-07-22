@@ -1,7 +1,0 @@
-{
-  "title": "The Night Before (Remastered 2009)",
-  "album": "Help!",
-  "videoId": "7tD40D7jk-Q",
-  "duration_seconds": 155,
-  "intro": "Here's a fantastic track from the *Help!* album, it's \"The Night Before\"! This song really showcases Paul McCartney's songwriting prowess, even though he and John Lennon couldn't quite remember who wrote what when asked about it later. It's a classic pop-rock tune with that signature Beatles energy. What's really cool about this one is that it's the very first Beatles song to feature an electric piano, played by none other than John Lennon himself! You'll hear that distinctive sound adding to the track's vibrant feel. The Beatles even performed this song in the *Help!* film, miming to the track on Salisbury Plain with tanks and soldiers around them \u2013 talk about a unique setting for a performance! While some critics might have overlooked it, many fans consider this one of the Beatles' best early songs, and I think you'll agree. It's got that catchy melody and a great beat that just makes you want to move. Here's \"The Night Before\"!"
-}

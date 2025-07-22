@@ -1,7 +1,0 @@
-{
-  "title": "Across The Universe (Remastered 2009)",
-  "album": "Let It Be",
-  "videoId": "90M60PzmxEE",
-  "duration_seconds": 229,
-  "intro": "Alright, let's take a moment to reflect with a truly profound and beautiful song from The Beatles, a track that really showcases John Lennon's poetic side: \"Across the Universe.\" This song has a fascinating history, with different versions appearing on various albums, but the one we're about to hear is the remastered 2009 version from the *Let It Be* album. John himself considered this one of his best, most poetic lyrics, and you can hear why. He said the words just came to him, flowing out like an \"endless rain into a paper cup,\" after an irritating night with his first wife, Cynthia. It transformed into a cosmic song, heavily influenced by his and the band's interest in Transcendental Meditation, which is why you'll hear the mantra \"Jai guru deva om\" woven throughout. It's a tribute to Maharishi Mahesh Yogi's spiritual teacher, meaning \"All glory to Guru Dev.\" This song is a testament to the power of words and the way they can transcend the ordinary to touch something universal. Get ready to be transported. Here's \"Across the Universe\"."
-}

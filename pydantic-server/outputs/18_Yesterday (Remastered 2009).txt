@@ -1,7 +1,0 @@
-{
-  "title": "Yesterday (Remastered 2009)",
-  "album": "Help!",
-  "videoId": "NrgmdOz227I",
-  "duration_seconds": 126,
-  "intro": "Here's a song that's truly a testament to Paul McCartney's genius, and one of the most iconic and beloved ballads of all time. This is \"Yesterday,\" from the album Help! It's a song so deeply ingrained in popular culture that it's hard to imagine a world without it. What's truly remarkable about \"Yesterday\" is its sparse arrangement \u2013 just Paul's voice and his acoustic guitar, accompanied by a string quartet. This was a radical departure for The Beatles at the time, and it was actually their first recording that featured only one member of the band. The story goes that the melody came to Paul in a dream, and he spent weeks asking everyone he knew if they'd ever heard it before, convinced he must have subconsciously plagiarized it! Thankfully, no one had, and he eventually wrote the poignant lyrics we all know and love. It's a melancholic reflection on lost love, and it resonates with so many people around the world. In fact, it's one of the most covered songs in history, with thousands of different versions. But for now, let's listen to the original, the one that started it all. Here's \"Yesterday\"."
-}

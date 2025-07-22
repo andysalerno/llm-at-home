@@ -1,7 +1,0 @@
-{
-  "title": "The Ballad Of John And Yoko (Remastered 2009)",
-  "album": "The Beatles 1967 - 1970",
-  "videoId": "vzd_DfGGx0I",
-  "duration_seconds": 182,
-  "intro": "Here's a unique one from the Beatles' catalog, a song that really captures a moment in time for John Lennon and Yoko Ono. This is \"The Ballad of John and Yoko,\" released as a non-album single in May 1969. What makes this track so special is that it's essentially a musical diary, written by John during his honeymoon in Paris with Yoko. It chronicles their highly publicized wedding and their "
-}

@@ -1,7 +1,0 @@
-{
-  "title": "Hey Bulldog (Remastered 2009)",
-  "album": "Yellow Submarine",
-  "videoId": "g6DVE305g0s",
-  "duration_seconds": 192,
-  "intro": "Here's a track that's often overlooked, but it's a real gem! \"Hey Bulldog\" was recorded during a film shoot for the \"Lady Madonna\" promotional video, and it really captures the raw energy of the band. John Lennon started writing it, but he and Paul McCartney finished it together in the studio, with a lot of playful banter and even some dog barks thrown in! It's a fantastic example of their collaborative spirit and their ability to just jam and create something brilliant on the spot. You can hear that driving piano riff, the powerful vocals, and a really cool guitar solo. This one's from the *Yellow Submarine* soundtrack, and it's a true rock and roll workout. Here's \"Hey Bulldog\"!"
-}

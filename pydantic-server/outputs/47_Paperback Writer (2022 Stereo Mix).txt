@@ -1,7 +1,0 @@
-{
-  "title": "Paperback Writer (2022 Stereo Mix)",
-  "album": "Revolver (Deluxe)",
-  "videoId": "gBcdOFehNCg",
-  "duration_seconds": 139,
-  "intro": "Alright, let's dive into a truly innovative track from the Beatles, a song that pushed the boundaries of their sound and production: \"Paperback Writer.\" This isn't just a catchy tune; it's a fascinating example of how the band was constantly evolving in the mid-60s. Primarily written by Paul McCartney, the inspiration for the lyrics actually came from his Aunt Lil, who challenged him to write a song about something other than love! So, Paul crafted this clever narrative from the perspective of an aspiring author writing a letter to a publisher. What really stands out in this track is that incredible, boosted bass sound. The story goes that John Lennon had been asking why the bass on a certain Wilson Pickett record sounded so much better than anything the Beatles had done. So, their engineer, Geoff Emerick, used a new technique, even employing a loudspeaker as a microphone, to give Paul's Rickenbacker bass that powerful, driving presence. You can really hear it! And listen closely to the backing vocals \u2013 John and George even sneak in a line from the French nursery rhyme \"Fr\u00e8re Jacques\" in the third verse! This song was a standalone single, released just before the *Revolver* album, and it really set the stage for the sonic experimentation that was to come. Here's \"Paperback Writer\"!"
-}

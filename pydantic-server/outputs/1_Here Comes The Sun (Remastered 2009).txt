@@ -1,7 +1,0 @@
-{
-  "title": "Here Comes The Sun (Remastered 2009)",
-  "album": "Abbey Road",
-  "videoId": "xUNqsfFUwhY",
-  "duration_seconds": 186,
-  "intro": "Here's a ray of sunshine for your ears! This is \"Here Comes The Sun,\" written by George Harrison. He penned this classic in Eric Clapton's garden, trying to escape the endless business meetings at Apple Corps. He said it felt like winter in England went on forever, and he was just so relieved to be out in the sun. John Lennon wasn't on this track, as he was recovering from a car crash. But George, Paul, and Ringo, along with George Martin's beautiful orchestral arrangement, created this timeless piece. It's one of the most streamed Beatles songs, and for good reason. Enjoy!"
-}

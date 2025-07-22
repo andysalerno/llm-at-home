@@ -1,7 +1,0 @@
-{
-  "title": "Don\u2019t Let Me Down (First Rooftop Performance)",
-  "album": "Let It Be (Super Deluxe)",
-  "videoId": "CXlCLDP2Vr0",
-  "duration_seconds": 210,
-  "intro": "You're listening to the Beatles Channel, and it's time for another classic! This is \"Don't Let Me Down,\" a powerful love song written by John Lennon for Yoko Ono. Paul McCartney described it as a \"genuine plea\" from John, showing his vulnerability. This particular version is from the famous rooftop concert, their final live performance. You can hear the raw energy of that day, with Billy Preston's electric piano adding that soulful touch. It's truly one of the most underrated gems in the Beatles' catalog. Here it is, the first rooftop performance of \"Don't Let Me Down\"!"
-}

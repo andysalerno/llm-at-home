@@ -1,7 +1,0 @@
-{
-  "title": "Oh! Darling (Remastered 2009)",
-  "album": "Abbey Road",
-  "videoId": "9BznFjbcBVs",
-  "duration_seconds": 208,
-  "intro": "Get ready for a real vocal powerhouse from Paul McCartney! This is \"Oh! Darling,\" from the legendary *Abbey Road* album. Paul really pushed his voice to the limit on this one, and it shows. He actually came into the studio early for a week straight, singing it by himself, trying to get that raw, worn-out sound, as if he'd been performing it live all week. He even said that five years earlier, he could have done it in a flash, but he really had to work for it by the time *Abbey Road* was being made. John Lennon even thought it was more his style and that he could have sung it better, but Paul wrote it, so he sang it! It's a fantastic example of their rock and roll roots, with a real doo-wop and R&B feel to it. You can hear the influence of those classic 50s and early 60s sounds, even some Louisiana swamp pop! It's a passionate, bluesy performance from Paul, and it's just a fantastic track. Here's \"Oh! Darling\"!"
-}

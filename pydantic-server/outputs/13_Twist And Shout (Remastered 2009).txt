@@ -1,7 +1,0 @@
-{
-  "title": "Twist And Shout (Remastered 2009)",
-  "album": "Please Please Me",
-  "videoId": "2RicaUqd9Hg",
-  "duration_seconds": 156,
-  "intro": "Get ready for a song that perfectly captures the raw energy and excitement of The Beatles' early days! This is \"Twist and Shout,\" from their debut album, \"Please Please Me.\" It's a cover, but honestly, when John Lennon tears into those vocals, it sounds like they wrote it themselves! Famously, this was the very last song recorded during the marathon one-day session for their first album, and John's voice was already shot. You can actually hear him cough at the end of the track, a testament to how much he poured into that performance. It's truly one of the most iconic single takes in rock history, and it'll have you twisting and shouting along in no time!"
-}

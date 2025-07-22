@@ -1,7 +1,0 @@
-{
-  "title": "A Day In The Life",
-  "album": "Sgt. Pepper's Lonely Hearts Club Band (Super Deluxe Edition)",
-  "videoId": "aXNY4NddrLo",
-  "duration_seconds": 331,
-  "intro": "Here's a song that's widely considered one of The Beatles' greatest achievements, and the grand finale to their masterpiece album, Sgt. Pepper's Lonely Hearts Club Band. This is \"A Day in the Life.\" What makes this track so extraordinary is how it seamlessly blends two distinct song fragments \u2013 one primarily written by John Lennon, and the other by Paul McCartney \u2013 into a cohesive and incredibly powerful narrative. John's sections were famously inspired by newspaper articles, including the tragic death of Guinness heir Tara Browne, and a story about the number of potholes in Blackburn, Lancashire! Paul's middle section, on the other hand, is a nostalgic, almost mundane account of his morning routine. The transitions between these two moods are marked by those incredible, almost chaotic orchestral crescendos, which were partly improvised by a 40-piece orchestra. And of course, it all culminates in that iconic, lingering final piano chord, which sustains for over 40 seconds, leaving you with a profound sense of awe. It's a song that truly pushes the boundaries of what pop music could be, a testament to The Beatles' boundless creativity and willingness to experiment. Here's \"A Day in the Life\"!"
-}

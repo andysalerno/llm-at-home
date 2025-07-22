@@ -1,7 +1,0 @@
-{
-  "title": "Love Me Do (Remastered 2009)",
-  "album": "Please Please Me",
-  "videoId": "0pGOFX1D_jg",
-  "duration_seconds": 142,
-  "intro": "Here's a truly historic track for all you Beatles fans out there! This is \"Love Me Do,\" the very first single officially released by The Beatles in the UK back in October of 1962. It's a song that really set the stage for everything that was to come. What's fascinating about \"Love Me Do\" is the story behind its recording. There are actually three different versions of this song, each with a different drummer! The version you're about to hear, from the *Please Please Me* album, features session drummer Andy White on drums, with Ringo Starr on tambourine. The earlier single release actually had Ringo on drums, and there's even an earlier version with Pete Best! John and Paul co-wrote this one, with Paul handling the verse and chorus, and John contributing that distinctive middle eight. And you can't miss John's bluesy harmonica riff that kicks it all off. It's a simple, catchy tune that perfectly captures the raw energy and charm of the early Beatles. Here's where it all began: \"Love Me Do\"!"
-}

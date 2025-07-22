@@ -1,7 +1,0 @@
-{
-  "title": "All My Loving (Remastered 2009)",
-  "album": "With The Beatles (Remastered 2009)",
-  "videoId": "TSpiwK5fig0",
-  "duration_seconds": 128,
-  "intro": "Here's a song that perfectly captures the early excitement and charm of The Beatles! This is \"All My Loving,\" from their second UK album, *With the Beatles*. Written by Paul McCartney, this track has a really interesting origin story. Paul actually thought of the lyrics while he was shaving, and then later put the music to them. He even said it was one of the first times he'd ever written the words before the music! You can hear that classic \"letter song\" style, similar to \"P.S. I Love You.\" Listen closely to George Harrison's Nashville-style guitar solo, and John Lennon's unique rhythm guitar playing, with those back-and-forth strummed triplets. And of course, Paul's walking bass line really drives the song. This was a huge hit for them, especially in Canada where it went to number one! It even got a lot of radio airplay in the US, even though it wasn't officially released as a single there. In fact, it was the opening number for their debut performance on *The Ed Sullivan Show* in February 1964, a moment that truly changed music history. Here's \"All My Loving\"!"
-}

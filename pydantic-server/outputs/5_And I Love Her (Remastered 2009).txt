@@ -1,7 +1,0 @@
-{
-  "title": "And I Love Her (Remastered 2009)",
-  "album": "A Hard Day's Night",
-  "videoId": "5tc0gLSSU1M",
-  "duration_seconds": 150,
-  "intro": "Here's a beautiful ballad from the Fab Four, \"And I Love Her.\" This track, primarily penned by Paul McCartney, really showcases his knack for crafting heartfelt melodies. It was featured on their third UK album, *A Hard Day's Night*, and it's interesting to note that it was released as a single in the US, reaching number 12 on the Billboard Hot 100. Paul himself called it \"the first ballad I impressed myself with,\" and you can hear why. George Harrison's distinctive guitar riff truly makes this song shine, adding that special touch that only he could provide. Get ready to be swept away by this timeless classic."
-}

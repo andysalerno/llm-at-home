@@ -1,7 +1,0 @@
-{
-  "title": "Let It Be (Remastered 2009)",
-  "album": "Let It Be",
-  "videoId": "QDYfEBY9NM4",
-  "duration_seconds": 244,
-  "intro": "Here's a song that needs no introduction, but I'll give it one anyway! This is the title track from their final album, though it was recorded before Abbey Road. Paul McCartney wrote this song after having a dream about his mother, Mary, who had passed away when he was fourteen. He said it was great to visit with her again, and he felt blessed to have that dream. His mother told him, \"It will be all right, just let it be.\" Here it is, the iconic \"Let It Be\"."
-}

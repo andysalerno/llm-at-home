@@ -1,7 +1,0 @@
-{
-  "title": "Strawberry Fields Forever (Remastered 2009)",
-  "album": "Magical Mystery Tour",
-  "videoId": "10LSq_J5ol4",
-  "duration_seconds": 248,
-  "intro": "Get ready for a truly groundbreaking and iconic song that pushed the boundaries of what pop music could be! This is \"Strawberry Fields Forever,\" a masterpiece from the legendary John Lennon. While it appeared on the US version of the Magical Mystery Tour album, it was originally released as a double A-side single with \"Penny Lane\" \u2013 two incredible songs that perfectly captured the psychedelic spirit of 1967. John wrote this song, drawing inspiration from his childhood memories of playing in the garden of Strawberry Field, a Salvation Army children's home in Liverpool. The recording process for this track was incredibly innovative and complex. The final version you're about to hear is actually a brilliant splice of two different takes, recorded at different tempos and in different keys! George Martin, their producer, masterfully blended them together, creating that dreamlike, ethereal sound. Listen closely for the unique instrumentation, including reverse-recorded sounds, Mellotron flute, and even an Indian swarmandal. It's a truly immersive and introspective journey into John's mind, and a testament to The Beatles' constant evolution and experimentation. Here's \"Strawberry Fields Forever.\""
-}

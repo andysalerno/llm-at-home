@@ -1,7 +1,0 @@
-{
-  "title": "Now And Then",
-  "album": "Now And Then",
-  "videoId": "fOjuqmZzul4",
-  "duration_seconds": 249,
-  "intro": "Get ready for a truly historic moment in music history. This is \"Now And Then,\" the last song by The Beatles. It's a track that bridges decades, starting with a demo John Lennon recorded in the late 1970s. For years, the sound quality of John's original recording made it impossible to complete, but thanks to incredible new technology, his voice has been isolated and brought to life. Paul McCartney and Ringo Starr then added their parts, and even George Harrison's guitar work from earlier sessions was incorporated. It's a poignant and powerful song, a true testament to the enduring magic of The Beatles, and a beautiful way to hear all four of them together one last time. This is \"Now And Then.\""
-}

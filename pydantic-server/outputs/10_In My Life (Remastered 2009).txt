@@ -1,7 +1,0 @@
-{
-  "title": "In My Life (Remastered 2009)",
-  "album": "Rubber Soul (Remastered 2009)",
-  "videoId": "YBcdt6DsLQA",
-  "duration_seconds": 147,
-  "intro": "Now, for a truly reflective and beautiful song from the Beatles' groundbreaking album, Rubber Soul. This is \"In My Life.\" John Lennon considered this his \"first real major piece of work\" because it was the first time he wrote so personally about his own life and memories. While there's been some friendly debate between John and Paul over who wrote the melody, what's undeniable is the song's poignant lyrics and that incredible baroque-inspired piano solo from George Martin. It's a timeless piece that invites us to look back on our own lives and the people who have shaped them. Get ready to be moved by this introspective masterpiece."
-}

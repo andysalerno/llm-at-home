@@ -1,7 +1,0 @@
-{
-  "title": "Ticket To Ride (Remastered 2009)",
-  "album": "Help!",
-  "videoId": "acxfOgPWUls",
-  "duration_seconds": 190,
-  "intro": "Now, get ready for a song that truly pushed the boundaries of what The Beatles had done before. This is \"Ticket to Ride,\" from the \"Help!\" album. John Lennon considered this one of his favorites, and even jokingly called it the \"first heavy metal record ever made\" because of its driving rhythm and harder sound. Listen for that distinctive guitar riff, and Ringo's unique drum pattern \u2013 it really gives the song a powerful, almost relentless energy. It was a huge hit, topping the charts on both sides of the Atlantic, and it even appeared in their film \"Help!\" Get ready to take a ride with this classic!"
-}

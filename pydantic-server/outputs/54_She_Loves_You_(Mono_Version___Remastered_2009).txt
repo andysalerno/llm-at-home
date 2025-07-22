@@ -1,7 +1,0 @@
-{
-  "title": "She Loves You (Mono Version / Remastered 2009)",
-  "album": "The Beatles 1962 - 1966",
-  "videoId": "OHD2gJNKgtY",
-  "duration_seconds": 143,
-  "intro": "Here's a classic that truly showcases the early Beatles' energy! \"She Loves You\" was written by John and Paul on a tour bus and in a hotel room in Newcastle, and it was recorded less than a week later. It's famous for that iconic \"yeah, yeah, yeah\" refrain, which was actually inspired by Elvis Presley's \"All Shook Up\" and the Isley Brothers' \"Twist and Shout.\" And get this: Paul's dad actually suggested they sing \"yes, yes, yes\" instead of \"yeah, yeah, yeah\"! Can you imagine? Luckily, they stuck with their original idea. This song also holds a special place in history as one of the first examples of the Beatles introducing folk chord changes into rock music. Here it is, the remastered mono version of \"She Loves You\"!"
-}

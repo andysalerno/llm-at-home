@@ -1,7 +1,0 @@
-{
-  "title": "You Never Give Me Your Money (Remastered 2009)",
-  "album": "Abbey Road",
-  "videoId": "BpndGZ71yww",
-  "duration_seconds": 243,
-  "intro": "Here's a truly fascinating piece from *Abbey Road*, and the very first song in the famous Side Two medley: \"You Never Give Me Your Money.\" This is a Paul McCartney composition, and it really lays bare some of the personal and financial struggles the band was facing at the time. Paul actually wrote this while on holiday with Linda in New York, and he later said it was specifically about Allen Klein, the manager John, George, and Ringo had brought in, much to Paul's dismay. He even said, \"it's basically a song about no faith in the person.\" You can hear that frustration in the lyrics, but the song itself is a brilliant, multi-part suite. It starts as a piano ballad, then shifts into a boogie-woogie section, and even features those beautiful arpeggiated guitars at the end. It's a testament to the Beatles' incredible ability to weave together disparate musical ideas into a cohesive whole, even as their personal relationships were fraying. And listen closely for those sound effects at the very end \u2013 bells, birds, and even chirping crickets \u2013 which seamlessly transition us into the next track in the medley. It's a truly innovative and emotionally resonant song. Here's \"You Never Give Me Your Money\"!"
-}

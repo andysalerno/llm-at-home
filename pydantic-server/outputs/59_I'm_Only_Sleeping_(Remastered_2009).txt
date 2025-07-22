@@ -1,7 +1,0 @@
-{
-  "title": "I'm Only Sleeping (Remastered 2009)",
-  "album": "Revolver",
-  "videoId": "BT5j9OQ7Sh0",
-  "duration_seconds": 181,
-  "intro": "Here's a fantastic track from the *Revolver* album, \"I'm Only Sleeping.\" This song truly captures John Lennon's state of mind at the time \u2013 he was known for being quite the sleeper! In fact, his friend Maureen Cleave once wrote that he was probably the laziest person in England. But don't let that fool you, because this song is anything but lazy in its production. It features a groundbreaking backwards guitar part played by George Harrison, a technique that was incredibly innovative for its time. Imagine, George had to perfect the part with the tape running backwards so that when it was played forward, it would create that dreamy, ethereal sound. And listen closely for a little yawn in the middle of the song \u2013 a playful nod to John's love of sleep! This is a truly psychedelic and inventive piece of music that showcases the Beatles' constant push for new sounds. Here's \"I'm Only Sleeping\"!"
-}
