@@ -18,14 +18,14 @@ services:
       - "3000:3000"
   sandboxed-code-execution:
     image: localhost/sandboxed-code-execution:latest
-    build: ../mcp-server-backends/sandboxed-code-execution
+    build: ./mcp-server-backends/sandboxed-code-execution
     ports:
       - "8003:8003"
     environment:
       - PORT=8003
   mcp-server:
     image: localhost/mcp-server:latest
-    build: ../mcp-servers
+    build: ./mcp-servers
     ports:
       - "8002:8002"
     env_file: .env
