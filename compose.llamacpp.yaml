@@ -24,4 +24,4 @@ services:
     devices:
       - nvidia.com/gpu=all
     env_file:
-      - ./.env
+      - ./.llamacpp.env
