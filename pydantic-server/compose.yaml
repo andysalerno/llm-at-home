@@ -23,15 +23,15 @@ services:
       - "8003:8003"
     environment:
       - PORT=8003
-  # mcp-server:
-  #   image: localhost/mcp-server:latest
-  #   build: ../mcp-servers
-  #   ports:
-  #     - "8002:8002"
-  #   env_file: .env
-  #   environment:
-  #     - SCRAPPER_ENDPOINT=http://scrapper:3000
-  #     - CODE_EXECUTION_ENDPOINT=http://sandboxed-code-execution:8003/execute
+  mcp-server:
+    image: localhost/mcp-server:latest
+    build: ../mcp-servers
+    ports:
+      - "8002:8002"
+    env_file: .env
+    environment:
+      - SCRAPPER_ENDPOINT=http://scrapper:3000
+      - CODE_EXECUTION_ENDPOINT=http://sandboxed-code-execution:8003/execute
 
 volumes:
     chroma_data:

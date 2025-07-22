@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.9.1
+    image: vllm/vllm-openai:v0.9.2
     # image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
@@ -129,6 +129,7 @@ services:
     # btbtyler09/Qwen3-30B-A3B-gptq-8bit <== error
     # Qwen/Qwen3-30B-A3B-FP8
     # nytopop/Qwen3-30B-A3B.w8a8
+    # --no-enforce-eager
     command: >
       --model Qwen/Qwen3-30B-A3B-FP8
       --tokenizer Qwen/Qwen3-30B-A3B-FP8
@@ -137,7 +138,6 @@ services:
       --tool-call-parser hermes
       --enable-auto-tool-choice
       --enable-reasoning
-      --no-enforce-eager
       --served-model-name model
       --max-model-len 32648
       -tp 2
