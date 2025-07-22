@@ -11,9 +11,9 @@ os.environ["FASTMCP_PORT"] = str(PORT)
 
 
 def setup_mcp(mcp: FastMCP):
-    # google_search.setup_mcp(mcp)
+    google_search.setup_mcp(mcp)
     visit_url_tool.setup_mcp(mcp)
-    # code_execution_tool.setup_mcp(mcp)
+    code_execution_tool.setup_mcp(mcp)
     search_wikipedia.setup_mcp(mcp)
 
 
