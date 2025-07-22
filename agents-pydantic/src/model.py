@@ -22,8 +22,8 @@ def get_extra_body(enable_thinking: bool = True):
         },
     }
 
-    # if not enable_thinking:
-    #     extra_body["chat_template_kwargs"] = {"enable_thinking": False}
+    if not enable_thinking:
+        extra_body["chat_template_kwargs"] = {"enable_thinking": False}
 
     return extra_body
 
