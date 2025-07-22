@@ -1,3 +1,4 @@
+name: services-stack
 services:
   phoenix:
     image: arizephoenix/phoenix:latest
