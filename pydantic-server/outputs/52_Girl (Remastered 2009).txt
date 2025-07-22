@@ -1,0 +1,7 @@
+{
+  "title": "Girl (Remastered 2009)",
+  "album": "Rubber Soul (Remastered 2009)",
+  "videoId": "-8l3ntDR_lI",
+  "duration_seconds": 152,
+  "intro": "Let's slow things down a bit with a truly captivating track from the *Rubber Soul* album, a song that perfectly encapsulates John Lennon's evolving songwriting: \"Girl.\" This was the very last song recorded for the album, and it's a deeply personal and melancholic piece. John himself described the \"girl\" in the song as an archetype he was searching for, a dream that he eventually found in Yoko Ono. You'll notice some fascinating elements in this song. The acoustic guitars, played by John and George, have a bright, almost sitar-like quality, thanks to the use of capos high up on the neck. And listen closely to John's vocals \u2013 he wanted the breathing to be very intimate, so the engineers added a special compressor to highlight every subtle intake of breath. It creates a truly unique and vulnerable sound. There's even a bit of playful mischief in the backing vocals during the middle eight, where Paul and George sing a repeated, almost whispered word that was influenced by The Beach Boys. It's a song that draws you in with its intimacy and thoughtful lyrics. Here's \"Girl\"."
+}

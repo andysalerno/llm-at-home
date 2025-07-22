@@ -1,12 +1,14 @@
 version: '3.9'
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.9.0.1
+    image: vllm/vllm-openai:v0.9.2
     # image: localhost/vllmgguf:latest
     # ipc: host
     shm_size: 1g
     environment:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
+      # - VLLM_LOGGING_LEVEL=DEBUG
+      # - VLLM_TRACE_FUNCTION=1
       # - VLLM_ATTENTION_BACKEND=FLASHINFER
       # - VLLM_USE_V1=1
     volumes:
@@ -119,15 +121,24 @@ services:
     # --served-model-name model
     # --max-model-len 32648
     # -tp 2
+    # --guided-decoding-backend xgrammar
+    # [--guided-decoding-backend {auto,guidance,lm-format-enforcer,outlines,xgrammar}]
+    #
+    # RedHatAI/gemma-3-27b-it-quantized.w8a8
+    # mobiuslabsgmbh/Qwen3-32B_gemlite-ao_a16w4_gs_128_pack_32bit
+    # btbtyler09/Qwen3-30B-A3B-gptq-8bit <== error
+    # Qwen/Qwen3-30B-A3B-FP8
+    # nytopop/Qwen3-30B-A3B.w8a8
+    # --no-enforce-eager
     command: >
       --model Qwen/Qwen3-30B-A3B-FP8
+      --tokenizer Qwen/Qwen3-30B-A3B-FP8
       --reasoning-parser qwen3
       --max-num-seqs 4
       --tool-call-parser hermes
       --enable-auto-tool-choice
       --enable-reasoning
       --served-model-name model
-      --guided-decoding-backend xgrammar
       --max-model-len 32648
       -tp 2
     ports:

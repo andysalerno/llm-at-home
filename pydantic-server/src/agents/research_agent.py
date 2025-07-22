@@ -54,7 +54,7 @@ async def _run_research_agent(
     ctx: RunContext[State],
     task: str,
     include_tools_in_prompt: bool,
-    agent_temp: float = 0.0,
+    agent_temp: float,
 ) -> str:
     agent = _create_agent(include_tools_in_prompt, agent_temp)
 
@@ -122,7 +122,7 @@ tool_output_definition = ToolOutput(
 
 def _create_agent(
     include_tools_in_prompt: bool,
-    temp: float = 0.0,
+    temp: float,
 ) -> Agent[None, ResearchComplete]:
     cur_date = _get_now_str()
 
@@ -135,7 +135,9 @@ def _create_agent(
         output_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=temp,
-            extra_body=get_extra_body(),
+            parallel_tool_calls=False,
+            timeout=30.0,
+            extra_body=get_extra_body(enable_thinking=False),
         ),
         system_prompt=_create_prompt(
             [],
@@ -188,7 +190,7 @@ def _create_prompt(
         - However, you are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
         - After invoking at most **{{ max_tool_calls }}** tools, you must then invoke the `research_complete` tool to indicate that you are done.
         - Additionally, you must NOT invoke the `research_complete` tool in the same response as other tools. It must be invoked alone.
-        - If you see interesting urls in search results, use the `visit_url` tool to scrape them and acquire their information.
+        - After searching the web and getting relevant urls,, use the `visit_url` tool to scrape them and acquire their information.
         - You MAY invoke any tool multiple times consecutively.
         - If you invoke a tool but it does not provide the information you need, you MAY invoke the same tool again with a different query.
 

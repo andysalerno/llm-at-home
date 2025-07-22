@@ -11,9 +11,9 @@ os.environ["FASTMCP_PORT"] = str(PORT)
 
 
 def setup_mcp(mcp: FastMCP):
-    google_search.setup_mcp(mcp)
+    # google_search.setup_mcp(mcp)
     visit_url_tool.setup_mcp(mcp)
-    code_execution_tool.setup_mcp(mcp)
+    # code_execution_tool.setup_mcp(mcp)
     search_wikipedia.setup_mcp(mcp)
 
 
@@ -22,6 +22,6 @@ async def serve(mcp: FastMCP):
 
 
 if __name__ == "__main__":
-    mcp = FastMCP("all_tools")
+    mcp = FastMCP("all_tools", host="0.0.0.0", port=PORT)
     setup_mcp(mcp)
     asyncio.run(serve(mcp))

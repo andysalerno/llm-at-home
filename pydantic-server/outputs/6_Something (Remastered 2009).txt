@@ -1,0 +1,7 @@
+{
+  "title": "Something (Remastered 2009)",
+  "album": "Abbey Road",
+  "videoId": "VWO3nEuWo4k",
+  "duration_seconds": 183,
+  "intro": "Here's a truly beautiful song, and a landmark for George Harrison. This is \"Something,\" from the Abbey Road album. It's widely considered to be the song that elevated George to the same songwriting stature as John and Paul. He started writing this during the White Album sessions, and it was initially offered to Joe Cocker before the Beatles recorded it. Listen for George's incredible guitar solo, which many critics consider one of his finest. It's a timeless love song, and it even topped the charts in the US! Get ready to be swept away by this classic."
+}

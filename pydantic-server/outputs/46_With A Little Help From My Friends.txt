@@ -1,0 +1,7 @@
+{
+  "title": "With A Little Help From My Friends",
+  "album": "Sgt. Pepper's Lonely Hearts Club Band (Super Deluxe Edition)",
+  "videoId": "GooL7-iPMYI",
+  "duration_seconds": 166,
+  "intro": "Get ready for a dose of pure joy and camaraderie from the legendary *Sgt. Pepper's Lonely Hearts Club Band* album! This is \"With a Little Help from My Friends,\" a song that perfectly captures the spirit of friendship and support. Written by John Lennon and Paul McCartney specifically for Ringo Starr to sing, it's a delightful showcase for his unique vocal charm. You know, they even had to change one of the original lyrics because Ringo was worried about fans throwing tomatoes at him if he sang about singing out of tune! It's a testament to how much they cared about each other, even in the midst of their incredible fame. This track immediately follows the title track on the album, creating a seamless transition into the world of Sgt. Pepper. It's a simple, heartfelt tune that reminds us all that we can get by with a little help from our friends. And speaking of help, it's famously been covered by many artists, most notably Joe Cocker, whose version became an anthem of the Woodstock era. But here it is, in its original, charming glory. Here's Ringo, with \"With a Little Help from My Friends\"!"
+}

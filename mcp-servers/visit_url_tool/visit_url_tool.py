@@ -54,6 +54,12 @@ class ScrapperClient:
             return ScrapperResponse.model_validate_json(response.text)
 
     def _create_api_uri(self, url: str) -> str:
+        if "(" in url and not ")" in url:
+            logger.warning("fixing url which is missing closing paren")
+            url = url + ")"
+
+        url = url.strip()
+
         scrapper_endpoint = self.scrapper_endpoint.rstrip("/")
         encoded_url = urllib.parse.quote(url, safe="")
         return f"{scrapper_endpoint}/api/article?url={encoded_url}"

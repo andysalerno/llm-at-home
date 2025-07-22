@@ -1,0 +1,7 @@
+{
+  "title": "Lucy In The Sky With Diamonds",
+  "album": "Sgt. Pepper's Lonely Hearts Club Band (Super Deluxe Edition)",
+  "videoId": "l7x-0c9jl4Y",
+  "duration_seconds": 208,
+  "intro": "Here's a truly iconic track from the groundbreaking *Sgt. Pepper's Lonely Hearts Club Band* album, a song that has sparked endless discussion and interpretation: \"Lucy in the Sky with Diamonds.\" Now, you might have heard the rumors about the title's supposed connection to certain initials, but John Lennon always maintained that the inspiration was far more innocent and whimsical. It came from a drawing by his then three-year-old son, Julian, who came home from nursery school with a picture he called \"Lucy \u2013 in the Sky with Diamonds,\" depicting his classmate Lucy O'Donnell. John was captivated by the image and the title, and it immediately sparked his imagination. He also drew heavily from the fantastical imagery of Lewis Carroll's *Alice in Wonderland* books, which he greatly admired. Listen closely to the dreamlike quality of the music, the ethereal Lowrey organ, and the subtle Indian tambura drone, all contributing to that psychedelic soundscape. It's a testament to the Beatles' incredible creativity and their ability to weave together diverse inspirations into something truly unique. Here's \"Lucy in the Sky with Diamonds\"!"
+}

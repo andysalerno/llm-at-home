@@ -1,0 +1,7 @@
+{
+  "title": "Here, There And Everywhere (Remastered 2009)",
+  "album": "Revolver",
+  "videoId": "xdcSFVXd3MU",
+  "duration_seconds": 145,
+  "intro": "Get ready for a truly beautiful and tender ballad from the Beatles' groundbreaking album, *Revolver*. This is \"Here, There and Everywhere.\" Paul McCartney, ever the romantic, penned this exquisite love song, and it's one he often cites as one of his personal favorites among his own compositions. He actually started writing it while waiting for John to wake up at John's house, sitting by the pool with his guitar. You can hear the influence of the Beach Boys, particularly their song \"God Only Knows,\" in the intricate harmonies and the way the song just flows so effortlessly. It's a testament to McCartney's melodic genius, and it showcases the band's incredible ability to craft a delicate and heartfelt piece amidst the more experimental tracks on *Revolver*. Even John Lennon reportedly called it \"the best tune\" on the album. It's a timeless classic that perfectly captures the feeling of being completely in love. Here's \"Here, There and Everywhere\"."
+}

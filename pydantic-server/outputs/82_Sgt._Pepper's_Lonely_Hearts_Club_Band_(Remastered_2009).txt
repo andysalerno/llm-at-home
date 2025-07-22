@@ -1,0 +1,7 @@
+{
+  "title": "Sgt. Pepper's Lonely Hearts Club Band (Remastered 2009)",
+  "album": "Sgt. Pepper's Lonely Hearts Club Band",
+  "videoId": "VtXl8xAPAtA",
+  "duration_seconds": 123,
+  "intro": "Here's a song that truly sets the stage for one of the most iconic albums in music history! This is the title track, \"Sgt. Pepper's Lonely Hearts Club Band.\" You know, the idea for this whole concept album came to Paul McCartney on a flight back from Kenya. He was thinking about how they could create alter-egos, a fictional band that would perform for an audience. And that's exactly what this song does \u2013 it introduces us to that band, with those fantastic crowd sounds and the orchestra tuning up, all taken from a session for \"A Day in the Life.\" It's like a grand opening to a show, inviting us into this whole new world. This track really kicks off the album with a bang, setting the tone for the incredible musical journey that follows. Here it is, \"Sgt. Pepper's Lonely Hearts Club Band\"!"
+}

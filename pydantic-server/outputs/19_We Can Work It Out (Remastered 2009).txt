@@ -1,0 +1,7 @@
+{
+  "title": "We Can Work It Out (Remastered 2009)",
+  "album": "The Beatles 1962 - 1966",
+  "videoId": "xedn8vp6W20",
+  "duration_seconds": 137,
+  "intro": "Get ready for a song that perfectly captures the collaborative genius of John Lennon and Paul McCartney! This is \"We Can Work It Out,\" a fantastic single released as a double A-side with \"Day Tripper\" in December of 1965. What's really interesting about this track is how it showcases their distinct songwriting styles coming together. Paul wrote the more optimistic verses and chorus, while John contributed that wonderfully contrasting, slightly more cynical middle eight, reminding us that \"Life is very short, and there's no time for fussing and fighting.\" And here's a fun fact: it was George Harrison's idea to incorporate that waltz-like rhythm in the bridge, adding another layer of depth to the song. It's a true testament to their ability to blend different perspectives into one cohesive and brilliant piece of music. Here's \"We Can Work It Out\"!"
+}

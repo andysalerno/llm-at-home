@@ -1,0 +1,11 @@
+[project]
+name = "tts"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "chatterbox-tts>=0.1.2",
+    "torchaudio>=2.6.0",
+    "flask>=3.0.0",
+]

@@ -1,0 +1,7 @@
+{
+  "title": "I Should Have Known Better (Remastered 2009)",
+  "album": "A Hard Day's Night",
+  "videoId": "5en2JMLA8Z0",
+  "duration_seconds": 164,
+  "intro": "Here's a fantastic track from the Beatles' third album, and the soundtrack to their first movie, *A Hard Day's Night*! This is \"I Should Have Known Better.\" Written primarily by John Lennon, this song really showcases his distinctive harmonica playing, which kicks off the track. Interestingly, this was the last time the Beatles featured the harmonica on a song's intro, though it would appear again in a solo later that year on \"I'm a Loser.\" You'll also hear George Harrison's brand new Rickenbacker 360/12 12-string guitar, which adds a really bright, jangling sound to the song. The recording process for this one had a bit of a hiccup; during the first session, John actually broke into hysterics over his harmonica playing, and they had to re-record it the next day! In the film, the song is performed in a train's brake coach, though it was actually filmed in a van with crew members rocking it to simulate the train's movement. It's a lively, catchy tune that perfectly captures the energy of the *A Hard Day's Night* era. Here's \"I Should Have Known Better\"!"
+}

@@ -1,0 +1,5 @@
+default:
+  just --list
+
+run:
+  HF_HOME=/home/tiny/.cache/hfhubuser uv run main.py

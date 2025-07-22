@@ -1,0 +1,7 @@
+{
+  "title": "I Want You (She's So Heavy) (Remastered 2009)",
+  "album": "Abbey Road",
+  "videoId": "tAe2Q_LhY8g",
+  "duration_seconds": 468,
+  "intro": "Now, get ready for a deep dive into the heavier side of The Beatles! This is \"I Want You (She's So Heavy)\" from *Abbey Road*. Written by John Lennon, this track is a powerful, almost primal expression of his love for Yoko Ono. It's one of the most intense and blues-infused songs the band ever recorded, showcasing a raw, hard rock sound that was quite ahead of its time. Listen to that driving, repetitive guitar riff \u2013 it's almost hypnotic, building and building in intensity. And the ending! It's famously abrupt, cutting off mid-riff, a decision made by John himself that leaves you wanting more. This song also holds a special place in Beatles history, as the final time all four Beatles were together in the studio was during the mixing of this very track on August 20, 1969. It's a testament to their enduring power and innovation, even as their journey together was nearing its end. Here's \"I Want You (She's So Heavy)\"!"
+}

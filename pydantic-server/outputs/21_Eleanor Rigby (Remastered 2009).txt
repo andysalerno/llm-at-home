@@ -1,0 +1,7 @@
+{
+  "title": "Eleanor Rigby (Remastered 2009)",
+  "album": "Revolver",
+  "videoId": "wbxTlxuECJA",
+  "duration_seconds": 127,
+  "intro": "Here's a truly groundbreaking song that marked a significant shift in The Beatles' sound. This is \"Eleanor Rigby,\" from their iconic 1966 album, Revolver. What makes this song so unique is its departure from traditional rock instrumentation. Instead of guitars and drums, you'll hear a powerful double string quartet, arranged by the brilliant George Martin. This gives the song a classical, almost cinematic feel, perfectly complementing its poignant lyrics about loneliness and isolation. Paul McCartney was the primary writer on this one, and he drew inspiration from various sources, including an old lady he knew who lived alone. The song paints vivid pictures of its characters \u2013 Eleanor Rigby, who picks up the rice after a wedding, and Father McKenzie, who preaches to no one. It's a somber but incredibly moving piece that showcases The Beatles' willingness to experiment and push the boundaries of popular music. Here's \"Eleanor Rigby\"."
+}

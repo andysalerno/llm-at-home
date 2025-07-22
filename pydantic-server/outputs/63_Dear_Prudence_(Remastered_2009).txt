@@ -1,0 +1,7 @@
+{
+  "title": "Dear Prudence (Remastered 2009)",
+  "album": "The Beatles",
+  "videoId": "wQA59IkCF5I",
+  "duration_seconds": 236,
+  "intro": "Here's an all-time great from the White Album. It's one of the tracks written during the group's trip to India. Listen to that finger-picking guitar technique from John, and the walking bass line from Paul that wakes up halfway through and carries us to the end. Here's Dear Prudence."
+}

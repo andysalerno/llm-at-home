@@ -1,0 +1,7 @@
+{
+  "title": "If I Fell (Remastered 2009)",
+  "album": "A Hard Day's Night",
+  "videoId": "F_80s6S_7Vw",
+  "duration_seconds": 140,
+  "intro": "Here's a beautiful and intricate ballad from the Beatles' third album, *A Hard Day's Night*: \"If I Fell.\" This song, primarily written by John Lennon, showcases a more mature and sophisticated side of their songwriting, especially for their early career. John himself described it as his \"first attempt at a ballad proper,\" and you can hear that intention in the lyrical depth and the complex chord changes. What's really striking about this track are the close, Everly Brothers-like harmonies between John and Paul, who even shared a single microphone during the recording to achieve that intimate sound. Listen closely to the opening, and you'll notice that John's vocal is single-tracked in the mono mix but double-tracked in the stereo version, a subtle but interesting production detail. While it didn't chart as an official single in the UK, it was released as the B-side to \"And I Love Her\" in the US, and even reached number one in Norway! It's a testament to the song's enduring appeal and the Beatles' incredible versatility. Here's \"If I Fell\"!"
+}

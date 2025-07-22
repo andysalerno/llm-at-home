@@ -16,21 +16,14 @@ def get_instrumentation_settings() -> InstrumentationSettings:
 
 
 def get_extra_body(enable_thinking: bool = True):
-    # return {}
-    # extra_body = {
-    #     "provider": {
-    #         "require_parameters": True,
-    #     },
-    # }
+    extra_body = {
+        "provider": {
+            "require_parameters": True,
+        },
+    }
 
-    extra_body = {}
-
-    if not enable_thinking:
-        extra_body = {
-            "chat_template_kwargs": {
-                "enable_thinking": False,
-            },
-        }
+    # if not enable_thinking:
+    #     extra_body["chat_template_kwargs"] = {"enable_thinking": False}
 
     return extra_body
 

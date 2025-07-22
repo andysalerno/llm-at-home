@@ -1,0 +1,7 @@
+{
+  "title": "Golden Slumbers (Remastered 2009)",
+  "album": "Abbey Road",
+  "videoId": "AcQjM7gV6mI",
+  "duration_seconds": 92,
+  "intro": "We're diving into the beautiful and poignant sounds of \"Golden Slumbers,\" a true gem from the *Abbey Road* album. This song is the sixth track in that iconic B-side medley, and it really sets the stage for the album's grand finale. Paul McCartney penned this one, and it's actually based on a 17th-century poem called \"Cradle Song\" by Thomas Dekker. Paul found the sheet music for it at his father's house, and even though he couldn't read music, he was inspired to create his own melody. You'll hear Paul's tender vocals, starting off softly, like a true lullaby, with just piano, bass, and strings. But then, as the drums kick in, his voice gains strength, emphasizing that shift in tone. It's a truly masterful vocal performance. What's really interesting is that John Lennon wasn't even present for the main recording session of this song, as he was recovering from a car accident. But he did join in for some overdubs later on. It's a testament to the band's dedication that they could create such a cohesive and moving piece even with one member temporarily out of commission. This is a song that truly showcases the emotional depth of the Beatles' later work. Here's \"Golden Slumbers\"!"
+}

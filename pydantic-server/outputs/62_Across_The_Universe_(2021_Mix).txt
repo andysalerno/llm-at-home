@@ -1,0 +1,7 @@
+{
+  "title": "Across The Universe (2021 Mix)",
+  "album": "Let It Be (Super Deluxe)",
+  "videoId": "eqUzU552X8A",
+  "duration_seconds": 229,
+  "intro": "Here's a truly cosmic and introspective piece from John Lennon, \"Across the Universe.\" This song has a fascinating history, with several different versions floating around, but we're going to dive into the 2021 Mix from the *Let It Be* (Super Deluxe) album. John considered this one of his best and most poetic lyrics, and you can hear why. The words just flow, like \"endless rain into a paper cup,\" a line that actually came to him after an argument with his then-wife, Cynthia! It's a beautiful example of how everyday irritation can transform into something truly profound. This song was heavily influenced by the Beatles' interest in Transcendental Meditation, and you'll hear the mantra \"Jai guru deva om\" woven throughout, a tribute to Maharishi Mahesh Yogi's spiritual teacher. It's a song that invites you to reflect, to look inward, and to contemplate the vastness of existence. Here's \"Across the Universe\"."
+}

@@ -1,0 +1,7 @@
+{
+  "title": "You've Got To Hide Your Love Away (Remastered 2009)",
+  "album": "Help!",
+  "videoId": "V8nLraecPRY",
+  "duration_seconds": 130,
+  "intro": "Here's a beautiful, introspective song from the *Help!* album, \"You've Got To Hide Your Love Away.\" This is a song that really showcases John Lennon's growing maturity as a songwriter. He wrote this one for the film *Help!*, and he described it as being in his \"Dylan period,\" which you can definitely hear in the acoustic, folk-rock feel. It's a very personal song, with lyrics that are open to interpretation, but many believe it reflects John's feelings about the pressures of fame and the need to keep parts of himself hidden. You'll hear the wonderful acoustic guitar work, and a lovely flute part that really adds to the song's melancholic beauty. Interestingly, when John first wrote the line \"two-foot tall,\" he accidentally sang \"two-foot small\" to Paul, and decided to keep it that way! And a little fun fact: The Silkie, a band signed by Brian Epstein, actually recorded a cover of this song, and John Lennon himself produced the session, with Paul contributing guitar and George on tambourine. It even became a Top 10 hit in the US! Here's \"You've Got To Hide Your Love Away.\""
+}
