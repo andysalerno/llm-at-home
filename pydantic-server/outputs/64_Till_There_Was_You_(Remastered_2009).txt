@@ -1,7 +1,0 @@
-{
-  "title": "Till There Was You (Remastered 2009)",
-  "album": "With The Beatles (Remastered 2009)",
-  "videoId": "SHAqAO7w8M8",
-  "duration_seconds": 134,
-  "intro": "Now for something a little different! Here's a beautiful ballad from the *With The Beatles* album, \"Till There Was You.\" This song actually comes from the 1957 Broadway musical *The Music Man*, and it was a big hit for Anita Bryant before the Beatles got their hands on it. But leave it to the Fab Four to make it their own! Paul McCartney takes the lead on vocals, and you'll hear John and George playing these lovely nylon-string acoustic guitars in a Spanish style, with Ringo adding a subtle bolero bongo beat. It's a real testament to their versatility, showing they could effortlessly move from hard-hitting rock and roll to these softer, more melodic tunes. In fact, the composer of *The Music Man*, Meredith Willson, actually earned more in royalties from the Beatles' version of this song than he did from the original play! This song was also famously performed by the Beatles during their second appearance on *The Ed Sullivan Show* in 1964, proving to millions of American viewers that they were more than just a rock and roll band. Here's \"Till There Was You\"."
-}

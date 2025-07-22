@@ -1,7 +1,0 @@
-{
-  "title": "Eight Days A Week (Remastered 2009)",
-  "album": "Beatles For Sale",
-  "videoId": "0soSE-RMH3s",
-  "duration_seconds": 164,
-  "intro": "Get ready for a classic that really shows off the Beatles' innovative spirit! This is \"Eight Days A Week,\" from their album *Beatles for Sale*. This song holds a special place in Beatles history because it was one of the first pop songs ever to start with a fade-in, giving you that unique sensation of the music just appearing out of nowhere. It's a really cool effect that pulls you right into the song! The inspiration for the title is pretty fun too. Paul McCartney has mentioned a couple of possibilities, one being a malapropism from Ringo Starr, who supposedly said it like an overworked chauffeur. Another story says it came from an actual chauffeur who drove Paul to John's house and said he was \"working eight days a week.\" Either way, it sparked a brilliant song! While it was a massive number one hit in the US, becoming their seventh chart-topper in just over a year, the band themselves weren't always the biggest fans of it. John Lennon even called it \"lousy\" at one point! But don't let that fool you, it's a fantastic track with George Harrison's Rickenbacker 12-string guitar adding those bright, jangling sounds. Here's \"Eight Days A Week\"!"
-}

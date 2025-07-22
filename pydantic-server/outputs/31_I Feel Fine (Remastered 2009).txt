@@ -1,7 +1,0 @@
-{
-  "title": "I Feel Fine (Remastered 2009)",
-  "album": "The Beatles 1962 - 1966",
-  "videoId": "8Goxw7VgxfA",
-  "duration_seconds": 141,
-  "intro": "Get ready for a song that truly pushed the boundaries of what was possible in pop music! This is \"I Feel Fine,\" a fantastic track from 1964. What makes this song so groundbreaking is right there at the very beginning: that distinctive, almost jarring, feedback sound. This wasn't a mistake, folks, it was completely intentional! John Lennon was incredibly proud of this, and he should be, because it's considered one of the very first times feedback was deliberately used on a rock record. It was an accident that turned into genius \u2013 Paul McCartney had leaned his bass against an amp, and when John's guitar picked up the feedback, they knew they had something special. Beyond that pioneering sound, listen for Ringo Starr's fantastic R&B-influenced drumming, inspired by Ray Charles, and that catchy, arpeggiated guitar riff. It's a testament to the Beatles' constant innovation and their willingness to experiment in the studio. Here's \"I Feel Fine\"!"
-}

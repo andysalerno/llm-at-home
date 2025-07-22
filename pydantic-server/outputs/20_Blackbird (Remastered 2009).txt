@@ -1,7 +1,0 @@
-{
-  "title": "Blackbird (Remastered 2009)",
-  "album": "The Beatles",
-  "videoId": "Man4Xw8Xypo",
-  "duration_seconds": 139,
-  "intro": "Here's a truly beautiful and poignant song from the White Album, a solo masterpiece from Paul McCartney. This is \"Blackbird,\" and it's a testament to Paul's incredible songwriting and guitar skills. What's fascinating about this song is its inspiration: Paul has stated that he wrote it in response to the civil rights movement in the Southern United States, using the blackbird as a metaphor for the struggles of Black women. He also drew inspiration from hearing a blackbird sing while the Beatles were in Rishikesh, India. Musically, it's a stunning piece, with Paul's intricate acoustic guitar work inspired by a Bach bourr\u00e9e. And listen closely \u2013 you can even hear Paul tapping his foot to keep time! It's a powerful and delicate song all at once. Here's \"Blackbird\"."
-}

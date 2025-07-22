@@ -1,7 +1,0 @@
-{
-  "title": "Michelle (Remastered 2009)",
-  "album": "Rubber Soul (Remastered 2009)",
-  "videoId": "WoBLi5eE-wY",
-  "duration_seconds": 163,
-  "intro": "Here's a beautiful and sophisticated track from the *Rubber Soul* album, a song that truly showcases the Beatles' growing musical maturity and willingness to experiment. This is \"Michelle.\" This song is primarily a Paul McCartney composition, and it has a fascinating origin story. The instrumental part of the song actually came first, with Paul trying to emulate the finger-picking guitar style of Chet Atkins. He wanted to create a melody with a bass line, something that was quite innovative for rock and roll guitarists at the time. The lyrical inspiration came from Paul's memories of the Parisian Left Bank culture he encountered in his Liverpool days, and he even asked a French teacher to help him with the French phrases in the song, like \"Michelle, ma belle\" and \"sont des mots qui vont tr\u00e8s bien ensemble\" \u2013 \"these are words that go very well together.\" And listen closely for that bridge, where John Lennon suggested adding the \"I love you\" phrase, inspired by Nina Simone's version of \"I Put a Spell on You.\" It's a truly elegant and romantic song, and it even won a Grammy Award for Song of the Year in 1967. Here's \"Michelle\"!"
-}

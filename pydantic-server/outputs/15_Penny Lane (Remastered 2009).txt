@@ -1,7 +1,0 @@
-{
-  "title": "Penny Lane (Remastered 2009)",
-  "album": "Magical Mystery Tour",
-  "videoId": "vfxQ1oDiEJM",
-  "duration_seconds": 181,
-  "intro": "Get ready for a trip down memory lane, literally! This is \"Penny Lane,\" a vibrant and nostalgic masterpiece from The Beatles. While it ended up on the US version of the Magical Mystery Tour album, it was originally released as a double A-side single with \"Strawberry Fields Forever\" \u2013 two iconic songs that perfectly captured the psychedelic spirit of 1967. Paul McCartney primarily wrote this one, painting a vivid picture of the sights and sounds of a real street in Liverpool, a place he and John knew well from their childhoods. Listen closely for that brilliant piccolo trumpet solo \u2013 it's one of the most distinctive elements of this sunny, baroque-pop gem. It's a song that makes you feel like you're right there, watching the everyday life unfold on Penny Lane."
-}

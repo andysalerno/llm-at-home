@@ -1,7 +1,0 @@
-{
-  "title": "Baby It's You (Remastered 2009)",
-  "album": "Please Please Me",
-  "videoId": "AWUTlM6hz0g",
-  "duration_seconds": 161,
-  "intro": "Time for another classic from the Fab Four! This is \"Baby It's You,\" a song that truly highlights the Beatles' early influences and their incredible ability to make any song their own. This track, found on their debut album *Please Please Me*, is actually a cover of a hit song by the American girl group The Shirelles. The Beatles were huge fans of American R&B and soul, and they brought that raw energy and excitement to everything they touched. You'll hear John Lennon on lead vocals, with Paul and George providing those signature harmonies. What's really interesting about this song is that it was co-written by none other than the legendary Burt Bacharach! The Beatles performed this song live as part of their stage act from 1961 to 1963, and it's clear why it was a fan favorite. It's got that catchy melody and a driving beat that just pulls you in. Here's \"Baby It's You\"!"
-}

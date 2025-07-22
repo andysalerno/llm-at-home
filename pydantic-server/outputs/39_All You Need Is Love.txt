@@ -1,7 +1,0 @@
-{
-  "title": "All You Need Is Love",
-  "album": "Yellow Submarine Songtrack",
-  "videoId": "qS3NYABbfZc",
-  "duration_seconds": 227,
-  "intro": "Here's a song that truly became an anthem for a generation, a message of peace and unity that resonated around the world: \"All You Need Is Love.\" This iconic track was originally written for a very special occasion \u2013 the first-ever live global television link, called Our World, back in June 1967. Imagine, over 400 million people in 25 countries watching the Beatles perform this live! John Lennon deliberately kept the lyrics simple and universal, so the message could be understood by everyone, everywhere. It was a perfect reflection of the utopian ideals of the Summer of Love. Listen closely, and you'll hear some fantastic musical Easter eggs in there too, like the opening with a snippet of the French national anthem, \"La Marseillaise,\" and then later, musical quotes from Glenn Miller's \"In the Mood\" and even their own \"She Loves You.\" It's a truly joyous and uplifting piece of music, and it perfectly encapsulates the spirit of the Beatles at their peak. Here's \"All You Need Is Love\"!"
-}

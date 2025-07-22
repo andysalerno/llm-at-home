@@ -1,7 +1,0 @@
-{
-  "title": "Come Together (Remastered 2009)",
-  "album": "Abbey Road",
-  "videoId": "oolpPmuK2I8",
-  "duration_seconds": 260,
-  "intro": "Here's a track that kicks off one of the most iconic albums of all time, Abbey Road. This is \"Come Together,\" written by John Lennon. It's got that undeniable groove, a real swampy, bluesy feel that just pulls you in. You can hear Paul McCartney's distinctive bass line, and Ringo Starr's drums are just perfectly understated, yet so effective. And listen for George Harrison's guitar work at the end \u2013 pure magic. This song was the opening track on Abbey Road, and it sets the tone for the whole album. Get ready to tap your feet, because here's \"Come Together\"!"
-}

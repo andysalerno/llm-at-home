@@ -1,7 +1,0 @@
-{
-  "title": "I Saw Her Standing There (Remastered 2009)",
-  "album": "Please Please Me",
-  "videoId": "oxwAB3SECtc",
-  "duration_seconds": 174,
-  "intro": "Here's a song that truly captures the raw energy and excitement of The Beatles' early days! This is \"I Saw Her Standing There,\" the electrifying opening track from their debut album, *Please Please Me*. What's really cool about this song is that it kicks off with Paul McCartney's iconic \"One, two, three, four!\" count-in. Now, back in those days, it was standard practice to edit out count-ins from the final recording, but their producer, George Martin, wanted to give listeners the feeling of a live performance, just like they would have experienced at the Cavern Club. It was a brilliant move that immediately plunges you into the heart of their sound. Paul McCartney started writing this one, originally calling it \"Seventeen,\" and he even borrowed a bass riff from Chuck Berry's \"Talkin' About You\" \u2013 a little nod to his rock and roll influences! John Lennon helped him finish it up, and together they created this absolute classic that perfectly showcases their youthful exuberance. Get ready to tap your feet and sing along! Here's \"I Saw Her Standing There\"!"
-}

@@ -1,7 +1,0 @@
-{
-  "title": "While My Guitar Gently Weeps (Remastered 2009)",
-  "album": "The Beatles",
-  "videoId": "bI8P6ZSHSvE",
-  "duration_seconds": 285,
-  "intro": "Alright, let's dive into a true masterpiece from the White Album, a song that really showcases George Harrison's growing prowess as a songwriter. This is \"While My Guitar Gently Weeps.\" George wrote this after returning from India, where the Beatles had been studying Transcendental Meditation. He was inspired by the Eastern concept that everything is relative, and he literally opened a book at random, saw the words \"gently weeps,\" and decided to write a song around them. But beyond that, the song also reflects some of the disharmony that was starting to creep into the band at the time. You can hear that emotion in every note. And speaking of notes, this track features a legendary guest guitarist \u2013 none other than Eric Clapton, who laid down that incredible lead guitar solo. It's a powerful and poignant song, a real highlight of the White Album, and a testament to George's incredible talent. Here it is, \"While My Guitar Gently Weeps\"."
-}

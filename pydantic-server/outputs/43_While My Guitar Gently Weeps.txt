@@ -1,7 +1,0 @@
-{
-  "title": "While My Guitar Gently Weeps",
-  "album": "Love",
-  "videoId": "NU4yWui_DFQ",
-  "duration_seconds": 227,
-  "intro": "Now, let's turn our attention to a true masterpiece from the White Album, a song that showcases the growing songwriting prowess of George Harrison: \"While My Guitar Gently Weeps.\" This isn't just a song; it's a profound statement, born from George's dismay at the world's unrealized potential for universal love. He even said the inspiration came to him while reading the I Ching, picking a book at random and seeing the words \"gently weeps.\" What makes this track even more legendary is the uncredited, yet unmistakable, guitar solo by none other than Eric Clapton, a close friend of George's. Clapton's contribution adds a raw, emotional depth that perfectly complements George's heartfelt lyrics. It's a powerful blend of blues and rock, a testament to George's evolving musical vision. This song also reflects some of the disharmony within the band at the time, with George inviting Clapton to contribute to counter the initial apathy from his bandmates. It's a truly iconic track, celebrated for its musicality and its poignant message. Here's \"While My Guitar Gently Weeps\"!"
-}

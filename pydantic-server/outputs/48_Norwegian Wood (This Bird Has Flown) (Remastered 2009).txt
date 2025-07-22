@@ -1,7 +1,0 @@
-{
-  "title": "Norwegian Wood (This Bird Has Flown) (Remastered 2009)",
-  "album": "Rubber Soul (Remastered 2009)",
-  "videoId": "Y_V6y1ZCg_8",
-  "duration_seconds": 125,
-  "intro": "Now, let's journey back to 1965 and the groundbreaking album *Rubber Soul* for a song that truly marked a turning point in The Beatles' sound: \"Norwegian Wood (This Bird Has Flown).\" This track is a lyrical masterpiece, primarily penned by John Lennon with some key contributions from Paul McCartney, and it's famous for its veiled account of an extramarital affair. But what truly sets this song apart, and what you'll hear immediately, is the mesmerizing sitar played by George Harrison. This was a revolutionary moment, marking the very first time an Indian string instrument was featured on a Western rock recording! George's interest in the sitar began while filming *Help!*, and his integration of it into \"Norwegian Wood\" not only influenced the development of raga rock and psychedelic rock but also introduced Indian classical music to a whole new Western audience. It's a testament to The Beatles' constant innovation and their willingness to explore new sonic landscapes. Get ready for a truly unique and influential piece of music. Here's \"Norwegian Wood (This Bird Has Flown)\"!"
-}

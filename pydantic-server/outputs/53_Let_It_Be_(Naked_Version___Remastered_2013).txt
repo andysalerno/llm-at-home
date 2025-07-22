@@ -1,7 +1,0 @@
-{
-  "title": "Let It Be (Naked Version / Remastered 2013)",
-  "album": "Let It Be... Naked",
-  "videoId": "lcA-qlMP11s",
-  "duration_seconds": 236,
-  "intro": "You know, when the Beatles were recording the *Let It Be* album, they had a very specific vision in mind: to get back to their roots, to that raw, stripped-down rock and roll sound. But then, Phil Spector came in and added all those orchestral embellishments, and well, Paul McCartney was never quite happy with it. So, years later, he spearheaded this project, *Let It Be... Naked*, to present the album as it was originally intended. This version of \"Let It Be\" is a prime example, showcasing the song without Spector's additions, letting the pure artistry of the band shine through. Here it is, the \"Naked\" version of \"Let It Be\"."
-}

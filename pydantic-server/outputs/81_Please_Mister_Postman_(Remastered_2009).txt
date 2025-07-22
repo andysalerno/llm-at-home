@@ -1,7 +1,0 @@
-{
-  "title": "Please Mister Postman (Remastered 2009)",
-  "album": "With The Beatles (Remastered 2009)",
-  "videoId": "v2Kk5IG2b8E",
-  "duration_seconds": 155,
-  "intro": "Here's a fantastic track from *With The Beatles* that really shows off their love for American R&B and Motown! This is \"Please Mister Postman.\" Now, this song was originally a huge hit for The Marvelettes, and it was actually the first Motown song ever to reach number one on the Billboard Hot 100 in the US. The Beatles, being the musical sponges they were, quickly added it to their live repertoire. John Lennon takes the lead on this one, with Paul and George backing him up with those signature harmonies and, of course, some enthusiastic handclaps! It's a high-energy, fun song that perfectly captures the excitement and raw talent of the early Beatles. You can really hear how much they enjoyed playing these R&B covers, and they truly made them their own. Here's \"Please Mister Postman\"!"
-}

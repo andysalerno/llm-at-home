@@ -1,7 +1,0 @@
-{
-  "title": "Anna (Go To Him) (Remastered 2009)",
-  "album": "Please Please Me",
-  "videoId": "b3zNKWyLfus",
-  "duration_seconds": 178,
-  "intro": "Here's a fantastic track from the Beatles' debut album, *Please Please Me*, a song that really highlights their early influences and John Lennon's incredible vocal range. This is \"Anna (Go To Him)\". This song is a cover, originally written and recorded by the American soul singer Arthur Alexander. It was a personal favorite of John Lennon's, and you can hear why \u2013 it's a soulful, passionate performance. Listen to how John pours his heart into the lyrics, especially when he hits those higher notes at the end of the bridges. It's said that John had a bad cold on the day they recorded this, which might have even added to the raw, emotional quality of his vocals. And pay attention to George Harrison's distinctive guitar work, and Ringo Starr's drumming, which faithfully replicates the unusual rhythm of the original. It's a brilliant example of the Beatles taking a great song and making it their own. Here's \"Anna (Go To Him)\"!"
-}

@@ -1,7 +1,0 @@
-{
-  "title": "Day Tripper",
-  "album": "1",
-  "videoId": "2IbPn5j2YKk",
-  "duration_seconds": 169,
-  "intro": "Alright, let's crank up the volume for a real rocker from 1965! This is \"Day Tripper,\" a track that was released as a double A-side single alongside \"We Can Work It Out.\" It's a song that really showcases John Lennon's blues and rock influences, built around that fantastic, driving guitar riff that just grabs you from the first note. You know, John himself described this as a \"drug song,\" and the title is a clever play on words, referring to both a tourist on a day trip and, well, a psychedelic \"trip.\" Paul McCartney also contributed to the lyrics, and he's even said it was a bit of a tongue-in-cheek jab at people who were only partially committed to the counterculture. This song was a staple of their live performances right up until they stopped touring in '66, and it's easy to hear why \u2013 it's got that raw energy that just makes you want to move! Get ready for some classic Beatles rock and roll. Here's \"Day Tripper\"!"
-}

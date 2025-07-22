@@ -1,7 +1,0 @@
-{
-  "title": "Yellow Submarine (Remastered 2009)",
-  "album": "Revolver",
-  "videoId": "RhoprlMxteE",
-  "duration_seconds": 159,
-  "intro": "Get ready to set sail on a whimsical journey with one of the most iconic and beloved Beatles songs! This is \"Yellow Submarine,\" from their groundbreaking album, Revolver. While it might sound like a simple children's song, it's got a fascinating story behind it. Paul McCartney and John Lennon wrote this one specifically for Ringo Starr to sing, and it became his signature vocal spot. You'll hear all sorts of fun sound effects, from bubbling water to clinking glasses, that really bring the submarine to life. It was a massive hit, topping the charts in several countries, and it even inspired the classic animated film. So, climb aboard, and let's dive into the world of the \"Yellow Submarine\"!"
-}

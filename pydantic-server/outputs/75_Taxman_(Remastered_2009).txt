@@ -1,7 +1,0 @@
-{
-  "title": "Taxman (Remastered 2009)",
-  "album": "Revolver",
-  "videoId": "l0zaebtU-CA",
-  "duration_seconds": 159,
-  "intro": "Here's a track that really shows George Harrison stepping into his own as a songwriter. This is \"Taxman,\" the opening track from the groundbreaking album *Revolver*. George wrote this song in protest of the incredibly high supertax imposed by the British Labour government at the time, which meant the Beatles were paying a whopping 95% of their income in taxes! Can you imagine? He even references Prime Minister Harold Wilson and Conservative Party leader Ted Heath by name in the lyrics. What's really interesting about this track is the guitar solo. While George was the lead guitarist, Paul McCartney actually played that fantastic, Indian-influenced solo on the song. It's a really unique and fiery sound that adds so much to the track's energy. And listen closely at the very beginning \u2013 you'll hear a count-in that's deliberately cut short, almost as if to say, \"Let's get straight to the point!\" This song was a bold statement from George, and it really set the tone for the innovative and experimental sounds of *Revolver*. Here's \"Taxman\"!"
-}
