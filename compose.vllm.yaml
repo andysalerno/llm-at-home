@@ -136,7 +136,6 @@ services:
       --max-num-seqs 4
       --tool-call-parser hermes
       --enable-auto-tool-choice
-      --enable-reasoning
       --served-model-name model
       --max-model-len 32648
       -tp 2

@@ -64,12 +64,12 @@ async def _run_research_agent(
     )
     state: State = ctx.deps.with_system_prompt_replaced(system_prompt)
 
-    logger.info(state)
+    logger.debug(state)
 
     async with agent.run_mcp_servers():
         result = await agent.run(task, message_history=state.message_history)
 
-    logger.info(result.new_messages())
+    logger.debug(result.new_messages())
 
     tool_outputs = _extract_tool_return_parts(result.new_messages())
 

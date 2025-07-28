@@ -20,7 +20,7 @@ class MemoryClient:
         Args:
             memory_fragment: The memory fragment to store.
         """
-        logger.info("Storing memory fragment: %s", {memory_fragment})
+        logger.debug("Storing memory fragment: %s", {memory_fragment})
         self.collection.add(documents=memory_fragment, ids=str(uuid.uuid4()))
 
         return "(memory stored)"
@@ -32,9 +32,9 @@ class MemoryClient:
         Args:
             keyword: The keyword to search for.
         """
-        logger.info("Searching memory with keyword: %s", keyword)
+        logger.debug("Searching memory with keyword: %s", keyword)
         results = self.collection.query(query_texts=keyword, n_results=5)
-        logger.info("Search results: %s", results)
+        logger.debug("Search results: %s", results)
 
         documents = results["documents"]
         documents = documents[0] if isinstance(documents, list) else documents
