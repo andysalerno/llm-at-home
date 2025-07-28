@@ -10,6 +10,12 @@ run-pydantic:
 run-langgraph:
   uv --directory ./agents-langgraph run --env-file .env src/main.py
 
+vllm-up:
+  sudo podman compose -f compose.vllm.yaml up
+
+vllm-down:
+  sudo podman compose -f compose.vllm.yaml down
+
 [working-directory: 'mcp-server-backends/sandboxed-code-execution']
 run-code-sandbox:
   docker run --rm -p 8003:8003 -e PORT=8003 python-sandbox 

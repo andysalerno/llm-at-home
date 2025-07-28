@@ -46,6 +46,19 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    # Configure logging to show only your code, not dependencies
+    logging.basicConfig(level=logging.WARNING)  # Set high level for all loggers
+    
+    # Enable INFO level for your specific modules
+    logging.getLogger(__name__).setLevel(logging.INFO)
+    logging.getLogger("agents").setLevel(logging.INFO)
+    logging.getLogger("chat_loop").setLevel(logging.INFO)
+    logging.getLogger("state").setLevel(logging.INFO)
+    logging.getLogger("tools").setLevel(logging.INFO)
+    
+    # Explicitly silence noisy dependencies
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("openai").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     asyncio.run(main())
