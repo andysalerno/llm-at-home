@@ -186,12 +186,11 @@ def _create_prompt(
         The current date is: {{ date_str }}.
 
         ## Rules
-        - You MAY invoke multiple tools to gather information related to your task.
-        - However, you are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
+        - You MAY invoke tools, *one at a time*, to gather information related to your task.
+        - You are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
         - After invoking at most **{{ max_tool_calls }}** tools, you must then invoke the `research_complete` tool to indicate that you are done.
         - Additionally, you must NOT invoke the `research_complete` tool in the same response as other tools. It must be invoked alone.
-        - After searching the web and getting relevant urls,, use the `visit_url` tool to scrape them and acquire their information.
-        - You MAY invoke any tool multiple times consecutively.
+        - After searching the web and getting relevant urls, use the `visit_url` tool to scrape them and acquire their information.
         - If you invoke a tool but it does not provide the information you need, you MAY invoke the same tool again with a different query.
 
         ## Definition of done
