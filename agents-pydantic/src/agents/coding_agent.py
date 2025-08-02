@@ -5,7 +5,7 @@ import textwrap
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.mcp import MCPServerHTTP
+from pydantic_ai.mcp import MCPServerSSE
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -70,54 +70,22 @@ async def _run_coding_agent(
     )
     state: State = ctx.deps.with_system_prompt_replaced(system_prompt)
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run(task, message_history=state.message_history)
 
     logger.info(f"new messages: {result.new_messages()}")
 
-    return result.output.handoff_message
-
-
-def _extract_tool_return_parts(
-    message_history: list[ModelMessage],
-) -> list[dict[str, str]]:
-    """Extracts the ToolReturnParts from the message history."""
-    outputs = [
-        {"tool_name": part.tool_name, "result": part.content}
-        for msg in message_history
-        if isinstance(msg, ModelRequest)
-        for part in msg.parts
-        if isinstance(part, ToolReturnPart)
-    ]
-
-    # find the handoff_message, which is actually an arg on ToolCallPart, not a ToolReturnPart
-    handoff_message = [
-        {
-            "tool_name": part.tool_name,
-            "result": part.args_as_dict().get("handoff_message"),
-        }
-        for msg in message_history
-        if isinstance(msg, ModelResponse)
-        for part in msg.parts
-        if isinstance(part, ToolCallPart)
-    ]
-
-    # get last instance of handoff_message, if it exists:
-    if handoff_message:
-        handoff_message = handoff_message[-1]
-        outputs.append(handoff_message)
-
-    return outputs
+    return result.output.final_answer
 
 
 class TaskComplete(BaseModel):
-    handoff_message: str
+    final_answer: str
 
 
 tool_output_definition = ToolOutput(
     type_=TaskComplete,
     name="task_complete",
-    description="Invoke this once you are completed with your task. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer. (You do not need to provide the answer itself; all the documents you found will be returned to the user for you.)",
+    description="Invoke this once you are completed with your task, AFTER you have observed the outcome of any tool calls. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer. (You do not need to provide the answer itself; all the documents you found will be returned to the user for you.)",
     strict=True,
 )
 
@@ -127,15 +95,16 @@ def _create_agent(
 ) -> Agent[None, TaskComplete]:
     cur_date = _get_now_str()
 
-    mcp_server = MCPServerHTTP(url="http://localhost:8002/sse")
+    mcp_server = MCPServerSSE(url="http://localhost:8002/sse")
 
     return Agent(
         model=create_model(),
         tools=[],
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         output_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=temp,
+            parallel_tool_calls=False,
             extra_body=get_extra_body(),
         ),
         system_prompt=_create_prompt(
@@ -162,6 +131,11 @@ def _create_prompt(
     return Template(
         textwrap.dedent("""\
         You are a coding assistant. You have been tasked with helping the user with a coding task.
+
+        You should:
+        - call whatever tools are necessary to perform the task
+        - after observing the output, invoke `task_complete` to mark the task as complete.
+        - do NOT invoke `task_complete` in the same turn you invoke other tools; you must first wait for those tools to return their results.
 
         ## Additional context
         The current date is: {{ date_str }}.

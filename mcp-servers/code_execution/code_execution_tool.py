@@ -20,7 +20,7 @@ def setup_mcp(mcp: FastMCP):
         Simply placing the result on the last line will not work.
 
         Args:
-            query: The query to search for. Remember, this is a google query, so write your query as you would in Google.
+            code: The Python code to execute, which must include a print statement to output the result.
         """
         logger.info("Executing code using endpoint: %s", CODE_EXECUTION_ENDPOINT)
         return await CodeExecutionTool(CODE_EXECUTION_ENDPOINT)(code)

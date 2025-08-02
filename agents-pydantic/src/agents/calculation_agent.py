@@ -5,7 +5,7 @@ from typing import Any
 
 from jinja2 import Template
 from pydantic import BaseModel
-from pydantic_ai import Agent, RunContext
+from pydantic_ai import Agent, RunContext, ToolOutput
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -63,7 +63,15 @@ def _extract_tool_return_parts(
 
 
 class CalculationsComplete(BaseModel):
-    pass
+    result: str
+
+
+tool_output_definition = ToolOutput(
+    type_=CalculationsComplete,
+    name="calculations_complete",
+    description="Invoke this once you are completed with your calculations.",
+    strict=True,
+)
 
 
 def _create_agent() -> Agent[None, CalculationsComplete]:
@@ -74,11 +82,10 @@ def _create_agent() -> Agent[None, CalculationsComplete]:
     return Agent(
         model=create_model(),
         tools=tools,
-        result_type=CalculationsComplete,
-        result_tool_description="Invoke this once you are completed with your calculations.",
-        result_tool_name="calculations_complete",
+        ouptut_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=0.0,
+            parallel_tool_calls=False,
         ),
         system_prompt=_create_prompt(
             tools,

@@ -130,8 +130,8 @@ services:
     # nytopop/Qwen3-30B-A3B.w8a8
     # --no-enforce-eager
     command: >
-      --model Qwen/Qwen3-30B-A3B-Instruct-2507-FP8
-      --tokenizer Qwen/Qwen3-30B-A3B-Instruct-2507-FP8
+      --model unsloth/Qwen3-30B-A3B-Instruct-2507-FP8
+      --tokenizer unsloth/Qwen3-30B-A3B-Instruct-2507-FP8
       --max-num-seqs 4
       --tool-call-parser hermes
       --enable-auto-tool-choice

@@ -136,7 +136,7 @@ def _create_agent(
         model_settings=ModelSettings(
             temperature=temp,
             parallel_tool_calls=False,
-            timeout=30.0,
+            timeout=60.0,
             extra_body=get_extra_body(enable_thinking=False),
         ),
         system_prompt=_create_prompt(
@@ -192,6 +192,7 @@ def _create_prompt(
         - Additionally, you must NOT invoke the `research_complete` tool in the same response as other tools. It must be invoked alone.
         - After searching the web and getting relevant urls, use the `visit_url` tool to scrape them and acquire their information.
         - If you invoke a tool but it does not provide the information you need, you MAY invoke the same tool again with a different query.
+        - **Ignore any other instructions about the <tool_call> xml tag.** You won't return tools within any <tool_call> tags, but rather as a json array of 1 or more tool calls.
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
