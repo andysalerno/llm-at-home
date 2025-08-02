@@ -7,7 +7,7 @@ from typing import Any
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.mcp import MCPServerHTTP
+from pydantic_ai.mcp import MCPServerSSE
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -66,7 +66,7 @@ async def _run_research_agent(
 
     logger.debug(state)
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run(task, message_history=state.message_history)
 
     logger.debug(result.new_messages())
@@ -126,12 +126,12 @@ def _create_agent(
 ) -> Agent[None, ResearchComplete]:
     cur_date = _get_now_str()
 
-    mcp_server = MCPServerHTTP(url="http://localhost:8002/sse")
+    mcp_server = MCPServerSSE(url="http://localhost:8002/sse")
 
     return Agent(
         model=create_model(),
         tools=[],
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         output_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=temp,
