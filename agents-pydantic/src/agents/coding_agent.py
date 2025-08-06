@@ -84,8 +84,8 @@ class TaskComplete(BaseModel):
 
 tool_output_definition = ToolOutput(
     type_=TaskComplete,
-    name="task_complete",
-    description="Invoke this once you are completed with your task, AFTER you have observed the outcome of any tool calls. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer. (You do not need to provide the answer itself; all the documents you found will be returned to the user for you.)",
+    name="final_answer",
+    description="Invoke this once you are completed with your task. MUST be invoked alone, not allowed to invoke this in parallel with other tools. Include a brief handoff message (1-2 sentences) how confident you are that your research uncovered a complete answer.",
     strict=True,
 )
 
@@ -130,12 +130,15 @@ def _create_prompt(
 ) -> str:
     return Template(
         textwrap.dedent("""\
-        You are a coding assistant. You have been tasked with helping the user with a coding task.
+        You are a coding assistant. You have been tasked with helping the user with a math, logic, or coding task.
 
         You should:
-        - call whatever tools are necessary to perform the task
-        - after observing the output, invoke `task_complete` to mark the task as complete.
-        - do NOT invoke `task_complete` in the same turn you invoke other tools; you must first wait for those tools to return their results.
+        - call whatever tools are necessary to perform the task.
+        - after observing the output, invoke `final_answer` to mark the task as complete.
+
+        Additional rules:
+        - NEVER invoke `final_answer` at the same time as other tools. You must first observe the output of any tool calls, THEN invoke `final_answer`.
+        - Your response output MUST be a json array of one or more tool calls - even if you wish to invoke just one tool, emit a json array with that single tool call:
 
         ## Additional context
         The current date is: {{ date_str }}.

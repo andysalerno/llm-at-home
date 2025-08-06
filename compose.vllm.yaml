@@ -3,7 +3,7 @@ name: vllm-stack
 services:
   llmhost:
     image: vllm/vllm-openai:v0.10.0
-    # image: localhost/vllmgguf:latest
+    # image: localhost/vllm-nightly:latest
     # ipc: host
     shm_size: 1g
     environment:
@@ -130,11 +130,8 @@ services:
     # nytopop/Qwen3-30B-A3B.w8a8
     # --no-enforce-eager
     command: >
-      --model unsloth/Qwen3-30B-A3B-Instruct-2507-FP8
-      --tokenizer unsloth/Qwen3-30B-A3B-Instruct-2507-FP8
+      --model unsloth/gpt-oss-20b
       --max-num-seqs 4
-      --tool-call-parser hermes
-      --enable-auto-tool-choice
       --served-model-name model
       --max-model-len 32648
       -tp 2
