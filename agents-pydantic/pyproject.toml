@@ -18,7 +18,7 @@ dependencies = [
     "opentelemetry-sdk",
     "opentelemetry-exporter-otlp",
     "openinference-instrumentation-openai",
-    "pydantic-ai==0.4.7",
+    "pydantic-ai==0.5.0",
 ]
 
 [tool.ruff.lint]

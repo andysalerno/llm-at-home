@@ -7,7 +7,7 @@ from typing import Any
 from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.mcp import MCPServerHTTP
+from pydantic_ai.mcp import MCPServerSSE
 from pydantic_ai.messages import (
     ModelMessage,
     ModelRequest,
@@ -66,7 +66,7 @@ async def _run_research_agent(
 
     logger.debug(state)
 
-    async with agent.run_mcp_servers():
+    async with agent:
         result = await agent.run(task, message_history=state.message_history)
 
     logger.debug(result.new_messages())
@@ -126,17 +126,17 @@ def _create_agent(
 ) -> Agent[None, ResearchComplete]:
     cur_date = _get_now_str()
 
-    mcp_server = MCPServerHTTP(url="http://localhost:8002/sse")
+    mcp_server = MCPServerSSE(url="http://localhost:8002/sse")
 
     return Agent(
         model=create_model(),
         tools=[],
-        mcp_servers=[mcp_server],
+        toolsets=[mcp_server],
         output_type=tool_output_definition,
         model_settings=ModelSettings(
             temperature=temp,
             parallel_tool_calls=False,
-            timeout=30.0,
+            timeout=60.0,
             extra_body=get_extra_body(enable_thinking=False),
         ),
         system_prompt=_create_prompt(
@@ -186,13 +186,13 @@ def _create_prompt(
         The current date is: {{ date_str }}.
 
         ## Rules
-        - You MAY invoke multiple tools to gather information related to your task.
-        - However, you are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
+        - You MAY invoke tools, *one at a time*, to gather information related to your task.
+        - You are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
         - After invoking at most **{{ max_tool_calls }}** tools, you must then invoke the `research_complete` tool to indicate that you are done.
         - Additionally, you must NOT invoke the `research_complete` tool in the same response as other tools. It must be invoked alone.
-        - After searching the web and getting relevant urls,, use the `visit_url` tool to scrape them and acquire their information.
-        - You MAY invoke any tool multiple times consecutively.
+        - After searching the web and getting relevant urls, use the `visit_url` tool to scrape them and acquire their information.
         - If you invoke a tool but it does not provide the information you need, you MAY invoke the same tool again with a different query.
+        - **Ignore any other instructions about the <tool_call> xml tag.** You won't return tools within any <tool_call> tags, but rather as a json array of 1 or more tool calls.
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.

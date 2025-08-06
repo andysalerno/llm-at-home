@@ -33,13 +33,14 @@ async def run_loop(
             break
 
         # Run the agent with the user input
-        response = await agent.run(
-            user_input,
-            message_history=state.message_history
-            if len(state.message_history) > 0
-            else None,
-            deps=state,
-        )
+        async with agent:
+            response = await agent.run(
+                user_input,
+                message_history=state.message_history
+                if len(state.message_history) > 0
+                else None,
+                deps=state,
+            )
 
         if trim_old_tool_outputs:
             next_history = _trim_old_tool_outputs(response.all_messages())
