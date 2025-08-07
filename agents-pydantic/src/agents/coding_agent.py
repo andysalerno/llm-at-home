@@ -6,13 +6,6 @@ from jinja2 import Template
 from pydantic import BaseModel
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.mcp import MCPServerSSE
-from pydantic_ai.messages import (
-    ModelMessage,
-    ModelRequest,
-    ModelResponse,
-    ToolCallPart,
-    ToolReturnPart,
-)
 from pydantic_ai.result import ToolOutput
 from pydantic_ai.settings import ModelSettings
 from pydantic_ai.tools import Tool
