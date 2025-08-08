@@ -5,10 +5,10 @@ from agents import Agent, ModelSettings
 from jinja2 import Template
 from model import get_model
 from agents.tool import Tool
-from agents.research_agent import research_agent_tool
+from agent_definitions.research_agent import research_agent_tool
 
 
-def create_responding_agent(
+async def create_responding_agent(
     temperature: float = 0.2,
     extra_tools: list[Tool] | None = None,
 ) -> Agent:
@@ -17,7 +17,7 @@ def create_responding_agent(
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
     tools = [
-        research_agent_tool(),
+        await research_agent_tool(),
         # research_agent_tool(include_tools_in_prompt, agent_temp=0.2),
         # coding_agent_tool(agent_temp=0.1),
         # coding_agent_tool(

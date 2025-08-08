@@ -7,7 +7,7 @@ import json
 from rich.console import Console
 
 from agents import RunConfig, Runner, custom_span, trace
-from .agents.responding_agent import create_responding_agent
+from agent_definitions.responding_agent import create_responding_agent
 
 from planner_agent import WebSearchItem, WebSearchPlan, create_planner_agent
 from search_agent import create_search_agent
@@ -16,11 +16,11 @@ from printer import Printer
 
 
 async def run_single(input: str):
-    responding_agent = create_responding_agent()
+    responding_agent = await create_responding_agent()
 
     output = await Runner.run(responding_agent, input)
 
-    print(json.dumps(output))
+    print(output.final_output)
 
     return output
 

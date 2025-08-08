@@ -15,7 +15,7 @@ tracer_provider = register(
 
 
 async def main():
-    query = input("What would you like to research? ")
+    query = input("input: ")
 
     # await ResearchManager().run(query)
     output = await run_single(query)
