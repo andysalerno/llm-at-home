@@ -8,7 +8,7 @@ from agents.tool import Tool
 from agents.research_agent import research_agent_tool
 
 
-def create_responding_assistant(
+def create_responding_agent(
     temperature: float = 0.2,
     extra_tools: list[Tool] | None = None,
 ) -> Agent:

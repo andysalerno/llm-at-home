@@ -2,15 +2,27 @@ from __future__ import annotations
 
 import asyncio
 import time
+import json
 
 from rich.console import Console
 
-from agents import RunConfig, Runner, custom_span, gen_trace_id, trace
+from agents import RunConfig, Runner, custom_span, trace
+from .agents.responding_agent import create_responding_agent
 
 from planner_agent import WebSearchItem, WebSearchPlan, create_planner_agent
 from search_agent import create_search_agent
 from writer_agent import ReportData, create_writer_agent
 from printer import Printer
+
+
+async def run_single(input: str):
+    responding_agent = create_responding_agent()
+
+    output = await Runner.run(responding_agent, input)
+
+    print(json.dumps(output))
+
+    return output
 
 
 class ResearchManager:

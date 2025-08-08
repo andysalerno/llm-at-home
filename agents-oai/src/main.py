@@ -4,7 +4,7 @@ import asyncio
 import os
 
 from model import initialize_model
-from manager import ResearchManager
+from manager import ResearchManager, run_single
 from phoenix.otel import register
 
 # configure the Phoenix tracer
@@ -17,7 +17,9 @@ tracer_provider = register(
 async def main():
     query = input("What would you like to research? ")
 
-    await ResearchManager().run(query)
+    # await ResearchManager().run(query)
+    output = await run_single(query)
+    print("Final output:", output)
 
 
 if __name__ == "__main__":
