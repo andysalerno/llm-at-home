@@ -7,6 +7,9 @@ run-smolagents:
 run-pydantic:
   uv --directory ./agents-pydantic run --env-file .env ./src/main.py
 
+run-oai:
+  uv --directory ./agents-oai run --env-file .env main.py
+
 run-langgraph:
   uv --directory ./agents-langgraph run --env-file .env src/main.py
 

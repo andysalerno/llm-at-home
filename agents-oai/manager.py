@@ -5,7 +5,7 @@ import time
 
 from rich.console import Console
 
-from agents import Runner, custom_span, gen_trace_id, trace
+from agents import RunConfig, Runner, custom_span, gen_trace_id, trace
 
 from planner_agent import WebSearchItem, WebSearchPlan, create_planner_agent
 from search_agent import create_search_agent
@@ -19,15 +19,7 @@ class ResearchManager:
         self.printer = Printer(self.console)
 
     async def run(self, query: str) -> None:
-        trace_id = gen_trace_id()
-        with trace("Research trace", trace_id=trace_id):
-            self.printer.update_item(
-                "trace_id",
-                f"View trace: https://platform.openai.com/traces/trace?trace_id={trace_id}",
-                is_done=True,
-                hide_checkmark=True,
-            )
-
+        with trace("Research trace"):
             self.printer.update_item(
                 "starting",
                 "Starting research...",
@@ -36,8 +28,6 @@ class ResearchManager:
             )
             search_plan = await self._plan_searches(query)
             search_results = await self._perform_searches(search_plan)
-
-            print(f"Search results: {search_results}")
 
             report = await self._write_report(query, search_results)
 
@@ -86,13 +76,12 @@ class ResearchManager:
 
     async def _search(self, item: WebSearchItem) -> str | None:
         input = f"Search term: {item.query}\nReason for searching: {item.reason}"
-        print(f"Searching: {input}")
         try:
             result = await Runner.run(
                 await create_search_agent(),
                 input,
+                run_config=RunConfig(trace_include_sensitive_data=True),
             )
-            print(f"Search result for '{item.query}': {result.final_output}")
             return str(result.final_output)
         except Exception:
             return None
