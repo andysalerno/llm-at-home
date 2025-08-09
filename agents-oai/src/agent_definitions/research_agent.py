@@ -52,6 +52,7 @@ async def create_research_agent(
         tools=[],
         # output_type=ResearchComplete, # breaks in vllm and llamacpp
         mcp_servers=[mcp_server],
+        handoffs=[],
         model_settings=ModelSettings(
             temperature=temp,
         ),

@@ -5,32 +5,31 @@ from agents import Agent, ModelSettings
 from jinja2 import Template
 from model import get_model
 from agents.tool import Tool
-from agent_definitions.research_agent import research_agent_tool
+from agent_definitions.research_agent import create_research_agent, research_agent_tool
 
 
 async def create_responding_agent(
     temperature: float = 0.2,
     extra_tools: list[Tool] | None = None,
+    use_handoffs: bool = True,
 ) -> Agent:
     if extra_tools is None:
         extra_tools = []
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    tools = [
-        await research_agent_tool(),
-        # research_agent_tool(include_tools_in_prompt, agent_temp=0.2),
-        # coding_agent_tool(agent_temp=0.1),
-        # coding_agent_tool(
-        #     tool_name="calculator",
-        #     tool_description="Performs a calculation, described in natural language, such as: '2 + 2', 'days between 2023-01-08 and 2024-02-12', '15 pounds times 23 kilograms', etc.",
-        #     agent_temp=0.1,
-        # ),
-        *extra_tools,
-    ]
+    if use_handoffs:
+        tools = extra_tools
+        handoffs = [await create_research_agent(temperature)]
+    else:
+        tools = [await research_agent_tool(), *extra_tools]
+        handoffs = []
+
+    handoffs = [await create_research_agent(temperature)]
 
     agent = Agent(
         name="RespondingAgent",
         tools=tools,
+        handoffs=handoffs,
         instructions=_create_prompt(cur_date),
         model=get_model(),
         model_settings=ModelSettings(
