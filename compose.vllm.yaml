@@ -129,8 +129,12 @@ services:
     # Qwen/Qwen3-30B-A3B-FP8
     # nytopop/Qwen3-30B-A3B.w8a8
     # --no-enforce-eager
+    # --model QuantTrio/Qwen3-30B-A3B-Instruct-2507-GPTQ-Int8
     command: >
-      --model unsloth/gpt-oss-20b
+      --model ramblingpolymath/Qwen3-30B-A3B-Instruct-2507-W8A8
+      --tokenizer unsloth/Qwen3-30B-A3B-Instruct-2507
+      --tool-call-parser hermes
+      --enable-auto-tool-choice
       --max-num-seqs 4
       --served-model-name model
       --max-model-len 32648

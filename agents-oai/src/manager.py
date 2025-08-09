@@ -5,12 +5,42 @@ import time
 
 from rich.console import Console
 
-from agents import Runner, custom_span, gen_trace_id, trace
+from agents import RunConfig, Runner, custom_span, trace
+from agent_definitions.responding_agent import create_responding_agent
 
 from planner_agent import WebSearchItem, WebSearchPlan, create_planner_agent
 from search_agent import create_search_agent
 from writer_agent import ReportData, create_writer_agent
 from printer import Printer
+
+
+async def run_single(input: str):
+    responding_agent = await create_responding_agent()
+
+    # output = await Runner.run(responding_agent, input)
+    result = Runner.run_streamed(responding_agent, input)
+
+    async for event in result.stream_events():
+        if event.type == "raw_response_event":
+            if event.data.type == "response.output_text.delta":
+                print(event.data.delta, end="", flush=True)
+            elif (
+                event.data.type == "response.output_item.done"
+                and event.data.item.type == "function_call"
+            ):
+                print(f"invoking function: {event.data.item.name}", flush=True)
+        elif event.type == "agent_updated_stream_event":
+            print(f"agent updated: {event.new_agent.name}", flush=True)
+        elif (
+            event.type == "run_item_stream_event"
+            and event.item.type == "message_output_item"
+        ):
+            # full message complete: print a new line
+            print("", flush=True)
+        else:
+            print(f"unknown event: {event}", flush=True)
+
+    print("", flush=True)
 
 
 class ResearchManager:
@@ -19,15 +49,7 @@ class ResearchManager:
         self.printer = Printer(self.console)
 
     async def run(self, query: str) -> None:
-        trace_id = gen_trace_id()
-        with trace("Research trace", trace_id=trace_id):
-            self.printer.update_item(
-                "trace_id",
-                f"View trace: https://platform.openai.com/traces/trace?trace_id={trace_id}",
-                is_done=True,
-                hide_checkmark=True,
-            )
-
+        with trace("Research trace"):
             self.printer.update_item(
                 "starting",
                 "Starting research...",
@@ -36,8 +58,6 @@ class ResearchManager:
             )
             search_plan = await self._plan_searches(query)
             search_results = await self._perform_searches(search_plan)
-
-            print(f"Search results: {search_results}")
 
             report = await self._write_report(query, search_results)
 
@@ -86,13 +106,12 @@ class ResearchManager:
 
     async def _search(self, item: WebSearchItem) -> str | None:
         input = f"Search term: {item.query}\nReason for searching: {item.reason}"
-        print(f"Searching: {input}")
         try:
             result = await Runner.run(
                 await create_search_agent(),
                 input,
+                run_config=RunConfig(trace_include_sensitive_data=True),
             )
-            print(f"Search result for '{item.query}': {result.final_output}")
             return str(result.final_output)
         except Exception:
             return None
