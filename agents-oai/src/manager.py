@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import time
-import json
 
 from rich.console import Console
 
@@ -18,11 +17,30 @@ from printer import Printer
 async def run_single(input: str):
     responding_agent = await create_responding_agent()
 
-    output = await Runner.run(responding_agent, input)
+    # output = await Runner.run(responding_agent, input)
+    result = Runner.run_streamed(responding_agent, input)
 
-    print(output.final_output)
+    async for event in result.stream_events():
+        if event.type == "raw_response_event":
+            if event.data.type == "response.output_text.delta":
+                print(event.data.delta, end="", flush=True)
+            elif (
+                event.data.type == "response.output_item.done"
+                and event.data.item.type == "function_call"
+            ):
+                print(f"invoking function: {event.data.item.name}", flush=True)
+        elif event.type == "agent_updated_stream_event":
+            print(f"agent updated: {event.new_agent.name}", flush=True)
+        elif (
+            event.type == "run_item_stream_event"
+            and event.item.type == "message_output_item"
+        ):
+            # full message complete: print a new line
+            print("", flush=True)
+        else:
+            print(f"unknown event: {event}", flush=True)
 
-    return output
+    print("", flush=True)
 
 
 class ResearchManager:

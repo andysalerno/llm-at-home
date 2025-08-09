@@ -50,7 +50,7 @@ async def create_research_agent(
         name="ResearchAgent",
         model=get_model(),
         tools=[],
-        # output_type=ResearchComplete,
+        # output_type=ResearchComplete, # breaks in vllm and llamacpp
         mcp_servers=[mcp_server],
         model_settings=ModelSettings(
             temperature=temp,
@@ -88,9 +88,7 @@ def _create_prompt(
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
-        At that point, invoke the tool `handoff_message` to indicate that you are done. Include a handoff message briefly summarizing what you found.
-        It is not your responsibility to write a summary or report - the user will see all the documents you found.
-        Simply invoke `research_complete` to share your findings.
+        At that point, simply respond with the answer you found, to indicate that you are done. Include a handoff message briefly summarizing what you found.
         """).strip(),
     ).render(
         date_str=date_str,
