@@ -4,7 +4,7 @@ import asyncio
 import os
 
 from model import initialize_model
-from manager import ResearchManager, run_single
+from manager import run_single
 from phoenix.otel import register
 
 # configure the Phoenix tracer
