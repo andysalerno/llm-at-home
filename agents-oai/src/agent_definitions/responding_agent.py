@@ -29,7 +29,7 @@ async def create_responding_agent(
     agent = Agent(
         name="RespondingAgent",
         tools=tools,
-        handoffs=handoffs,
+        handoffs=handoffs,  # type: ignore
         instructions=_create_prompt(cur_date),
         model=get_model(),
         model_settings=ModelSettings(

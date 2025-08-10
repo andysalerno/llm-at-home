@@ -18,7 +18,8 @@ def setup_mcp(mcp: FastMCP):
 
 
 async def serve(mcp: FastMCP):
-    await mcp.run_sse_async()
+    # await mcp.run_sse_async()
+    await mcp.run_streamable_http_async()
 
 
 if __name__ == "__main__":
