@@ -4,7 +4,7 @@ import textwrap
 
 from jinja2 import Template
 from pydantic import BaseModel
-from agents.mcp import MCPServerSse, MCPServer
+from agents.mcp import MCPServerStreamableHttp, MCPServer
 
 from agents import Agent, ModelSettings, Runner
 from model import get_model
@@ -33,7 +33,8 @@ class ResearchComplete(BaseModel):
 
 
 async def create_mcp_server() -> MCPServer:
-    server = MCPServerSse(params={"url": "http://localhost:8002/sse"})
+    # server = MCPServerSse(params={"url": "http://localhost:8002/sse"})
+    server = MCPServerStreamableHttp(params={"url": "http://localhost:8002/mcp"})
     await server.connect()
 
     return server

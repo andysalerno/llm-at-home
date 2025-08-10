@@ -5,7 +5,7 @@ from agent_definitions.responding_agent import create_responding_agent
 
 
 async def run_single(input: str):
-    responding_agent = await create_responding_agent()
+    responding_agent = await create_responding_agent(use_handoffs=False)
 
     result = Runner.run_streamed(responding_agent, input)
 
