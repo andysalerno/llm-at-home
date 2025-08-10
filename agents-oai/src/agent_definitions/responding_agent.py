@@ -5,12 +5,14 @@ from agents import Agent, Handoff, ModelSettings, handoff
 from jinja2 import Template
 from model import get_model
 from agents.tool import Tool
+from agents.mcp import MCPServer
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
 
 
 async def create_responding_agent(
     temperature: float = 0.2,
     extra_tools: list[Tool] | None = None,
+    researcher_mcp_server: MCPServer | None = None,
     use_handoffs: bool = True,
 ) -> Agent:
     if extra_tools is None:
@@ -20,15 +22,20 @@ async def create_responding_agent(
     handoffs: list[Handoff]
     if use_handoffs:
         tools = extra_tools
-        handoffs = [handoff(await create_research_agent(temperature))]
+        handoffs = [
+            handoff(await create_research_agent(temperature, researcher_mcp_server))
+        ]
     else:
-        tools = [await research_agent_tool(), *extra_tools]
+        tools = [
+            await research_agent_tool(temperature, researcher_mcp_server),
+            *extra_tools,
+        ]
         handoffs = []
 
     agent = Agent(
         name="RespondingAgent",
         tools=tools,
-        handoffs=handoffs,
+        handoffs=handoffs,  # type: ignore
         instructions=_create_prompt(cur_date),
         model=get_model(),
         model_settings=ModelSettings(
