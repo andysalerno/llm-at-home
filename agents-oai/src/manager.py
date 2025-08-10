@@ -2,18 +2,13 @@ from __future__ import annotations
 
 from agents import Runner
 from agent_definitions.responding_agent import create_responding_agent
-from agents.mcp import MCPServerStreamableHttp, MCPServer
-
-
-async def create_mcp_server() -> MCPServer:
-    # await server.connect()
-    # return server
-    return MCPServerStreamableHttp(params={"url": "http://localhost:8002/mcp"})
+from agents.mcp import MCPServerStreamableHttp
 
 
 async def run_single(input: str):
     async with MCPServerStreamableHttp(
-        params={"url": "http://localhost:8002/mcp"}
+        params={"url": "http://localhost:8002/mcp"},
+        cache_tools_list=True,
     ) as mcp_server:
         responding_agent = await create_responding_agent(
             use_handoffs=True, researcher_mcp_server=mcp_server
