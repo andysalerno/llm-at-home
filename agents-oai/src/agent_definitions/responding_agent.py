@@ -1,7 +1,7 @@
 import datetime
 import textwrap
 
-from agents import Agent, ModelSettings
+from agents import Agent, Handoff, ModelSettings, handoff
 from jinja2 import Template
 from model import get_model
 from agents.tool import Tool
@@ -17,19 +17,18 @@ async def create_responding_agent(
         extra_tools = []
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
+    handoffs: list[Handoff]
     if use_handoffs:
         tools = extra_tools
-        handoffs = [await create_research_agent(temperature)]
+        handoffs = [handoff(await create_research_agent(temperature))]
     else:
         tools = [await research_agent_tool(), *extra_tools]
         handoffs = []
 
-    handoffs = [await create_research_agent(temperature)]
-
     agent = Agent(
         name="RespondingAgent",
         tools=tools,
-        handoffs=handoffs,  # type: ignore
+        handoffs=handoffs,
         instructions=_create_prompt(cur_date),
         model=get_model(),
         model_settings=ModelSettings(

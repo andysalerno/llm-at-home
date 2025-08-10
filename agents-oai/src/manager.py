@@ -5,11 +5,12 @@ from agent_definitions.responding_agent import create_responding_agent
 
 
 async def run_single(input: str):
-    responding_agent = await create_responding_agent(use_handoffs=False)
+    responding_agent = await create_responding_agent(use_handoffs=True)
 
     result = Runner.run_streamed(responding_agent, input)
 
     async for event in result.stream_events():
+        # print(f"saw event: {event.type}", flush=True)
         if event.type == "raw_response_event":
             if event.data.type == "response.output_text.delta":
                 print(event.data.delta, end="", flush=True)

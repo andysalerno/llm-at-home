@@ -1,6 +1,7 @@
 import datetime
 import logging
 import textwrap
+from typing import Any
 
 from jinja2 import Template
 from pydantic import BaseModel
@@ -42,7 +43,7 @@ async def create_mcp_server() -> MCPServer:
 
 async def create_research_agent(
     temp: float,
-) -> Agent:
+) -> Agent[Any]:
     cur_date = _get_now_str()
 
     mcp_server = await create_mcp_server()
