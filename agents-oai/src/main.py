@@ -6,6 +6,8 @@ import os
 from model import initialize_model
 from manager import run_single
 from phoenix.otel import register
+from agents.mcp import MCPServerStreamableHttp
+from agents import SQLiteSession
 
 # configure the Phoenix tracer
 tracer_provider = register(
@@ -15,10 +17,20 @@ tracer_provider = register(
 
 
 async def main():
-    query = input("input: ")
+    async with MCPServerStreamableHttp(
+        params={"url": "http://localhost:8002/mcp"},
+        cache_tools_list=True,
+    ) as mcp_server:
+        # session = SQLiteSession("session_1")
+        context = []
+        while True:
+            query = input("input: ")
 
-    output = await run_single(query)
-    print("Final output:", output)
+            context.append({"content": query, "role": "user"})
+
+            output = await run_single(query, context, mcp_server)
+            context = output
+            print("Final output:", output)
 
 
 if __name__ == "__main__":
