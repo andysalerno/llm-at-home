@@ -1,10 +1,11 @@
 import datetime
 import logging
 import textwrap
+from typing import Any
 
 from jinja2 import Template
 from pydantic import BaseModel
-from agents.mcp import MCPServerSse, MCPServer
+from agents.mcp import MCPServer
 
 from agents import Agent, ModelSettings, Runner
 from model import get_model
@@ -15,7 +16,9 @@ logger = logging.getLogger(__name__)
 
 # TODO: add a flag to force the agent to remove
 # existing tool calls and outputs before running
-async def research_agent_tool(agent_temp: float = 0.0) -> Tool:
+async def research_agent_tool(
+    agent_temp: float = 0.0, mcp_server: MCPServer | None = None
+) -> Tool:
     description = (
         "Gives a task to a research agent and returns the final result of its research."
         ' Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."'
@@ -23,7 +26,7 @@ async def research_agent_tool(agent_temp: float = 0.0) -> Tool:
         " The research agent will return a report with the results of the research, including relevant documents."
     )
 
-    agent = await create_research_agent(agent_temp)
+    agent = await create_research_agent(agent_temp, mcp_server)
 
     return agent.as_tool(tool_name="ask_researcher", tool_description=description)
 
@@ -32,26 +35,23 @@ class ResearchComplete(BaseModel):
     handoff_message: str
 
 
-async def create_mcp_server() -> MCPServer:
-    server = MCPServerSse(params={"url": "http://localhost:8002/sse"})
-    await server.connect()
-
-    return server
-
-
 async def create_research_agent(
     temp: float,
-) -> Agent:
+    mcp_server: MCPServer | None = None,
+) -> Agent[Any]:
     cur_date = _get_now_str()
 
-    mcp_server = await create_mcp_server()
+    # mcp_server = await create_mcp_server()
+
+    mcp_servers = [mcp_server] if mcp_server else []
 
     return Agent(
         name="ResearchAgent",
         model=get_model(),
         tools=[],
         # output_type=ResearchComplete, # breaks in vllm and llamacpp
-        mcp_servers=[mcp_server],
+        mcp_servers=mcp_servers,
+        handoffs=[],
         model_settings=ModelSettings(
             temperature=temp,
         ),

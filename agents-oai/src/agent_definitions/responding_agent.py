@@ -1,36 +1,41 @@
 import datetime
 import textwrap
 
-from agents import Agent, ModelSettings
+from agents import Agent, Handoff, ModelSettings, handoff
 from jinja2 import Template
 from model import get_model
 from agents.tool import Tool
-from agent_definitions.research_agent import research_agent_tool
+from agents.mcp import MCPServer
+from agent_definitions.research_agent import create_research_agent, research_agent_tool
 
 
 async def create_responding_agent(
     temperature: float = 0.2,
     extra_tools: list[Tool] | None = None,
+    researcher_mcp_server: MCPServer | None = None,
+    use_handoffs: bool = True,
 ) -> Agent:
     if extra_tools is None:
         extra_tools = []
     cur_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-    tools = [
-        await research_agent_tool(),
-        # research_agent_tool(include_tools_in_prompt, agent_temp=0.2),
-        # coding_agent_tool(agent_temp=0.1),
-        # coding_agent_tool(
-        #     tool_name="calculator",
-        #     tool_description="Performs a calculation, described in natural language, such as: '2 + 2', 'days between 2023-01-08 and 2024-02-12', '15 pounds times 23 kilograms', etc.",
-        #     agent_temp=0.1,
-        # ),
-        *extra_tools,
-    ]
+    handoffs: list[Handoff]
+    if use_handoffs:
+        tools = extra_tools
+        handoffs = [
+            handoff(await create_research_agent(temperature, researcher_mcp_server))
+        ]
+    else:
+        tools = [
+            await research_agent_tool(temperature, researcher_mcp_server),
+            *extra_tools,
+        ]
+        handoffs = []
 
     agent = Agent(
         name="RespondingAgent",
         tools=tools,
+        handoffs=handoffs,  # type: ignore
         instructions=_create_prompt(cur_date),
         model=get_model(),
         model_settings=ModelSettings(

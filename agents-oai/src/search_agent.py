@@ -1,5 +1,5 @@
 from agents import Agent, HostedMCPTool, WebSearchTool, Runner
-from agents.mcp import MCPServerSse, MCPServer
+from agents.mcp import MCPServerStreamableHttp, MCPServer
 from agents.model_settings import ModelSettings
 from model import get_model
 
@@ -14,7 +14,8 @@ INSTRUCTIONS = (
 
 
 async def create_mcp_server() -> MCPServer:
-    server = MCPServerSse(params={"url": "http://localhost:8002/sse"})
+    # server = MCPServerSse(params={"url": "http://localhost:8002/sse"})
+    server = MCPServerStreamableHttp(params={"url": "http://localhost:8002/mcp"})
     await server.connect()
 
     return server
