@@ -56,9 +56,6 @@ def _create_prompt(
 
         Since your internal knowledge is limited, you may invoke tools to get more information (including up-to-date information).
 
-        ## Additional context
-        The current date is: {{ date_str }}.
-
         ## Additional rules
         - Always prefer to use the research assistant over your own knowledge. Even when you think you know the answer, it is better to use the research assistant to get the most accurate and up-to-date information, and to discover sources to provide to the user.
         - If you still cannot find a relevant result, even after invoking the research assistant, tell the user you do not know, or invoke the researcher again with a reformulated task.
@@ -68,6 +65,9 @@ def _create_prompt(
         - You are free to invoke tools/assistants/researchers as many times as you need to construct a complete answer. In fact, you are encouraged to break the task into smaller sub-tasks and invoke the tools/assistants/researchers for each of them.
         - Do not hallucinate! Any factual information you provide must be based on findings from the research assistant.
         - When possible, cite your sources via markdown links.
+
+        ## Additional context
+        The current date is: {{ date_str }}.
         """).strip(),
     ).render(
         date_str=date_str,

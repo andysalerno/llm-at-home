@@ -75,9 +75,6 @@ def _create_prompt(
 
         Research is performed by querying the web and visiting relevant web pages.
 
-        ## Additional context
-        The current date is: {{ date_str }}.
-
         ## Rules
         - You MUST invoke tools, *one at a time*, to gather information related to your task.
         - You are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
@@ -89,6 +86,9 @@ def _create_prompt(
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
         At that point, simply respond with the answer you found, to indicate that you are done. Include a handoff message briefly summarizing what you found.
+
+        ## Additional context
+        The current date is: {{ date_str }}.
         """).strip(),
     ).render(
         date_str=date_str,
