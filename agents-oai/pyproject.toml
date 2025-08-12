@@ -5,9 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "arize-phoenix-otel>=0.12.1",
-    "openai-agents[litellm]>=0.2.5",
-    "openinference-instrumentation-litellm>=0.1.24",
-    "openinference-instrumentation-openai-agents>=1.1.1",
-    "rich>=14.1.0",
+    "arize-phoenix-otel",
+    "openai-agents[litellm]",
+    "openinference-instrumentation-litellm",
+    "openinference-instrumentation-openai-agents",
 ]

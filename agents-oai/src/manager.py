@@ -29,6 +29,7 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
         ):
             print("", flush=True)
         else:
-            print(f"unknown event: {event}", flush=True)
+            # print(f"unknown event: {event}", flush=True)
+            pass
 
     return result.to_input_list()

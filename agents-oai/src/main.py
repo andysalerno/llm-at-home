@@ -30,7 +30,6 @@ async def main():
 
             output = await run_single(query, context, mcp_server)
             context = output
-            print("Final output:", output)
 
 
 if __name__ == "__main__":
