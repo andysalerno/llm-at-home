@@ -8,6 +8,7 @@ from manager import run_single
 from phoenix.otel import register
 from agents.mcp import MCPServerStreamableHttp
 from agents import SQLiteSession
+from context import trim_tool_calls
 
 # configure the Phoenix tracer
 tracer_provider = register(
@@ -30,6 +31,7 @@ async def main():
 
             output = await run_single(query, context, mcp_server)
             context = output
+            context = trim_tool_calls(context)
 
 
 if __name__ == "__main__":
