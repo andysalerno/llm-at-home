@@ -41,8 +41,6 @@ async def create_research_agent(
 ) -> Agent[Any]:
     cur_date = _get_now_str()
 
-    # mcp_server = await create_mcp_server()
-
     mcp_servers = [mcp_server] if mcp_server else []
 
     return Agent(
@@ -78,14 +76,18 @@ def _create_prompt(
         ## Rules
         - You MUST invoke tools, *one at a time*, to gather information related to your task.
         - You are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
-        - After invoking at most **{{ max_tool_calls }}** tools, you must then respond with the `handof_message` to indicate that you are done.
-        - Additionally, you must NOT invoke the `handoff_message` tool in the same response as other tools. It must be invoked alone.
+        - After invoking at most **{{ max_tool_calls }}** tools, you must then respond.
         - After searching the web and getting relevant urls, use the `visit_url` tool to scrape them and acquire their information.
         - If you invoke a tool but it does not provide the information you need, you MAY invoke the same tool again with a different query.
+        - Cite all sources of information you use in your final response.
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
-        At that point, simply respond with the answer you found, to indicate that you are done. Include a handoff message briefly summarizing what you found.
+        At that point, simply respond with your answer.
+
+        ## Citations
+        Provided the list of sources you used as markdown links at the end of your response.
+        The markdown link must be in the format `[title](url)`. You can't use numbered links like [1] or [2], those are not supported.
 
         ## Additional context
         The current date is: {{ date_str }}.
