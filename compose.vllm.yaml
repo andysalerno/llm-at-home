@@ -2,7 +2,7 @@ version: '3.9'
 name: vllm-stack
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.10.0
+    image: vllm/vllm-openai:v0.10.1
     # image: localhost/vllm-nightly:latest
     # ipc: host
     shm_size: 1g
@@ -130,6 +130,23 @@ services:
     # nytopop/Qwen3-30B-A3B.w8a8
     # --no-enforce-eager
     # --model QuantTrio/Qwen3-30B-A3B-Instruct-2507-GPTQ-Int8
+
+    # qwen3-30B-A3B-Instruct-2507-W8A8:
+    # --model ramblingpolymath/Qwen3-30B-A3B-Instruct-2507-W8A8
+    # --tokenizer unsloth/Qwen3-30B-A3B-Instruct-2507
+    # --tool-call-parser hermes
+    # --enable-auto-tool-choice
+    # --max-num-seqs 4
+    # --served-model-name model
+    # --max-model-len 32648
+    # -tp 2
+
+    # gpt-oss-20b:
+    # --model openai/gpt-oss-20b
+    # --max-num-seqs 4
+    # --served-model-name model
+    # --max-model-len 32648
+    # -tp 2
     command: >
       --model ramblingpolymath/Qwen3-30B-A3B-Instruct-2507-W8A8
       --tokenizer unsloth/Qwen3-30B-A3B-Instruct-2507
