@@ -1,13 +1,16 @@
 from __future__ import annotations
+import os
 
-from agents import Runner, Session
+from agents import Runner
 from agent_definitions.responding_agent import create_responding_agent
 from agents.mcp import MCPServer
+
+USE_HANDOFFS = os.getenv("USE_HANDOFFS", "true") == "true"
 
 
 async def run_single(input: str, input_context: list, mcp_server: MCPServer):
     responding_agent = await create_responding_agent(
-        use_handoffs=True, researcher_mcp_server=mcp_server
+        use_handoffs=USE_HANDOFFS, researcher_mcp_server=mcp_server
     )
     # result = Runner.run_streamed(responding_agent, input, session=session)
     result = Runner.run_streamed(responding_agent, input_context)

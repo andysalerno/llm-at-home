@@ -1,4 +1,5 @@
 import datetime
+import os
 import textwrap
 
 from agents import Agent, Handoff, ModelSettings, handoff
@@ -7,6 +8,8 @@ from model import get_model
 from agents.tool import Tool
 from agents.mcp import MCPServer
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
+
+HANDOFFS_ENABLED = os.getenv("USE_HANDOFFS", "true").lower() in ("true", "1", "yes")
 
 
 async def create_responding_agent(
@@ -59,16 +62,24 @@ def _create_prompt(
         ## Additional rules
         - Always prefer to use the research assistant over your own knowledge. Even when you think you know the answer, it is better to use the research assistant to get the most accurate and up-to-date information, and to discover sources to provide to the user.
         - If you still cannot find a relevant result, even after invoking the research assistant, tell the user you do not know, or invoke the researcher again with a reformulated task.
-        - If you need to do any kind of calculation, delegate to the coding assistant; it is better at math than you are!
+        - If you need to do any kind of calculation, delegate to the research agent; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
         - Do not mention your tools/assistants/researchers to the user; they are transparent to the user.
         - You are free to invoke tools/assistants/researchers as many times as you need to construct a complete answer. In fact, you are encouraged to break the task into smaller sub-tasks and invoke the tools/assistants/researchers for each of them.
-        - Do not hallucinate! Any factual information you provide must be based on findings from the research assistant.
+        - The user may have follow-up questions, requests, or may even change the topic. Keep using the research assistant to get responses for follow-up questions, or wherever the conversation goes.
+        - Do not hallucinate! Any factual information you provide MUST be based on findings from the research assistant, and *directly citable* from its outputs.
+        - Don't say anything not substantiated by the researcher. If you don't have enough information, ask the researcher for more.
         - When possible, cite your sources via markdown links.
+        {{ handoff_tools_disclaimer }}
 
         ## Additional context
         The current date is: {{ date_str }}.
         """).strip(),
     ).render(
         date_str=date_str,
+        handoff_tools_disclaimer=(
+            "- You may ONLY invoke the tools mentioned in the system message. Just because you see a tool in the chat history does NOT mean it can be invoked by you now."
+            if HANDOFFS_ENABLED
+            else ""
+        ),
     )
