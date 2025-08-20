@@ -84,6 +84,7 @@ def _create_prompt(
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
         At that point, simply respond with your answer.
+        OR, if you have performed more than **{{ max_tool_calls }}** tool invocations, and have still not found sufficient information, you respond with what you have found and indicate you could not find sufficient information.
 
         ## Citations
         Provided the list of sources you used as markdown links at the end of your response.

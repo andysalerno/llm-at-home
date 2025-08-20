@@ -13,7 +13,7 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
         use_handoffs=USE_HANDOFFS, researcher_mcp_server=mcp_server
     )
     # result = Runner.run_streamed(responding_agent, input, session=session)
-    result = Runner.run_streamed(responding_agent, input_context)
+    result = Runner.run_streamed(responding_agent, input_context, max_turns=25)
 
     async for event in result.stream_events():
         if event.type == "raw_response_event":

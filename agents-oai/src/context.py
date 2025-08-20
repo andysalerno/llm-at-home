@@ -42,7 +42,8 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
                     result.append(item)
                 continue
 
-            item["name"] = "redacted_function_name"
+            # redacting old tool call names may help the model understand it cannot call all old tools?
+            # item["name"] = "redacted_function_name"
             result.append(item)
         else:
             result.append(item)
