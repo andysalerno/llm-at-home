@@ -14,10 +14,16 @@ run-langgraph:
   uv --directory ./agents-langgraph run --env-file .env src/main.py
 
 vllm-up:
-  sudo podman compose -f compose.vllm.yaml up
+  sudo podman compose -f compose.llamacpp.yaml up
 
 vllm-down:
-  sudo podman compose -f compose.vllm.yaml down
+  sudo podman compose -f compose.llamacpp.yaml down
+
+llama-up:
+  sudo podman compose -f compose.vllm.yaml up
+
+llama-down:
+  sudo podman compose -f compose.vllm.yaml up
 
 [working-directory: 'mcp-server-backends/sandboxed-code-execution']
 run-code-sandbox:
