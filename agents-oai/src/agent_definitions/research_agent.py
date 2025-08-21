@@ -107,7 +107,7 @@ def _create_prompt(
 
         ## Citations
         Provided the list of sources you used as markdown links at the end of your response.
-        The markdown link must be in the format `[title](url)`. You can't use numbered links like [1] or [2], those are not supported.
+        The markdown link must be in the format `[title](http://url)`. You can't use numbered links like [1] or [2] or other shorthand, those are not supported.
 
         ## Additional context
         The current date is: {{ date_str }}.
