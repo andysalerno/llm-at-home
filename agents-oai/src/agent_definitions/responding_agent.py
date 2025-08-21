@@ -10,6 +10,11 @@ from agents.mcp import MCPServer
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
 
 HANDOFFS_ENABLED = os.getenv("USE_HANDOFFS", "true").lower() in ("true", "1", "yes")
+HANDOFFS_PROMPT_ENABLED = os.getenv("USE_HANDOFFS_PROMPT", "true").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 
 
 async def create_responding_agent(
@@ -79,7 +84,7 @@ def _create_prompt(
         date_str=date_str,
         handoff_tools_disclaimer=(
             "- You may ONLY invoke the tools mentioned in the system message. Just because you see a tool in the chat history does NOT mean it can be invoked by you now."
-            if HANDOFFS_ENABLED
+            if HANDOFFS_PROMPT_ENABLED
             else ""
         ),
     )

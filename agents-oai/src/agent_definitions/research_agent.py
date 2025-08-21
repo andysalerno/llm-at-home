@@ -2,6 +2,7 @@ import datetime
 import logging
 import textwrap
 from typing import Any
+import os
 
 from jinja2 import Template
 from pydantic import BaseModel
@@ -10,8 +11,11 @@ from agents.mcp import MCPServer
 from agents import Agent, ModelSettings, Runner
 from model import get_model
 from agents.tool import Tool
+from agents import function_tool
 
 logger = logging.getLogger(__name__)
+
+ENABLE_REASON_TOOL = os.getenv("ENABLE_REASON_TOOL", "false") == "true"
 
 
 # TODO: add a flag to force the agent to remove
@@ -31,6 +35,16 @@ async def research_agent_tool(
     return agent.as_tool(tool_name="ask_researcher", tool_description=description)
 
 
+@function_tool
+async def reason(thinking: str) -> str:
+    """Invoke to capture your reasoning / thought process / plan. Always invoke this tool before invoking any other tool to capture your reasoning.
+
+    Args:
+        thinking: The reasoning or thought process to be recorded.
+    """
+    return "(reasoning complete)"
+
+
 class ResearchComplete(BaseModel):
     handoff_message: str
 
@@ -43,10 +57,12 @@ async def create_research_agent(
 
     mcp_servers = [mcp_server] if mcp_server else []
 
+    tools = [] if not ENABLE_REASON_TOOL else [reason]
+
     return Agent(
         name="ResearchAgent",
         model=get_model(),
-        tools=[],
+        tools=tools,  # type: ignore
         # output_type=ResearchComplete, # breaks in vllm and llamacpp
         mcp_servers=mcp_servers,
         handoffs=[],
@@ -75,11 +91,14 @@ def _create_prompt(
 
         ## Rules
         - You MUST invoke tools, *one at a time*, to gather information related to your task.
+        {{ reason_tool_details -}}
         - You are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
         - After invoking at most **{{ max_tool_calls }}** tools, you must then respond.
         - After searching the web and getting relevant urls, use the `visit_url` tool to scrape them and acquire their information.
         - If you invoke a tool but it does not provide the information you need, you MAY invoke the same tool again with a different query.
+        - ALWAYS perform at least one tool invocation before responding.
         - Cite all sources of information you use in your final response.
+        - Do NOT use your own knowledge, only use the information you gather from the tools you invoke.
 
         ## Definition of done
         Your research is complete when you have gathered sufficient information to respond to the task.
@@ -96,6 +115,9 @@ def _create_prompt(
     ).render(
         date_str=date_str,
         max_tool_calls=max_tool_calls,
+        reason_tool_details="- You MUST invoke the `reason` tool to record your thought process and plan before invoking any other tool.\n- You MUST NOT invoke ANY tool (even subsequent tools) unless you first invoked the `reason` tool to record your thoughts.\n"
+        if ENABLE_REASON_TOOL
+        else "",
     )
 
 
