@@ -1,4 +1,5 @@
 import os
+import json
 from agents import TResponseInputItem
 
 # remove previous tool calls from context, EXCEPT handoff messages (transfer_to_* calls)
@@ -23,7 +24,7 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
 
             skip_allowed = True
 
-            prev = item.get("output", "")
+            prev = item.get("output")
             if not isinstance(prev, str):
                 continue
 
@@ -45,6 +46,17 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
             # redacting old tool call names may help the model understand it cannot call all old tools?
             # item["name"] = "redacted_function_name"
             result.append(item)
+        elif item.get("type") == "message":
+            content = item.get("content")
+            content = content[0]  # type: ignore
+
+            if content["type"] == "output_text" and len(content["text"]) == 0:
+                continue
+
+            result.append(item)
+
+        # elif item.get("type") == "reasoning":
+        #     continue
         else:
             result.append(item)
 
