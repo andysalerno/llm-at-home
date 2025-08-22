@@ -19,6 +19,7 @@ HANDOFFS_PROMPT_ENABLED = os.getenv("USE_HANDOFFS_PROMPT", "true").lower() in (
 
 async def create_responding_agent(
     temperature: float = 0.2,
+    top_p: float = 0.9,
     extra_tools: list[Tool] | None = None,
     researcher_mcp_server: MCPServer | None = None,
     use_handoffs: bool = True,
@@ -31,11 +32,13 @@ async def create_responding_agent(
     if use_handoffs:
         tools = extra_tools
         handoffs = [
-            handoff(await create_research_agent(temperature, researcher_mcp_server))
+            handoff(
+                await create_research_agent(temperature, top_p, researcher_mcp_server)
+            )
         ]
     else:
         tools = [
-            await research_agent_tool(temperature, researcher_mcp_server),
+            await research_agent_tool(temperature, top_p, researcher_mcp_server),
             *extra_tools,
         ]
         handoffs = []
@@ -48,6 +51,7 @@ async def create_responding_agent(
         model=get_model(),
         model_settings=ModelSettings(
             temperature=temperature,
+            top_p=top_p,
             # extra_body=get_extra_body(),
         ),
     )
