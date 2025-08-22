@@ -21,7 +21,7 @@ ENABLE_REASON_TOOL = os.getenv("ENABLE_REASON_TOOL", "false") == "true"
 # TODO: add a flag to force the agent to remove
 # existing tool calls and outputs before running
 async def research_agent_tool(
-    agent_temp: float = 0.0, mcp_server: MCPServer | None = None
+    agent_temp: float = 0.0, top_p: float = 0.9, mcp_server: MCPServer | None = None
 ) -> Tool:
     description = (
         "Gives a task to a research agent and returns the final result of its research."
@@ -30,7 +30,7 @@ async def research_agent_tool(
         " The research agent will return a report with the results of the research, including relevant documents."
     )
 
-    agent = await create_research_agent(agent_temp, mcp_server)
+    agent = await create_research_agent(agent_temp, top_p, mcp_server)
 
     return agent.as_tool(tool_name="ask_researcher", tool_description=description)
 
@@ -51,6 +51,7 @@ class ResearchComplete(BaseModel):
 
 async def create_research_agent(
     temp: float,
+    top_p: float,
     mcp_server: MCPServer | None = None,
 ) -> Agent[Any]:
     cur_date = _get_now_str()
@@ -67,6 +68,7 @@ async def create_research_agent(
         mcp_servers=mcp_servers,
         handoffs=[],
         model_settings=ModelSettings(
+            top_p=top_p,
             temperature=temp,
         ),
         instructions=_create_prompt(
@@ -119,16 +121,3 @@ def _create_prompt(
         if ENABLE_REASON_TOOL
         else "",
     )
-
-
-async def _run_research_agent(
-    task: str,
-    agent_temp: float,
-) -> str:
-    agent = await create_research_agent(agent_temp)
-
-    output = await Runner.run(agent, input=task)
-
-    logger.debug(output)
-
-    return output.final_output
