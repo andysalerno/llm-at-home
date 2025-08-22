@@ -20,10 +20,10 @@ vllm-down:
   sudo podman compose -f compose.llamacpp.yaml down
 
 llama-up:
-  sudo podman compose -f compose.vllm.yaml up
+  sudo podman compose -f compose.llamacpp.yaml --env-file .llamacpp.env up
 
 llama-down:
-  sudo podman compose -f compose.vllm.yaml up
+  sudo podman compose -f compose.llamacpp.yaml --env-file .llamacpp.env down
 
 [working-directory: 'mcp-server-backends/sandboxed-code-execution']
 run-code-sandbox:
