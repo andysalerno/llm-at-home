@@ -7,6 +7,7 @@ services:
       - CUDA_DEVICE_ORDER=PCI_BUS_ID
     volumes:
       - /home/tiny/mnt/drive/.cache/huggingface:/root/.cache/huggingface
+      - /home/tiny/mnt/drive/.cache/sglang:/tmp/torchinductor_root
     restart: unless-stopped
     # --model neuralmagic/Phi-3-medium-128k-instruct-quantized.w8a8
     # --model unsloth/Llama-3.2-3B-Instruct
@@ -39,10 +40,12 @@ services:
     # -tp 2
     command: >
       python3 -m sglang.launch_server
-      --model Qwen/Qwen3-30B-A3B-FP8
+      --model unsloth/gpt-oss-20b
       --tp 2
-      --trust-remote-code
       --port 8000
+      --host 0.0.0.0
+      --tool-call-parser gpt-oss
+      --max-running-requests 4
     ports:
       - "8000:8000"
     devices:
