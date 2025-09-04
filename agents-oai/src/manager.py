@@ -29,7 +29,10 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
                 event.data.type == "response.output_item.done"
                 and event.data.item.type == "function_call"
             ):
-                print(f"invoking function: {event.data.item.name}", flush=True)
+                print(
+                    f"invoking function: {event.data.item.name}({event.data.item.arguments})",
+                    flush=True,
+                )
         elif event.type == "agent_updated_stream_event":
             print(f"agent updated: {event.new_agent.name}", flush=True)
         elif (
