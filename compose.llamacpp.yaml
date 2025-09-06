@@ -7,6 +7,7 @@ services:
     # restart: unless-stopped
     #   -ts 1,1
     #   --main-gpu 1
+    # -ctk q8_0 -ctv q8_0
     command: >
       -m /models/${MODEL_NAME}
       --metrics
@@ -14,8 +15,8 @@ services:
       --port 8000
       --host 0.0.0.0
       -ngl 100
-      -fa
-      -c 65536
+      -fa auto
+      -c 32768
       --no-webui
       -ts 1,1
     ports:

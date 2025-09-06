@@ -16,6 +16,11 @@ from agents import function_tool
 logger = logging.getLogger(__name__)
 
 ENABLE_REASON_TOOL = os.getenv("ENABLE_REASON_TOOL", "false") == "true"
+PARALLEL_TOOL_CALLS = os.getenv("PARALLEL_TOOL_CALLS", "true").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 
 
 # TODO: add a flag to force the agent to remove
@@ -70,6 +75,7 @@ async def create_research_agent(
         model_settings=ModelSettings(
             top_p=top_p,
             temperature=temp,
+            parallel_tool_calls=PARALLEL_TOOL_CALLS,
         ),
         instructions=_create_prompt(
             cur_date,
