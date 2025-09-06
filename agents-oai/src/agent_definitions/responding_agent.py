@@ -10,6 +10,11 @@ from agents.mcp import MCPServer
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
 
 HANDOFFS_ENABLED = os.getenv("USE_HANDOFFS", "true").lower() in ("true", "1", "yes")
+PARALLEL_TOOL_CALLS = os.getenv("PARALLEL_TOOL_CALLS", "true").lower() in (
+    "true",
+    "1",
+    "yes",
+)
 HANDOFFS_PROMPT_ENABLED = os.getenv("USE_HANDOFFS_PROMPT", "true").lower() in (
     "true",
     "1",
@@ -52,6 +57,7 @@ async def create_responding_agent(
         model_settings=ModelSettings(
             temperature=temperature,
             top_p=top_p,
+            parallel_tool_calls=PARALLEL_TOOL_CALLS,
             # extra_body=get_extra_body(),
         ),
     )
