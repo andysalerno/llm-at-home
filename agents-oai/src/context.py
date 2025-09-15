@@ -50,7 +50,9 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
             content = item.get("content")
             content = content[0]  # type: ignore
 
-            if content["type"] == "output_text" and len(content["text"]) == 0:
+            if content["type"] == "output_text" and (
+                len(content["text"]) == 0 or content["text"].isspace()
+            ):
                 continue
 
             result.append(item)

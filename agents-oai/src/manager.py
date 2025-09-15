@@ -18,7 +18,6 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
         top_p=RESPONDING_AGENT_TOP_P,
         researcher_mcp_server=mcp_server,
     )
-    # result = Runner.run_streamed(responding_agent, input, session=session)
     result = Runner.run_streamed(responding_agent, input_context, max_turns=MAX_TURNS)
 
     async for event in result.stream_events():
@@ -39,7 +38,8 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
             event.type == "run_item_stream_event"
             and event.item.type == "message_output_item"
         ):
-            print("", flush=True)
+            # print("", flush=True)
+            pass
         else:
             # print(f"unknown event: {event}", flush=True)
             pass
