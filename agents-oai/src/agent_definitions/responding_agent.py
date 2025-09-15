@@ -1,5 +1,4 @@
 import datetime
-import os
 import textwrap
 
 from agents import Agent, Handoff, ModelSettings, handoff
@@ -8,18 +7,7 @@ from model import get_model
 from agents.tool import Tool
 from agents.mcp import MCPServer
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
-
-HANDOFFS_ENABLED = os.getenv("USE_HANDOFFS", "true").lower() in ("true", "1", "yes")
-PARALLEL_TOOL_CALLS = os.getenv("PARALLEL_TOOL_CALLS", "true").lower() in (
-    "true",
-    "1",
-    "yes",
-)
-HANDOFFS_PROMPT_ENABLED = os.getenv("USE_HANDOFFS_PROMPT", "true").lower() in (
-    "true",
-    "1",
-    "yes",
-)
+from config import config
 
 
 async def create_responding_agent(
@@ -57,7 +45,7 @@ async def create_responding_agent(
         model_settings=ModelSettings(
             temperature=temperature,
             top_p=top_p,
-            parallel_tool_calls=PARALLEL_TOOL_CALLS,
+            parallel_tool_calls=config.PARALLEL_TOOL_CALLS,
             # extra_body=get_extra_body(),
         ),
     )
@@ -94,7 +82,7 @@ def _create_prompt(
         date_str=date_str,
         handoff_tools_disclaimer=(
             "- You may ONLY invoke the tools mentioned in the system message. Just because you see a tool in the chat history does NOT mean it can be invoked by you now."
-            if HANDOFFS_PROMPT_ENABLED
+            if config.USE_HANDOFFS_PROMPT
             else ""
         ),
     )

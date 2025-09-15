@@ -1,24 +1,21 @@
 from __future__ import annotations
-import os
 
 from agents import Runner
 from agent_definitions.responding_agent import create_responding_agent
 from agents.mcp import MCPServer
-
-USE_HANDOFFS = os.getenv("USE_HANDOFFS", "true") == "true"
-RESPONDING_AGENT_TEMP = float(os.getenv("RESPONDING_AGENT_TEMP", "0.2"))
-RESPONDING_AGENT_TOP_P = float(os.getenv("RESPONDING_AGENT_TOP_P", "0.75"))
-MAX_TURNS = int(os.getenv("MAX_TURNS", "25"))
+from config import config
 
 
 async def run_single(input: str, input_context: list, mcp_server: MCPServer):
     responding_agent = await create_responding_agent(
-        use_handoffs=USE_HANDOFFS,
-        temperature=RESPONDING_AGENT_TEMP,
-        top_p=RESPONDING_AGENT_TOP_P,
+        use_handoffs=config.USE_HANDOFFS,
+        temperature=config.RESPONDING_AGENT_TEMP,
+        top_p=config.RESPONDING_AGENT_TOP_P,
         researcher_mcp_server=mcp_server,
     )
-    result = Runner.run_streamed(responding_agent, input_context, max_turns=MAX_TURNS)
+    result = Runner.run_streamed(
+        responding_agent, input_context, max_turns=config.MAX_TURNS
+    )
 
     async for event in result.stream_events():
         if event.type == "raw_response_event":
