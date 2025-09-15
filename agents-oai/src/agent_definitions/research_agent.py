@@ -7,13 +7,22 @@ from jinja2 import Template
 from pydantic import BaseModel
 from agents.mcp import MCPServer
 
-from agents import Agent, ModelSettings
+from agents import Agent, ModelSettings, handoff
 from model import get_model
 from agents.tool import Tool
-from agents import function_tool
+from agent_definitions.reason_tool import reason
 from config import config
+from agent_definitions.math_agent import calculator_agent_tool, create_calculator_agent
 
 logger = logging.getLogger(__name__)
+
+
+_description = (
+    "Gives a task to a research agent and returns the final result of its research."
+    ' Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."'
+    " Tasks can be simple or complex."
+    " The research agent will return a report with the results of the research, including relevant documents."
+)
 
 
 # TODO: add a flag to force the agent to remove
@@ -21,26 +30,9 @@ logger = logging.getLogger(__name__)
 async def research_agent_tool(
     agent_temp: float = 0.0, top_p: float = 0.9, mcp_server: MCPServer | None = None
 ) -> Tool:
-    description = (
-        "Gives a task to a research agent and returns the final result of its research."
-        ' Tasks are in natural language and can be anything from "What is the capital of France?" to "Write a Python script that calculates the Fibonacci sequence."'
-        " Tasks can be simple or complex."
-        " The research agent will return a report with the results of the research, including relevant documents."
-    )
-
     agent = await create_research_agent(agent_temp, top_p, mcp_server)
 
-    return agent.as_tool(tool_name="ask_researcher", tool_description=description)
-
-
-@function_tool
-async def reason(thinking: str) -> str:
-    """Invoke to capture your reasoning / thought process / plan. Always invoke this tool before invoking any other tool to capture your reasoning.
-
-    Args:
-        thinking: The reasoning or thought process to be recorded.
-    """
-    return "(reasoning complete)"
+    return agent.as_tool(tool_name="ask_researcher", tool_description=_description)
 
 
 class ResearchComplete(BaseModel):
@@ -57,14 +49,21 @@ async def create_research_agent(
     mcp_servers = [mcp_server] if mcp_server else []
 
     tools = [] if not config.ENABLE_REASON_TOOL else [reason]
+    handoffs = []
+
+    if not config.USE_HANDOFFS:
+        tools.append(await calculator_agent_tool(temp, top_p, mcp_server))
+    else:
+        handoffs.append(handoff(await create_calculator_agent(temp, top_p, mcp_server)))
 
     return Agent(
         name="ResearchAgent",
+        handoff_description=_description,
+        handoffs=handoffs,
         model=get_model(),
         tools=tools,  # type: ignore
         # output_type=ResearchComplete, # breaks in vllm and llamacpp
         mcp_servers=mcp_servers,
-        handoffs=[],
         model_settings=ModelSettings(
             top_p=top_p,
             temperature=temp,

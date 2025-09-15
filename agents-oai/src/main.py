@@ -21,7 +21,6 @@ async def main():
         params={"url": "http://localhost:8002/mcp"},
         cache_tools_list=True,
     ) as mcp_server:
-        # session = SQLiteSession("session_1")
         context = []
         while True:
             query = input("input: ")
@@ -36,6 +35,21 @@ async def main():
 if __name__ == "__main__":
     # First try to get model/api key from args
     import argparse
+    import logging
+
+    # Configure logging to only show logs from your own code
+    logging.basicConfig(
+        level=logging.WARNING,  # Set root logger to capture everything
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
+    # Set your own modules to INFO level
+    logging.getLogger("model").setLevel(logging.INFO)
+    logging.getLogger("manager").setLevel(logging.INFO)
+    logging.getLogger("context").setLevel(logging.INFO)
+    logging.getLogger("config").setLevel(logging.INFO)
+    logging.getLogger("agent_definitions").setLevel(logging.INFO)
+    logging.getLogger(__name__).setLevel(logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=False)

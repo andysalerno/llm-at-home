@@ -4,6 +4,9 @@ from agents import Runner
 from agent_definitions.responding_agent import create_responding_agent
 from agents.mcp import MCPServer
 from config import config
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 async def run_single(input: str, input_context: list, mcp_server: MCPServer):
@@ -11,7 +14,7 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
         use_handoffs=config.USE_HANDOFFS,
         temperature=config.RESPONDING_AGENT_TEMP,
         top_p=config.RESPONDING_AGENT_TOP_P,
-        researcher_mcp_server=mcp_server,
+        mcp_server=mcp_server,
     )
     result = Runner.run_streamed(
         responding_agent, input_context, max_turns=config.MAX_TURNS
@@ -30,7 +33,7 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
                     flush=True,
                 )
         elif event.type == "agent_updated_stream_event":
-            print(f"agent updated: {event.new_agent.name}", flush=True)
+            logger.info(f"agent updated: {event.new_agent.name}")
         elif (
             event.type == "run_item_stream_event"
             and event.item.type == "message_output_item"
