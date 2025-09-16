@@ -2,20 +2,18 @@ import datetime
 import logging
 import textwrap
 from typing import Any
-import os
 
 from jinja2 import Template
 from pydantic import BaseModel
 from agents.mcp import MCPServer
 
-from agents import Agent, ModelSettings, Runner
+from agents import Agent, ModelSettings
 from model import get_model
 from agents.tool import Tool
 from agents import function_tool
+from config import config
 
 logger = logging.getLogger(__name__)
-
-ENABLE_REASON_TOOL = os.getenv("ENABLE_REASON_TOOL", "false") == "true"
 
 
 # TODO: add a flag to force the agent to remove
@@ -78,7 +76,7 @@ async def create_research_agent(
 
     mcp_servers = [mcp_server] if mcp_server else []
 
-    tools = [] if not ENABLE_REASON_TOOL else [reason]
+    tools = [] if not config.ENABLE_REASON_TOOL else [reason]
 
     return Agent(
         name="ResearchAgent",
@@ -138,6 +136,6 @@ def _create_prompt(
         date_str=date_str,
         max_tool_calls=max_tool_calls,
         reason_tool_details="- You MUST invoke the `reason` tool to record your thought process and plan before invoking any other tool.\n- You MUST NOT invoke ANY tool (even subsequent tools) unless you first invoked the `reason` tool to record your thoughts.\n"
-        if ENABLE_REASON_TOOL
+        if config.ENABLE_REASON_TOOL
         else "",
     )

@@ -1,5 +1,4 @@
 import datetime
-import os
 import textwrap
 
 from agents import Agent, Handoff, ModelSettings, handoff
@@ -8,25 +7,15 @@ from model import get_model
 from agents.tool import Tool
 from agents.mcp import MCPServer
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
-
-HANDOFFS_ENABLED = os.getenv("USE_HANDOFFS", "true").lower() in ("true", "1", "yes")
-PARALLEL_TOOL_CALLS = os.getenv("PARALLEL_TOOL_CALLS", "true").lower() in (
-    "true",
-    "1",
-    "yes",
-)
-HANDOFFS_PROMPT_ENABLED = os.getenv("USE_HANDOFFS_PROMPT", "true").lower() in (
-    "true",
-    "1",
-    "yes",
-)
+from agent_definitions.math_agent import create_calculator_agent, calculator_agent_tool
+from config import config
 
 
 async def create_responding_agent(
     temperature: float = 0.2,
     top_p: float = 0.9,
     extra_tools: list[Tool] | None = None,
-    researcher_mcp_server: MCPServer | None = None,
+    mcp_server: MCPServer | None = None,
     use_handoffs: bool = True,
 ) -> Agent:
     if extra_tools is None:
@@ -37,13 +26,13 @@ async def create_responding_agent(
     if use_handoffs:
         tools = extra_tools
         handoffs = [
-            handoff(
-                await create_research_agent(temperature, top_p, researcher_mcp_server)
-            )
+            handoff(await create_research_agent(temperature, top_p, mcp_server)),
+            handoff(await create_calculator_agent(temperature, top_p, mcp_server)),
         ]
     else:
         tools = [
-            await research_agent_tool(temperature, top_p, researcher_mcp_server),
+            await research_agent_tool(temperature, top_p, mcp_server),
+            await calculator_agent_tool(temperature, top_p, mcp_server),
             *extra_tools,
         ]
         handoffs = []
@@ -57,7 +46,7 @@ async def create_responding_agent(
         model_settings=ModelSettings(
             temperature=temperature,
             top_p=top_p,
-            parallel_tool_calls=PARALLEL_TOOL_CALLS,
+            parallel_tool_calls=config.PARALLEL_TOOL_CALLS,
             # extra_body=get_extra_body(),
         ),
     )
@@ -77,7 +66,7 @@ def _create_prompt(
         ## Additional rules
         - Always prefer to use the research assistant over your own knowledge. Even when you think you know the answer, it is better to use the research assistant to get the most accurate and up-to-date information, and to discover sources to provide to the user.
         - If you still cannot find a relevant result, even after invoking the research assistant, tell the user you do not know, or invoke the researcher again with a reformulated task.
-        - If you need to do any kind of calculation, delegate to the research agent; it is better at math than you are!
+        - If you need to do any kind of calculation, delegate to the calculator agent; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
         - Do not mention your tools/assistants/researchers to the user; they are transparent to the user.
         - You are free to invoke tools/assistants/researchers as many times as you need to construct a complete answer. In fact, you are encouraged to break the task into smaller sub-tasks and invoke the tools/assistants/researchers for each of them.
@@ -94,7 +83,7 @@ def _create_prompt(
         date_str=date_str,
         handoff_tools_disclaimer=(
             "- You may ONLY invoke the tools mentioned in the system message. Just because you see a tool in the chat history does NOT mean it can be invoked by you now."
-            if HANDOFFS_PROMPT_ENABLED
+            if config.USE_HANDOFFS_PROMPT
             else ""
         ),
     )

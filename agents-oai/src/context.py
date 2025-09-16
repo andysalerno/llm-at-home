@@ -1,13 +1,7 @@
-import os
-import json
 from agents import TResponseInputItem
+from config import config
 
 # remove previous tool calls from context, EXCEPT handoff messages (transfer_to_* calls)
-REMOVE_OLD_TOOL_CALLS = os.getenv("REMOVE_OLD_TOOL_CALLS", "true").lower() in (
-    "true",
-    "1",
-    "yes",
-)
 
 TRIM_LEN = 1024
 
@@ -19,7 +13,7 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
 
     for item in input:
         if item.get("type") == "function_call_output":
-            if REMOVE_OLD_TOOL_CALLS and skip_allowed:
+            if config.REMOVE_OLD_TOOL_CALLS and skip_allowed:
                 continue
 
             skip_allowed = True
@@ -36,7 +30,7 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
 
             result.append(item)
         elif item.get("type") == "function_call":
-            if REMOVE_OLD_TOOL_CALLS:
+            if config.REMOVE_OLD_TOOL_CALLS:
                 # just skip it entirely
                 if item.get("name").startswith("transfer_to"):
                     skip_allowed = False
@@ -50,7 +44,9 @@ def trim_tool_calls(input: list[TResponseInputItem]) -> list[TResponseInputItem]
             content = item.get("content")
             content = content[0]  # type: ignore
 
-            if content["type"] == "output_text" and len(content["text"]) == 0:
+            if content["type"] == "output_text" and (
+                len(content["text"]) == 0 or content["text"].isspace()
+            ):
                 continue
 
             result.append(item)

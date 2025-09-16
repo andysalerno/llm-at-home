@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "arize-phoenix-otel",
-    "openai-agents[litellm]==0.2.11",
+    "openai-agents[litellm]==0.3.0",
     "openai",
     "openinference-instrumentation-litellm",
     "openinference-instrumentation-openai-agents",
