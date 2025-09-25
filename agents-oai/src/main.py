@@ -8,6 +8,7 @@ from phoenix.otel import register
 from agents.mcp import MCPServerStreamableHttp
 from config import config
 from context import trim_tool_calls
+from mcp_registry import register_named_server
 
 # configure the Phoenix tracer
 tracer_provider = register(
@@ -21,15 +22,23 @@ async def main():
         params={"url": "http://localhost:8002/mcp"},
         cache_tools_list=True,
     ) as mcp_server:
-        context = []
-        while True:
-            query = input("input: ")
+        # there MUST be a better way to do this:
+        async with MCPServerStreamableHttp(
+            params={"url": "http://localhost:8002/mcp"},
+            cache_tools_list=True,
+            tool_filter={"allowed_tool_names": ["execute_python_code"]},
+        ) as calculator_mcp_server:
+            register_named_server("default", mcp_server)
+            register_named_server("calculator", calculator_mcp_server)
+            context = []
+            while True:
+                query = input("input: ")
 
-            context.append({"content": query, "role": "user"})
+                context.append({"content": query, "role": "user"})
 
-            output = await run_single(query, context, mcp_server)
-            context = output
-            context = trim_tool_calls(context)
+                output = await run_single(query, context, mcp_server)
+                context = output
+                context = trim_tool_calls(context)
 
 
 if __name__ == "__main__":

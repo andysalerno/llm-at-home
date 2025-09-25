@@ -6,6 +6,7 @@ from jinja2 import Template
 from model import get_model
 from agents.tool import Tool
 from agents.mcp import MCPServer
+from agent_definitions.reason_tool import reason
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
 from agent_definitions.math_agent import create_calculator_agent, calculator_agent_tool
 from config import config
@@ -37,6 +38,9 @@ async def create_responding_agent(
         ]
         handoffs = []
 
+    if config.ENABLE_REASON_TOOL:
+        tools.append(reason)
+
     agent = Agent(
         name="RespondingAgent",
         tools=tools,
@@ -47,6 +51,7 @@ async def create_responding_agent(
             temperature=temperature,
             top_p=top_p,
             parallel_tool_calls=config.PARALLEL_TOOL_CALLS,
+            # tool_choice="reason" if config.ENABLE_REASON_TOOL else "auto",
             # extra_body=get_extra_body(),
         ),
     )
@@ -65,6 +70,7 @@ def _create_prompt(
 
         ## Additional rules
         - Always prefer to use the research assistant over your own knowledge. Even when you think you know the answer, it is better to use the research assistant to get the most accurate and up-to-date information, and to discover sources to provide to the user.
+        {{ reason_tool_details -}}
         - If you still cannot find a relevant result, even after invoking the research assistant, tell the user you do not know, or invoke the researcher again with a reformulated task.
         - If you need to do any kind of calculation, delegate to the calculator agent; it is better at math than you are!
         - The research assistant may provide more information than necessary to handle the user's question. In that case, provide whatever extra context or information that you think might be useful to the user.
@@ -81,6 +87,9 @@ def _create_prompt(
         """).strip(),
     ).render(
         date_str=date_str,
+        reason_tool_details="- You MUST invoke the `reason` tool to record your thought process and plan before invoking any other tool.\n- You MUST NOT invoke ANY tool (even subsequent tools) unless you first invoked the `reason` tool to record your thoughts.\n"
+        if config.ENABLE_REASON_TOOL
+        else "",
         handoff_tools_disclaimer=(
             "- You may ONLY invoke the tools mentioned in the system message. Just because you see a tool in the chat history does NOT mean it can be invoked by you now."
             if config.USE_HANDOFFS_PROMPT
