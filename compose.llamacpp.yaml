@@ -15,8 +15,9 @@ services:
       --port 8000
       --host 0.0.0.0
       -ngl 100
+      -sm row
       -fa auto
-      -c 32768
+      -c 65536
       --no-webui
       -ts 1,1
     ports:
