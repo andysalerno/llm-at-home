@@ -2,7 +2,7 @@ version: '3.9'
 name: vllm-stack
 services:
   llmhost:
-    image: vllm/vllm-openai:v0.10.1.1
+    image: vllm/vllm-openai:v0.10.2
     # image: localhost/vllm-nightly:latest
     # ipc: host
     shm_size: 1g
@@ -147,14 +147,24 @@ services:
     # --served-model-name model
     # --max-model-len 32648
     # -tp 2
+
+    # --model QuantTrio/Qwen3-30B-A3B-Thinking-2507-GPTQ-Int8
+    # --tokenizer unsloth/Qwen3-30B-A3B-Thinking-2507
+    # --reasoning-parser qwen3
+    # --tool-call-parser hermes
+    # --enable-auto-tool-choice
+    # --max-num-seqs 4
+    # --served-model-name model
+    # --max-model-len 32648
+    # -tp 2
     command: >
-      --model ramblingpolymath/Qwen3-30B-A3B-Instruct-2507-W8A8
+      --model QuantTrio/Qwen3-30B-A3B-Instruct-2507-GPTQ-Int8
       --tokenizer unsloth/Qwen3-30B-A3B-Instruct-2507
       --tool-call-parser hermes
       --enable-auto-tool-choice
       --max-num-seqs 4
       --served-model-name model
-      --max-model-len 32648
+      --max-model-len 65536
       -tp 2
     ports:
       - "8000:8000"
