@@ -1,17 +1,25 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from agents import Runner
-from agents.mcp import MCPServer
 
 from agent_definitions.responding_agent import create_responding_agent
 from config import config
 
+if TYPE_CHECKING:
+    from agents.items import TResponseInputItem
+    from agents.mcp import MCPServer
+
 logger = logging.getLogger(__name__)
 
 
-async def run_single(input: str, input_context: list, mcp_server: MCPServer):
+async def run_single(
+    input: str,
+    input_context: list[TResponseInputItem],
+    mcp_server: MCPServer,
+) -> list[TResponseInputItem]:
     responding_agent = await create_responding_agent(
         use_handoffs=config.USE_HANDOFFS,
         temperature=config.RESPONDING_AGENT_TEMP,
