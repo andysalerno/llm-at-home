@@ -3,15 +3,15 @@ import logging
 import textwrap
 from typing import Any
 
-from jinja2 import Template
-from agents.mcp import MCPServer
-
 from agents import Agent, ModelSettings
-from model import get_model
+from agents.mcp import MCPServer
 from agents.tool import Tool
+from jinja2 import Template
+
 from agent_definitions.reason_tool import reason
 from config import config
 from mcp_registry import get_named_server
+from model import get_model
 
 logger = logging.getLogger(__name__)
 
@@ -23,12 +23,15 @@ _calculator_description = (
 
 
 async def calculator_agent_tool(
-    agent_temp: float = 0.0, top_p: float = 0.9, mcp_server: MCPServer | None = None
+    agent_temp: float = 0.0,
+    top_p: float = 0.9,
+    mcp_server: MCPServer | None = None,
 ) -> Tool:
     agent = await create_calculator_agent(agent_temp, top_p, mcp_server)
 
     return agent.as_tool(
-        tool_name="ask_calculator_agent", tool_description=_calculator_description
+        tool_name="ask_calculator_agent",
+        tool_description=_calculator_description,
     )
 
 

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from agents import Runner
-from agent_definitions.responding_agent import create_responding_agent
-from agents.mcp import MCPServer
-from config import config
 import logging
+
+from agents import Runner
+from agents.mcp import MCPServer
+
+from agent_definitions.responding_agent import create_responding_agent
+from config import config
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,9 @@ async def run_single(input: str, input_context: list, mcp_server: MCPServer):
         mcp_server=mcp_server,
     )
     result = Runner.run_streamed(
-        responding_agent, input_context, max_turns=config.MAX_TURNS
+        responding_agent,
+        input_context,
+        max_turns=config.MAX_TURNS,
     )
 
     async for event in result.stream_events():

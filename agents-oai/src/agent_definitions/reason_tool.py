@@ -7,5 +7,6 @@ async def reason(thinking: str) -> str:
 
     Args:
         thinking: The reasoning or thought process to be recorded.
+
     """
     return "(reasoning complete)"

@@ -1,7 +1,6 @@
 """Centralized configuration module for environment variables."""
 
 import os
-from typing import Optional
 
 
 class Config:
@@ -39,15 +38,15 @@ class Config:
 
     # Model configuration
     @property
-    def MODEL_NAME(self) -> Optional[str]:
+    def MODEL_NAME(self) -> str | None:
         return os.getenv("MODEL_NAME")
 
     @property
-    def MODEL_BASE_URI(self) -> Optional[str]:
+    def MODEL_BASE_URI(self) -> str | None:
         return os.getenv("MODEL_BASE_URI")
 
     @property
-    def MODEL_API_KEY(self) -> Optional[str]:
+    def MODEL_API_KEY(self) -> str | None:
         return os.getenv("MODEL_API_KEY")
 
     # Context management

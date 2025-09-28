@@ -1,7 +1,6 @@
 from agents import Model
 from agents.extensions.models.litellm_model import LitellmModel
 
-
 MODEL: Model | None = None
 
 
