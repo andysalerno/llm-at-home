@@ -68,6 +68,7 @@ async def create_research_agent(
             top_p=top_p,
             temperature=temp,
             parallel_tool_calls=config.PARALLEL_TOOL_CALLS,
+            tool_choice="reason" if config.ENABLE_REASON_TOOL else "auto",
         ),
         instructions=_create_prompt(
             cur_date,

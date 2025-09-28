@@ -11,6 +11,7 @@ from model import get_model
 from agents.tool import Tool
 from agent_definitions.reason_tool import reason
 from config import config
+from mcp_registry import get_named_server
 
 logger = logging.getLogger(__name__)
 
@@ -38,20 +39,9 @@ async def create_calculator_agent(
 ) -> Agent[Any]:
     cur_date = _get_now_str()
 
+    mcp_server = get_named_server("calculator")
+
     tools = []
-    if mcp_server:
-        python_tool = next(
-            (
-                t
-                for t in await mcp_server.list_tools()
-                if t.name == "execute_python_code"
-            ),
-            None,
-        )
-        if python_tool:
-            logger.info("Adding execute_python_code tool to CalculatorAgent")
-        else:
-            logger.warning("MCP server provided but execute_python_code tool not found")
 
     if config.ENABLE_REASON_TOOL:
         tools.append(reason)
@@ -60,7 +50,7 @@ async def create_calculator_agent(
         name="CalculatorAgent",
         handoff_description=_calculator_description,
         model=get_model(),
-        tools=tools,  # type: ignore
+        mcp_servers=[mcp_server],
         # output_type=ResearchComplete, # breaks in vllm and llamacpp
         handoffs=[],
         model_settings=ModelSettings(
@@ -89,7 +79,6 @@ def _create_prompt(
         Your calculations are handled primarily by invoking a Python interpreter tool.
 
         ## Rules
-        {{ reason_tool_details -}}
         - You are limited to at most **{{ max_tool_calls }}** total tool invocations during this task (since the last user message).
         - After invoking at most **{{ max_tool_calls }}** tools, you must then respond.
 
@@ -99,7 +88,4 @@ def _create_prompt(
     ).render(
         date_str=date_str,
         max_tool_calls=max_tool_calls,
-        reason_tool_details="- You MUST invoke the `reason` tool to record your thought process and plan before invoking any other tool.\n- You MUST NOT invoke ANY tool (even subsequent tools) unless you first invoked the `reason` tool to record your thoughts.\n"
-        if config.ENABLE_REASON_TOOL
-        else "",
     )
