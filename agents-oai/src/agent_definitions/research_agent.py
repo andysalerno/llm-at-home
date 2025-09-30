@@ -3,16 +3,16 @@ import logging
 import textwrap
 from typing import Any
 
+from agents import Agent, ModelSettings, handoff
+from agents.mcp import MCPServer
+from agents.tool import Tool
 from jinja2 import Template
 from pydantic import BaseModel
-from agents.mcp import MCPServer
 
-from agents import Agent, ModelSettings, handoff
-from model import get_model
-from agents.tool import Tool
+from agent_definitions.math_agent import calculator_agent_tool, create_calculator_agent
 from agent_definitions.reason_tool import reason
 from config import config
-from agent_definitions.math_agent import calculator_agent_tool, create_calculator_agent
+from model import get_model
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,9 @@ _description = (
 # TODO: add a flag to force the agent to remove
 # existing tool calls and outputs before running
 async def research_agent_tool(
-    agent_temp: float = 0.0, top_p: float = 0.9, mcp_server: MCPServer | None = None
+    agent_temp: float = 0.0,
+    top_p: float = 0.9,
+    mcp_server: MCPServer | None = None,
 ) -> Tool:
     agent = await create_research_agent(agent_temp, top_p, mcp_server)
 

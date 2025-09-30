@@ -2,14 +2,15 @@ import datetime
 import textwrap
 
 from agents import Agent, Handoff, ModelSettings, handoff
-from jinja2 import Template
-from model import get_model
-from agents.tool import Tool
 from agents.mcp import MCPServer
+from agents.tool import Tool
+from jinja2 import Template
+
+from agent_definitions.math_agent import calculator_agent_tool, create_calculator_agent
 from agent_definitions.reason_tool import reason
 from agent_definitions.research_agent import create_research_agent, research_agent_tool
-from agent_definitions.math_agent import create_calculator_agent, calculator_agent_tool
 from config import config
+from model import get_model
 
 
 async def create_responding_agent(

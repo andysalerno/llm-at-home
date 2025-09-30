@@ -3,15 +3,14 @@ import logging
 import textwrap
 from typing import Any
 
+from agents import Agent, ModelSettings, function_tool
+from agents.mcp import MCPServer
+from agents.tool import Tool
 from jinja2 import Template
 from pydantic import BaseModel
-from agents.mcp import MCPServer
 
-from agents import Agent, ModelSettings
-from model import get_model
-from agents.tool import Tool
-from agents import function_tool
 from config import config
+from model import get_model
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,9 @@ logger = logging.getLogger(__name__)
 # TODO: add a flag to force the agent to remove
 # existing tool calls and outputs before running
 async def research_agent_tool(
-    agent_temp: float = 0.0, top_p: float = 0.9, mcp_server: MCPServer | None = None
+    agent_temp: float = 0.0,
+    top_p: float = 0.9,
+    mcp_server: MCPServer | None = None,
 ) -> Tool:
     description = (
         "Gives a task to a research agent and returns the final result of its research."
@@ -39,6 +40,7 @@ async def reason(thinking: str) -> str:
 
     Args:
         thinking: The reasoning or thought process to be recorded.
+
     """
     return "(reasoning complete)"
 
@@ -49,6 +51,7 @@ async def review_progress(thinking: str) -> str:
 
     Args:
         thinking: The reasoning or thought process to be recorded.
+
     """
     return "(reasoning complete)"
 
@@ -59,6 +62,7 @@ async def update_progress(thinking: str) -> str:
 
     Args:
         thinking: The reasoning or thought process to be recorded.
+
     """
     return "(reasoning complete)"
 

@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import asyncio
 
-from model import initialize_model
-from manager import run_single
-from phoenix.otel import register
 from agents.mcp import MCPServerStreamableHttp
+from phoenix.otel import register
+
 from config import config
 from context import trim_tool_calls
+from manager import run_single
 from mcp_registry import register_named_server
+from model import initialize_model
 
 # configure the Phoenix tracer
 tracer_provider = register(
@@ -17,7 +18,7 @@ tracer_provider = register(
 )
 
 
-async def main():
+async def main() -> None:
     async with MCPServerStreamableHttp(
         params={"url": "http://localhost:8002/mcp"},
         cache_tools_list=True,
