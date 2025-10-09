@@ -1,0 +1,19 @@
+[project]
+name = "transformers-serve"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "accelerate>=1.10.1",
+    "bitsandbytes>=0.48.1",
+    "flash-attn>=2.8.3",
+    "gptqmodel>=5.0.0.dev0",
+    "optimum>=1.27.0",
+    "torch==2.8",
+    "transformers[serving]",
+]
+
+[tool.uv.sources]
+transformers = { git = "https://github.com/huggingface/transformers" }
+gptqmodel = { git = "https://github.com/ModelCloud/GPTQModel" }
