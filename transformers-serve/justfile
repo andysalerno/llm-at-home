@@ -1,0 +1,2 @@
+run:
+  uv run transformers serve --force-model QuantTrio/Qwen3-30B-A3B-Instruct-2507-GPTQ-Int8 --host 0.0.0.0 --port 8000 --continuous-batching --attn_implementation flash_attention_2
