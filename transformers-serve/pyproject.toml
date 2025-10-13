@@ -7,13 +7,19 @@ requires-python = ">=3.13"
 dependencies = [
     "accelerate>=1.10.1",
     "bitsandbytes>=0.48.1",
+    "device-smi>=0.5.1",
     "flash-attn>=2.8.3",
-    "gptqmodel>=5.0.0.dev0",
+    # "gptqmodel>=5.0.0.dev0",
+    "gptqmodel>=4.2.5",
+    "logbar>=0.1.1",
     "optimum>=1.27.0",
+    "pillow>=11.3.0",
+    "threadpoolctl>=3.6.0",
+    "tokenicer>=0.0.5",
     "torch==2.8",
     "transformers[serving]",
 ]
 
 [tool.uv.sources]
 transformers = { git = "https://github.com/huggingface/transformers" }
-gptqmodel = { git = "https://github.com/ModelCloud/GPTQModel" }
+# gptqmodel = { git = "https://github.com/ModelCloud/GPTQModel" }
