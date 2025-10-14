@@ -6,12 +6,11 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "arize-phoenix-otel",
-    # "openai-agents[litellm]==0.3.2",
     "openai",
     "openai-agents[litellm]",
     "openinference-instrumentation-litellm",
     "openinference-instrumentation-openai-agents",
 ]
 
-[tool.uv.sources]
-openai-agents = { path = "../../openai-agents-python", editable = true }
+# [tool.uv.sources]
+# openai-agents = { path = "../../openai-agents-python", editable = true }

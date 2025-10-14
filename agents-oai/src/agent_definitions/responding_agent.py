@@ -53,7 +53,7 @@ async def create_responding_agent(
             top_p=top_p,
             parallel_tool_calls=config.PARALLEL_TOOL_CALLS,
             # tool_choice="reason" if config.ENABLE_REASON_TOOL else "auto",
-            tool_choice={'type': 'function', 'function': {'name': 'reason'}} if config.ENABLE_REASON_TOOL else "auto",
+            # tool_choice={'type': 'function', 'function': {'name': 'reason'}} if config.ENABLE_REASON_TOOL else "auto",
             # extra_body=get_extra_body(),
         ),
     )
