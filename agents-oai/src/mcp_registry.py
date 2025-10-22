@@ -9,7 +9,7 @@ def get_named_server(name: str) -> MCPServer:
     return _instance[name]
 
 
-def register_named_server(name: str, server: MCPServer):
+def register_named_server(name: str, server: MCPServer) -> None:
     if name in _instance:
         raise ValueError(f"MCP server already registered with name '{name}'")
     _instance[name] = server

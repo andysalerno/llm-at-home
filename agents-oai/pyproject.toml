@@ -7,7 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "arize-phoenix-otel",
     "openai",
-    "openai-agents[litellm]",
+    "openai-agents[litellm]>=0.4.1",
     "openinference-instrumentation-litellm",
     "openinference-instrumentation-openai-agents",
 ]
