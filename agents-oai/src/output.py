@@ -12,7 +12,7 @@ class Output:
         print(text, end="", flush=True)
 
     def capture_user_input(self) -> str:
-        return input("> ")
+        return input("\n> ")
 
     def logger(self, name: str) -> Logger:
         return getLogger(f"agentscli.{name}")
