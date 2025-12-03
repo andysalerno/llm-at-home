@@ -19,27 +19,30 @@ tracer_provider = register(
 
 
 async def main() -> None:
-    async with MCPServerStreamableHttp(
-        params={"url": "http://localhost:8002/mcp"},
-        cache_tools_list=True,
-    ) as mcp_server:
-        # there MUST be a better way to do this:
-        async with MCPServerStreamableHttp(
+    async with (
+        MCPServerStreamableHttp(
+            params={"url": "http://localhost:8002/mcp"},
+            cache_tools_list=True,
+        ) as mcp_server,
+        MCPServerStreamableHttp(
             params={"url": "http://localhost:8002/mcp"},
             cache_tools_list=True,
             tool_filter={"allowed_tool_names": ["execute_python_code"]},
-        ) as calculator_mcp_server:
-            register_named_server("default", mcp_server)
-            register_named_server("calculator", calculator_mcp_server)
-            context = []
-            while True:
-                query = input("input: ")
+        ) as calculator_mcp_server,
+    ):
+        register_named_server("default", mcp_server)
+        register_named_server("calculator", calculator_mcp_server)
+        context = []
+        while True:
+            # last_message = context[-1] if len(context) > 0 else None
+            # print(f"last message: {last_message}")
+            query = input("input: ")
 
-                context.append({"content": query, "role": "user"})
+            context.append({"content": query, "role": "user"})
 
-                output = await run_single(query, context, mcp_server)
-                context = output
-                context = trim_tool_calls(context)
+            output = await run_single(query, context, mcp_server)
+            context = output
+            context = trim_tool_calls(context)
 
 
 if __name__ == "__main__":

@@ -48,6 +48,7 @@ async def create_responding_agent(
         handoffs=handoffs,  # type: ignore
         instructions=_create_prompt(cur_date),
         model=get_model(),
+        tool_use_behavior="run_llm_again",
         model_settings=ModelSettings(
             temperature=temperature,
             top_p=top_p,
