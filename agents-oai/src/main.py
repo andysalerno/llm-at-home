@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 
 from agents.mcp import MCPServerStreamableHttp
 from phoenix.otel import register
 
+from chat_loop import run_single
 from config import config
 from context import trim_tool_calls
-from manager import run_single
 from mcp_registry import register_named_server
 from model import initialize_model
+from output import Output
 
 # configure the Phoenix tracer
 tracer_provider = register(
@@ -19,6 +21,12 @@ tracer_provider = register(
 
 
 async def main() -> None:
+    logging.basicConfig(
+        level=logging.WARNING,  # Set root logger to capture everything
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+    logging.getLogger("agentscli").setLevel(logging.INFO)
+
     async with (
         MCPServerStreamableHttp(
             params={"url": "http://localhost:8002/mcp"},
@@ -33,36 +41,22 @@ async def main() -> None:
         register_named_server("default", mcp_server)
         register_named_server("calculator", calculator_mcp_server)
         context = []
+        output = Output()
         while True:
             # last_message = context[-1] if len(context) > 0 else None
             # print(f"last message: {last_message}")
-            query = input("input: ")
+            query = output.capture_user_input()
 
             context.append({"content": query, "role": "user"})
 
-            output = await run_single(query, context, mcp_server)
-            context = output
+            result = await run_single(query, context, mcp_server, output)
+            context = result
             context = trim_tool_calls(context)
 
 
 if __name__ == "__main__":
     # First try to get model/api key from args
     import argparse
-    import logging
-
-    # Configure logging to only show logs from your own code
-    logging.basicConfig(
-        level=logging.WARNING,  # Set root logger to capture everything
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-
-    # Set your own modules to INFO level
-    logging.getLogger("model").setLevel(logging.INFO)
-    logging.getLogger("manager").setLevel(logging.INFO)
-    logging.getLogger("context").setLevel(logging.INFO)
-    logging.getLogger("config").setLevel(logging.INFO)
-    logging.getLogger("agent_definitions").setLevel(logging.INFO)
-    logging.getLogger(__name__).setLevel(logging.INFO)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=False)
