@@ -12,7 +12,7 @@ from openai.types.responses import ResponseOutputItemDoneEvent, ResponseTextDelt
 
 from agent_definitions.responding_agent import create_responding_agent
 from config import config
-from output import Output
+from output import LoggingAgentRunHooks, Output
 
 if TYPE_CHECKING:
     from agents.items import TResponseInputItem
@@ -36,6 +36,7 @@ async def run_single(
     result = Runner.run_streamed(
         responding_agent,
         input_context,
+        hooks=LoggingAgentRunHooks(output),
         max_turns=config.MAX_TURNS,
     )
 
@@ -49,9 +50,10 @@ async def run_single(
                 isinstance(event.data, ResponseOutputItemDoneEvent)
                 and event.data.item.type == "function_call"
             ):
-                logger.info(
-                    f"\n[Invoking function: {event.data.item.name}({event.data.item.arguments})]",
-                )
+                pass
+                # logger.info(
+                #     f"\n[Invoking function: {event.data.item.name}({event.data.item.arguments})]",
+                # )
         elif isinstance(event, AgentUpdatedStreamEvent):
             logger.info(f"\n[Switched to agent: {event.new_agent.name}]")
 
