@@ -42,23 +42,20 @@ async def create_responding_agent(
     if config.ENABLE_REASON_TOOL:
         tools.append(reason)
 
-    agent = Agent(
+    return Agent(
         name="RespondingAgent",
         tools=tools,
         handoffs=handoffs,  # type: ignore
         instructions=_create_prompt(cur_date),
         model=get_model(),
+        tool_use_behavior="run_llm_again",
         model_settings=ModelSettings(
             temperature=temperature,
             top_p=top_p,
             parallel_tool_calls=config.PARALLEL_TOOL_CALLS,
-            # tool_choice="reason" if config.ENABLE_REASON_TOOL else "auto",
-            # tool_choice={'type': 'function', 'function': {'name': 'reason'}} if config.ENABLE_REASON_TOOL else "auto",
-            # extra_body=get_extra_body(),
+            tool_choice="reason" if config.ENABLE_REASON_TOOL else "auto",
         ),
     )
-
-    return agent
 
 
 def _create_prompt(

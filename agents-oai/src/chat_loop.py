@@ -4,9 +4,15 @@ import logging
 from typing import TYPE_CHECKING
 
 from agents import Runner
+from agents.stream_events import (
+    AgentUpdatedStreamEvent,
+    RawResponsesStreamEvent,
+)
+from openai.types.responses import ResponseOutputItemDoneEvent, ResponseTextDeltaEvent
 
 from agent_definitions.responding_agent import create_responding_agent
 from config import config
+from output import LoggingAgentRunHooks, Output
 
 if TYPE_CHECKING:
     from agents.items import TResponseInputItem
@@ -19,6 +25,7 @@ async def run_single(
     input: str,
     input_context: list[TResponseInputItem],
     mcp_server: MCPServer,
+    output: Output,
 ) -> list[TResponseInputItem]:
     responding_agent = await create_responding_agent(
         use_handoffs=config.USE_HANDOFFS,
@@ -29,31 +36,25 @@ async def run_single(
     result = Runner.run_streamed(
         responding_agent,
         input_context,
+        hooks=LoggingAgentRunHooks(output),
         max_turns=config.MAX_TURNS,
     )
 
+    logger = output.logger("chat_loop")
+
     async for event in result.stream_events():
-        if event.type == "raw_response_event":
-            if event.data.type == "response.output_text.delta":
-                print(event.data.delta, end="", flush=True)
+        if isinstance(event, RawResponsesStreamEvent):
+            if isinstance(event.data, ResponseTextDeltaEvent):
+                output.streaming_message(event.data.delta)
             elif (
-                event.data.type == "response.output_item.done"
+                isinstance(event.data, ResponseOutputItemDoneEvent)
                 and event.data.item.type == "function_call"
             ):
-                print(
-                    f"invoking function: {event.data.item.name}({event.data.item.arguments})",
-                    flush=True,
-                )
-        elif event.type == "agent_updated_stream_event":
-            logger.info(f"agent updated: {event.new_agent.name}")
-        elif (
-            event.type == "run_item_stream_event"
-            and event.item.type == "message_output_item"
-        ):
-            # print("", flush=True)
-            pass
-        else:
-            # print(f"unknown event: {event}", flush=True)
-            pass
+                pass
+                # logger.info(
+                #     f"\n[Invoking function: {event.data.item.name}({event.data.item.arguments})]",
+                # )
+        elif isinstance(event, AgentUpdatedStreamEvent):
+            logger.info(f"\n[Switched to agent: {event.new_agent.name}]")
 
     return result.to_input_list()
